@@ -1,0 +1,331 @@
+diff --git a/index.html b/index.html
+index ff24d1c722aee92730c9c1e0fc71726bef5d422d..6b8441b691bb0de9b5fa56f91c3b67f6a9112603 100644
+--- a/index.html
++++ b/index.html
+@@ -136,51 +136,51 @@
+             color: #5b0acd;
+             border: 1px solid rgba(114, 31, 244, 0.3);
+             padding: 12px 16px;
+             border-radius: 12px;
+             cursor: pointer;
+             font-size: 0.85rem;
+             font-weight: 600;
+             transition: all 0.3s ease;
+         }
+ 
+         .btn:hover {
+             background: rgba(114, 31, 244, 0.35);
+             transform: translateY(-2px);
+             box-shadow: 0 8px 25px rgba(114, 31, 244, 0.25);
+         }
+ 
+         .btn-primary {
+             background: rgba(114, 31, 244, 0.25);
+             border-color: rgba(114, 31, 244, 0.4);
+             color: #5b0acd;
+         }
+ 
+         .btn-success {
+             background: rgba(157, 78, 221, 0.25);
+             border-color: rgba(157, 78, 221, 0.4);
+-            color: #7c3aed;
++            color: #00D88A;
+         }
+ 
+         /* Categories Panel */
+         .categories-panel {
+             top: 20px;
+             right: 20px;
+             padding: 20px;
+             min-width: 250px;
+             max-width: 300px;
+             display: none;
+         }
+ 
+         /* Mobile Categories Toggle */
+         .mobile-categories-toggle {
+             position: absolute;
+             top: 20px;
+             right: 20px;
+             background: rgba(114, 31, 244, 0.2);
+             backdrop-filter: blur(10px);
+             color: #5b0acd;
+             border: 1px solid rgba(114, 31, 244, 0.3);
+             padding: 12px;
+             border-radius: 12px;
+             cursor: pointer;
+             font-size: 1.2rem;
+diff --git a/index.html b/index.html
+index ff24d1c722aee92730c9c1e0fc71726bef5d422d..6b8441b691bb0de9b5fa56f91c3b67f6a9112603 100644
+--- a/index.html
++++ b/index.html
+@@ -605,101 +605,101 @@
+                     <p class="modal-subtitle" id="modalSubtitle">Subtitle</p>
+                     <button class="close-btn" onclick="closeModal()">×</button>
+                 </div>
+                 
+                 <div class="modal-body">
+                     <div id="modalContent"></div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ 
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+     <script>
+         // Treasury Tools Galaxy
+         class TreasuryGalaxy {
+             constructor() {
+                 this.CONFIG = {
+                     loadingTimeout: 10000,
+                     enableAutoRotate: true,
+                     rotationSpeed: 0.003,
+                     cameraDistance: 12
+                 };
+ 
+                 this.TREASURY_TOOLS = [
+                     // TRMS Category
+-                    { name: 'Kyriba', category: 'TRMS', color: 0x4c1d95, desc: 'Leading cloud-based treasury and risk management platform with AI-powered analytics and comprehensive derivatives management.' },
+-                    { name: 'GTreasury', category: 'TRMS', color: 0x4c1d95, desc: 'Enterprise treasury platform with strong accounting integration, advanced reporting, and multi-entity consolidation.' },
+-                    { name: 'Reval', category: 'TRMS', color: 0x4c1d95, desc: 'Comprehensive treasury and risk solutions with sophisticated derivatives management and hedge accounting.' },
+-                    { name: 'Quantum', category: 'TRMS', color: 0x4c1d95, desc: 'Advanced treasury management system with real-time risk analytics and hedging optimization capabilities.' },
+-                    { name: 'WallStreet Suite', category: 'TRMS', color: 0x4c1d95, desc: 'Complete treasury and risk platform with advanced analytics, multi-asset support, and regulatory reporting.' },
+-                    { name: 'ATOM', category: 'TRMS', color: 0x4c1d95, desc: 'Advanced treasury platform with comprehensive derivatives trading and sophisticated risk management tools.' },
+-                    { name: 'Integrity', category: 'TRMS', color: 0x4c1d95, desc: 'Enterprise treasury solution with robust compliance features and comprehensive workflow management.' },
+-                    { name: 'IT2', category: 'TRMS', color: 0x4c1d95, desc: 'Integrated treasury technology platform with comprehensive cash management and risk analytics.' },
+-                    { name: 'Datalog', category: 'TRMS', color: 0x4c1d95, desc: 'Treasury management system with advanced analytics, multi-entity support, and comprehensive reporting.' },
+-                    { name: 'Coupa', category: 'TRMS', color: 0x4c1d95, desc: 'Business spend management platform with integrated treasury operations and procurement workflows.' },
++                    { name: 'Kyriba', category: 'TRMS', color: 0x00b4f0, desc: 'Leading cloud-based treasury and risk management platform with AI-powered analytics and comprehensive derivatives management.' },
++                    { name: 'GTreasury', category: 'TRMS', color: 0x00b4f0, desc: 'Enterprise treasury platform with strong accounting integration, advanced reporting, and multi-entity consolidation.' },
++                    { name: 'Reval', category: 'TRMS', color: 0x00b4f0, desc: 'Comprehensive treasury and risk solutions with sophisticated derivatives management and hedge accounting.' },
++                    { name: 'Quantum', category: 'TRMS', color: 0x00b4f0, desc: 'Advanced treasury management system with real-time risk analytics and hedging optimization capabilities.' },
++                    { name: 'WallStreet Suite', category: 'TRMS', color: 0x00b4f0, desc: 'Complete treasury and risk platform with advanced analytics, multi-asset support, and regulatory reporting.' },
++                    { name: 'ATOM', category: 'TRMS', color: 0x00b4f0, desc: 'Advanced treasury platform with comprehensive derivatives trading and sophisticated risk management tools.' },
++                    { name: 'Integrity', category: 'TRMS', color: 0x00b4f0, desc: 'Enterprise treasury solution with robust compliance features and comprehensive workflow management.' },
++                    { name: 'IT2', category: 'TRMS', color: 0x00b4f0, desc: 'Integrated treasury technology platform with comprehensive cash management and risk analytics.' },
++                    { name: 'Datalog', category: 'TRMS', color: 0x00b4f0, desc: 'Treasury management system with advanced analytics, multi-entity support, and comprehensive reporting.' },
++                    { name: 'Coupa', category: 'TRMS', color: 0x00b4f0, desc: 'Business spend management platform with integrated treasury operations and procurement workflows.' },
+                     
+                     // Cash Tools Category
+-                    { name: 'Trovata', category: 'CASH', color: 0x7c3aed, desc: 'AI-powered cash visibility platform with real-time bank connectivity and predictive analytics.' },
+-                    { name: 'Tesorio', category: 'CASH', color: 0x7c3aed, desc: 'Cash flow optimization platform with machine learning insights and automated forecasting.' },
+-                    { name: 'Autocash.ai', category: 'CASH', color: 0x7c3aed, desc: 'AI-powered cash management with predictive analytics and automated scenario planning.' },
+-                    { name: 'Balance', category: 'CASH', color: 0x7c3aed, desc: 'Real-time cash visibility platform with automated bank reconciliation and multi-currency support.' },
+-                    { name: 'Nilus', category: 'CASH', color: 0x7c3aed, desc: 'Cash positioning and forecasting platform with advanced scenario planning and variance analysis.' },
+-                    { name: 'Obol', category: 'CASH', color: 0x7c3aed, desc: 'Digital treasury platform with real-time cash visibility and liquidity optimization features.' },
+-                    { name: 'Panax', category: 'CASH', color: 0x7c3aed, desc: 'Working capital optimization platform with cash flow forecasting and payment timing analytics.' },
+-                    { name: 'Statement', category: 'CASH', color: 0x7c3aed, desc: 'Bank statement processing platform with automated data extraction and reconciliation.' },
+-                    { name: 'Treasury Suite', category: 'CASH', color: 0x7c3aed, desc: 'Comprehensive cash management suite with forecasting, positioning, and liquidity optimization.' },
+-                    { name: 'Vesto', category: 'CASH', color: 0x7c3aed, desc: 'Cash investment platform with yield optimization, risk monitoring, and liquidity management.' },
++                    { name: 'Trovata', category: 'CASH', color: 0x00d88a, desc: 'AI-powered cash visibility platform with real-time bank connectivity and predictive analytics.' },
++                    { name: 'Tesorio', category: 'CASH', color: 0x00d88a, desc: 'Cash flow optimization platform with machine learning insights and automated forecasting.' },
++                    { name: 'Autocash.ai', category: 'CASH', color: 0x00d88a, desc: 'AI-powered cash management with predictive analytics and automated scenario planning.' },
++                    { name: 'Balance', category: 'CASH', color: 0x00d88a, desc: 'Real-time cash visibility platform with automated bank reconciliation and multi-currency support.' },
++                    { name: 'Nilus', category: 'CASH', color: 0x00d88a, desc: 'Cash positioning and forecasting platform with advanced scenario planning and variance analysis.' },
++                    { name: 'Obol', category: 'CASH', color: 0x00d88a, desc: 'Digital treasury platform with real-time cash visibility and liquidity optimization features.' },
++                    { name: 'Panax', category: 'CASH', color: 0x00d88a, desc: 'Working capital optimization platform with cash flow forecasting and payment timing analytics.' },
++                    { name: 'Statement', category: 'CASH', color: 0x00d88a, desc: 'Bank statement processing platform with automated data extraction and reconciliation.' },
++                    { name: 'Treasury Suite', category: 'CASH', color: 0x00d88a, desc: 'Comprehensive cash management suite with forecasting, positioning, and liquidity optimization.' },
++                    { name: 'Vesto', category: 'CASH', color: 0x00d88a, desc: 'Cash investment platform with yield optimization, risk monitoring, and liquidity management.' },
+                     
+                     // TMS-Lite Category
+-                    { name: 'Treasury4', category: 'LITE', color: 0xc084fc, desc: 'Next-generation treasury platform with modern UI, cloud-native architecture, and intuitive workflows.' },
+-                    { name: 'Treasura', category: 'LITE', color: 0xc084fc, desc: 'User-friendly treasury management system with essential cash and risk management features.' },
+-                    { name: 'Treasury Cube', category: 'LITE', color: 0xc084fc, desc: 'Modular treasury platform with customizable features for growing treasury operations.' },
+-                    { name: 'Treasury Curve', category: 'LITE', color: 0xc084fc, desc: 'Simplified treasury management solution with intuitive interface and core functionality.' },
+-                    { name: 'Bottomline', category: 'LITE', color: 0xc084fc, desc: 'Payment automation and cash management platform with strong banking integration.' },
+-                    { name: 'City Financials', category: 'LITE', color: 0xc084fc, desc: 'Streamlined treasury system designed for mid-market companies and growth businesses.' },
+-                    { name: 'HighRadius', category: 'LITE', color: 0xc084fc, desc: 'Autonomous finance platform with AI capabilities for accounts receivable and treasury.' }
++                    { name: 'Treasury4', category: 'LITE', color: 0x9d4edd, desc: 'Next-generation treasury platform with modern UI, cloud-native architecture, and intuitive workflows.' },
++                    { name: 'Treasura', category: 'LITE', color: 0x9d4edd, desc: 'User-friendly treasury management system with essential cash and risk management features.' },
++                    { name: 'Treasury Cube', category: 'LITE', color: 0x9d4edd, desc: 'Modular treasury platform with customizable features for growing treasury operations.' },
++                    { name: 'Treasury Curve', category: 'LITE', color: 0x9d4edd, desc: 'Simplified treasury management solution with intuitive interface and core functionality.' },
++                    { name: 'Bottomline', category: 'LITE', color: 0x9d4edd, desc: 'Payment automation and cash management platform with strong banking integration.' },
++                    { name: 'City Financials', category: 'LITE', color: 0x9d4edd, desc: 'Streamlined treasury system designed for mid-market companies and growth businesses.' },
++                    { name: 'HighRadius', category: 'LITE', color: 0x9d4edd, desc: 'Autonomous finance platform with AI capabilities for accounts receivable and treasury.' }
+                 ];
+ 
+                 this.CATEGORIES = {
+                     TRMS: {
+                         title: 'Treasury & Risk Management Systems',
+                         subtitle: 'Enterprise-Grade Platforms',
+                         description: 'Comprehensive treasury management platforms designed for large enterprises with complex operations, including sophisticated risk management, derivatives trading, and multi-entity consolidation.',
+-                        color: '#4c1d95'
++                        color: '#00B4F0'
+                     },
+                     CASH: {
+                         title: 'Cash Management Tools',
+                         subtitle: 'Specialized Visibility & Forecasting',
+                         description: 'Focused solutions for cash visibility, forecasting, and liquidity management. These tools excel at providing real-time cash positions and predictive analytics.',
+-                        color: '#7c3aed'
++                        color: '#00D88A'
+                     },
+                     LITE: {
+                         title: 'TMS-Lite Solutions',
+                         subtitle: 'Streamlined Treasury Platforms',
+                         description: 'Simplified treasury management systems providing core functionality without enterprise complexity. Perfect for mid-market companies and growing businesses.',
+-                        color: '#c084fc'
++                        color: '#9D4EDD'
+                     }
+                 };
+ 
+                 // Initialize
+                 this.scene = null;
+                 this.camera = null;
+                 this.renderer = null;
+                 this.toolsGroup = null;
+                 this.raycaster = null;
+                 this.mouse = null;
+                 this.isAutoRotating = true;
+                 this.isDragging = false;
+                 this.previousMousePosition = { x: 0, y: 0 };
+                 this.isMobile = window.innerWidth <= 768;
+                 this.lastTouchDistance = 0;
+ 
+                 this.init();
+             }
+ 
+             init() {
+                 console.log('Initializing Treasury Galaxy...');
+                 
+                 if (typeof THREE === 'undefined') {
+                     this.showFallback();
+                     return;
+diff --git a/index.html b/index.html
+index ff24d1c722aee92730c9c1e0fc71726bef5d422d..6b8441b691bb0de9b5fa56f91c3b67f6a9112603 100644
+--- a/index.html
++++ b/index.html
+@@ -805,60 +805,59 @@
+                     mesh.position.set(x, y * radius, z);
+                     mesh.userData = tool;
+                     
+                     // Create text label
+                     const textTexture = this.createTextTexture(tool.name);
+                     const textMaterial = new THREE.SpriteMaterial({ 
+                         map: textTexture, 
+                         transparent: true 
+                     });
+                     const textSprite = new THREE.Sprite(textMaterial);
+                     textSprite.scale.set(3, 1, 1);
+                     textSprite.position.copy(mesh.position);
+                     textSprite.position.multiplyScalar(1.2);
+                     textSprite.userData = tool;
+                     
+                     this.toolsGroup.add(mesh);
+                     this.toolsGroup.add(textSprite);
+                 });
+             }
+ 
+             createTextTexture(text) {
+                 const canvas = document.createElement('canvas');
+                 const context = canvas.getContext('2d');
+                 canvas.width = 512;
+                 canvas.height = 128;
+-                
++
++                context.clearRect(0, 0, canvas.width, canvas.height);
+                 context.fillStyle = '#1e293b';
+-                context.strokeStyle = '#ffffff';
+-                context.lineWidth = 4;
+                 context.font = 'bold 28px Arial';
+                 context.textAlign = 'center';
+-                
+-                context.strokeText(text, 256, 80);
+-                context.fillText(text, 256, 80);
+-                
++                context.textBaseline = 'middle';
++
++                context.fillText(text, canvas.width / 2, canvas.height / 2);
++
+                 return new THREE.CanvasTexture(canvas);
+             }
+ 
+             createStarField() {
+                 const geometry = new THREE.BufferGeometry();
+                 const starCount = 500;
+                 const positions = new Float32Array(starCount * 3);
+                 
+                 for (let i = 0; i < starCount; i++) {
+                     positions[i * 3] = (Math.random() - 0.5) * 100;
+                     positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+                     positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+                 }
+                 
+                 geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                 
+                 const material = new THREE.PointsMaterial({ 
+                     color: 0x94a3b8, 
+                     size: 0.08,
+                     transparent: true,
+                     opacity: 0.4
+                 });
+                 
+                 const stars = new THREE.Points(geometry, material);
+                 this.scene.add(stars);
+diff --git a/index.html b/index.html
+index ff24d1c722aee92730c9c1e0fc71726bef5d422d..6b8441b691bb0de9b5fa56f91c3b67f6a9112603 100644
+--- a/index.html
++++ b/index.html
+@@ -1027,59 +1026,59 @@
+                 document.getElementById('toolDesc').textContent = tool.desc;
+                 infoPanel.style.opacity = '1';
+                 
+                 setTimeout(() => {
+                     infoPanel.style.opacity = '0';
+                 }, 5000);
+             }
+ 
+             animate() {
+                 requestAnimationFrame(() => this.animate());
+                 
+                 if (this.isAutoRotating && !this.isDragging) {
+                     this.toolsGroup.rotation.y += this.CONFIG.rotationSpeed;
+                 }
+                 
+                 this.renderer.render(this.scene, this.camera);
+             }
+ 
+             showFallback() {
+                 console.log('Showing fallback content...');
+                 document.getElementById('loadingScreen').innerHTML = `
+                     <div class="fallback-content">
+                         <h1 style="color: white;">Treasury Tools Catalog</h1>
+                         <p style="color: white; opacity: 0.9;">3D visualization unavailable. Browse our complete catalog below:</p>
+                         <div class="fallback-grid">
+-                            <div class="fallback-category" style="--category-color: #4c1d95;">
++                            <div class="fallback-category" style="--category-color: #00B4F0;">
+                                 <h3>🏢 Treasury & Risk Management (10)</h3>
+                                 <p>Kyriba, GTreasury, Reval, Quantum, WallStreet Suite, ATOM, Integrity, IT2, Datalog, Coupa</p>
+                             </div>
+-                            <div class="fallback-category" style="--category-color: #7c3aed;">
++                            <div class="fallback-category" style="--category-color: #00D88A;">
+                                 <h3>💰 Cash Management Tools (10)</h3>
+                                 <p>Trovata, Tesorio, Autocash.ai, Balance, Nilus, Obol, Panax, Statement, Treasury Suite, Vesto</p>
+                             </div>
+-                            <div class="fallback-category" style="--category-color: #c084fc;">
++                            <div class="fallback-category" style="--category-color: #9D4EDD;">
+                                 <h3>⚡ TMS-Lite Solutions (7)</h3>
+                                 <p>Treasury4, Treasura, Treasury Cube, Treasury Curve, Bottomline, City Financials, HighRadius</p>
+                             </div>
+                         </div>
+                     </div>
+                 `;
+                 // Change background to white for fallback
+                 document.getElementById('loadingScreen').style.background = '#ffffff';
+             }
+ 
+             handleResize() {
+                 if (this.camera && this.renderer) {
+                     const container = document.querySelector('.container');
+                     if (container) {
+                         this.camera.aspect = container.offsetWidth / container.offsetHeight;
+                         this.camera.updateProjectionMatrix();
+                         this.renderer.setSize(container.offsetWidth, container.offsetHeight);
+                     }
+                 }
+ 
+                 // Update mobile detection
+                 const wasMobile = this.isMobile;
+                 this.isMobile = window.innerWidth <= 768;
+                 
+                 if (wasMobile !== this.isMobile) {
