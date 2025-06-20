@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasury Tools Galaxy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        /* Category Filter Pills */
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid transparent;
+            color: #475569;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            user-select: none;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            touch-action: manipulation;
+        }
+
+        .filter-pill:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-1px);
+        }
+
+        .filter-pill.active {
+            background: #5b21b6;
+            color: white;
+            border-color: #5b21b6;
+        }
+
+        .filter-pill .count {
+            margin-left: 6px;
+            opacity: 0.7;
+            font-size: 0.8rem;
+        }
+
+        /* Main Canvas */
+        .galaxy-canvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .galaxy-canvas:active {
+            cursor: grabbing;
+        }
+
+        /* Loading */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            z-index: 5;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #374151;
+            transition: all 0.3s ease;
+            min-height: 48px;
+            touch-action: manipulation;
+            user-select: none;
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tool Info Popup */
+        .tool-popup {
+            position: absolute;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            transform: translateY(10px);
+        }
+
+        .tool-popup.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .tool-popup h3 {
+            margin: 0 0 8px 0;
+            color: #1e293b;
+            font-size: 1.2rem;
+        }
+
+        .tool-popup .category {
+            color: #7c3aed;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-popup p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .tool-popup .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #9ca3af;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Help Instructions */
+        .help-instructions {
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #475569;
+            max-width: 200px;
+            z-index: 5;
+            opacity: 0.8;
+        }
+
+        .help-instructions h4 {
+            margin: 0 0 8px 0;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .help-instructions div {
+            margin-bottom: 4px;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .title {
+                font-size: 1.3rem;
+                text-align: center;
+            }
+
+            .subtitle {
+                text-align: center;
+                margin-top: 0;
+            }
+
+            .category-filters {
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .filter-pill {
+                padding: 10px 14px;
+                font-size: 0.8rem;
+                min-height: 48px;
+            }
+
+            .help-instructions {
+                display: none;
+            }
+
+            .tool-popup {
+                max-width: calc(100vw - 40px);
+                left: 50% !important;
+                transform: translateX(-50%) translateY(10px);
+            }
+
+            .tool-popup.visible {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .bottom-controls {
+                flex-direction: column;
+                align-items: center;
+                bottom: 15px;
+            }
+
+            .control-btn {
+                min-width: 120px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px;
+            }
+
+            .filter-pill {
+                padding: 10px 12px;
+                font-size: 0.75rem;
+            }
+
+            .filter-pill .count {
+                font-size: 0.7rem;
+            }
+
+            .tool-popup {
+                padding: 16px;
+                max-width: calc(100vw - 20px);
+            }
+        }
+
+        /* Loading screen specific styles */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 100;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loading-content h1 {
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .loading-content p {
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        /* Hide scrollbars but keep functionality */
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="loading-content">
+                <h1>Treasury Tools Galaxy</h1>
+                <p>Loading interactive visualization...</p>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1 class="title">Treasury Tools Galaxy</h1>
+                    <p class="subtitle">Interactive 3D exploration of 27 treasury management solutions</p>
+                </div>
+                <div class="category-filters">
+                    <button class="filter-pill active" data-category="ALL">
+                        🌟 All Tools <span class="count">(27)</span>
+                    </button>
+                    <button class="filter-pill" data-category="TRMS">
+                        🏢 Enterprise <span class="count">(10)</span>
+                    </button>
+                    <button class="filter-pill" data-category="CASH">
+                        💰 Cash Tools <span class="count">(10)</span>
+                    </button>
+                    <button class="filter-pill" data-category="LITE">
+                        ⚡ TMS-Lite <span class="count">(7)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Instructions -->
+        <div class="help-instructions">
+            <h4>How to Explore</h4>
+            <div>🖱️ <strong>Drag:</strong> Rotate galaxy</div>
+            <div>🔍 <strong>Scroll:</strong> Zoom in/out</div>
+            <div>👆 <strong>Click:</strong> Tool details</div>
+            <div>🏷️ <strong>Filter:</strong> Use category pills</div>
+        </div>
+
+        <!-- Main Canvas -->
+        <canvas class="galaxy-canvas" id="galaxyCanvas"></canvas>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <button class="control-btn" id="resetBtn">🏠 Reset View</button>
+            <button class="control-btn" id="autoBtn">▶️ Auto Rotate</button>
+        </div>
+
+        <!-- Tool Info Popup -->
+        <div class="tool-popup" id="toolPopup">
+            <button class="close-btn" id="closePopup">×</button>
+            <h3 id="toolName">Tool Name</h3>
+            <div class="category" id="toolCategory">Category</div>
+            <p id="toolDescription">Tool description will appear here...</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        class SimplifiedTreasuryGalaxy {
+            constructor() {
+                // Configuration
+                this.CONFIG = {
+                    cameraDistance: 8,
+                    rotationSpeed: 0.002,
+                    nodeSize: 0.15,
+                    galaxyRadius: 3
+                };
+
+                // Treasury tools data
+                this.TREASURY_TOOLS = [
+                    // TRMS - Blue
+                    { name: 'Kyriba', category: 'TRMS', color: 0x3b82f6, desc: 'Leading cloud-based treasury and risk management platform with AI-powered analytics.' },
+                    { name: 'GTreasury', category: 'TRMS', color: 0x3b82f6, desc: 'Enterprise treasury platform with strong accounting integration and advanced reporting.' },
+                    { name: 'Reval', category: 'TRMS', color: 0x3b82f6, desc: 'Comprehensive treasury and risk solutions with sophisticated derivatives management.' },
+                    { name: 'Quantum', category: 'TRMS', color: 0x3b82f6, desc: 'Advanced treasury management system with real-time risk analytics and optimization.' },
+                    { name: 'WallStreet Suite', category: 'TRMS', color: 0x3b82f6, desc: 'Complete treasury and risk platform with advanced analytics and regulatory reporting.' },
+                    { name: 'ATOM', category: 'TRMS', color: 0x3b82f6, desc: 'Advanced treasury platform with comprehensive derivatives trading and risk management.' },
+                    { name: 'Integrity', category: 'TRMS', color: 0x3b82f6, desc: 'Enterprise treasury solution with robust compliance features and workflow management.' },
+                    { name: 'IT2', category: 'TRMS', color: 0x3b82f6, desc: 'Integrated treasury technology platform with comprehensive cash management.' },
+                    { name: 'Datalog', category: 'TRMS', color: 0x3b82f6, desc: 'Treasury management system with advanced analytics and multi-entity support.' },
+                    { name: 'Coupa', category: 'TRMS', color: 0x3b82f6, desc: 'Business spend management platform with integrated treasury operations.' },
+                    
+                    // CASH - Green
+                    { name: 'Trovata', category: 'CASH', color: 0x10b981, desc: 'AI-powered cash visibility platform with real-time bank connectivity and predictive analytics.' },
+                    { name: 'Tesorio', category: 'CASH', color: 0x10b981, desc: 'Cash flow optimization platform with machine learning insights and automated forecasting.' },
+                    { name: 'Autocash.ai', category: 'CASH', color: 0x10b981, desc: 'AI-powered cash management with predictive analytics and automated scenario planning.' },
+                    { name: 'Balance', category: 'CASH', color: 0x10b981, desc: 'Real-time cash visibility platform with automated bank reconciliation.' },
+                    { name: 'Nilus', category: 'CASH', color: 0x10b981, desc: 'Cash positioning and forecasting platform with advanced scenario planning.' },
+                    { name: 'Obol', category: 'CASH', color: 0x10b981, desc: 'Digital treasury platform with real-time cash visibility and liquidity optimization.' },
+                    { name: 'Panax', category: 'CASH', color: 0x10b981, desc: 'Working capital optimization platform with cash flow forecasting and payment timing analytics.' },
+                    { name: 'Statement', category: 'CASH', color: 0x10b981, desc: 'Bank statement processing platform with automated data extraction and reconciliation.' },
+                    { name: 'Treasury Suite', category: 'CASH', color: 0x10b981, desc: 'Comprehensive cash management suite with forecasting, positioning, and optimization.' },
+                    { name: 'Vesto', category: 'CASH', color: 0x10b981, desc: 'Cash investment platform with yield optimization, risk monitoring, and liquidity management.' },
+                    
+                    // LITE - Purple
+                    { name: 'Treasury4', category: 'LITE', color: 0x8b5cf6, desc: 'Next-generation treasury platform with modern UI and cloud-native architecture.' },
+                    { name: 'Treasura', category: 'LITE', color: 0x8b5cf6, desc: 'User-friendly treasury management system with essential cash and risk management features.' },
+                    { name: 'Treasury Cube', category: 'LITE', color: 0x8b5cf6, desc: 'Modular treasury platform with customizable features for growing treasury operations.' },
+                    { name: 'Treasury Curve', category: 'LITE', color: 0x8b5cf6, desc: 'Simplified treasury management solution with intuitive interface and core functionality.' },
+                    { name: 'Bottomline', category: 'LITE', color: 0x8b5cf6, desc: 'Payment automation and cash management platform with strong banking integration.' },
+                    { name: 'City Financials', category: 'LITE', color: 0x8b5cf6, desc: 'Streamlined treasury system designed for mid-market companies and growth businesses.' },
+                    { name: 'HighRadius', category: 'LITE', color: 0x8b5cf6, desc: 'Autonomous finance platform with AI capabilities for accounts receivable and treasury.' }
+                ];
+
+                this.CATEGORIES = {
+                    TRMS: { title: 'Treasury & Risk Management', color: '#3b82f6' },
+                    CASH: { title: 'Cash Management Tools', color: '#10b981' },
+                    LITE: { title: 'TMS-Lite Solutions', color: '#8b5cf6' }
+                };
+
+                // Initialize
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.toolsGroup = null;
+                this.raycaster = null;
+                this.mouse = null;
+                this.isAutoRotating = false;
+                this.isDragging = false;
+                this.previousMousePosition = { x: 0, y: 0 };
+                this.currentFilter = 'ALL';
+                this.hoveredTool = null;
+
+                this.init();
+            }
+
+            init() {
+                console.log('Initializing Treasury Galaxy...');
+                
+                try {
+                    this.setupScene();
+                    this.setupInteractions();
+                    this.createGalaxy();
+                    this.animate();
+                    this.hideLoading();
+                } catch (error) {
+                    console.error('Failed to initialize:', error);
+                    this.showError();
+                }
+            }
+
+            setupScene() {
+                const canvas = document.getElementById('galaxyCanvas');
+                const container = document.querySelector('.container');
+
+                // Scene setup
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(
+                    75, 
+                    container.offsetWidth / container.offsetHeight, 
+                    0.1, 
+                    1000
+                );
+                this.camera.position.set(0, 0, this.CONFIG.cameraDistance);
+
+                // Renderer setup
+                this.renderer = new THREE.WebGLRenderer({ 
+                    canvas: canvas, 
+                    antialias: true, 
+                    alpha: true 
+                });
+                this.renderer.setSize(container.offsetWidth, container.offsetHeight);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                this.renderer.setClearColor(0x000000, 0);
+
+                // Tools group
+                this.toolsGroup = new THREE.Group();
+                this.scene.add(this.toolsGroup);
+
+                // Lighting
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                this.scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(5, 5, 5);
+                this.scene.add(directionalLight);
+
+                // Interaction setup
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+            }
+
+            createGalaxy() {
+                // Create subtle background sphere
+                const sphereGeometry = new THREE.SphereGeometry(this.CONFIG.galaxyRadius, 32, 32);
+                const sphereMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.05
+                });
+                const backgroundSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+                this.toolsGroup.add(backgroundSphere);
+
+                // Create tool nodes using fibonacci sphere distribution
+                const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+
+                this.TREASURY_TOOLS.forEach((tool, index) => {
+                    const y = 1 - (index / (this.TREASURY_TOOLS.length - 1)) * 2;
+                    const radiusAtY = Math.sqrt(1 - y * y);
+                    const theta = phi * index;
+
+                    const x = Math.cos(theta) * radiusAtY * this.CONFIG.galaxyRadius;
+                    const z = Math.sin(theta) * radiusAtY * this.CONFIG.galaxyRadius;
+
+                    // Create tool sphere
+                    const geometry = new THREE.SphereGeometry(this.CONFIG.nodeSize, 16, 16);
+                    const material = new THREE.MeshPhongMaterial({
+                        color: tool.color,
+                        emissive: tool.color,
+                        emissiveIntensity: 0.2,
+                        shininess: 100
+                    });
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(x, y * this.CONFIG.galaxyRadius, z);
+                    mesh.userData = tool;
+
+                    // Create text label
+                    const textSprite = this.createTextSprite(tool.name);
+                    textSprite.position.copy(mesh.position);
+                    textSprite.position.multiplyScalar(1.2);
+                    textSprite.userData = tool;
+
+                    this.toolsGroup.add(mesh);
+                    this.toolsGroup.add(textSprite);
+                });
+
+                // Create subtle star field
+                this.createStarField();
+            }
+
+            createTextSprite(text) {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                canvas.width = 512;
+                canvas.height = 128;
+                
+                context.fillStyle = '#ffffff';
+                context.font = 'bold 24px Arial';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                
+                // Add subtle shadow
+                context.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                context.shadowBlur = 4;
+                context.shadowOffsetX = 2;
+                context.shadowOffsetY = 2;
+                
+                context.fillText(text, 256, 64);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ 
+                    map: texture, 
+                    transparent: true 
+                });
+                
+                const sprite = new THREE.Sprite(material);
+                sprite.scale.set(2, 0.5, 1);
+                
+                return sprite;
+            }
+
+            createStarField() {
+                const geometry = new THREE.BufferGeometry();
+                const starCount = 100;
+                const positions = new Float32Array(starCount * 3);
+
+                for (let i = 0; i < starCount; i++) {
+                    positions[i * 3] = (Math.random() - 0.5) * 50;
+                    positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+                    positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+                }
+
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+                const material = new THREE.PointsMaterial({ 
+                    color: 0xffffff, 
+                    size: 0.02,
+                    transparent: true,
+                    opacity: 0.3
+                });
+
+                const stars = new THREE.Points(geometry, material);
+                this.scene.add(stars);
+            }
+
+            setupInteractions() {
+                const canvas = document.getElementById('galaxyCanvas');
+
+                // Mouse events
+                canvas.addEventListener('mousedown', (e) => this.onPointerDown(e));
+                canvas.addEventListener('mousemove', (e) => this.onPointerMove(e));
+                canvas.addEventListener('mouseup', () => this.onPointerUp());
+                canvas.addEventListener('click', (e) => this.onPointerClick(e));
+                canvas.addEventListener('wheel', (e) => this.onWheel(e));
+
+                // Touch events
+                canvas.addEventListener('touchstart', (e) => this.onTouchStart(e), { passive: false });
+                canvas.addEventListener('touchmove', (e) => this.onTouchMove(e), { passive: false });
+                canvas.addEventListener('touchend', (e) => this.onTouchEnd(e), { passive: false });
+
+                // Category filter buttons
+                document.querySelectorAll('.filter-pill').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const category = btn.dataset.category;
+                        this.filterByCategory(category);
+                    });
+                });
+
+                // Control buttons
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetView());
+                document.getElementById('autoBtn').addEventListener('click', () => this.toggleAutoRotate());
+
+                // Popup close
+                document.getElementById('closePopup').addEventListener('click', () => this.hideToolPopup());
+
+                // Window resize
+                window.addEventListener('resize', () => this.handleResize());
+
+                // Close popup on escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideToolPopup();
+                    }
+                });
+            }
+
+            onPointerDown(event) {
+                this.isDragging = true;
+                const pos = this.getPointerPosition(event);
+                this.previousMousePosition = pos;
+            }
+
+            onPointerMove(event) {
+                const pos = this.getPointerPosition(event);
+
+                if (this.isDragging) {
+                    const deltaMove = {
+                        x: pos.x - this.previousMousePosition.x,
+                        y: pos.y - this.previousMousePosition.y
+                    };
+
+                    this.toolsGroup.rotation.y += deltaMove.x * 0.01;
+                    this.toolsGroup.rotation.x += deltaMove.y * 0.01;
+
+                    this.previousMousePosition = pos;
+                } else {
+                    this.handleHover(event);
+                }
+            }
+
+            onPointerUp() {
+                this.isDragging = false;
+            }
+
+            onPointerClick(event) {
+                if (!this.isDragging) {
+                    this.handleClick(event);
+                }
+            }
+
+            onTouchStart(event) {
+                event.preventDefault();
+                if (event.touches.length === 1) {
+                    this.onPointerDown(event.touches[0]);
+                }
+            }
+
+            onTouchMove(event) {
+                event.preventDefault();
+                if (event.touches.length === 1) {
+                    this.onPointerMove(event.touches[0]);
+                } else if (event.touches.length === 2) {
+                    // Handle pinch zoom
+                    const touch1 = event.touches[0];
+                    const touch2 = event.touches[1];
+                    const distance = Math.sqrt(
+                        Math.pow(touch2.clientX - touch1.clientX, 2) +
+                        Math.pow(touch2.clientY - touch1.clientY, 2)
+                    );
+
+                    if (this.lastPinchDistance) {
+                        const scale = this.lastPinchDistance / distance;
+                        this.camera.position.multiplyScalar(scale);
+                        this.camera.position.clampLength(4, 15);
+                    }
+
+                    this.lastPinchDistance = distance;
+                }
+            }
+
+            onTouchEnd(event) {
+                event.preventDefault();
+                if (event.touches.length === 0) {
+                    if (!this.isDragging) {
+                        this.handleClick(event.changedTouches[0]);
+                    }
+                    this.onPointerUp();
+                    this.lastPinchDistance = 0;
+                }
+            }
+
+            getPointerPosition(event) {
+                const rect = event.target.getBoundingClientRect();
+                return {
+                    x: (event.clientX || event.pageX) - rect.left,
+                    y: (event.clientY || event.pageY) - rect.top
+                };
+            }
+
+            handleHover(event) {
+                const rect = event.target.getBoundingClientRect();
+                this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                this.raycaster.setFromCamera(this.mouse, this.camera);
+                const intersects = this.raycaster.intersectObjects(this.toolsGroup.children);
+
+                if (intersects.length > 0) {
+                    const object = intersects[0].object;
+                    const tool = object.userData;
+
+                    if (tool && tool.name && object.type === 'Mesh') {
+                        event.target.style.cursor = 'pointer';
+                        
+                        // Highlight effect
+                        if (this.hoveredTool !== object) {
+                            if (this.hoveredTool) {
+                                this.hoveredTool.material.emissiveIntensity = 0.2;
+                            }
+                            object.material.emissiveIntensity = 0.4;
+                            this.hoveredTool = object;
+                        }
+                    }
+                } else {
+                    event.target.style.cursor = 'grab';
+                    if (this.hoveredTool) {
+                        this.hoveredTool.material.emissiveIntensity = 0.2;
+                        this.hoveredTool = null;
+                    }
+                }
+            }
+
+            handleClick(event) {
+                const rect = event.target.getBoundingClientRect();
+                this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+                this.raycaster.setFromCamera(this.mouse, this.camera);
+                const intersects = this.raycaster.intersectObjects(this.toolsGroup.children);
+
+                if (intersects.length > 0) {
+                    const tool = intersects[0].object.userData;
+                    if (tool && tool.name) {
+                        this.showToolPopup(tool, event);
+                    }
+                }
+            }
+
+            onWheel(event) {
+                event.preventDefault();
+                const scaleFactor = event.deltaY > 0 ? 1.1 : 0.9;
+                this.camera.position.multiplyScalar(scaleFactor);
+                this.camera.position.clampLength(4, 15);
+            }
+
+            showToolPopup(tool, event) {
+                const popup = document.getElementById('toolPopup');
+                const rect = event.target.getBoundingClientRect();
+                
+                document.getElementById('toolName').textContent = tool.name;
+                document.getElementById('toolCategory').textContent = this.CATEGORIES[tool.category].title;
+                document.getElementById('toolDescription').textContent = tool.desc;
+
+                // Position popup
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                popup.style.left = Math.min(x + 10, window.innerWidth - 320) + 'px';
+                popup.style.top = Math.min(y - 10, window.innerHeight - 200) + 'px';
+                
+                popup.classList.add('visible');
+            }
+
+            hideToolPopup() {
+                document.getElementById('toolPopup').classList.remove('visible');
+            }
+
+            filterByCategory(category) {
+                this.currentFilter = category;
+
+                // Update active filter button
+                document.querySelectorAll('.filter-pill').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === category);
+                });
+
+                // Show/hide tools
+                this.toolsGroup.children.forEach(child => {
+                    if (child.userData && child.userData.category) {
+                        child.visible = category === 'ALL' || child.userData.category === category;
+                    }
+                });
+            }
+
+            resetView() {
+                this.camera.position.set(0, 0, this.CONFIG.cameraDistance);
+                this.toolsGroup.rotation.set(0, 0, 0);
+                this.hideToolPopup();
+            }
+
+            toggleAutoRotate() {
+                this.isAutoRotating = !this.isAutoRotating;
+                const btn = document.getElementById('autoBtn');
+                btn.textContent = this.isAutoRotating ? '⏸️ Auto Rotate' : '▶️ Auto Rotate';
+            }
+
+            handleResize() {
+                const container = document.querySelector('.container');
+                if (this.camera && this.renderer) {
+                    this.camera.aspect = container.offsetWidth / container.offsetHeight;
+                    this.camera.updateProjectionMatrix();
+                    this.renderer.setSize(container.offsetWidth, container.offsetHeight);
+                }
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+
+                if (this.isAutoRotating && !this.isDragging) {
+                    this.toolsGroup.rotation.y += this.CONFIG.rotationSpeed;
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            hideLoading() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }
+
+            showError() {
+                document.getElementById('loadingScreen').innerHTML = `
+                    <div class="loading-content">
+                        <h1>Treasury Tools</h1>
+                        <p>3D visualization not available. Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new SimplifiedTreasuryGalaxy();
+        });
+
+        // Prevent zoom on double-tap (iOS)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+    </script>
+</body>
+</html>
