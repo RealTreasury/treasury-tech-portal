@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasury Town</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+            min-height: 100vh;
+            overflow-x: auto;
+            touch-action: manipulation;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2D5AA0;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #5B7F3C;
+            margin-bottom: 20px;
+        }
+
+        /* Category Filter Buttons */
+        .category-filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 3px solid #ddd;
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            user-select: none;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            touch-action: manipulation;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .filter-btn.active {
+            background: #FFD700;
+            border-color: #FFA500;
+            color: #8B4513;
+            transform: scale(1.05);
+        }
+
+        /* Main Town Map */
+        .town-map {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .neighborhood {
+            margin-bottom: 60px;
+            padding: 30px;
+            border-radius: 25px;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .neighborhood-enterprise {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border: 4px solid #2196F3;
+        }
+
+        .neighborhood-cash {
+            background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%);
+            border: 4px solid #4CAF50;
+        }
+
+        .neighborhood-lite {
+            background: linear-gradient(135deg, #F3E5F5 0%, #E1BEE7 100%);
+            border: 4px solid #9C27B0;
+        }
+
+        .neighborhood-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .neighborhood-title.enterprise { color: #1976D2; }
+        .neighborhood-title.cash { color: #388E3C; }
+        .neighborhood-title.lite { color: #7B1FA2; }
+
+        .neighborhood-description {
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1rem;
+            color: #444;
+            border: 2px dashed #999;
+        }
+
+        /* Buildings Grid */
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+
+        /* Individual Buildings */
+        .building {
+            width: 180px;
+            height: 160px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        .building:hover {
+            transform: scale(1.1) translateY(-5px);
+        }
+
+        .building:active {
+            transform: scale(1.05) translateY(-2px);
+        }
+
+        /* Building Styles */
+        .building-enterprise {
+            background: linear-gradient(to bottom, #64B5F6 0%, #2196F3 70%, #1976D2 100%);
+            border: 3px solid #0D47A1;
+        }
+
+        .building-cash {
+            background: linear-gradient(to bottom, #81C784 0%, #4CAF50 70%, #388E3C 100%);
+            border: 3px solid #1B5E20;
+        }
+
+        .building-lite {
+            background: linear-gradient(to bottom, #BA68C8 0%, #9C27B0 70%, #7B1FA2 100%);
+            border: 3px solid #4A148C;
+        }
+
+        .building {
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* Building Windows */
+        .building::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 40px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(255,255,255,0.3) 0px,
+                rgba(255,255,255,0.3) 8px,
+                transparent 8px,
+                transparent 16px
+            );
+            border-radius: 5px;
+        }
+
+        .building-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            margin-top: 50px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .building-type {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.9);
+            margin-top: 5px;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* Roads/Paths */
+        .road {
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                #696969 0px,
+                #696969 30px,
+                #FFFFFF 30px,
+                #FFFFFF 40px
+            );
+            margin: 30px 0;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Decorative Elements */
+        .tree {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 1;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* Tool Information Popup */
+        .tool-popup {
+            position: fixed;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            max-width: 350px;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            transform: scale(0.8);
+            border: 4px solid #FFD700;
+        }
+
+        .tool-popup.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1);
+        }
+
+        .tool-popup h3 {
+            margin: 0 0 10px 0;
+            color: #2D5AA0;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        .tool-popup .category {
+            background: #FFD700;
+            color: #8B4513;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .tool-popup p {
+            margin: 0;
+            color: #444;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .tool-popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #FFD700;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #8B4513;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 150;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #FFD700;
+            padding: 15px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #8B4513;
+            transition: all 0.3s ease;
+            min-height: 50px;
+            touch-action: manipulation;
+            user-select: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:hover {
+            background: #FFD700;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #FFD700;
+            max-width: 200px;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .instructions h4 {
+            margin: 0 0 10px 0;
+            color: #2D5AA0;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .instructions div {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .category-filters {
+                gap: 8px;
+            }
+
+            .filter-btn {
+                padding: 12px 18px;
+                font-size: 1rem;
+                min-height: 50px;
+            }
+
+            .town-map {
+                padding: 20px 10px;
+            }
+
+            .neighborhood {
+                margin-bottom: 40px;
+                padding: 20px;
+            }
+
+            .neighborhood-title {
+                font-size: 1.6rem;
+            }
+
+            .buildings-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 15px;
+            }
+
+            .building {
+                width: 160px;
+                height: 140px;
+            }
+
+            .building-name {
+                font-size: 1rem;
+            }
+
+            .instructions {
+                display: none;
+            }
+
+            .tool-popup {
+                max-width: calc(100vw - 40px);
+                left: 50% !important;
+                transform: translateX(-50%) scale(0.8);
+            }
+
+            .tool-popup.visible {
+                transform: translateX(-50%) scale(1);
+            }
+
+            .bottom-controls {
+                bottom: 10px;
+                right: 10px;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 15px;
+            }
+
+            .title {
+                font-size: 1.7rem;
+            }
+
+            .filter-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+
+            .buildings-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+
+            .building {
+                width: 140px;
+                height: 120px;
+            }
+
+            .building-name {
+                font-size: 0.9rem;
+                margin-top: 40px;
+            }
+        }
+
+        /* Hidden state for filtering */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .loading h1 {
+            color: #2D5AA0;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .loading p {
+            color: #5B7F3C;
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 215, 0, 0.3);
+            border-top: 6px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Screen -->
+        <div class="loading" id="loadingScreen">
+            <h1>🏘️ Treasury Town</h1>
+            <p>Building your financial neighborhood...</p>
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1 class="title">🏘️ Welcome to Treasury Town!</h1>
+                <p class="subtitle">Explore 27 amazing financial tools in our friendly neighborhood</p>
+                
+                <div class="category-filters">
+                    <button class="filter-btn active" data-category="ALL">
+                        🌟 Show All Neighborhoods <span>(27 buildings)</span>
+                    </button>
+                    <button class="filter-btn" data-category="TRMS">
+                        🏢 Enterprise District <span>(10 buildings)</span>
+                    </button>
+                    <button class="filter-btn" data-category="CASH">
+                        💰 Cash Corner <span>(10 buildings)</span>
+                    </button>
+                    <button class="filter-btn" data-category="LITE">
+                        ⚡ Lite Lane <span>(7 buildings)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h4>🗺️ How to Explore</h4>
+            <div>👆 <strong>Click buildings</strong> to learn more</div>
+            <div>🏷️ <strong>Use buttons</strong> to filter areas</div>
+            <div>📱 <strong>Scroll</strong> to see everything</div>
+            <div>🔍 <strong>Each color</strong> = different type</div>
+        </div>
+
+        <!-- Main Town Map -->
+        <div class="town-map" id="townMap">
+            <!-- Enterprise District -->
+            <div class="neighborhood neighborhood-enterprise" data-category="TRMS">
+                <h2 class="neighborhood-title enterprise">🏢 Enterprise District</h2>
+                <div class="neighborhood-description">
+                    <strong>Big Business Buildings!</strong> These are the fanciest, most powerful tools for huge companies that need to handle lots of money and make complex financial decisions. Think of them as the skyscrapers of our town!
+                </div>
+                <div class="buildings-grid" id="buildings-TRMS"></div>
+            </div>
+
+            <div class="road">
+                <div class="tree" style="left: 10%; top: -15px;">🌳</div>
+                <div class="tree" style="left: 90%; top: -15px;">🌲</div>
+            </div>
+
+            <!-- Cash Corner -->
+            <div class="neighborhood neighborhood-cash" data-category="CASH">
+                <h2 class="neighborhood-title cash">💰 Cash Corner</h2>
+                <div class="neighborhood-description">
+                    <strong>Money Management Houses!</strong> These friendly tools help companies keep track of their money - like a super smart piggy bank that can see all your money in different places and help you plan for the future!
+                </div>
+                <div class="buildings-grid" id="buildings-CASH"></div>
+            </div>
+
+            <div class="road">
+                <div class="tree" style="left: 20%; top: -15px;">🌸</div>
+                <div class="tree" style="left: 80%; top: -15px;">🌺</div>
+            </div>
+
+            <!-- Lite Lane -->
+            <div class="neighborhood neighborhood-lite" data-category="LITE">
+                <h2 class="neighborhood-title lite">⚡ Lite Lane</h2>
+                <div class="neighborhood-description">
+                    <strong>Growing Business Homes!</strong> These are perfect for medium-sized companies that need more than basic tools but don't need the biggest, most complex ones yet. They're like the perfect family homes of our town!
+                </div>
+                <div class="buildings-grid" id="buildings-LITE"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <button class="control-btn" id="scrollTopBtn">🔝 Back to Top</button>
+        </div>
+
+        <!-- Tool Information Popup -->
+        <div class="tool-popup" id="toolPopup">
+            <button class="close-btn" id="closePopup">✕</button>
+            <h3 id="toolName">Tool Name</h3>
+            <div class="category" id="toolCategory">Category</div>
+            <p id="toolDescription">Tool description will appear here...</p>
+        </div>
+    </div>
+
+    <script>
+        class TreasuryTown {
+            constructor() {
+                this.TREASURY_TOOLS = [
+                    // TRMS - Enterprise District (Blue Buildings)
+                    { name: 'Kyriba', category: 'TRMS', desc: 'A super smart assistant that helps big companies manage their money and predict what will happen in the future - like having a crystal ball for finances!' },
+                    { name: 'GTreasury', category: 'TRMS', desc: 'Think of this as the ultimate money organizer that connects with all the accounting systems and creates amazing reports that help companies understand their finances.' },
+                    { name: 'Reval', category: 'TRMS', desc: 'This is like a financial calculator that can handle the most complicated math problems about money, investments, and risks that big companies face.' },
+                    { name: 'Quantum', category: 'TRMS', desc: 'Imagine having a super computer that watches all your money moves in real-time and tells you the best ways to protect and grow your wealth.' },
+                    { name: 'WallStreet Suite', category: 'TRMS', desc: 'This is like having an entire team of money experts built into one program that can handle everything a big bank or company needs.' },
+                    { name: 'ATOM', category: 'TRMS', desc: 'A powerful tool that helps companies trade different types of investments safely, like having training wheels for very complex financial decisions.' },
+                    { name: 'Integrity', category: 'TRMS', desc: 'This tool makes sure companies follow all the money rules and laws - like having a hall monitor for financial activities!' },
+                    { name: 'IT2', category: 'TRMS', desc: 'An all-in-one money management system that connects everything together, like having all your financial tools in one magical toolbox.' },
+                    { name: 'Datalog', category: 'TRMS', desc: 'This creates amazing charts and reports about money that help companies make smart decisions - like turning numbers into colorful pictures!' },
+                    { name: 'Coupa', category: 'TRMS', desc: 'A tool that helps companies control their spending and buying, like having a smart shopping assistant that never overspends.' },
+                    
+                    // CASH - Cash Corner (Green Buildings)
+                    { name: 'Trovata', category: 'CASH', desc: 'This is like having magical glasses that let you see all your money in different banks at the same time, plus it can predict how much money you\'ll have tomorrow!' },
+                    { name: 'Tesorio', category: 'CASH', desc: 'A smart robot that learns about your money patterns and helps you plan better - like having a financial fortune teller that actually works!' },
+                    { name: 'Autocash.ai', category: 'CASH', desc: 'An artificial intelligence friend that watches your money and gives you smart advice about what to do with it, like having a money-smart robot helper!' },
+                    { name: 'Balance', category: 'CASH', desc: 'This tool shows you exactly how much money you have everywhere, all the time - like having a money dashboard in your car that never lies!' },
+                    { name: 'Nilus', category: 'CASH', desc: 'A planning tool that helps you figure out where your money will be next week or next month - like a GPS for your cash flow!' },
+                    { name: 'Obol', category: 'CASH', desc: 'A digital helper that makes sure you always have enough money where you need it, when you need it - like a smart money butler!' },
+                    { name: 'Panax', category: 'CASH', desc: 'This tool helps companies get paid faster and pay bills at just the right time to keep more money in their pockets - like perfect money timing!' },
+                    { name: 'Statement', category: 'CASH', desc: 'A super reader that can quickly understand all your bank statements and organize them perfectly - like having a librarian for your money documents!' },
+                    { name: 'Treasury Suite', category: 'CASH', desc: 'A complete set of money tools all working together, like having a Swiss Army knife but for managing cash instead of camping!' },
+                    { name: 'Vesto', category: 'CASH', desc: 'This tool helps you invest your extra cash safely to earn more money while keeping it ready when you need it - like a smart savings account!' },
+                    
+                    // LITE - Lite Lane (Purple Buildings)
+                    { name: 'Treasury4', category: 'LITE', desc: 'A modern, easy-to-use money management tool that looks great and works fast - like the iPhone of treasury tools!' },
+                    { name: 'Treasura', category: 'LITE', desc: 'A friendly tool that has all the important money features without being too complicated - perfect for growing companies!' },
+                    { name: 'Treasury Cube', category: 'LITE', desc: 'A building-block style tool where you can add more features as your company grows - like financial Legos!' },
+                    { name: 'Treasury Curve', category: 'LITE', desc: 'A simple, straightforward money tool that focuses on doing the most important things really well - no extra complications!' },
+                    { name: 'Bottomline', category: 'LITE', desc: 'A tool that specializes in moving money safely between banks and protecting companies from money thieves - like a financial security guard!' },
+                    { name: 'City Financials', category: 'LITE', desc: 'Designed specifically for medium-sized companies that need good tools but don\'t want to pay huge enterprise prices - the perfect middle choice!' },
+                    { name: 'HighRadius', category: 'LITE', desc: 'A smart tool that uses AI to help companies get paid faster and manage their money better - like having a robot accountant helper!' }
+                ];
+
+                this.currentFilter = 'ALL';
+                this.init();
+            }
+
+            init() {
+                console.log('Building Treasury Town...');
+                
+                // Create all buildings
+                this.createBuildings();
+                
+                // Setup interactions
+                this.setupInteractions();
+                
+                // Add some decorative elements
+                this.addDecorations();
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                }, 1000);
+            }
+
+            createBuildings() {
+                const categories = ['TRMS', 'CASH', 'LITE'];
+                
+                categories.forEach(category => {
+                    const container = document.getElementById(`buildings-${category}`);
+                    const tools = this.TREASURY_TOOLS.filter(tool => tool.category === category);
+                    
+                    tools.forEach(tool => {
+                        const building = document.createElement('div');
+                        building.className = `building building-${category.toLowerCase()}`;
+                        building.dataset.category = category;
+                        building.innerHTML = `
+                            <div class="building-name">${tool.name}</div>
+                            <div class="building-type">${this.getCategoryName(category)}</div>
+                        `;
+                        
+                        building.addEventListener('click', (e) => {
+                            this.showToolPopup(tool, e);
+                        });
+                        
+                        // Add touch feedback
+                        building.addEventListener('touchstart', () => {
+                            building.style.transform = 'scale(1.05) translateY(-2px)';
+                        });
+                        
+                        building.addEventListener('touchend', () => {
+                            building.style.transform = '';
+                        });
+                        
+                        container.appendChild(building);
+                    });
+                });
+            }
+
+            getCategoryName(category) {
+                const names = {
+                    TRMS: 'Big Business',
+                    CASH: 'Money Helper',
+                    LITE: 'Growing Business'
+                };
+                return names[category] || category;
+            }
+
+            setupInteractions() {
+                // Category filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const category = btn.dataset.category;
+                        this.filterByCategory(category);
+                    });
+                });
+
+                // Scroll to top button
+                document.getElementById('scrollTopBtn').addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                // Close popup
+                document.getElementById('closePopup').addEventListener('click', () => {
+                    this.hideToolPopup();
+                });
+
+                // Close popup on outside click
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.tool-popup') && !e.target.closest('.building')) {
+                        this.hideToolPopup();
+                    }
+                });
+
+                // Close popup on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideToolPopup();
+                    }
+                });
+            }
+
+            filterByCategory(category) {
+                this.currentFilter = category;
+
+                // Update active filter button
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.category === category);
+                });
+
+                // Show/hide neighborhoods
+                document.querySelectorAll('.neighborhood').forEach(neighborhood => {
+                    const shouldShow = category === 'ALL' || neighborhood.dataset.category === category;
+                    neighborhood.classList.toggle('hidden', !shouldShow);
+                });
+
+                // Hide roads between hidden neighborhoods
+                document.querySelectorAll('.road').forEach(road => {
+                    const prevNeighborhood = road.previousElementSibling;
+                    const nextNeighborhood = road.nextElementSibling;
+                    
+                    if (prevNeighborhood && nextNeighborhood) {
+                        const prevVisible = !prevNeighborhood.classList.contains('hidden');
+                        const nextVisible = !nextNeighborhood.classList.contains('hidden');
+                        road.classList.toggle('hidden', !prevVisible || !nextVisible);
+                    }
+                });
+
+                // Scroll to top when filtering
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            showToolPopup(tool, event) {
+                const popup = document.getElementById('toolPopup');
+                
+                document.getElementById('toolName').textContent = tool.name;
+                document.getElementById('toolCategory').textContent = this.getCategoryName(tool.category);
+                document.getElementById('toolDescription').textContent = tool.desc;
+
+                // Position popup near the clicked building
+                const rect = event.target.getBoundingClientRect();
+                const popupRect = popup.getBoundingClientRect();
+                
+                let left = rect.left + rect.width / 2 - 175; // Center on building
+                let top = rect.top - 250; // Above the building
+
+                // Keep popup on screen
+                if (left < 20) left = 20;
+                if (left + 350 > window.innerWidth) left = window.innerWidth - 370;
+                if (top < 20) top = rect.bottom + 10; // Below if no room above
+
+                popup.style.left = left + 'px';
+                popup.style.top = top + 'px';
+                popup.classList.add('visible');
+            }
+
+            hideToolPopup() {
+                document.getElementById('toolPopup').classList.remove('visible');
+            }
+
+            addDecorations() {
+                // Add some random trees and decorations around the town
+                const townMap = document.getElementById('townMap');
+                const decorations = ['🌳', '🌲', '🌸', '🌺', '🚗', '🚙', '⛽', '🏪'];
+                
+                // Add a few random decorations (but not too many to avoid clutter)
+                for (let i = 0; i < 5; i++) {
+                    const decoration = document.createElement('div');
+                    decoration.style.position = 'absolute';
+                    decoration.style.fontSize = '1.5rem';
+                    decoration.style.zIndex = '1';
+                    decoration.style.pointerEvents = 'none';
+                    decoration.textContent = decorations[Math.floor(Math.random() * decorations.length)];
+                    decoration.style.left = Math.random() * 80 + 10 + '%';
+                    decoration.style.top = Math.random() * 200 + 200 + 'px';
+                    townMap.appendChild(decoration);
+                }
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new TreasuryTown();
+        });
+
+        // Prevent zoom on double-tap (mobile)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+    </script>
+</body>
+</html>
