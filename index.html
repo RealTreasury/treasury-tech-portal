@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasury Stack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .container {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Edit Mode Toggle */
+        .edit-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 300;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .edit-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .edit-toggle.active {
+            background: #10b981;
+        }
+
+        /* Export Button */
+        .export-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 200px;
+            z-index: 300;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Editable Elements */
+        .editable {
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode .editable {
+            border: 2px dashed #6366f1;
+            border-radius: 8px;
+            padding: 4px 8px;
+            cursor: text;
+        }
+
+        .edit-mode .editable:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .edit-mode .editable:focus {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: #6366f1;
+            border-style: solid;
+        }
+
+        /* Logo Upload Area */
+        .logo-upload {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px dashed #6366f1;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            width: 80px;
+            height: 80px;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #6366f1;
+            z-index: 10;
+        }
+
+        .edit-mode .logo-wrapper:hover .logo-upload {
+            display: flex;
+        }
+
+        .logo-wrapper {
+            position: relative;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .title-section h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        /* Stats Cards */
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+            min-width: 80px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-tab {
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-tab:hover {
+            color: #1a1a1a;
+            background: #f3f4f6;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 60px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .category-info {
+            flex: 1;
+        }
+
+        .category-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #1a1a1a;
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-enterprise .category-badge {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .category-cash .category-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .category-lite .category-badge {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .category-description {
+            color: #4b5563;
+            font-size: 0.95rem;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .category-count {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .count-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #6366f1;
+            display: block;
+        }
+
+        .count-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* Tool Card */
+        .tool-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #6366f1, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-card:hover {
+            background: white;
+            border-color: #6366f1;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Edit mode tool card styles */
+        .edit-mode .tool-card {
+            cursor: default;
+            transform: none !important;
+        }
+
+        .edit-mode .tool-card:hover {
+            transform: none !important;
+            border-color: #e5e7eb;
+        }
+
+        .edit-mode .tool-editable {
+            border: 2px dashed transparent;
+            border-radius: 8px;
+            padding: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode .tool-editable:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .edit-mode .tool-editable:focus {
+            outline: none;
+            border-style: solid;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Video Section */
+        .tool-video {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .video-link:hover {
+            color: #4f46e5;
+        }
+
+        .video-placeholder {
+            color: #9ca3af;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .add-video-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-video-btn:hover {
+            background: #4f46e5;
+        }
+
+        /* Video embed in modal */
+        .video-section {
+            margin-top: 25px;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .tool-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .tool-type {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tool-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .tool-enterprise .tool-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .tool-cash .tool-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .tool-lite .tool-icon {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .tool-description {
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .tool-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tool-tag {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            padding: 30px 30px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f3f4f6;
+            border: none;
+            color: #1a1a1a;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .feature-section {
+            margin-bottom: 25px;
+        }
+
+        .feature-section h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-list {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .feature-list li {
+            color: #4b5563;
+            font-size: 0.9rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #6366f1;
+            font-weight: bold;
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            color: white;
+        }
+
+        .loading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .loading p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Edit Mode Banner */
+        .edit-mode-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 12px;
+            text-align: center;
+            z-index: 500;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-mode .edit-mode-banner {
+            display: block;
+        }
+
+        .edit-mode .header {
+            top: 48px;
+        }
+
+        .edit-mode-banner p {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Save Notification */
+        .save-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+            display: none;
+            z-index: 400;
+        }
+
+        /* Hidden state */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .stats-bar {
+                justify-content: space-between;
+                gap: 10px;
+            }
+
+            .stat-card {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .filter-tabs {
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 20px 15px;
+            }
+
+            .category-section {
+                padding: 20px;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .category-count {
+                align-self: center;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+
+            .modal-content {
+                margin: 10px;
+                max-height: calc(100vh - 20px);
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title-section h1 {
+                font-size: 1.5rem;
+            }
+
+            .filter-tab {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+
+            .category-title {
+                font-size: 1.3rem;
+            }
+
+            .tool-name {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body class="" style="overflow: auto;">
+    <div class="container">
+        <!-- Loading Screen -->
+        <div class="loading" id="loadingScreen" style="display: none;">
+            <div class="loading-logo">💼</div>
+            <h1 class="editable" data-key="site-title">Treasury Stack</h1>
+            <p>Loading financial tools ecosystem...</p>
+        </div>
+
+        <!-- Edit Mode Banner -->
+        
+
+        <!-- Edit Mode Toggle -->
+        
+
+        <!-- Export Button -->
+        
+
+        <!-- Save Notification -->
+        
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-wrapper">
+                        <div class="logo" id="logoContainer">
+                            <span id="logoIcon" style="display: none;">💼</span>
+                            <img id="logoImage" style="display: block;" alt="Logo" src="data:image/png;base64,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">
+                        </div>
+                        
+                        
+                    </div>
+                    <div class="title-section">
+                        <h1 class="editable" data-key="header-title">Treasury Tech Stack</h1>
+                        <p class="subtitle editable" data-key="header-subtitle">Discover the complete treasury tech landscape</p>
+                    </div>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalTools">27</div>
+                        <div class="stat-label">Tools</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$B</div>
+                        <div class="stat-label">Value</div>
+                    </div>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-category="ALL">All</button>
+                    <button class="filter-tab" data-category="TRMS">Enterprise</button>
+                    <button class="filter-tab" data-category="CASH">Cash Tools</button>
+                    <button class="filter-tab" data-category="LITE">Mid-Market</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Enterprise Section -->
+            <div class="category-section category-enterprise" data-category="TRMS">
+                <div class="category-header">
+                    <div class="category-info">
+                        <h2 class="category-title">
+                            🏢 <span class="editable" data-key="enterprise-title">Enterprise Treasury Systems</span>
+                            <span class="category-badge">Advanced</span>
+                        </h2>
+                        <p class="category-description editable" data-key="enterprise-desc">
+                            Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.
+                        </p>
+                    </div>
+                    <div class="category-count">
+                        <span class="count-number" id="count-TRMS">10</span>
+                        <span class="count-label">Solutions</span>
+                    </div>
+                </div>
+                <div class="tools-grid" id="tools-TRMS"><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="0" data-field="name">Kyriba</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="0" data-field="desc">Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">AI/ML</span><span class="tool-tag">Cloud</span><span class="tool-tag">Global</span><span class="tool-tag">Risk Management</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/WyWeobyqzfQ" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="0">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="1" data-field="name">GTreasury</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="1" data-field="desc">Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Integration</span><span class="tool-tag">Analytics</span><span class="tool-tag">Enterprise</span><span class="tool-tag">Consolidation</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="1">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="2" data-field="name">Reval</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="2" data-field="desc">Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Derivatives</span><span class="tool-tag">Risk</span><span class="tool-tag">Valuation</span><span class="tool-tag">Compliance</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="2">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="3" data-field="name">Quantum</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="3" data-field="desc">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Real-time</span><span class="tool-tag">Optimization</span><span class="tool-tag">Banking</span><span class="tool-tag">Hedging</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="3">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="4" data-field="name">WallStreet Suite</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="4" data-field="desc">Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Multi-asset</span><span class="tool-tag">Regulatory</span><span class="tool-tag">Trading</span><span class="tool-tag">Analytics</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="4">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="5" data-field="name">ATOM</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="5" data-field="desc">Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Trading</span><span class="tool-tag">Automation</span><span class="tool-tag">Workflows</span><span class="tool-tag">Derivatives</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="5">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="6" data-field="name">Integrity</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="6" data-field="desc">Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Governance</span><span class="tool-tag">Compliance</span><span class="tool-tag">Audit</span><span class="tool-tag">Controls</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="6">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="7" data-field="name">IT2</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="7" data-field="desc">Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Integration</span><span class="tool-tag">Unified</span><span class="tool-tag">Platform</span><span class="tool-tag">Processing</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="7">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="8" data-field="name">Datalog</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="8" data-field="desc">Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Analytics</span><span class="tool-tag">Reporting</span><span class="tool-tag">Visualization</span><span class="tool-tag">Multi-entity</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="8">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-trms">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="9" data-field="name">Coupa</div>
+                                        <div class="tool-type">Enterprise Treasury</div>
+                                    </div>
+                                    <div class="tool-icon">🏢</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="9" data-field="desc">Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Spend Management</span><span class="tool-tag">Procurement</span><span class="tool-tag">Integration</span><span class="tool-tag">Automation</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="9">Change Video</button>
+                                </div>
+                            </div></div>
+            </div>
+
+            <!-- Cash Tools Section -->
+            <div class="category-section category-cash" data-category="CASH">
+                <div class="category-header">
+                    <div class="category-info">
+                        <h2 class="category-title">
+                            💰 <span class="editable" data-key="cash-title">Cash Management Tools</span>
+                            <span class="category-badge">Essential</span>
+                        </h2>
+                        <p class="category-description editable" data-key="cash-desc">
+                            AI-powered cash visibility and forecasting platforms designed for modern finance teams. These tools provide real-time bank connectivity, predictive analytics, and automated workflows to optimize liquidity management and improve cash flow forecasting accuracy.
+                        </p>
+                    </div>
+                    <div class="category-count">
+                        <span class="count-number" id="count-CASH">10</span>
+                        <span class="count-label">Solutions</span>
+                    </div>
+                </div>
+                <div class="tools-grid" id="tools-CASH"><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="10" data-field="name">Trovata</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="10" data-field="desc">AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">AI/ML</span><span class="tool-tag">Real-time</span><span class="tool-tag">Mobile</span><span class="tool-tag">Forecasting</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/Vx4At4BN-og" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="10">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="11" data-field="name">Tesorio</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="11" data-field="desc">Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">ML</span><span class="tool-tag">Optimization</span><span class="tool-tag">Automation</span><span class="tool-tag">Scenarios</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="11">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="12" data-field="name">Autocash.ai</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="12" data-field="desc">AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">AI-first</span><span class="tool-tag">Predictions</span><span class="tool-tag">Smart</span><span class="tool-tag">Recommendations</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="12">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="13" data-field="name">Balance</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="13" data-field="desc">Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Real-time</span><span class="tool-tag">Reconciliation</span><span class="tool-tag">Multi-currency</span><span class="tool-tag">UX</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="13">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="14" data-field="name">Nilus</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="14" data-field="desc">Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Forecasting</span><span class="tool-tag">Scenarios</span><span class="tool-tag">Precision</span><span class="tool-tag">Performance</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="14">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="15" data-field="name">Obol</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="15" data-field="desc">Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Digital</span><span class="tool-tag">Modern</span><span class="tool-tag">Liquidity</span><span class="tool-tag">Mobile</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="15">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="16" data-field="name">Panax</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="16" data-field="desc">Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Working Capital</span><span class="tool-tag">Optimization</span><span class="tool-tag">Payment Timing</span><span class="tool-tag">Enhancement</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="16">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="17" data-field="name">Statement</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="17" data-field="desc">Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Automation</span><span class="tool-tag">Processing</span><span class="tool-tag">Extraction</span><span class="tool-tag">Reconciliation</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="17">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="18" data-field="name">Treasury Suite</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="18" data-field="desc">Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Comprehensive</span><span class="tool-tag">Suite</span><span class="tool-tag">Integrated</span><span class="tool-tag">Complete</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="18">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-cash">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="19" data-field="name">Vesto</div>
+                                        <div class="tool-type">Cash Management</div>
+                                    </div>
+                                    <div class="tool-icon">💰</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="19" data-field="desc">Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Investment</span><span class="tool-tag">Yield</span><span class="tool-tag">Optimization</span><span class="tool-tag">Returns</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="19">Add Video</button>
+                                </div>
+                            </div></div>
+            </div>
+
+            <!-- Mid-Market Section -->
+            <div class="category-section category-lite" data-category="LITE">
+                <div class="category-header">
+                    <div class="category-info">
+                        <h2 class="category-title">
+                            ⚡ <span class="editable" data-key="lite-title">Mid-Market Platforms</span>
+                            <span class="category-badge">Scalable</span>
+                        </h2>
+                        <p class="category-description editable" data-key="lite-desc">
+                            Balanced treasury solutions for growing companies that need more than basic cash management but don't require full enterprise complexity. These platforms offer modular functionality, competitive pricing, and scalable architecture for businesses in transition.
+                        </p>
+                    </div>
+                    <div class="category-count">
+                        <span class="count-number" id="count-LITE">7</span>
+                        <span class="count-label">Solutions</span>
+                    </div>
+                </div>
+                <div class="tools-grid" id="tools-LITE"><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="20" data-field="name">Treasury4</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="20" data-field="desc">Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Modern</span><span class="tool-tag">Cloud-native</span><span class="tool-tag">UI/UX</span><span class="tool-tag">Next-gen</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="20">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="21" data-field="name">Treasura</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="21" data-field="desc">User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">User-friendly</span><span class="tool-tag">Accessible</span><span class="tool-tag">Mid-market</span><span class="tool-tag">Essential</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="21">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="22" data-field="name">Treasury Cube</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="22" data-field="desc">Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Modular</span><span class="tool-tag">Scalable</span><span class="tool-tag">Customizable</span><span class="tool-tag">Growth</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="22">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="23" data-field="name">Treasury Curve</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="23" data-field="desc">Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Simplified</span><span class="tool-tag">Core</span><span class="tool-tag">Streamlined</span><span class="tool-tag">Cost-effective</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="23">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="24" data-field="name">Bottomline</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="24" data-field="desc">Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Payments</span><span class="tool-tag">Automation</span><span class="tool-tag">Banking</span><span class="tool-tag">Security</span>
+                                </div>
+                                <div class="tool-video">
+                                    <span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="24">Add Video</button>
+                                </div>
+                            </div><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="25" data-field="name">City Financials</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="25" data-field="desc">Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">Mid-market</span><span class="tool-tag">Growth</span><span class="tool-tag">Practical</span><span class="tool-tag">Scalable</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="25">Change Video</button>
+                                </div>
+                            </div><div class="tool-card tool-lite">
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" data-tool-index="26" data-field="name">HighRadius</div>
+                                        <div class="tool-type">Mid-Market Platform</div>
+                                    </div>
+                                    <div class="tool-icon">⚡</div>
+                                </div>
+                                <div class="tool-description tool-editable" data-tool-index="26" data-field="desc">Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.</div>
+                                <div class="tool-tags">
+                                    <span class="tool-tag">AI</span><span class="tool-tag">Autonomous</span><span class="tool-tag">A/R</span><span class="tool-tag">Integration</span>
+                                </div>
+                                <div class="tool-video">
+                                    <a href="https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="26">Change Video</button>
+                                </div>
+                            </div></div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal" id="toolModal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="modal-close" id="modalClose">×</button>
+                    <h3 class="modal-title" id="modalTitle">Quantum</h3>
+                    <p class="modal-subtitle" id="modalSubtitle">Enterprise Treasury</p>
+                </div>
+                <div class="modal-body">
+                    <div class="feature-section">
+                        <h4>🎯 Overview</h4>
+                        <p id="modalDescription" style="color: #4b5563; line-height: 1.6;">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</p>
+                    </div>
+                    <div class="feature-section">
+                        <h4>✨ Key Features</h4>
+                        <ul class="feature-list" id="modalFeatures"><li>Real-time risk monitoring</li><li>Portfolio optimization</li><li>Stress testing</li><li>Automated hedging</li><li>Compliance controls</li><li>Advanced analytics</li></ul>
+                    </div>
+                    <div class="feature-section">
+                        <h4>🏢 Target Market</h4>
+                        <p id="modalTarget" style="color: #4b5563; line-height: 1.6;">Investment banks and large financial institutions</p>
+                    </div>
+                <div class="feature-section video-section">
+                                <h4>🎥 Demo Video</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                                    <iframe src="https://www.youtube.com/embed/zpDBPTp6_gU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen="">
+                                    </iframe>
+                                </div>
+                            </div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TreasuryStack {
+            constructor() {
+                this.TREASURY_TOOLS = [
+    {
+        "name": "Kyriba",
+        "category": "TRMS",
+        "desc": "Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.",
+        "features": [
+            "AI-driven cash forecasting",
+            "Real-time risk analytics",
+            "Derivatives management",
+            "Multi-bank connectivity",
+            "Regulatory compliance",
+            "Hedge accounting automation"
+        ],
+        "target": "Large enterprises and multinational corporations with complex treasury operations",
+        "tags": [
+            "AI/ML",
+            "Cloud",
+            "Global",
+            "Risk Management"
+        ],
+        "videoUrl": "https://youtu.be/WyWeobyqzfQ"
+    },
+    {
+        "name": "GTreasury",
+        "category": "TRMS",
+        "desc": "Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.",
+        "features": [
+            "Deep ERP integration",
+            "Multi-entity consolidation",
+            "Advanced analytics",
+            "Customizable workflows",
+            "Real-time reporting",
+            "API connectivity"
+        ],
+        "target": "Fortune 500 companies requiring complex consolidation and reporting",
+        "tags": [
+            "Integration",
+            "Analytics",
+            "Enterprise",
+            "Consolidation"
+        ],
+        "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j"
+    },
+    {
+        "name": "Reval",
+        "category": "TRMS",
+        "desc": "Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.",
+        "features": [
+            "Derivatives valuation",
+            "Hedge accounting",
+            "Market data integration",
+            "Risk analytics",
+            "Regulatory reporting",
+            "Trade capture"
+        ],
+        "target": "Financial institutions and corporations with complex derivative portfolios",
+        "tags": [
+            "Derivatives",
+            "Risk",
+            "Valuation",
+            "Compliance"
+        ],
+        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
+    },
+    {
+        "name": "Quantum",
+        "category": "TRMS",
+        "desc": "Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.",
+        "features": [
+            "Real-time risk monitoring",
+            "Portfolio optimization",
+            "Stress testing",
+            "Automated hedging",
+            "Compliance controls",
+            "Advanced analytics"
+        ],
+        "target": "Investment banks and large financial institutions",
+        "tags": [
+            "Real-time",
+            "Optimization",
+            "Banking",
+            "Hedging"
+        ],
+        "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr"
+    },
+    {
+        "name": "WallStreet Suite",
+        "category": "TRMS",
+        "desc": "Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.",
+        "features": [
+            "Multi-asset support",
+            "Advanced analytics",
+            "Regulatory compliance",
+            "Trade management",
+            "Risk controls",
+            "Market data feeds"
+        ],
+        "target": "Large banks and corporations requiring full-scale treasury operations",
+        "tags": [
+            "Multi-asset",
+            "Regulatory",
+            "Trading",
+            "Analytics"
+        ],
+        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
+    },
+    {
+        "name": "ATOM",
+        "category": "TRMS",
+        "desc": "Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.",
+        "features": [
+            "Derivatives trading",
+            "Automated workflows",
+            "Risk management",
+            "Trade processing",
+            "Compliance monitoring",
+            "Real-time analytics"
+        ],
+        "target": "Large corporations and financial institutions with active trading operations",
+        "tags": [
+            "Trading",
+            "Automation",
+            "Workflows",
+            "Derivatives"
+        ]
+    },
+    {
+        "name": "Integrity",
+        "category": "TRMS",
+        "desc": "Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.",
+        "features": [
+            "Governance controls",
+            "Audit trails",
+            "Compliance management",
+            "Policy enforcement",
+            "Risk controls",
+            "Workflow approval"
+        ],
+        "target": "Highly regulated industries requiring strict governance and compliance",
+        "tags": [
+            "Governance",
+            "Compliance",
+            "Audit",
+            "Controls"
+        ],
+        "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr"
+    },
+    {
+        "name": "IT2",
+        "category": "TRMS",
+        "desc": "Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.",
+        "features": [
+            "Integrated platform",
+            "Cash management",
+            "Risk analytics",
+            "Payment processing",
+            "Bank connectivity",
+            "Unified reporting"
+        ],
+        "target": "Large enterprises seeking integrated treasury technology solutions",
+        "tags": [
+            "Integration",
+            "Unified",
+            "Platform",
+            "Processing"
+        ],
+        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
+    },
+    {
+        "name": "Datalog",
+        "category": "TRMS",
+        "desc": "Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.",
+        "features": [
+            "Advanced analytics",
+            "Multi-entity support",
+            "Data visualization",
+            "Custom reporting",
+            "Cash positioning",
+            "Risk monitoring"
+        ],
+        "target": "Large corporations requiring sophisticated analytics and reporting",
+        "tags": [
+            "Analytics",
+            "Reporting",
+            "Visualization",
+            "Multi-entity"
+        ],
+        "videoUrl": "https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk"
+    },
+    {
+        "name": "Coupa",
+        "category": "TRMS",
+        "desc": "Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.",
+        "features": [
+            "Spend management",
+            "Treasury integration",
+            "Procurement workflows",
+            "Supplier management",
+            "Analytics dashboard",
+            "Automation tools"
+        ],
+        "target": "Large enterprises requiring integrated spend and treasury management",
+        "tags": [
+            "Spend Management",
+            "Procurement",
+            "Integration",
+            "Automation"
+        ],
+        "videoUrl": "https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC"
+    },
+    {
+        "name": "Trovata",
+        "category": "CASH",
+        "desc": "AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.",
+        "features": [
+            "AI forecasting",
+            "Real-time connectivity",
+            "Predictive analytics",
+            "Cash visibility",
+            "Mobile access",
+            "API integration"
+        ],
+        "target": "Mid to large companies seeking AI-driven cash management solutions",
+        "tags": [
+            "AI/ML",
+            "Real-time",
+            "Mobile",
+            "Forecasting"
+        ],
+        "videoUrl": "https://youtu.be/Vx4At4BN-og"
+    },
+    {
+        "name": "Tesorio",
+        "category": "CASH",
+        "desc": "Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.",
+        "features": [
+            "ML optimization",
+            "Automated forecasting",
+            "Scenario planning",
+            "Workflow automation",
+            "Integration tools",
+            "Performance analytics"
+        ],
+        "target": "Growth companies and mid-market businesses optimizing cash flow",
+        "tags": [
+            "ML",
+            "Optimization",
+            "Automation",
+            "Scenarios"
+        ]
+    },
+    {
+        "name": "Autocash.ai",
+        "category": "CASH",
+        "desc": "AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.",
+        "features": [
+            "AI predictions",
+            "Automated scenarios",
+            "Smart recommendations",
+            "Risk assessment",
+            "Cash optimization",
+            "Intelligent alerts"
+        ],
+        "target": "Tech-forward companies embracing AI-driven financial operations",
+        "tags": [
+            "AI-first",
+            "Predictions",
+            "Smart",
+            "Recommendations"
+        ],
+        "videoUrl": "https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB"
+    },
+    {
+        "name": "Balance",
+        "category": "CASH",
+        "desc": "Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.",
+        "features": [
+            "Real-time visibility",
+            "Auto reconciliation",
+            "Multi-currency",
+            "Cash positioning",
+            "Bank connectivity",
+            "Streamlined UX"
+        ],
+        "target": "Companies needing real-time cash visibility and automated reconciliation",
+        "tags": [
+            "Real-time",
+            "Reconciliation",
+            "Multi-currency",
+            "UX"
+        ]
+    },
+    {
+        "name": "Nilus",
+        "category": "CASH",
+        "desc": "Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.",
+        "features": [
+            "Advanced forecasting",
+            "Scenario planning",
+            "Variance analysis",
+            "Performance tracking",
+            "Budget integration",
+            "Precision modeling"
+        ],
+        "target": "Companies requiring sophisticated cash forecasting and scenario analysis",
+        "tags": [
+            "Forecasting",
+            "Scenarios",
+            "Precision",
+            "Performance"
+        ]
+    },
+    {
+        "name": "Obol",
+        "category": "CASH",
+        "desc": "Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.",
+        "features": [
+            "Liquidity optimization",
+            "Digital workflows",
+            "Real-time data",
+            "Modern interface",
+            "Mobile platform",
+            "Automated reporting"
+        ],
+        "target": "Modern finance teams seeking digital-first cash management solutions",
+        "tags": [
+            "Digital",
+            "Modern",
+            "Liquidity",
+            "Mobile"
+        ],
+        "videoUrl": "https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa"
+    },
+    {
+        "name": "Panax",
+        "category": "CASH",
+        "desc": "Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.",
+        "features": [
+            "Working capital optimization",
+            "Payment timing analytics",
+            "A/R & A/P integration",
+            "Cash flow enhancement",
+            "Performance tracking",
+            "Optimization tools"
+        ],
+        "target": "Companies focused on working capital optimization and payment timing",
+        "tags": [
+            "Working Capital",
+            "Optimization",
+            "Payment Timing",
+            "Enhancement"
+        ],
+        "videoUrl": "https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8"
+    },
+    {
+        "name": "Statement",
+        "category": "CASH",
+        "desc": "Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.",
+        "features": [
+            "Automated processing",
+            "Data extraction",
+            "Reconciliation tools",
+            "Data validation",
+            "Exception handling",
+            "API integration"
+        ],
+        "target": "Companies seeking automated bank statement processing and data extraction",
+        "tags": [
+            "Automation",
+            "Processing",
+            "Extraction",
+            "Reconciliation"
+        ]
+    },
+    {
+        "name": "Treasury Suite",
+        "category": "CASH",
+        "desc": "Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.",
+        "features": [
+            "Comprehensive suite",
+            "Cash forecasting",
+            "Liquidity optimization",
+            "Workflow management",
+            "Bank connectivity",
+            "Integrated platform"
+        ],
+        "target": "Companies requiring a complete cash management suite with integrated functionality",
+        "tags": [
+            "Comprehensive",
+            "Suite",
+            "Integrated",
+            "Complete"
+        ]
+    },
+    {
+        "name": "Vesto",
+        "category": "CASH",
+        "desc": "Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.",
+        "features": [
+            "Yield optimization",
+            "Risk monitoring",
+            "Investment tracking",
+            "Liquidity management",
+            "Performance analytics",
+            "Compliance tools"
+        ],
+        "target": "Companies with significant cash positions seeking yield optimization",
+        "tags": [
+            "Investment",
+            "Yield",
+            "Optimization",
+            "Returns"
+        ]
+    },
+    {
+        "name": "Treasury4",
+        "category": "LITE",
+        "desc": "Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.",
+        "features": [
+            "Modern UI/UX",
+            "Cloud-native",
+            "Intuitive workflows",
+            "API-first design",
+            "Mobile responsive",
+            "Quick deployment"
+        ],
+        "target": "Modern finance teams seeking next-generation treasury technology",
+        "tags": [
+            "Modern",
+            "Cloud-native",
+            "UI/UX",
+            "Next-gen"
+        ],
+        "videoUrl": "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P"
+    },
+    {
+        "name": "Treasura",
+        "category": "LITE",
+        "desc": "User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.",
+        "features": [
+            "User-friendly",
+            "Essential features",
+            "Simplified setup",
+            "Competitive pricing",
+            "Basic reporting",
+            "Standard integrations"
+        ],
+        "target": "Mid-market companies seeking accessible treasury management solutions",
+        "tags": [
+            "User-friendly",
+            "Accessible",
+            "Mid-market",
+            "Essential"
+        ],
+        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
+    },
+    {
+        "name": "Treasury Cube",
+        "category": "LITE",
+        "desc": "Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.",
+        "features": [
+            "Modular design",
+            "Customizable features",
+            "Scalable architecture",
+            "Growth-focused",
+            "Flexible pricing",
+            "Configurable workflows"
+        ],
+        "target": "Growing companies requiring scalable and customizable treasury solutions",
+        "tags": [
+            "Modular",
+            "Scalable",
+            "Customizable",
+            "Growth"
+        ]
+    },
+    {
+        "name": "Treasury Curve",
+        "category": "LITE",
+        "desc": "Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.",
+        "features": [
+            "Simplified interface",
+            "Core functionality",
+            "Easy setup",
+            "Streamlined UX",
+            "Basic reporting",
+            "Cost-effective"
+        ],
+        "target": "Companies seeking simplified treasury management with core functionality",
+        "tags": [
+            "Simplified",
+            "Core",
+            "Streamlined",
+            "Cost-effective"
+        ],
+        "videoUrl": "https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv"
+    },
+    {
+        "name": "Bottomline",
+        "category": "LITE",
+        "desc": "Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.",
+        "features": [
+            "Payment automation",
+            "Fraud protection",
+            "Banking integration",
+            "Multi-bank support",
+            "Security controls",
+            "Workflow tools"
+        ],
+        "target": "Companies prioritizing payment automation and banking integration",
+        "tags": [
+            "Payments",
+            "Automation",
+            "Banking",
+            "Security"
+        ]
+    },
+    {
+        "name": "City Financials",
+        "category": "LITE",
+        "desc": "Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.",
+        "features": [
+            "Mid-market focus",
+            "Growth-oriented",
+            "Quick implementation",
+            "Scalable pricing",
+            "Support included",
+            "Practical features"
+        ],
+        "target": "Mid-market companies seeking practical and growth-oriented solutions",
+        "tags": [
+            "Mid-market",
+            "Growth",
+            "Practical",
+            "Scalable"
+        ],
+        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
+    },
+    {
+        "name": "HighRadius",
+        "category": "LITE",
+        "desc": "Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.",
+        "features": [
+            "AI automation",
+            "A/R optimization",
+            "Treasury integration",
+            "Machine learning",
+            "Process automation",
+            "Autonomous finance"
+        ],
+        "target": "Companies seeking AI-powered automation for A/R and treasury operations",
+        "tags": [
+            "AI",
+            "Autonomous",
+            "A/R",
+            "Integration"
+        ],
+        "videoUrl": "https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn"
+    }
+];
+
+                this.currentFilter = 'ALL';
+                this.isEditMode = false;
+                this.editableContent = {};
+                this.init();
+            }
+
+            init() {
+                console.log('Initializing Treasury Stack...');
+                
+                this.loadSavedData();
+                this.createToolCards();
+                this.setupInteractions();
+                this.setupEditMode();
+                this.updateCounts();
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                }, 800);
+            }
+
+            loadSavedData() {
+                // Load saved editable content
+                const savedContent = localStorage.getItem('treasuryStackContent');
+                if (savedContent) {
+                    this.editableContent = JSON.parse(savedContent);
+                    
+                    // Apply saved content to editable elements
+                    document.querySelectorAll('.editable').forEach(element => {
+                        const key = element.dataset.key;
+                        if (this.editableContent[key]) {
+                            element.textContent = this.editableContent[key];
+                        }
+                    });
+                }
+
+                // Load saved logo
+                const savedLogo = localStorage.getItem('treasuryStackLogo');
+                if (savedLogo) {
+                    const logoIcon = document.getElementById('logoIcon');
+                    const logoImage = document.getElementById('logoImage');
+                    
+                    logoIcon.style.display = 'none';
+                    logoImage.src = savedLogo;
+                    logoImage.style.display = 'block';
+                }
+
+                // Load saved tools
+                const savedTools = localStorage.getItem('treasuryStackTools');
+                if (savedTools) {
+                    this.TREASURY_TOOLS = JSON.parse(savedTools);
+                }
+            }
+
+            saveData() {
+                // Save editable content
+                document.querySelectorAll('.editable').forEach(element => {
+                    const key = element.dataset.key;
+                    this.editableContent[key] = element.textContent;
+                });
+                
+                localStorage.setItem('treasuryStackContent', JSON.stringify(this.editableContent));
+                localStorage.setItem('treasuryStackTools', JSON.stringify(this.TREASURY_TOOLS));
+                
+                // Show save notification
+                const notification = document.getElementById('saveNotification');
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 2000);
+            }
+
+            setupEditMode() {
+                const editToggle = document.getElementById('editToggle');
+                const editIcon = editToggle.querySelector('.edit-icon');
+                const editText = editToggle.querySelector('.edit-text');
+                const exportBtn = document.getElementById('exportBtn');
+                
+                editToggle.addEventListener('click', () => {
+                    this.isEditMode = !this.isEditMode;
+                    document.body.classList.toggle('edit-mode', this.isEditMode);
+                    editToggle.classList.toggle('active', this.isEditMode);
+                    
+                    if (this.isEditMode) {
+                        editIcon.textContent = '💾';
+                        editText.textContent = 'Save & Exit';
+                        exportBtn.style.display = 'flex';
+                        
+                        // Make elements editable
+                        document.querySelectorAll('.editable').forEach(element => {
+                            element.contentEditable = true;
+                            element.addEventListener('input', () => this.saveData());
+                        });
+                        
+                        // Make tool descriptions editable
+                        this.makeToolsEditable();
+                        
+                        // Scroll to top to see edit banner
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        editIcon.textContent = '✏️';
+                        editText.textContent = 'Edit Mode';
+                        exportBtn.style.display = 'none';
+                        
+                        // Make elements non-editable
+                        document.querySelectorAll('.editable').forEach(element => {
+                            element.contentEditable = false;
+                        });
+                        
+                        // Save final state
+                        this.saveData();
+                        
+                        // Refresh tool cards
+                        this.createToolCards();
+                    }
+                });
+
+                // Export functionality
+                exportBtn.addEventListener('click', () => {
+                    this.exportHTML();
+                });
+
+                // Logo upload
+                const logoUpload = document.getElementById('logoUpload');
+                const logoInput = document.getElementById('logoInput');
+                
+                logoUpload.addEventListener('click', () => {
+                    if (this.isEditMode) {
+                        logoInput.click();
+                    }
+                });
+
+                logoInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const logoIcon = document.getElementById('logoIcon');
+                            const logoImage = document.getElementById('logoImage');
+                            
+                            logoIcon.style.display = 'none';
+                            logoImage.src = e.target.result;
+                            logoImage.style.display = 'block';
+                            
+                            // Save logo to localStorage
+                            localStorage.setItem('treasuryStackLogo', e.target.result);
+                            this.saveData();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            exportHTML() {
+                // Save current state first
+                this.saveData();
+
+                // Get the current HTML
+                const html = document.documentElement.outerHTML;
+
+                // Create a new document from the HTML string
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Remove edit mode classes and elements
+                doc.body.classList.remove('edit-mode');
+                doc.querySelector('.edit-toggle')?.remove();
+                doc.querySelector('.export-btn')?.remove();
+                doc.querySelector('.edit-mode-banner')?.remove();
+                doc.querySelector('.save-notification')?.remove();
+                doc.querySelector('.logo-upload')?.remove();
+                doc.querySelector('#logoInput')?.remove();
+
+                // Remove contenteditable attributes
+                doc.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable');
+                });
+
+                // Update the TREASURY_TOOLS data in the script
+                const scriptTags = doc.querySelectorAll('script');
+                scriptTags.forEach(script => {
+                    if (script.textContent.includes('this.TREASURY_TOOLS')) {
+                        // Replace the TREASURY_TOOLS array with current data
+                        const toolsJSON = JSON.stringify(this.TREASURY_TOOLS, null, 4);
+                        script.textContent = script.textContent.replace(
+                            /this\.TREASURY_TOOLS = \[[\s\S]*?\];/,
+                            `this.TREASURY_TOOLS = ${toolsJSON};`
+                        );
+                    }
+                });
+
+                // Update all editable content with current values
+                document.querySelectorAll('.editable').forEach(element => {
+                    const key = element.dataset.key;
+                    const value = element.textContent;
+                    const targetElement = doc.querySelector(`[data-key="${key}"]`);
+                    if (targetElement) {
+                        targetElement.textContent = value;
+                    }
+                });
+
+                // Update logo
+                const logoImage = document.getElementById('logoImage');
+                if (logoImage && logoImage.style.display !== 'none') {
+                    const exportLogoImage = doc.getElementById('logoImage');
+                    const exportLogoIcon = doc.getElementById('logoIcon');
+                    if (exportLogoImage && exportLogoIcon) {
+                        exportLogoImage.src = logoImage.src;
+                        exportLogoImage.style.display = 'block';
+                        exportLogoIcon.style.display = 'none';
+                    }
+                }
+
+                // Get the final HTML
+                const finalHTML = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+
+                // Create a blob and download
+                const blob = new Blob([finalHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'treasury-stack-updated.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Show notification
+                const notification = document.getElementById('saveNotification');
+                notification.textContent = 'HTML exported successfully!';
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                    notification.textContent = 'Changes saved automatically';
+                }, 3000);
+            }
+
+            makeToolsEditable() {
+                // Clear and recreate tool cards with edit functionality
+                this.createToolCards();
+            }
+
+            createToolCards() {
+                const categories = ['TRMS', 'CASH', 'LITE'];
+                
+                categories.forEach(category => {
+                    const container = document.getElementById(`tools-${category}`);
+                    container.innerHTML = ''; // Clear existing cards
+                    const tools = this.TREASURY_TOOLS.filter(tool => tool.category === category);
+                    
+                    tools.forEach((tool, index) => {
+                        const card = document.createElement('div');
+                        card.className = `tool-card tool-${category.toLowerCase()}`;
+                        
+                        if (this.isEditMode) {
+                            card.innerHTML = `
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="name">${tool.name}</div>
+                                        <div class="tool-type">${this.getCategoryName(category)}</div>
+                                    </div>
+                                    <div class="tool-icon">${this.getCategoryIcon(category)}</div>
+                                </div>
+                                <div class="tool-description tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="desc">${tool.desc}</div>
+                                <div class="tool-tags">
+                                    ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+                                </div>
+                                <div class="tool-video">
+                                    ${tool.videoUrl ? 
+                                        `<a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Change Video</button>` : 
+                                        `<span class="video-placeholder">No demo video</span>
+                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Add Video</button>`
+                                    }
+                                </div>
+                            `;
+                            
+                            // Add event listeners for editable fields
+                            card.querySelectorAll('.tool-editable').forEach(element => {
+                                element.addEventListener('input', (e) => {
+                                    const toolIndex = parseInt(e.target.dataset.toolIndex);
+                                    const field = e.target.dataset.field;
+                                    this.TREASURY_TOOLS[toolIndex][field] = e.target.textContent;
+                                    this.saveData();
+                                });
+                            });
+                            
+                            // Add event listener for video button
+                            card.querySelector('.add-video-btn').addEventListener('click', (e) => {
+                                const toolIndex = parseInt(e.target.dataset.toolIndex);
+                                this.promptForVideo(toolIndex);
+                            });
+                        } else {
+                            card.innerHTML = `
+                                <div class="tool-header">
+                                    <div>
+                                        <div class="tool-name">${tool.name}</div>
+                                        <div class="tool-type">${this.getCategoryName(category)}</div>
+                                    </div>
+                                    <div class="tool-icon">${this.getCategoryIcon(category)}</div>
+                                </div>
+                                <div class="tool-description">${tool.desc}</div>
+                                <div class="tool-tags">
+                                    ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+                                </div>
+                                ${tool.videoUrl ? 
+                                    `<div class="tool-video">
+                                        <a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                    </div>` : ''
+                                }
+                            `;
+                            
+                            card.addEventListener('click', () => {
+                                this.showToolModal(tool);
+                            });
+                        }
+                        
+                        container.appendChild(card);
+                    });
+                });
+            }
+
+            promptForVideo(toolIndex) {
+                const tool = this.TREASURY_TOOLS[toolIndex];
+                const currentUrl = tool.videoUrl || '';
+                const newUrl = prompt('Enter the demo video URL (YouTube, Vimeo, etc.):', currentUrl);
+                
+                if (newUrl !== null) {
+                    tool.videoUrl = newUrl;
+                    this.saveData();
+                    this.createToolCards(); // Refresh the cards
+                }
+            }
+
+            updateCounts() {
+                // Update total tools count
+                document.getElementById('totalTools').textContent = this.TREASURY_TOOLS.length;
+                
+                // Update category counts
+                const categories = ['TRMS', 'CASH', 'LITE'];
+                categories.forEach(category => {
+                    const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
+                    const countElement = document.getElementById(`count-${category}`);
+                    if (countElement) {
+                        countElement.textContent = count;
+                    }
+                });
+            }
+
+            getCategoryName(category) {
+                const names = {
+                    TRMS: 'Enterprise Treasury',
+                    CASH: 'Cash Management',
+                    LITE: 'Mid-Market Platform'
+                };
+                return names[category] || category;
+            }
+
+            getCategoryIcon(category) {
+                const icons = {
+                    TRMS: '🏢',
+                    CASH: '💰',
+                    LITE: '⚡'
+                };
+                return icons[category] || '💼';
+            }
+
+            setupInteractions() {
+                // Filter tabs
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const category = tab.dataset.category;
+                        this.filterByCategory(category);
+                    });
+                });
+
+                // Modal close
+                document.getElementById('modalClose').addEventListener('click', () => {
+                    this.hideToolModal();
+                });
+
+                // Close modal on outside click
+                document.getElementById('toolModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'toolModal') {
+                        this.hideToolModal();
+                    }
+                });
+
+                // Close modal on escape
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.hideToolModal();
+                    }
+                });
+            }
+
+            filterByCategory(category) {
+                this.currentFilter = category;
+
+                // Update active tab
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.category === category);
+                });
+
+                // Show/hide sections
+                document.querySelectorAll('.category-section').forEach(section => {
+                    const shouldShow = category === 'ALL' || section.dataset.category === category;
+                    section.classList.toggle('hidden', !shouldShow);
+                });
+
+                // Smooth scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            showToolModal(tool) {
+                document.getElementById('modalTitle').textContent = tool.name;
+                document.getElementById('modalSubtitle').textContent = this.getCategoryName(tool.category);
+                document.getElementById('modalDescription').textContent = tool.desc;
+                document.getElementById('modalTarget').textContent = tool.target;
+
+                const featuresList = document.getElementById('modalFeatures');
+                featuresList.innerHTML = tool.features.map(feature => `<li>${feature}</li>`).join('');
+
+                // Add video section if available
+                const modalBody = document.querySelector('.modal-body');
+                const existingVideo = modalBody.querySelector('.video-section');
+                if (existingVideo) existingVideo.remove();
+
+                if (tool.videoUrl) {
+                    const videoSection = document.createElement('div');
+                    videoSection.className = 'feature-section video-section';
+                    
+                    // Check if it's a YouTube URL and create embed
+                    if (tool.videoUrl.includes('youtube.com') || tool.videoUrl.includes('youtu.be')) {
+                        const videoId = this.extractYouTubeId(tool.videoUrl);
+                        if (videoId) {
+                            videoSection.innerHTML = `
+                                <h4>🎥 Demo Video</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                            `;
+                        } else {
+                            videoSection.innerHTML = `
+                                <h4>🎥 Demo Video</h4>
+                                <a href="${tool.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Demo Video →</a>
+                            `;
+                        }
+                    } else {
+                        videoSection.innerHTML = `
+                            <h4>🎥 Demo Video</h4>
+                            <a href="${tool.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Demo Video →</a>
+                        `;
+                    }
+                    
+                    modalBody.appendChild(videoSection);
+                }
+
+                document.getElementById('toolModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            extractYouTubeId(url) {
+                const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[7].length === 11) ? match[7] : null;
+            }
+
+            hideToolModal() {
+                document.getElementById('toolModal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new TreasuryStack();
+        });
+
+        // Prevent zoom on double-tap (mobile)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+    </script>
+
+</body></html>
