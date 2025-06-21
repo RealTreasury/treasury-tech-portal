@@ -79,6 +79,56 @@
             box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
         }
 
+        /* Search Box */
+        .search-container {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .search-clear:hover {
+            background: #f3f4f6;
+        }
+
         /* Editable Elements */
         .editable {
             outline: none;
@@ -100,6 +150,70 @@
             background: rgba(99, 102, 241, 0.1);
             border-color: #6366f1;
             border-style: solid;
+        }
+
+        /* Tag Editing */
+        .edit-mode .tool-tags {
+            border: 2px dashed transparent;
+            border-radius: 8px;
+            padding: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode .tool-tags:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .edit-mode .tool-tag {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .edit-mode .tool-tag:hover {
+            background: #e5e7eb;
+        }
+
+        .tag-remove {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .edit-mode .tool-tag:hover .tag-remove {
+            display: flex;
+        }
+
+        .add-tag-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-left: 6px;
+            display: none;
+        }
+
+        .edit-mode .add-tag-btn {
+            display: inline-block;
+        }
+
+        .add-tag-btn:hover {
+            background: #4f46e5;
         }
 
         /* Logo Upload Area */
@@ -195,6 +309,15 @@
             font-weight: 400;
         }
 
+        /* Header Middle Section */
+        .header-middle {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            justify-content: center;
+        }
+
         /* Stats Cards */
         .stats-bar {
             display: flex;
@@ -269,6 +392,23 @@
             padding: 40px 20px;
         }
 
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+            display: none;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .no-results p {
+            font-size: 1rem;
+        }
+
         /* Category Section */
         .category-section {
             margin-bottom: 60px;
@@ -286,6 +426,15 @@
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-header:hover {
+            background: rgba(99, 102, 241, 0.02);
+            margin: -15px -15px 25px -15px;
+            padding: 15px 15px 15px 15px;
+            border-radius: 12px;
         }
 
         .category-info {
@@ -763,6 +912,11 @@
                 gap: 15px;
             }
 
+            .header-middle {
+                flex-direction: column;
+                gap: 15px;
+            }
+
             .stats-bar {
                 justify-content: space-between;
                 gap: 10px;
@@ -832,6 +986,10 @@
             .tool-name {
                 font-size: 1.1rem;
             }
+
+            .search-container {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -886,18 +1044,27 @@
                     </div>
                 </div>
 
-                <div class="stats-bar">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalTools">27</div>
-                        <div class="stat-label">Tools</div>
+                <div class="header-middle">
+                    <!-- Search Container -->
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
+                        <button class="search-clear" id="searchClear">×</button>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Categories</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">$B</div>
-                        <div class="stat-label">Value</div>
+
+                    <div class="stats-bar">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalTools">27</div>
+                            <div class="stat-label">Tools</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Categories</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">$B</div>
+                            <div class="stat-label">Value</div>
+                        </div>
                     </div>
                 </div>
 
@@ -905,16 +1072,22 @@
                     <button class="filter-tab active" data-category="ALL">All</button>
                     <button class="filter-tab" data-category="TRMS">Enterprise</button>
                     <button class="filter-tab" data-category="CASH">Cash Tools</button>
-                    <button class="filter-tab" data-category="LITE">Mid-Market</button>
+                    <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="main-content" id="mainContent">
+            <!-- No Results Message -->
+            <div class="no-results" id="noResults">
+                <h3>No vendors found</h3>
+                <p>Try adjusting your search terms or filters</p>
+            </div>
+
             <!-- Enterprise Section -->
             <div class="category-section category-enterprise" data-category="TRMS">
-                <div class="category-header">
+                <div class="category-header" data-category="TRMS">
                     <div class="category-info">
                         <h2 class="category-title">
                             🏢 <span class="editable" data-key="enterprise-title">Enterprise Treasury Systems</span>
@@ -934,7 +1107,7 @@
 
             <!-- Cash Tools Section -->
             <div class="category-section category-cash" data-category="CASH">
-                <div class="category-header">
+                <div class="category-header" data-category="CASH">
                     <div class="category-info">
                         <h2 class="category-title">
                             💰 <span class="editable" data-key="cash-title">Cash Tools</span>
@@ -952,12 +1125,12 @@
                 <div class="tools-grid" id="tools-CASH"></div>
             </div>
 
-            <!-- Mid-Market Section -->
+            <!-- TMS-Lite Section -->
             <div class="category-section category-lite" data-category="LITE">
-                <div class="category-header">
+                <div class="category-header" data-category="LITE">
                     <div class="category-info">
                         <h2 class="category-title">
-                            ⚡ <span class="editable" data-key="lite-title">Mid-Market Platforms</span>
+                            ⚡ <span class="editable" data-key="lite-title">TMS-Lite Platforms</span>
                             <span class="category-badge">Scalable</span>
                         </h2>
                         <p class="category-description editable" data-key="lite-desc">
@@ -973,7 +1146,7 @@
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Tool Modal -->
         <div class="modal" id="toolModal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -993,6 +1166,23 @@
                     <div class="feature-section">
                         <h4>🏢 Target Market</h4>
                         <p id="modalTarget" style="color: #4b5563; line-height: 1.6;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Modal -->
+        <div class="modal" id="categoryModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="modal-close" id="categoryModalClose">×</button>
+                    <h3 class="modal-title" id="categoryModalTitle"></h3>
+                    <p class="modal-subtitle" id="categoryModalSubtitle"></p>
+                </div>
+                <div class="modal-body" id="categoryModalBody">
+                    <div class="feature-section">
+                        <h4>🎯 Overview</h4>
+                        <p id="categoryModalDescription" style="color: #4b5563; line-height: 1.6;"></p>
                     </div>
                 </div>
             </div>
@@ -1563,9 +1753,29 @@
                     }
                 ];
 
+                this.CATEGORY_INFO = {
+                    TRMS: {
+                        name: "Enterprise Treasury Systems",
+                        description: "Full-scale treasury management platforms designed for complex treasury operations in large organizations. These solutions handle sophisticated derivatives trading, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with complex financial operations requiring extensive controls and reporting.",
+                        videoUrl: "https://youtu.be/WyWeobyqzfQ"
+                    },
+                    CASH: {
+                        name: "Cash Tools",
+                        description: "AI-powered cash visibility and forecasting platforms designed for modern finance teams. These innovative tools provide real-time bank connectivity, predictive analytics, and automated workflows to optimize liquidity management and significantly improve cash flow forecasting accuracy across all business sizes.",
+                        videoUrl: "https://youtu.be/Vx4At4BN-og"
+                    },
+                    LITE: {
+                        name: "TMS-Lite Platforms",
+                        description: "Balanced treasury solutions for growing companies that need more than basic cash management but don't require full enterprise complexity. These platforms offer modular functionality, competitive pricing, and scalable architecture perfect for businesses in transition from spreadsheets to sophisticated treasury management.",
+                        videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P"
+                    }
+                };
+
                 this.currentFilter = 'ALL';
+                this.searchTerm = '';
                 this.isEditMode = false;
                 this.editableContent = {};
+                this.filteredTools = [];
                 this.init();
             }
 
@@ -1576,6 +1786,7 @@
                 this.createToolCards();
                 this.setupInteractions();
                 this.setupEditMode();
+                this.setupSearch();
                 this.updateCounts();
                 
                 // Hide loading screen
@@ -1615,6 +1826,12 @@
                 if (savedTools) {
                     this.TREASURY_TOOLS = JSON.parse(savedTools);
                 }
+
+                // Load saved category info
+                const savedCategoryInfo = localStorage.getItem('treasuryStackCategoryInfo');
+                if (savedCategoryInfo) {
+                    this.CATEGORY_INFO = { ...this.CATEGORY_INFO, ...JSON.parse(savedCategoryInfo) };
+                }
             }
 
             saveData() {
@@ -1626,6 +1843,7 @@
                 
                 localStorage.setItem('treasuryStackContent', JSON.stringify(this.editableContent));
                 localStorage.setItem('treasuryStackTools', JSON.stringify(this.TREASURY_TOOLS));
+                localStorage.setItem('treasuryStackCategoryInfo', JSON.stringify(this.CATEGORY_INFO));
                 
                 // Show save notification
                 const notification = document.getElementById('saveNotification');
@@ -1633,6 +1851,126 @@
                 setTimeout(() => {
                     notification.style.display = 'none';
                 }, 2000);
+            }
+
+            setupSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const searchClear = document.getElementById('searchClear');
+
+                searchInput.addEventListener('input', (e) => {
+                    this.searchTerm = e.target.value.toLowerCase();
+                    
+                    // Show/hide clear button
+                    if (this.searchTerm) {
+                        searchClear.style.display = 'block';
+                        // Update placeholder to indicate global search
+                        searchInput.placeholder = 'Searching all categories...';
+                    } else {
+                        searchClear.style.display = 'none';
+                        searchInput.placeholder = 'Search vendors, features, or tags...';
+                    }
+
+                    this.filterAndDisplayTools();
+                });
+
+                searchClear.addEventListener('click', () => {
+                    searchInput.value = '';
+                    this.searchTerm = '';
+                    searchClear.style.display = 'none';
+                    searchInput.placeholder = 'Search vendors, features, or tags...';
+                    this.filterAndDisplayTools();
+                });
+            }
+
+            filterAndDisplayTools() {
+                let tools;
+
+                // If searching, search across ALL tools regardless of category filter
+                if (this.searchTerm) {
+                    tools = this.TREASURY_TOOLS.filter(tool => {
+                        const searchableText = [
+                            tool.name,
+                            tool.desc,
+                            tool.target,
+                            ...tool.tags,
+                            ...tool.features
+                        ].join(' ').toLowerCase();
+                        
+                        return searchableText.includes(this.searchTerm);
+                    });
+                } else {
+                    // If not searching, respect the category filter
+                    tools = this.currentFilter === 'ALL' 
+                        ? this.TREASURY_TOOLS 
+                        : this.TREASURY_TOOLS.filter(tool => tool.category === this.currentFilter);
+                }
+
+                this.filteredTools = tools;
+                this.displayFilteredTools();
+                this.updateVisibleCounts();
+            }
+
+            displayFilteredTools() {
+                const categories = ['TRMS', 'CASH', 'LITE'];
+                const hasResults = this.filteredTools.length > 0;
+                
+                // Show/hide no results message only if no results across all categories
+                document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+
+                categories.forEach(category => {
+                    const section = document.querySelector(`[data-category="${category}"]`);
+                    const container = document.getElementById(`tools-${category}`);
+                    const categoryTools = this.filteredTools.filter(tool => tool.category === category);
+                    
+                    // Always show all sections for consistent UI
+                    section.classList.remove('hidden');
+                    
+                    // Clear and populate container
+                    container.innerHTML = '';
+                    
+                    if (categoryTools.length > 0) {
+                        categoryTools.forEach(tool => {
+                            const card = this.createToolCard(tool, category);
+                            container.appendChild(card);
+                        });
+                    } else {
+                        // Show appropriate message when no tools in this category
+                        let message = '';
+                        if (this.searchTerm) {
+                            message = `No tools found matching "${this.searchTerm}"`;
+                        } else if (this.currentFilter !== 'ALL' && this.currentFilter !== category) {
+                            message = `Switch to "${this.getCategoryName(category)}" or "All" to see these tools`;
+                        }
+                        
+                        if (message) {
+                            container.innerHTML = `
+                                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6b7280;">
+                                    <p>${message}</p>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+            }
+
+            updateVisibleCounts() {
+                if (this.searchTerm) {
+                    // Update counts based on search results
+                    const categories = ['TRMS', 'CASH', 'LITE'];
+                    categories.forEach(category => {
+                        const count = this.filteredTools.filter(tool => tool.category === category).length;
+                        const countElement = document.getElementById(`count-${category}`);
+                        if (countElement) {
+                            countElement.textContent = count;
+                        }
+                    });
+                    
+                    // Update total tools count
+                    document.getElementById('totalTools').textContent = this.filteredTools.length;
+                } else {
+                    // Reset to original counts
+                    this.updateCounts();
+                }
             }
 
             setupEditMode() {
@@ -1676,7 +2014,7 @@
                         this.saveData();
                         
                         // Refresh tool cards
-                        this.createToolCards();
+                        this.filterAndDisplayTools();
                     }
                 });
 
@@ -1750,88 +2088,142 @@
             }
 
             makeToolsEditable() {
-                // Clear and recreate tool cards with edit functionality
-                this.createToolCards();
+                // This will be handled in createToolCard method
+                this.filterAndDisplayTools();
+            }
+
+            createToolCard(tool, category) {
+                const card = document.createElement('div');
+                card.className = `tool-card tool-${category.toLowerCase()}`;
+                
+                if (this.isEditMode) {
+                    card.innerHTML = `
+                        <div class="tool-header">
+                            <div>
+                                <div class="tool-name tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="name">${tool.name}</div>
+                                <div class="tool-type">${this.getCategoryName(category)}</div>
+                            </div>
+                            <div class="tool-icon">${this.getCategoryIcon(category)}</div>
+                        </div>
+                        <div class="tool-description tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="desc">${tool.desc}</div>
+                        <div class="tool-tags" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">
+                            ${tool.tags.map((tag, index) => `
+                                <span class="tool-tag" data-tag-index="${index}">
+                                    ${tag}
+                                    <button class="tag-remove" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-tag-index="${index}">×</button>
+                                </span>
+                            `).join('')}
+                            <button class="add-tag-btn" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">+ Tag</button>
+                        </div>
+                        <div class="tool-video">
+                            ${tool.videoUrl ? 
+                                `<a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                                 <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Change Video</button>` : 
+                                `<span class="video-placeholder">No demo video</span>
+                                 <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Add Video</button>`
+                            }
+                        </div>
+                    `;
+                    
+                    // Add event listeners for editable fields
+                    card.querySelectorAll('.tool-editable').forEach(element => {
+                        element.addEventListener('input', (e) => {
+                            const toolIndex = parseInt(e.target.dataset.toolIndex);
+                            const field = e.target.dataset.field;
+                            this.TREASURY_TOOLS[toolIndex][field] = e.target.textContent;
+                            this.saveData();
+                        });
+                    });
+                    
+                    // Add event listener for video button
+                    card.querySelector('.add-video-btn').addEventListener('click', (e) => {
+                        const toolIndex = parseInt(e.target.dataset.toolIndex);
+                        this.promptForVideo(toolIndex);
+                    });
+
+                    // Add event listeners for tag management
+                    card.querySelectorAll('.tag-remove').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const toolIndex = parseInt(e.target.dataset.toolIndex);
+                            const tagIndex = parseInt(e.target.dataset.tagIndex);
+                            this.removeTag(toolIndex, tagIndex);
+                        });
+                    });
+
+                    card.querySelector('.add-tag-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const toolIndex = parseInt(e.target.dataset.toolIndex);
+                        this.addTag(toolIndex);
+                    });
+
+                    // Make tags editable
+                    card.querySelectorAll('.tool-tag').forEach(tagElement => {
+                        const textNode = tagElement.firstChild;
+                        if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+                            tagElement.addEventListener('click', (e) => {
+                                if (e.target === tagElement) {
+                                    this.editTag(tagElement, parseInt(tagElement.dataset.tagIndex), parseInt(card.querySelector('.tool-tags').dataset.toolIndex));
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    card.innerHTML = `
+                        <div class="tool-header">
+                            <div>
+                                <div class="tool-name">${tool.name}</div>
+                                <div class="tool-type">${this.getCategoryName(category)}</div>
+                            </div>
+                            <div class="tool-icon">${this.getCategoryIcon(category)}</div>
+                        </div>
+                        <div class="tool-description">${tool.desc}</div>
+                        <div class="tool-tags">
+                            ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+                        </div>
+                        ${tool.videoUrl ? 
+                            `<div class="tool-video">
+                                <a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                            </div>` : ''
+                        }
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        this.showToolModal(tool);
+                    });
+                }
+                
+                return card;
+            }
+
+            addTag(toolIndex) {
+                const newTag = prompt('Enter new tag:');
+                if (newTag && newTag.trim()) {
+                    this.TREASURY_TOOLS[toolIndex].tags.push(newTag.trim());
+                    this.saveData();
+                    this.filterAndDisplayTools();
+                }
+            }
+
+            removeTag(toolIndex, tagIndex) {
+                this.TREASURY_TOOLS[toolIndex].tags.splice(tagIndex, 1);
+                this.saveData();
+                this.filterAndDisplayTools();
+            }
+
+            editTag(tagElement, tagIndex, toolIndex) {
+                const currentTag = this.TREASURY_TOOLS[toolIndex].tags[tagIndex];
+                const newTag = prompt('Edit tag:', currentTag);
+                if (newTag !== null && newTag.trim() && newTag.trim() !== currentTag) {
+                    this.TREASURY_TOOLS[toolIndex].tags[tagIndex] = newTag.trim();
+                    this.saveData();
+                    this.filterAndDisplayTools();
+                }
             }
 
             createToolCards() {
-                const categories = ['TRMS', 'CASH', 'LITE'];
-                
-                categories.forEach(category => {
-                    const container = document.getElementById(`tools-${category}`);
-                    container.innerHTML = ''; // Clear existing cards
-                    const tools = this.TREASURY_TOOLS.filter(tool => tool.category === category);
-                    
-                    tools.forEach((tool, index) => {
-                        const card = document.createElement('div');
-                        card.className = `tool-card tool-${category.toLowerCase()}`;
-                        
-                        if (this.isEditMode) {
-                            card.innerHTML = `
-                                <div class="tool-header">
-                                    <div>
-                                        <div class="tool-name tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="name">${tool.name}</div>
-                                        <div class="tool-type">${this.getCategoryName(category)}</div>
-                                    </div>
-                                    <div class="tool-icon">${this.getCategoryIcon(category)}</div>
-                                </div>
-                                <div class="tool-description tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="desc">${tool.desc}</div>
-                                <div class="tool-tags">
-                                    ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
-                                </div>
-                                <div class="tool-video">
-                                    ${tool.videoUrl ? 
-                                        `<a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
-                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Change Video</button>` : 
-                                        `<span class="video-placeholder">No demo video</span>
-                                         <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Add Video</button>`
-                                    }
-                                </div>
-                            `;
-                            
-                            // Add event listeners for editable fields
-                            card.querySelectorAll('.tool-editable').forEach(element => {
-                                element.addEventListener('input', (e) => {
-                                    const toolIndex = parseInt(e.target.dataset.toolIndex);
-                                    const field = e.target.dataset.field;
-                                    this.TREASURY_TOOLS[toolIndex][field] = e.target.textContent;
-                                    this.saveData();
-                                });
-                            });
-                            
-                            // Add event listener for video button
-                            card.querySelector('.add-video-btn').addEventListener('click', (e) => {
-                                const toolIndex = parseInt(e.target.dataset.toolIndex);
-                                this.promptForVideo(toolIndex);
-                            });
-                        } else {
-                            card.innerHTML = `
-                                <div class="tool-header">
-                                    <div>
-                                        <div class="tool-name">${tool.name}</div>
-                                        <div class="tool-type">${this.getCategoryName(category)}</div>
-                                    </div>
-                                    <div class="tool-icon">${this.getCategoryIcon(category)}</div>
-                                </div>
-                                <div class="tool-description">${tool.desc}</div>
-                                <div class="tool-tags">
-                                    ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
-                                </div>
-                                ${tool.videoUrl ? 
-                                    `<div class="tool-video">
-                                        <a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
-                                    </div>` : ''
-                                }
-                            `;
-                            
-                            card.addEventListener('click', () => {
-                                this.showToolModal(tool);
-                            });
-                        }
-                        
-                        container.appendChild(card);
-                    });
-                });
+                // This method is now replaced by filterAndDisplayTools
+                this.filterAndDisplayTools();
             }
 
             promptForVideo(toolIndex) {
@@ -1842,7 +2234,7 @@
                 if (newUrl !== null) {
                     tool.videoUrl = newUrl;
                     this.saveData();
-                    this.createToolCards(); // Refresh the cards
+                    this.filterAndDisplayTools();
                 }
             }
 
@@ -1865,7 +2257,7 @@
                 const names = {
                     TRMS: 'Enterprise Treasury',
                     CASH: 'Cash Tools',
-                    LITE: 'Mid-Market Platform'
+                    LITE: 'TMS-Lite Platform'
                 };
                 return names[category] || category;
             }
@@ -1888,22 +2280,42 @@
                     });
                 });
 
-                // Modal close
+                // Category headers - make them clickable
+                document.querySelectorAll('.category-header').forEach(header => {
+                    header.addEventListener('click', () => {
+                        const category = header.dataset.category;
+                        this.showCategoryModal(category);
+                    });
+                });
+
+                // Tool modal close
                 document.getElementById('modalClose').addEventListener('click', () => {
                     this.hideToolModal();
                 });
 
-                // Close modal on outside click
+                // Category modal close
+                document.getElementById('categoryModalClose').addEventListener('click', () => {
+                    this.hideCategoryModal();
+                });
+
+                // Close modals on outside click
                 document.getElementById('toolModal').addEventListener('click', (e) => {
                     if (e.target.id === 'toolModal') {
                         this.hideToolModal();
                     }
                 });
 
-                // Close modal on escape
+                document.getElementById('categoryModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'categoryModal') {
+                        this.hideCategoryModal();
+                    }
+                });
+
+                // Close modals on escape
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         this.hideToolModal();
+                        this.hideCategoryModal();
                     }
                 });
             }
@@ -1916,14 +2328,101 @@
                     tab.classList.toggle('active', tab.dataset.category === category);
                 });
 
-                // Show/hide sections
-                document.querySelectorAll('.category-section').forEach(section => {
-                    const shouldShow = category === 'ALL' || section.dataset.category === category;
-                    section.classList.toggle('hidden', !shouldShow);
-                });
+                // Filter and display tools
+                this.filterAndDisplayTools();
 
                 // Smooth scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            showCategoryModal(category) {
+                const categoryInfo = this.CATEGORY_INFO[category];
+                if (!categoryInfo) return;
+
+                document.getElementById('categoryModalTitle').textContent = categoryInfo.name;
+                document.getElementById('categoryModalSubtitle').textContent = `${this.getCategoryIcon(category)} Treasury Category`;
+                document.getElementById('categoryModalDescription').textContent = categoryInfo.description;
+
+                // Add video section if available
+                const modalBody = document.getElementById('categoryModalBody');
+                const existingVideo = modalBody.querySelector('.video-section');
+                if (existingVideo) existingVideo.remove();
+
+                if (categoryInfo.videoUrl) {
+                    const videoSection = document.createElement('div');
+                    videoSection.className = 'feature-section video-section';
+                    
+                    // Check if it's a YouTube URL and create embed
+                    if (categoryInfo.videoUrl.includes('youtube.com') || categoryInfo.videoUrl.includes('youtu.be')) {
+                        const videoId = this.extractYouTubeId(categoryInfo.videoUrl);
+                        if (videoId) {
+                            videoSection.innerHTML = `
+                                <h4>🎥 Category Overview Video</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
+                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>
+                            `;
+                        } else {
+                            videoSection.innerHTML = `
+                                <h4>🎥 Category Overview Video</h4>
+                                <a href="${categoryInfo.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Overview Video →</a>
+                            `;
+                        }
+                    } else {
+                        videoSection.innerHTML = `
+                            <h4>🎥 Category Overview Video</h4>
+                            <a href="${categoryInfo.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Overview Video →</a>
+                        `;
+                    }
+                    
+                    modalBody.appendChild(videoSection);
+                }
+
+                // Show edit controls in edit mode
+                if (this.isEditMode) {
+                    const editSection = document.createElement('div');
+                    editSection.className = 'feature-section edit-section';
+                    editSection.innerHTML = `
+                        <h4>✏️ Edit Category</h4>
+                        <button class="add-video-btn" onclick="treasuryStack.editCategoryVideo('${category}')" style="display: inline-block; margin-right: 10px;">
+                            ${categoryInfo.videoUrl ? 'Change Video' : 'Add Video'}
+                        </button>
+                        <div style="margin-top: 10px;">
+                            <textarea placeholder="Category description..." style="width: 100%; min-height: 100px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;" 
+                                onchange="treasuryStack.updateCategoryDescription('${category}', this.value)">${categoryInfo.description}</textarea>
+                        </div>
+                    `;
+                    modalBody.appendChild(editSection);
+                }
+
+                document.getElementById('categoryModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            editCategoryVideo(category) {
+                const currentUrl = this.CATEGORY_INFO[category].videoUrl || '';
+                const newUrl = prompt('Enter the category overview video URL (YouTube, Vimeo, etc.):', currentUrl);
+                
+                if (newUrl !== null) {
+                    this.CATEGORY_INFO[category].videoUrl = newUrl;
+                    this.saveData();
+                    this.hideCategoryModal();
+                    // Reopen the modal to show changes
+                    setTimeout(() => this.showCategoryModal(category), 100);
+                }
+            }
+
+            updateCategoryDescription(category, description) {
+                this.CATEGORY_INFO[category].description = description;
+                this.saveData();
+            }
+
+            hideCategoryModal() {
+                document.getElementById('categoryModal').style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
 
             showToolModal(tool) {
@@ -1936,7 +2435,7 @@
                 featuresList.innerHTML = tool.features.map(feature => `<li>${feature}</li>`).join('');
 
                 // Add video section if available
-                const modalBody = document.querySelector('.modal-body');
+                const modalBody = document.querySelector('#toolModal .modal-body');
                 const existingVideo = modalBody.querySelector('.video-section');
                 if (existingVideo) existingVideo.remove();
 
@@ -1989,9 +2488,12 @@
             }
         }
 
+        // Global variable for edit mode access
+        let treasuryStack;
+
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            new TreasuryStack();
+            treasuryStack = new TreasuryStack();
         });
 
         // Prevent zoom on double-tap (mobile)
