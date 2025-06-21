@@ -437,6 +437,34 @@
             border-radius: 12px;
         }
 
+        /* Edit mode category header styles */
+        .edit-mode .category-header {
+            cursor: default;
+        }
+
+        .edit-mode .category-header:hover {
+            background: transparent;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-left: 0;
+            margin-right: 0;
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        /* Make editable elements in category headers more obvious */
+        .edit-mode .category-header .editable {
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-mode .category-header .editable:hover {
+            background: rgba(99, 102, 241, 0.1) !important;
+            cursor: text;
+        }
+
         .category-info {
             flex: 1;
         }
@@ -1993,6 +2021,13 @@
                         document.querySelectorAll('.editable').forEach(element => {
                             element.contentEditable = true;
                             element.addEventListener('input', () => this.saveData());
+                            
+                            // Prevent event bubbling for category header editables
+                            if (element.closest('.category-header')) {
+                                element.addEventListener('click', (e) => {
+                                    e.stopPropagation();
+                                });
+                            }
                         });
                         
                         // Make tool descriptions editable
@@ -2280,7 +2315,7 @@
                     });
                 });
 
-                // Category headers - make them clickable
+                // Category headers - clickable only when not in edit mode
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', () => {
                         const category = header.dataset.category;
@@ -2343,12 +2378,17 @@
                 document.getElementById('categoryModalSubtitle').textContent = `${this.getCategoryIcon(category)} Treasury Category`;
                 document.getElementById('categoryModalDescription').textContent = categoryInfo.description;
 
-                // Add video section if available
+                // Clear existing content
                 const modalBody = document.getElementById('categoryModalBody');
-                const existingVideo = modalBody.querySelector('.video-section');
-                if (existingVideo) existingVideo.remove();
+                modalBody.innerHTML = `
+                    <div class="feature-section">
+                        <h4>🎯 Overview</h4>
+                        <p id="categoryModalDescription" style="color: #4b5563; line-height: 1.6;">${categoryInfo.description}</p>
+                    </div>
+                `;
 
-                if (categoryInfo.videoUrl) {
+                // Add video section if available (only in view mode)
+                if (categoryInfo.videoUrl && !this.isEditMode) {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-section';
                     
@@ -2381,21 +2421,32 @@
                     modalBody.appendChild(videoSection);
                 }
 
-                // Show edit controls in edit mode
+                // Show edit controls ONLY in edit mode
                 if (this.isEditMode) {
                     const editSection = document.createElement('div');
                     editSection.className = 'feature-section edit-section';
                     editSection.innerHTML = `
                         <h4>✏️ Edit Category</h4>
-                        <button class="add-video-btn" onclick="treasuryStack.editCategoryVideo('${category}')" style="display: inline-block; margin-right: 10px;">
-                            ${categoryInfo.videoUrl ? 'Change Video' : 'Add Video'}
-                        </button>
-                        <div style="margin-top: 10px;">
-                            <textarea placeholder="Category description..." style="width: 100%; min-height: 100px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px;" 
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Category Description:</label>
+                            <textarea placeholder="Category description..." style="width: 100%; min-height: 100px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; font-family: inherit; resize: vertical;" 
                                 onchange="treasuryStack.updateCategoryDescription('${category}', this.value)">${categoryInfo.description}</textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Video URL:</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="url" placeholder="https://youtube.com/..." value="${categoryInfo.videoUrl || ''}" 
+                                    style="flex: 1; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.9rem;"
+                                    onchange="treasuryStack.updateCategoryVideo('${category}', this.value)">
+                                <button class="add-video-btn" onclick="treasuryStack.editCategoryVideo('${category}')" style="display: inline-flex; align-items: center; white-space: nowrap;">
+                                    Browse
+                                </button>
+                            </div>
                         </div>
                     `;
                     modalBody.appendChild(editSection);
+                } else if (categoryInfo.videoUrl) {
+                    // Only show video in view mode - already handled above
                 }
 
                 document.getElementById('categoryModal').style.display = 'flex';
@@ -2407,12 +2458,18 @@
                 const newUrl = prompt('Enter the category overview video URL (YouTube, Vimeo, etc.):', currentUrl);
                 
                 if (newUrl !== null) {
-                    this.CATEGORY_INFO[category].videoUrl = newUrl;
-                    this.saveData();
-                    this.hideCategoryModal();
-                    // Reopen the modal to show changes
-                    setTimeout(() => this.showCategoryModal(category), 100);
+                    this.updateCategoryVideo(category, newUrl);
+                    // Update the input field if it exists
+                    const inputField = document.querySelector(`input[onchange*="${category}"]`);
+                    if (inputField) {
+                        inputField.value = newUrl;
+                    }
                 }
+            }
+
+            updateCategoryVideo(category, url) {
+                this.CATEGORY_INFO[category].videoUrl = url;
+                this.saveData();
             }
 
             updateCategoryDescription(category, description) {
