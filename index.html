@@ -726,13 +726,13 @@
             border: 1px solid #e5e7eb;
         }
 
-        /* MINIMAL MODAL STYLES - COMPACT VERSION */
+        /* IFRAME-COMPATIBLE MODAL STYLES */
         .modal {
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
+            width: 100vw !important;
+            height: 100vh !important;
             z-index: 999999 !important;
             padding: 15px !important;
             box-sizing: border-box !important;
@@ -740,13 +740,33 @@
             align-items: center !important;
             justify-content: center !important;
             
+            /* Force viewport positioning for iframes */
+            transform: translateZ(0) !important;
+            -webkit-transform: translateZ(0) !important;
+            
+            /* WordPress compatible visibility */
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            
             /* Lighter backdrop */
             background: rgba(0, 0, 0, 0.4) !important;
             backdrop-filter: blur(8px) !important;
+            
+            /* Iframe-specific positioning fix */
+            margin: 0 !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+        }
+
+        /* Show modal when active */
+        .modal.show {
+            opacity: 1 !important;
+            visibility: visible !important;
         }
 
         /* Hide modal by default */
-        .modal:not(.show):not([style*="flex"]) {
+        .modal:not(.show) {
             display: none !important;
         }
 
@@ -2368,8 +2388,10 @@
                 // Category headers - clickable only when not in edit mode
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', () => {
-                        const category = header.dataset.category;
-                        this.showCategoryModal(category);
+                        if (!this.isEditMode) {
+                            const category = header.dataset.category;
+                            this.showCategoryModal(category);
+                        }
                     });
                 });
 
@@ -2499,7 +2521,10 @@
                     // Only show video in view mode - already handled above
                 }
 
-                document.getElementById('categoryModal').style.display = 'flex';
+                // Show modal with proper class system
+                const modal = document.getElementById('categoryModal');
+                modal.style.display = 'flex';
+                modal.classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
 
@@ -2528,8 +2553,12 @@
             }
 
             hideCategoryModal() {
-                document.getElementById('categoryModal').style.display = 'none';
-                document.body.style.overflow = 'auto';
+                const modal = document.getElementById('categoryModal');
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 300);
             }
 
             showToolModal(tool) {
@@ -2580,6 +2609,7 @@
                 }
 
                 document.getElementById('toolModal').style.display = 'flex';
+                document.getElementById('toolModal').classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
 
@@ -2590,16 +2620,63 @@
             }
 
             hideToolModal() {
-                document.getElementById('toolModal').style.display = 'none';
-                document.body.style.overflow = 'auto';
+                const modal = document.getElementById('toolModal');
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }, 300);
             }
         }
 
         // Global variable for edit mode access
         let treasuryStack;
 
+        // Iframe positioning fix for modals
+        function fixModalPositioning() {
+            const isInIframe = window !== window.parent;
+            if (isInIframe) {
+                // Force modals to position relative to iframe viewport
+                const style = document.createElement('style');
+                style.textContent = `
+                    .modal {
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 100vw !important;
+                        height: 100vh !important;
+                        margin: 0 !important;
+                        transform: translateZ(0) !important;
+                        -webkit-transform: translateZ(0) !important;
+                    }
+                    
+                    .modal-content {
+                        position: relative !important;
+                        max-height: 80vh !important;
+                        max-width: 90vw !important;
+                        overflow-y: auto !important;
+                        margin: auto !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Ensure modals appear in viewport center
+                document.addEventListener('click', function(e) {
+                    const modal = document.querySelector('.modal.show');
+                    if (modal) {
+                        // Force recalculation of position
+                        modal.style.top = '0px';
+                        modal.style.left = '0px';
+                        modal.style.position = 'fixed';
+                        modal.style.transform = 'translateZ(0)';
+                    }
+                });
+            }
+        }
+
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
+            fixModalPositioning(); // Fix iframe modal positioning
             treasuryStack = new TreasuryStack();
         });
 
