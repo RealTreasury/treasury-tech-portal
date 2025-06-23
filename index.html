@@ -1019,7 +1019,7 @@
                 max-width: 100%;
             }
         }
-           /* Add this to the <style> section in your index.html */
+          /* Modal backdrop - keeps full iframe coverage for backdrop */
 .modal {
     position: fixed !important;
     top: 0 !important;
@@ -1027,14 +1027,34 @@
     width: 100% !important;
     height: 100% !important;
     z-index: 999999 !important;
-    padding: 15px !important;
+    padding: 20px !important;
     box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
+/* Modal content - nice constrained width */
 .modal-content, .video-access-form {
-    max-width: 95% !important;
-    max-height: 95% !important;
+    max-width: 500px !important;    /* Comfortable reading width */
+    width: 90% !important;           /* Responsive */
+    max-height: 85vh !important;     /* Don't take full height */
     overflow-y: auto !important;
+    margin: 0 auto !important;
+}
+
+/* Specific adjustments for different modal types */
+#videoModal .modal-content,
+#videoModal .video-access-form {
+    max-width: 520px !important;    /* Video form slightly wider */
+}
+
+#toolModal .modal-content {
+    max-width: 600px !important;    /* Tool details wider */
+}
+
+#categoryModal .modal-content {
+    max-width: 650px !important;    /* Category info widest */
 }
     </style>
  
