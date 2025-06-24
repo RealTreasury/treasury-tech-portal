@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Treasury Stack</title>
@@ -55,6 +57,11 @@
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* This class is added to the body via JS to prevent background scroll */
+        body.modal-open {
+            overflow: hidden !important;
         }
 
         .container {
@@ -186,9 +193,11 @@
             padding: 4px 8px;
             cursor: text;
         }
+
         .edit-mode .editable:hover {
             background: rgba(99, 102, 241, 0.05);
         }
+
         .edit-mode .editable:focus {
             background: rgba(99, 102, 241, 0.1);
             border-color: #6366f1;
@@ -527,15 +536,18 @@
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 12px; /* Reduced from 20px */
+            gap: 12px;
+            /* Reduced from 20px */
         }
 
         /* Tool Card - TIGHTENED SPACING */
         .tool-card {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
-            border-radius: 12px; /* Reduced from 16px */
-            padding: 16px; /* Reduced from 24px */
+            border-radius: 12px;
+            /* Reduced from 16px */
+            padding: 16px;
+            /* Reduced from 24px */
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -580,10 +592,12 @@
         .tool-card-content {
             flex-grow: 1;
         }
-        
+
         .tool-card-actions {
-            margin-top: 12px; /* Reduced from 16px */
-            padding-top: 12px; /* Reduced from 16px */
+            margin-top: 12px;
+            /* Reduced from 16px */
+            padding-top: 12px;
+            /* Reduced from 16px */
             border-top: 1px solid #e5e7eb;
         }
 
@@ -591,14 +605,17 @@
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 10px; /* Reduced from 16px */
+            margin-bottom: 10px;
+            /* Reduced from 16px */
         }
 
         .tool-name {
-            font-size: 1.2rem; /* Reduced from 1.3rem */
+            font-size: 1.2rem;
+            /* Reduced from 1.3rem */
             font-weight: 700;
             color: #281345;
-            margin-bottom: 2px; /* Reduced from 4px */
+            margin-bottom: 2px;
+            /* Reduced from 4px */
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             line-height: 1.2;
             display: flex;
@@ -631,13 +648,17 @@
         }
 
         .tool-icon {
-            width: 36px; /* Reduced from 40px */
-            height: 36px; /* Reduced from 40px */
-            border-radius: 8px; /* Reduced from 10px */
+            width: 36px;
+            /* Reduced from 40px */
+            height: 36px;
+            /* Reduced from 40px */
+            border-radius: 8px;
+            /* Reduced from 10px */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px; /* Reduced from 18px */
+            font-size: 16px;
+            /* Reduced from 18px */
             flex-shrink: 0;
             color: white;
         }
@@ -662,27 +683,37 @@
 
         .tool-description {
             color: #7e7e7e;
-            font-size: 0.85rem; /* Reduced from 0.9rem */
-            line-height: 1.4; /* Reduced from 1.6 */
-            margin-bottom: 0; /* Reduced from 16px, now handled by tool-card-actions margin */
+            font-size: 0.85rem;
+            /* Reduced from 0.9rem */
+            line-height: 1.4;
+            /* Reduced from 1.6 */
+            margin-bottom: 0;
+            /* Reduced from 16px, now handled by tool-card-actions margin */
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .tool-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 4px; /* Reduced from 6px */
-            margin-top: 0; /* Removed as spacing is handled by parent */
-            padding-top: 0; /* Removed as spacing is handled by parent */
-            border-top: none; /* Removed as border is on parent */
+            gap: 4px;
+            /* Reduced from 6px */
+            margin-top: 0;
+            /* Removed as spacing is handled by parent */
+            padding-top: 0;
+            /* Removed as spacing is handled by parent */
+            border-top: none;
+            /* Removed as border is on parent */
         }
 
         .tool-tag {
             background: #f3f4f6;
             color: #6b7280;
-            padding: 3px 6px; /* Reduced from 4px 8px */
-            border-radius: 4px; /* Reduced from 6px */
-            font-size: 0.65rem; /* Reduced from 0.7rem */
+            padding: 3px 6px;
+            /* Reduced from 4px 8px */
+            border-radius: 4px;
+            /* Reduced from 6px */
+            font-size: 0.65rem;
+            /* Reduced from 0.7rem */
             font-weight: 500;
             border: 1px solid #e5e7eb;
         }
@@ -693,7 +724,8 @@
             border: none;
             color: #6366f1;
             cursor: pointer;
-            font-size: 0.65rem; /* Reduced from 0.7rem */
+            font-size: 0.65rem;
+            /* Reduced from 0.7rem */
             font-weight: 500;
             padding: 2px 4px;
             border-radius: 4px;
@@ -705,41 +737,63 @@
             background: #f3f4f6;
         }
 
-        /* MODAL STYLES */
+        /* MODAL STYLES - REVISED FOR VIEWPORT CENTERING */
         .modal {
+            /* Core positioning: Fixed to the browser viewport, not the document */
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
             width: 100vw !important;
             height: 100vh !important;
             z-index: 999999 !important;
-            padding: 15px !important;
-            box-sizing: border-box !important;
-            display: none !important;
+
+            /* Centering the modal content vertically and horizontally */
+            display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            background: rgba(0, 0, 0, 0.5) !important;
-            backdrop-filter: blur(8px) !important;
+
+            /* Backdrop styling */
+            background: rgba(40, 19, 69, 0.4) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+
+            /* Padding for smaller screens */
+            padding: 20px !important;
+            box-sizing: border-box !important;
+
+            /* Hiding/showing with smooth transition */
             opacity: 0;
-            transition: all 0.3s ease;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0s 0.3s linear;
         }
 
         .modal.show {
-            display: flex !important;
             opacity: 1 !important;
+            visibility: visible !important;
+            transition: opacity 0.3s ease;
         }
 
+        /* The actual modal pop-up box */
         .modal-content {
-            max-width: 600px !important;      
-            width: 90% !important;            
-            max-height: 85vh !important;      
+            max-width: 600px !important;
+            width: 100% !important;
+            /* Use 100% to respect padding on .modal */
+            max-height: 90vh !important;
             overflow-y: auto !important;
+            /* Add scroll for content that's too tall */
             margin: 0 auto !important;
+            /* Horizontal centering fallback */
             position: relative !important;
             background: white !important;
             border-radius: 16px !important;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3) !important;
-            transform: scale(0.9);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3) !important;
+            display: flex;
+            /* Helps with internal layout */
+            flex-direction: column;
+            /* Stacks header, body, footer */
+
+            /* Animation for showing the modal */
+            transform: scale(0.95);
             transition: transform 0.3s ease;
         }
 
@@ -754,8 +808,10 @@
             justify-content: space-between;
             align-items: flex-start;
             gap: 16px;
+            flex-shrink: 0;
+            /* Prevent header from shrinking */
         }
-        
+
         .modal-header-main {
             flex-grow: 1;
         }
@@ -783,8 +839,35 @@
 
         .modal-body {
             padding: 24px !important;
+            overflow-y: auto;
+            /* Ensure body scrolls if needed, not the whole content box */
+            flex-grow: 1;
+            /* Allow body to take up available space */
+        }
+        
+        .modal-close {
+            background: #f3f4f6;
+            border: none;
+            color: #281345;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 600;
+            position: static; /* Let flexbox handle positioning */
         }
 
+        .modal-close:hover {
+            background: #e5e7eb;
+            transform: scale(1.1);
+        }
+        
         .video-container {
             width: 100%;
             height: 0;
@@ -822,7 +905,7 @@
         .feature-list {
             list-style: none;
             display: grid;
-            gap: 10px !important;            
+            gap: 10px !important;
         }
 
         .feature-list li {
@@ -840,7 +923,7 @@
             color: #6366f1;
             font-weight: bold;
         }
-        
+
         .website-link--modal {
             background: linear-gradient(135deg, rgba(114, 22, 244, 0.6), rgba(80, 15, 171, 0.7)) !important;
             color: #ffffff !important;
@@ -854,7 +937,7 @@
             border: 1px solid rgba(199, 125, 255, 0.4) !important;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .website-link--modal:hover {
@@ -863,30 +946,7 @@
             transform: translateY(-2px);
             color: white;
             text-decoration: none;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .modal-close {
-            background: #f3f4f6;
-            border: none;
-            color: #281345;
-            width: 36px !important;
-            height: 36px !important;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-weight: 600;
-            position: static;
-        }
-
-        .modal-close:hover {
-            background: #e5e7eb;
-            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         /* Mobile adjustments */
@@ -906,10 +966,12 @@
                 justify-content: space-around;
                 width: 100%;
             }
+
             .filter-tabs {
                 flex-wrap: wrap;
                 justify-content: center;
             }
+
             .stat-card {
                 flex: 1;
                 min-width: 0;
@@ -939,18 +1001,20 @@
 
             .tools-grid {
                 grid-template-columns: 1fr;
-                gap: 10px; /* Reduced for mobile too */
+                gap: 10px;
+                /* Reduced for mobile too */
             }
 
             .tool-card {
-                padding: 14px; /* Reduced for mobile */
+                padding: 14px;
+                /* Reduced for mobile */
             }
-            
+
             .modal-header {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .modal-header-actions {
                 flex-direction: row-reverse;
                 justify-content: flex-end;
@@ -984,7 +1048,8 @@
             }
 
             .tool-name {
-                font-size: 1.1rem; /* Adjusted for mobile */
+                font-size: 1.1rem;
+                /* Adjusted for mobile */
             }
 
             .search-container {
@@ -993,6 +1058,7 @@
         }
     </style>
 </head>
+
 <body class="edit-mode">
     <div class="container">
         <!-- Loading Screen -->
@@ -1098,227 +1164,239 @@
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-TRMS"><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Kyriba
-                                    <span class="video-indicator">🎥</span>
+                <div class="tools-grid" id="tools-TRMS">
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Kyriba
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.</div>
                         </div>
-                        <div class="tool-description">Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Kyriba">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Kyriba">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    GTreasury
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        GTreasury
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.</div>
                         </div>
-                        <div class="tool-description">Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="GTreasury">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="GTreasury">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Reval
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Reval
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.</div>
                         </div>
-                        <div class="tool-description">Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Reval">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Reval">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Quantum
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Quantum
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</div>
                         </div>
-                        <div class="tool-description">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Quantum">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Quantum">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    WallStreet Suite
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        WallStreet Suite
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.</div>
                         </div>
-                        <div class="tool-description">Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="WallStreet Suite">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="WallStreet Suite">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    ATOM
-                                    
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        ATOM
+
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.</div>
                         </div>
-                        <div class="tool-description">Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="ATOM">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="ATOM">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Integrity
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Integrity
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.</div>
                         </div>
-                        <div class="tool-description">Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Integrity">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Integrity">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    IT2
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        IT2
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.</div>
                         </div>
-                        <div class="tool-description">Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="IT2">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="IT2">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Datalog
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Datalog
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.</div>
                         </div>
-                        <div class="tool-description">Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Datalog">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Datalog">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Coupa
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Coupa
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.</div>
                         </div>
-                        <div class="tool-description">Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Coupa">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Coupa">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Treasury Cube
-                                    
+                    <div class="tool-card tool-trms">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Treasury Cube
+
+                                    </div>
+                                    <div class="tool-type">TRMS</div>
                                 </div>
-                                <div class="tool-type">TRMS</div>
+                                <div class="tool-icon">🏢</div>
                             </div>
-                            <div class="tool-icon">🏢</div>
+                            <div class="tool-description">Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</div>
                         </div>
-                        <div class="tool-description">Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Treasury Cube">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Treasury Cube">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div></div>
+                </div>
             </div>
 
             <!-- Cash Tools Section -->
@@ -1338,207 +1416,218 @@
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-CASH"><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Trovata
-                                    <span class="video-indicator">🎥</span>
+                <div class="tools-grid" id="tools-CASH">
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Trovata
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.</div>
                         </div>
-                        <div class="tool-description">AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Trovata">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Trovata">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Tesorio
-                                    
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Tesorio
+
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.</div>
                         </div>
-                        <div class="tool-description">Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Tesorio">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Tesorio">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Autocash.ai
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Autocash.ai
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.</div>
                         </div>
-                        <div class="tool-description">AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Autocash.ai">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Autocash.ai">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Balance
-                                    
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Balance
+
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.</div>
                         </div>
-                        <div class="tool-description">Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Balance">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Balance">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Nilus
-                                    
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Nilus
+
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.</div>
                         </div>
-                        <div class="tool-description">Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Nilus">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Nilus">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Obol
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Obol
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.</div>
                         </div>
-                        <div class="tool-description">Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Obol">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Obol">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Panax
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Panax
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.</div>
                         </div>
-                        <div class="tool-description">Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Panax">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Panax">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Statement
-                                    
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Statement
+
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.</div>
                         </div>
-                        <div class="tool-description">Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Statement">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Statement">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Treasury Suite
-                                    
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Treasury Suite
+
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.</div>
                         </div>
-                        <div class="tool-description">Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Treasury Suite">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Treasury Suite">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Vesto
-                                    
+                    <div class="tool-card tool-cash">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Vesto
+
+                                    </div>
+                                    <div class="tool-type">Cash Tools</div>
                                 </div>
-                                <div class="tool-type">Cash Tools</div>
+                                <div class="tool-icon">💰</div>
                             </div>
-                            <div class="tool-icon">💰</div>
+                            <div class="tool-description">Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.</div>
                         </div>
-                        <div class="tool-description">Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Vesto">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Vesto">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div></div>
+                </div>
             </div>
 
             <!-- TMS-Lite Section -->
@@ -1558,127 +1647,134 @@
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-LITE"><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Treasura
-                                    <span class="video-indicator">🎥</span>
+                <div class="tools-grid" id="tools-LITE">
+                    <div class="tool-card tool-lite">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Treasura
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TMS-Lite</div>
                                 </div>
-                                <div class="tool-type">TMS-Lite</div>
+                                <div class="tool-icon">⚡</div>
                             </div>
-                            <div class="tool-icon">⚡</div>
+                            <div class="tool-description">User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.</div>
                         </div>
-                        <div class="tool-description">User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Treasura">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Treasura">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Treasury Curve
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-lite">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Treasury Curve
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TMS-Lite</div>
                                 </div>
-                                <div class="tool-type">TMS-Lite</div>
+                                <div class="tool-icon">⚡</div>
                             </div>
-                            <div class="tool-icon">⚡</div>
+                            <div class="tool-description">Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.</div>
                         </div>
-                        <div class="tool-description">Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Treasury Curve">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Treasury Curve">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Bottomline
-                                    
+                    <div class="tool-card tool-lite">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Bottomline
+
+                                    </div>
+                                    <div class="tool-type">TMS-Lite</div>
                                 </div>
-                                <div class="tool-type">TMS-Lite</div>
+                                <div class="tool-icon">⚡</div>
                             </div>
-                            <div class="tool-icon">⚡</div>
+                            <div class="tool-description">Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.</div>
                         </div>
-                        <div class="tool-description">Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Bottomline">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Bottomline">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    City Financials
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-lite">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        City Financials
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TMS-Lite</div>
                                 </div>
-                                <div class="tool-type">TMS-Lite</div>
+                                <div class="tool-icon">⚡</div>
                             </div>
-                            <div class="tool-icon">⚡</div>
+                            <div class="tool-description">Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.</div>
                         </div>
-                        <div class="tool-description">Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="City Financials">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="City Financials">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    HighRadius
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-lite">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        HighRadius
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TMS-Lite</div>
                                 </div>
-                                <div class="tool-type">TMS-Lite</div>
+                                <div class="tool-icon">⚡</div>
                             </div>
-                            <div class="tool-icon">⚡</div>
+                            <div class="tool-description">Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.</div>
                         </div>
-                        <div class="tool-description">Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="HighRadius">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="HighRadius">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">
-                                    Treasury4
-                                    <span class="video-indicator">🎥</span>
+                    <div class="tool-card tool-lite">
+                        <div class="tool-card-content">
+                            <div class="tool-header">
+                                <div>
+                                    <div class="tool-name">
+                                        Treasury4
+                                        <span class="video-indicator">🎥</span>
+                                    </div>
+                                    <div class="tool-type">TMS-Lite</div>
                                 </div>
-                                <div class="tool-type">TMS-Lite</div>
+                                <div class="tool-icon">⚡</div>
                             </div>
-                            <div class="tool-icon">⚡</div>
+                            <div class="tool-description">Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.</div>
                         </div>
-                        <div class="tool-description">Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn" data-tool-name="Treasury4">... more</button>
+                        <div class="tool-card-actions">
+                            <div class="tool-tags">
+                                <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
+                                <button class="show-more-tags-btn" data-tool-name="Treasury4">... more</button>
+                            </div>
                         </div>
                     </div>
-                </div></div>
+                </div>
             </div>
         </div>
 
@@ -1690,13 +1786,14 @@
                         <h3 class="modal-title" id="modalTitle">Kyriba</h3>
                     </div>
                     <div class="modal-header-actions">
-                         <a id="modalWebsiteLink" href="https://www.kyriba.com/?utm_source=realtreasury&amp;utm_medium=website&amp;utm_campaign=vendor_referral" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: inline-flex;">
+                        <a id="modalWebsiteLink" href="https://www.kyriba.com/?utm_source=realtreasury&amp;utm_medium=website&amp;utm_campaign=vendor_referral" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: inline-flex;">
                             Visit Website →
                         </a>
                         <button class="modal-close" id="modalClose">×</button>
                     </div>
                 </div>
-                <div class="modal-body"><div class="feature-section video-demo-section">
+                <div class="modal-body">
+                    <div class="feature-section video-demo-section">
                         <h4>🎥 Demo Video</h4>
                         <div class="video-container">
                             <iframe src="https://www.youtube.com/embed/WyWeobyqzfQ" frameborder="0" allowfullscreen=""></iframe>
@@ -1715,14 +1812,15 @@
         <div class="modal" id="categoryModal">
             <div class="modal-content">
                 <div class="modal-header">
-                     <div class="modal-header-main">
+                    <div class="modal-header-main">
                         <h3 class="modal-title" id="categoryModalTitle">Treasury &amp; Risk Management Systems (TRMS)</h3>
-                     </div>
-                     <div class="modal-header-actions">
+                    </div>
+                    <div class="modal-header-actions">
                         <button class="modal-close" id="categoryModalClose">×</button>
-                     </div>
+                    </div>
                 </div>
-                <div class="modal-body"><div class="feature-section video-demo-section">
+                <div class="modal-body">
+                    <div class="feature-section video-demo-section">
                         <h4>🎥 Category Overview Video</h4>
                         <div class="video-container">
                             <iframe src="https://www.youtube.com/embed/WyWeobyqzfQ" frameborder="0" allowfullscreen=""></iframe>
@@ -1735,7 +1833,16 @@
                     </div>
                     <div class="feature-section">
                         <h4>🎯 Key Characteristics</h4>
-                        <ul class="feature-list" id="categoryModalFeatures"><li>Comprehensive multi-module integration</li><li>Advanced derivatives and risk management</li><li>Hedge accounting automation</li><li>Global payment infrastructure</li><li>In-house banking capabilities</li><li>Regulatory compliance and reporting</li><li>Complex multi-entity consolidation</li><li>Sophisticated workflow automation</li></ul>
+                        <ul class="feature-list" id="categoryModalFeatures">
+                            <li>Comprehensive multi-module integration</li>
+                            <li>Advanced derivatives and risk management</li>
+                            <li>Hedge accounting automation</li>
+                            <li>Global payment infrastructure</li>
+                            <li>In-house banking capabilities</li>
+                            <li>Regulatory compliance and reporting</li>
+                            <li>Complex multi-entity consolidation</li>
+                            <li>Sophisticated workflow automation</li>
+                        </ul>
                     </div>
                     <div class="feature-section">
                         <h4>🏢 Ideal For</h4>
@@ -1748,7 +1855,7 @@
 
     <script>
         let treasuryStack;
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Initializing Treasury Stack...');
             treasuryStack = new TreasuryStack();
@@ -1758,37 +1865,217 @@
             constructor() {
                 this.TREASURY_TOOLS = [
                     // TRMS
-                    { "name": "Kyriba", "category": "TRMS", "desc": "Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.", "features": ["AI-driven cash forecasting", "Real-time risk analytics", "Derivatives management", "Multi-bank connectivity", "Regulatory compliance", "Hedge accounting automation"], "target": "Large enterprises and multinational corporations with complex treasury operations", "videoUrl": "https://youtu.be/WyWeobyqzfQ", "websiteUrl": "https://www.kyriba.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "GTreasury", "category": "TRMS", "desc": "Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.", "features": ["Deep ERP integration", "Multi-entity consolidation", "Advanced analytics", "Customizable workflows", "Real-time reporting", "API connectivity"], "target": "Fortune 500 companies requiring complex consolidation and reporting", "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j", "websiteUrl": "https://gtreasury.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Reval", "category": "TRMS", "desc": "Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.", "features": ["Derivatives valuation", "Hedge accounting", "Market data integration", "Risk analytics", "Regulatory reporting", "Trade capture"], "target": "Financial institutions and corporations with complex derivative portfolios", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/reval/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Quantum", "category": "TRMS", "desc": "Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.", "features": ["Real-time risk monitoring", "Portfolio optimization", "Stress testing", "Automated hedging", "Compliance controls", "Advanced analytics"], "target": "Investment banks and large financial institutions", "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" },
-                    { "name": "WallStreet Suite", "category": "TRMS", "desc": "Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.", "features": ["Multi-asset support", "Advanced analytics", "Regulatory compliance", "Trade management", "Risk controls", "Market data feeds"], "target": "Large banks and corporations requiring full-scale treasury operations", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/wallstreet-suite/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "ATOM", "category": "TRMS", "desc": "Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.", "features": ["Derivatives trading", "Automated workflows", "Risk management", "Trade processing", "Compliance monitoring", "Real-time analytics"], "target": "Large corporations and financial institutions with active trading operations" },
-                    { "name": "Integrity", "category": "TRMS", "desc": "Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.", "features": ["Governance controls", "Audit trails", "Compliance management", "Policy enforcement", "Risk controls", "Workflow approval"], "target": "Highly regulated industries requiring strict governance and compliance", "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" },
-                    { "name": "IT2", "category": "TRMS", "desc": "Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.", "features": ["Integrated platform", "Cash management", "Risk analytics", "Payment processing", "Bank connectivity", "Unified reporting"], "target": "Large enterprises seeking integrated treasury technology solutions", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/it2/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Datalog", "category": "TRMS", "desc": "Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.", "features": ["Advanced analytics", "Multi-entity support", "Data visualization", "Custom reporting", "Cash positioning", "Risk monitoring"], "target": "Large corporations requiring sophisticated analytics and reporting", "videoUrl": "https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk", "websiteUrl": "https://www.datalog-finance.com/en/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Coupa", "category": "TRMS", "desc": "Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.", "features": ["Spend management", "Treasury integration", "Procurement workflows", "Supplier management", "Analytics dashboard", "Automation tools"], "target": "Large enterprises requiring integrated spend and treasury management", "videoUrl": "https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC", "websiteUrl": "https://www.coupa.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Treasury Cube", "category": "TRMS", "desc": "Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.", "features": ["Modular design", "Customizable features", "Scalable architecture", "Growth-focused", "Flexible pricing", "Configurable workflows"], "target": "Growing companies requiring scalable and customizable treasury solutions", "websiteUrl": "https://treasurycube.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
+                    {
+                        "name": "Kyriba",
+                        "category": "TRMS",
+                        "desc": "Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.",
+                        "features": ["AI-driven cash forecasting", "Real-time risk analytics", "Derivatives management", "Multi-bank connectivity", "Regulatory compliance", "Hedge accounting automation"],
+                        "target": "Large enterprises and multinational corporations with complex treasury operations",
+                        "videoUrl": "https://youtu.be/WyWeobyqzfQ",
+                        "websiteUrl": "https://www.kyriba.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "GTreasury",
+                        "category": "TRMS",
+                        "desc": "Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.",
+                        "features": ["Deep ERP integration", "Multi-entity consolidation", "Advanced analytics", "Customizable workflows", "Real-time reporting", "API connectivity"],
+                        "target": "Fortune 500 companies requiring complex consolidation and reporting",
+                        "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j",
+                        "websiteUrl": "https://gtreasury.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Reval",
+                        "category": "TRMS",
+                        "desc": "Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.",
+                        "features": ["Derivatives valuation", "Hedge accounting", "Market data integration", "Risk analytics", "Regulatory reporting", "Trade capture"],
+                        "target": "Financial institutions and corporations with complex derivative portfolios",
+                        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o",
+                        "websiteUrl": "https://iongroup.com/products/treasury/reval/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Quantum",
+                        "category": "TRMS",
+                        "desc": "Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.",
+                        "features": ["Real-time risk monitoring", "Portfolio optimization", "Stress testing", "Automated hedging", "Compliance controls", "Advanced analytics"],
+                        "target": "Investment banks and large financial institutions",
+                        "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr"
+                    }, {
+                        "name": "WallStreet Suite",
+                        "category": "TRMS",
+                        "desc": "Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.",
+                        "features": ["Multi-asset support", "Advanced analytics", "Regulatory compliance", "Trade management", "Risk controls", "Market data feeds"],
+                        "target": "Large banks and corporations requiring full-scale treasury operations",
+                        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o",
+                        "websiteUrl": "https://iongroup.com/products/treasury/wallstreet-suite/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "ATOM",
+                        "category": "TRMS",
+                        "desc": "Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.",
+                        "features": ["Derivatives trading", "Automated workflows", "Risk management", "Trade processing", "Compliance monitoring", "Real-time analytics"],
+                        "target": "Large corporations and financial institutions with active trading operations"
+                    }, {
+                        "name": "Integrity",
+                        "category": "TRMS",
+                        "desc": "Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.",
+                        "features": ["Governance controls", "Audit trails", "Compliance management", "Policy enforcement", "Risk controls", "Workflow approval"],
+                        "target": "Highly regulated industries requiring strict governance and compliance",
+                        "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr"
+                    }, {
+                        "name": "IT2",
+                        "category": "TRMS",
+                        "desc": "Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.",
+                        "features": ["Integrated platform", "Cash management", "Risk analytics", "Payment processing", "Bank connectivity", "Unified reporting"],
+                        "target": "Large enterprises seeking integrated treasury technology solutions",
+                        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o",
+                        "websiteUrl": "https://iongroup.com/products/treasury/it2/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Datalog",
+                        "category": "TRMS",
+                        "desc": "Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.",
+                        "features": ["Advanced analytics", "Multi-entity support", "Data visualization", "Custom reporting", "Cash positioning", "Risk monitoring"],
+                        "target": "Large corporations requiring sophisticated analytics and reporting",
+                        "videoUrl": "https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk",
+                        "websiteUrl": "https://www.datalog-finance.com/en/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Coupa",
+                        "category": "TRMS",
+                        "desc": "Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.",
+                        "features": ["Spend management", "Treasury integration", "Procurement workflows", "Supplier management", "Analytics dashboard", "Automation tools"],
+                        "target": "Large enterprises requiring integrated spend and treasury management",
+                        "videoUrl": "https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC",
+                        "websiteUrl": "https://www.coupa.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Treasury Cube",
+                        "category": "TRMS",
+                        "desc": "Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.",
+                        "features": ["Modular design", "Customizable features", "Scalable architecture", "Growth-focused", "Flexible pricing", "Configurable workflows"],
+                        "target": "Growing companies requiring scalable and customizable treasury solutions",
+                        "websiteUrl": "https://treasurycube.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    },
 
                     // CASH
-                    { "name": "Trovata", "category": "CASH", "desc": "AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.", "features": ["AI forecasting", "Real-time connectivity", "Predictive analytics", "Cash visibility", "Mobile access", "API integration"], "target": "Mid to large companies seeking AI-driven cash management solutions", "videoUrl": "https://youtu.be/Vx4At4BN-og", "websiteUrl": "https://trovata.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Tesorio", "category": "CASH", "desc": "Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.", "features": ["ML optimization", "Automated forecasting", "Scenario planning", "Workflow automation", "Integration tools", "Performance analytics"], "target": "Growth companies and mid-market businesses optimizing cash flow", "websiteUrl": "https://www.tesorio.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Autocash.ai", "category": "CASH", "desc": "AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.", "features": ["AI predictions", "Automated scenarios", "Smart recommendations", "Risk assessment", "Cash optimization", "Intelligent alerts"], "target": "Tech-forward companies embracing AI-driven financial operations", "videoUrl": "https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB", "websiteUrl": "https://www.autocash.ai/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Balance", "category": "CASH", "desc": "Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.", "features": ["Real-time visibility", "Auto reconciliation", "Multi-currency", "Cash positioning", "Bank connectivity", "Streamlined UX"], "target": "Companies needing real-time cash visibility and automated reconciliation", "websiteUrl": "https://www.balancecash.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Nilus", "category": "CASH", "desc": "Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.", "features": ["Advanced forecasting", "Scenario planning", "Variance analysis", "Performance tracking", "Budget integration", "Precision modeling"], "target": "Companies requiring sophisticated cash forecasting and scenario analysis", "websiteUrl": "https://www.nilus.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Obol", "category": "CASH", "desc": "Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.", "features": ["Liquidity optimization", "Digital workflows", "Real-time data", "Modern interface", "Mobile platform", "Automated reporting"], "target": "Modern finance teams seeking digital-first cash management solutions", "videoUrl": "https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa", "websiteUrl": "https://www.obol.app/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Panax", "category": "CASH", "desc": "Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.", "features": ["Working capital optimization", "Payment timing analytics", "A/R & A/P integration", "Cash flow enhancement", "Performance tracking", "Optimization tools"], "target": "Companies focused on working capital optimization and payment timing", "videoUrl": "https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8", "websiteUrl": "https://www.thepanax.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Statement", "category": "CASH", "desc": "Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.", "features": ["Automated processing", "Data extraction", "Reconciliation tools", "Data validation", "Exception handling", "API integration"], "target": "Companies seeking automated bank statement processing and data extraction", "websiteUrl": "https://www.statement.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Treasury Suite", "category": "CASH", "desc": "Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.", "features": ["Comprehensive suite", "Cash forecasting", "Liquidity optimization", "Workflow management", "Bank connectivity", "Integrated platform"], "target": "Companies requiring a complete cash management suite with integrated functionality", "websiteUrl": "https://www.treasurysuite.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Vesto", "category": "CASH", "desc": "Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.", "features": ["Yield optimization", "Risk monitoring", "Investment tracking", "Liquidity management", "Performance analytics", "Compliance tools"], "target": "Companies with significant cash positions seeking yield optimization", "websiteUrl": "https://www.vesto.com/about?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    
+                    {
+                        "name": "Trovata",
+                        "category": "CASH",
+                        "desc": "AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.",
+                        "features": ["AI forecasting", "Real-time connectivity", "Predictive analytics", "Cash visibility", "Mobile access", "API integration"],
+                        "target": "Mid to large companies seeking AI-driven cash management solutions",
+                        "videoUrl": "https://youtu.be/Vx4At4BN-og",
+                        "websiteUrl": "https://trovata.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Tesorio",
+                        "category": "CASH",
+                        "desc": "Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.",
+                        "features": ["ML optimization", "Automated forecasting", "Scenario planning", "Workflow automation", "Integration tools", "Performance analytics"],
+                        "target": "Growth companies and mid-market businesses optimizing cash flow",
+                        "websiteUrl": "https://www.tesorio.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Autocash.ai",
+                        "category": "CASH",
+                        "desc": "AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.",
+                        "features": ["AI predictions", "Automated scenarios", "Smart recommendations", "Risk assessment", "Cash optimization", "Intelligent alerts"],
+                        "target": "Tech-forward companies embracing AI-driven financial operations",
+                        "videoUrl": "https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB",
+                        "websiteUrl": "https://www.autocash.ai/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Balance",
+                        "category": "CASH",
+                        "desc": "Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.",
+                        "features": ["Real-time visibility", "Auto reconciliation", "Multi-currency", "Cash positioning", "Bank connectivity", "Streamlined UX"],
+                        "target": "Companies needing real-time cash visibility and automated reconciliation",
+                        "websiteUrl": "https://www.balancecash.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Nilus",
+                        "category": "CASH",
+                        "desc": "Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.",
+                        "features": ["Advanced forecasting", "Scenario planning", "Variance analysis", "Performance tracking", "Budget integration", "Precision modeling"],
+                        "target": "Companies requiring sophisticated cash forecasting and scenario analysis",
+                        "websiteUrl": "https://www.nilus.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Obol",
+                        "category": "CASH",
+                        "desc": "Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.",
+                        "features": ["Liquidity optimization", "Digital workflows", "Real-time data", "Modern interface", "Mobile platform", "Automated reporting"],
+                        "target": "Modern finance teams seeking digital-first cash management solutions",
+                        "videoUrl": "https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa",
+                        "websiteUrl": "https://www.obol.app/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Panax",
+                        "category": "CASH",
+                        "desc": "Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.",
+                        "features": ["Working capital optimization", "Payment timing analytics", "A/R & A/P integration", "Cash flow enhancement", "Performance tracking", "Optimization tools"],
+                        "target": "Companies focused on working capital optimization and payment timing",
+                        "videoUrl": "https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8",
+                        "websiteUrl": "https://www.thepanax.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Statement",
+                        "category": "CASH",
+                        "desc": "Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.",
+                        "features": ["Automated processing", "Data extraction", "Reconciliation tools", "Data validation", "Exception handling", "API integration"],
+                        "target": "Companies seeking automated bank statement processing and data extraction",
+                        "websiteUrl": "https://www.statement.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Treasury Suite",
+                        "category": "CASH",
+                        "desc": "Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.",
+                        "features": ["Comprehensive suite", "Cash forecasting", "Liquidity optimization", "Workflow management", "Bank connectivity", "Integrated platform"],
+                        "target": "Companies requiring a complete cash management suite with integrated functionality",
+                        "websiteUrl": "https://www.treasurysuite.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Vesto",
+                        "category": "CASH",
+                        "desc": "Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.",
+                        "features": ["Yield optimization", "Risk monitoring", "Investment tracking", "Liquidity management", "Performance analytics", "Compliance tools"],
+                        "target": "Companies with significant cash positions seeking yield optimization",
+                        "websiteUrl": "https://www.vesto.com/about?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    },
+
                     // LITE
-                    { "name": "Treasura", "category": "LITE", "desc": "User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.", "features": ["User-friendly", "Essential features", "Simplified setup", "Competitive pricing", "Basic reporting", "Standard integrations"], "target": "Mid-market companies seeking accessible treasury management solutions", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/treasura/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Treasury Curve", "category": "LITE", "desc": "Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.", "features": ["Simplified interface", "Core functionality", "Easy setup", "Streamlined UX", "Basic reporting", "Cost-effective"], "target": "Companies seeking simplified treasury management with core functionality", "videoUrl": "https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv", "websiteUrl": "https://www.treasurycurve.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Bottomline", "category": "LITE", "desc": "Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.", "features": ["Payment automation", "Fraud protection", "Banking integration", "Multi-bank support", "Security controls", "Workflow tools"], "target": "Companies prioritizing payment automation and banking integration", "websiteUrl": "https://www.bottomline.com/us?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "City Financials", "category": "LITE", "desc": "Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.", "features": ["Mid-market focus", "Growth-oriented", "Quick implementation", "Scalable pricing", "Support included", "Practical features"], "target": "Mid-market companies seeking practical and growth-oriented solutions", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/city-financials/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "HighRadius", "category": "LITE", "desc": "Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.", "features": ["AI automation", "A/R optimization", "Treasury integration", "Machine learning", "Process automation", "Autonomous finance"], "target": "Companies seeking AI-powered automation for A/R and treasury operations", "videoUrl": "https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn", "websiteUrl": "https://www.highradius.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
-                    { "name": "Treasury4", "category": "LITE", "desc": "Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.", "features": ["Modern UI/UX", "Cloud-native", "Intuitive workflows", "API-first design", "Mobile responsive", "Quick deployment"], "target": "Modern finance teams seeking next-generation treasury technology", "videoUrl": "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P", "websiteUrl": "https://www.treasury4.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" }
+                    {
+                        "name": "Treasura",
+                        "category": "LITE",
+                        "desc": "User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.",
+                        "features": ["User-friendly", "Essential features", "Simplified setup", "Competitive pricing", "Basic reporting", "Standard integrations"],
+                        "target": "Mid-market companies seeking accessible treasury management solutions",
+                        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o",
+                        "websiteUrl": "https://iongroup.com/products/treasury/treasura/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Treasury Curve",
+                        "category": "LITE",
+                        "desc": "Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.",
+                        "features": ["Simplified interface", "Core functionality", "Easy setup", "Streamlined UX", "Basic reporting", "Cost-effective"],
+                        "target": "Companies seeking simplified treasury management with core functionality",
+                        "videoUrl": "https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv",
+                        "websiteUrl": "https://www.treasurycurve.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Bottomline",
+                        "category": "LITE",
+                        "desc": "Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.",
+                        "features": ["Payment automation", "Fraud protection", "Banking integration", "Multi-bank support", "Security controls", "Workflow tools"],
+                        "target": "Companies prioritizing payment automation and banking integration",
+                        "websiteUrl": "https://www.bottomline.com/us?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "City Financials",
+                        "category": "LITE",
+                        "desc": "Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.",
+                        "features": ["Mid-market focus", "Growth-oriented", "Quick implementation", "Scalable pricing", "Support included", "Practical features"],
+                        "target": "Mid-market companies seeking practical and growth-oriented solutions",
+                        "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o",
+                        "websiteUrl": "https://iongroup.com/products/treasury/city-financials/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "HighRadius",
+                        "category": "LITE",
+                        "desc": "Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.",
+                        "features": ["AI automation", "A/R optimization", "Treasury integration", "Machine learning", "Process automation", "Autonomous finance"],
+                        "target": "Companies seeking AI-powered automation for A/R and treasury operations",
+                        "videoUrl": "https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn",
+                        "websiteUrl": "https://www.highradius.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }, {
+                        "name": "Treasury4",
+                        "category": "LITE",
+                        "desc": "Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.",
+                        "features": ["Modern UI/UX", "Cloud-native", "Intuitive workflows", "API-first design", "Mobile responsive", "Quick deployment"],
+                        "target": "Modern finance teams seeking next-generation treasury technology",
+                        "videoUrl": "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P",
+                        "websiteUrl": "https://www.treasury4.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+                    }
                 ];
 
                 // Category information with videos
@@ -1845,7 +2132,7 @@
                         videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" // Add your category overview video here
                     }
                 };
-                
+
                 const cashTags = ["Bank Connectivity", "Basic Forecasting Tools", "Cash Visibility", "Transaction Search, Sort, Tag, Group"];
                 const liteTags = [...cashTags, "Cash Positioning", "Market Data", "Treasury Payments"];
                 const trmsTags = [...liteTags, "AI Forecasting", "AI Insights", "AP Payments", "Bank Account Management", "Basic FX (Spots, FWD)", "Cash Accounting", "Debt Management", "Deal Accounting", "In-House Banking", "Investments", "SWIFT Connectivity", "Derivatives (Interest, FX)", "Intercompany Loans", "Instrument Valuations"];
@@ -1861,7 +2148,7 @@
                 this.isEditMode = false;
                 this.editableContent = {};
                 this.filteredTools = [];
-                
+
                 this.init();
             }
 
@@ -1874,7 +2161,7 @@
                 this.setupModals();
                 this.updateCounts();
                 this.filterAndDisplayTools();
-                
+
                 setTimeout(() => {
                     const loading = document.getElementById('loadingScreen');
                     if (loading) loading.style.display = 'none';
@@ -1891,7 +2178,7 @@
             loadSavedData() {
                 // Clear old tools data to use updated version
                 localStorage.removeItem('treasuryStackTools');
-                
+
                 const savedContent = localStorage.getItem('treasuryStackContent');
                 if (savedContent) {
                     this.editableContent = JSON.parse(savedContent);
@@ -1923,10 +2210,10 @@
                     const key = element.dataset.key;
                     this.editableContent[key] = element.innerHTML;
                 });
-                
+
                 localStorage.setItem('treasuryStackContent', JSON.stringify(this.editableContent));
                 localStorage.setItem('treasuryStackTools', JSON.stringify(this.TREASURY_TOOLS));
-                
+
                 const notification = document.getElementById('saveNotification');
                 if (notification) {
                     notification.style.display = 'block';
@@ -1957,7 +2244,7 @@
                         }
                     });
                 });
-                
+
                 document.getElementById('mainContent').addEventListener('click', (e) => {
                     if (e.target.classList.contains('show-more-tags-btn')) {
                         const toolName = e.target.dataset.toolName;
@@ -2010,7 +2297,7 @@
             setupModals() {
                 const toolModal = document.getElementById('toolModal');
                 const toolModalClose = document.getElementById('modalClose');
-                
+
                 if (toolModalClose) {
                     toolModalClose.addEventListener('click', () => this.closeModal('toolModal'));
                 }
@@ -2022,7 +2309,7 @@
 
                 const categoryModal = document.getElementById('categoryModal');
                 const categoryModalClose = document.getElementById('categoryModalClose');
-                
+
                 if (categoryModalClose) {
                     categoryModalClose.addEventListener('click', () => this.closeModal('categoryModal'));
                 }
@@ -2046,10 +2333,10 @@
                 const modalDescription = document.getElementById('modalDescription');
                 const modalWebsiteLink = document.getElementById('modalWebsiteLink');
                 const modalBody = modal?.querySelector('.modal-body');
-                
+
                 if (modalTitle) modalTitle.textContent = tool.name;
                 if (modalDescription) modalDescription.textContent = tool.desc;
-                
+
                 if (modalWebsiteLink) {
                     if (tool.websiteUrl) {
                         modalWebsiteLink.href = tool.websiteUrl;
@@ -2058,16 +2345,16 @@
                         modalWebsiteLink.style.display = 'none';
                     }
                 }
-                
+
                 const existingVideoSection = modalBody?.querySelector('.video-demo-section');
                 if (existingVideoSection) {
                     existingVideoSection.remove();
                 }
-                
+
                 if (tool.videoUrl && modalBody) {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-demo-section';
-                    
+
                     let embedUrl = tool.videoUrl;
                     if (tool.videoUrl.includes('youtu.be/')) {
                         const videoId = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
@@ -2076,20 +2363,20 @@
                         const videoId = new URL(tool.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
-                    
+
                     videoSection.innerHTML = `
                         <h4>🎥 Demo Video</h4>
                         <div class="video-container">
                             <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
                         </div>
                     `;
-                    
+
                     modalBody.insertBefore(videoSection, modalBody.firstChild);
                 }
-                
+
                 if (modal) {
                     modal.classList.add('show');
-                    document.body.style.overflow = 'hidden';
+                    document.body.classList.add('modal-open');
                 }
             }
 
@@ -2100,11 +2387,11 @@
                 const modalTarget = document.getElementById('categoryModalTarget');
                 const modalFeatures = document.getElementById('categoryModalFeatures');
                 const modalBody = modal?.querySelector('.modal-body');
-                
+
                 if (modalTitle) modalTitle.textContent = categoryInfo.name;
                 if (modalDescription) modalDescription.textContent = categoryInfo.description;
                 if (modalTarget) modalTarget.textContent = categoryInfo.target;
-                
+
                 if (modalFeatures) {
                     modalFeatures.innerHTML = '';
                     categoryInfo.features.forEach(feature => {
@@ -2113,38 +2400,38 @@
                         modalFeatures.appendChild(li);
                     });
                 }
-                
+
                 const existingVideoSection = modalBody?.querySelector('.video-demo-section');
                 if (existingVideoSection) {
                     existingVideoSection.remove();
                 }
-                
+
                 if (categoryInfo.videoUrl && modalBody) {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-demo-section';
-                    
+
                     let embedUrl = categoryInfo.videoUrl;
-                     if (categoryInfo.videoUrl.includes('youtu.be/')) {
+                    if (categoryInfo.videoUrl.includes('youtu.be/')) {
                         const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     } else if (categoryInfo.videoUrl.includes('youtube.com/watch')) {
                         const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
-                    
+
                     videoSection.innerHTML = `
                         <h4>🎥 Category Overview Video</h4>
                         <div class="video-container">
                             <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
                         </div>
                     `;
-                    
+
                     modalBody.insertBefore(videoSection, modalBody.firstChild);
                 }
-                
+
                 if (modal) {
                     modal.classList.add('show');
-                    document.body.style.overflow = 'hidden';
+                    document.body.classList.add('modal-open');
                 }
             }
 
@@ -2152,7 +2439,7 @@
                 const modal = document.getElementById(modalId);
                 if (modal) {
                     modal.classList.remove('show');
-                    document.body.style.overflow = 'auto';
+                    document.body.classList.remove('modal-open');
                 }
             }
 
@@ -2169,13 +2456,13 @@
                             ...(tool.tags || []),
                             ...(tool.features || [])
                         ].join(' ').toLowerCase();
-                        
+
                         return searchableText.includes(lowerCaseSearchTerm);
                     });
                 } else {
-                    tools = this.currentFilter === 'ALL' 
-                        ? this.TREASURY_TOOLS 
-                        : this.TREASURY_TOOLS.filter(tool => tool.category === this.currentFilter);
+                    tools = this.currentFilter === 'ALL' ?
+                        this.TREASURY_TOOLS :
+                        this.TREASURY_TOOLS.filter(tool => tool.category === this.currentFilter);
                 }
 
                 this.filteredTools = tools;
@@ -2186,7 +2473,7 @@
             displayFilteredTools() {
                 const categories = ['TRMS', 'CASH', 'LITE'];
                 const hasResults = this.filteredTools.length > 0;
-                
+
                 const noResults = document.getElementById('noResults');
                 if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
 
@@ -2194,11 +2481,11 @@
                     const section = document.querySelector(`.category-section[data-category="${category}"]`);
                     const container = document.getElementById(`tools-${category}`);
                     const categoryTools = this.filteredTools.filter(tool => tool.category === category);
-                    
+
                     if (section) {
-                       section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) && categoryTools.length > 0 ? 'block' : 'none';
+                        section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) && categoryTools.length > 0 ? 'block' : 'none';
                     }
-                    
+
                     if (this.searchTerm && section) {
                         section.style.display = categoryTools.length > 0 ? 'block' : 'none';
                     }
@@ -2216,18 +2503,18 @@
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
-                
+
                 const iconMap = {
                     'TRMS': '🏢',
                     'CASH': '💰',
                     'LITE': '⚡'
                 };
-                
+
                 const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
                 const sortedTags = [...tags].sort((a, b) => a.localeCompare(b));
                 const displayTags = sortedTags.slice(0, 3);
                 const hasMoreTags = sortedTags.length > 3;
-                
+
                 card.innerHTML = `
                     <div class="tool-card-content">
                         <div class="tool-header">
@@ -2249,16 +2536,16 @@
                         </div>
                     </div>
                 `;
-                
+
                 if (!this.isEditMode) {
                     card.addEventListener('click', (e) => {
                         if (!e.target.classList.contains('show-more-tags-btn') &&
                             !e.target.classList.contains('show-less-tags-btn')) {
-                           this.showToolModal(tool);
+                            this.showToolModal(tool);
                         }
                     });
                 }
-                
+
                 return card;
             }
 
@@ -2273,7 +2560,7 @@
                     }
                     visibleTotal += count;
                 });
-                
+
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
                     totalTools.textContent = this.searchTerm ? visibleTotal : this.TREASURY_TOOLS.length;
@@ -2289,7 +2576,7 @@
                         countElement.textContent = count;
                     }
                 });
-                
+
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
                     totalTools.textContent = this.TREASURY_TOOLS.length;
@@ -2301,34 +2588,34 @@
                 const editIcon = editToggle?.querySelector('.edit-icon');
                 const editText = editToggle?.querySelector('.edit-text');
                 const exportBtn = document.getElementById('exportBtn');
-                
+
                 if (editToggle) {
                     editToggle.addEventListener('click', () => {
                         this.isEditMode = !this.isEditMode;
                         document.body.classList.toggle('edit-mode', this.isEditMode);
                         editToggle.classList.toggle('active', this.isEditMode);
-                        
+
                         if (this.isEditMode) {
                             if (editIcon) editIcon.textContent = '💾';
                             if (editText) editText.textContent = 'Save & Exit';
                             if (exportBtn) exportBtn.style.display = 'flex';
-                            
+
                             document.querySelectorAll('.editable').forEach(element => {
                                 element.contentEditable = "true";
                             });
-                            
+
                         } else {
                             if (editIcon) editIcon.textContent = '✏️';
                             if (editText) editText.textContent = 'Edit Mode';
                             if (exportBtn) exportBtn.style.display = 'none';
-                            
+
                             document.querySelectorAll('.editable').forEach(element => {
                                 element.contentEditable = "false";
                             });
-                            
+
                             this.saveData();
                         }
-                        this.filterAndDisplayTools(); 
+                        this.filterAndDisplayTools();
                     });
                 }
 
@@ -2338,7 +2625,7 @@
 
                 const logoUpload = document.getElementById('logoUpload');
                 const logoInput = document.getElementById('logoInput');
-                
+
                 if (logoUpload && logoInput) {
                     logoUpload.addEventListener('click', () => {
                         if (this.isEditMode) logoInput.click();
@@ -2368,14 +2655,16 @@
             exportHTML() {
                 const tempBody = document.body.cloneNode(true);
                 tempBody.classList.remove('edit-mode');
-                
+
                 tempBody.querySelector('#editToggle')?.remove();
                 tempBody.querySelector('#exportBtn')?.remove();
                 tempBody.querySelector('.edit-mode-banner')?.remove();
                 tempBody.querySelectorAll('.editable').forEach(el => el.removeAttribute('contenteditable'));
-                
+
                 const htmlContent = `<!DOCTYPE html>\n${document.documentElement.cloneNode(true).outerHTML}`;
-                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const blob = new Blob([htmlContent], {
+                    type: 'text/html'
+                });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -2388,50 +2677,52 @@
         }
 
         let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
+        document.addEventListener('touchend', function(event) {
             const now = Date.now();
             if (now - lastTouchEnd <= 300) {
                 event.preventDefault();
             }
             lastTouchEnd = now;
-        }, { passive: false });
+        }, {
+            passive: false
+        });
     </script>
-<script>
-  let lastHeight = 0;
-  let resizeTimeout;
-  
-  function sendHeight() {
-    // Clear any pending resize
-    clearTimeout(resizeTimeout);
-    
-    // Debounce to prevent too many updates
-    resizeTimeout = setTimeout(() => {
-      // Get the actual content height
-      const height = document.documentElement.scrollHeight;
-      
-      // Only send if height actually changed
-      if (Math.abs(height - lastHeight) > 5) {
-        lastHeight = height;
-        window.parent.postMessage({ 
-          type: "setHeight", 
-          height: height 
-        }, "*");
-      }
-    }, 100);
-  }
+    <script>
+        let lastHeight = 0;
+        let resizeTimeout;
 
-  // Send height on load
-  window.addEventListener("load", sendHeight);
-  
-  // Send height on window resize only
-  window.addEventListener("resize", sendHeight);
-  
-  // Don't use MutationObserver as it can cause infinite loops
-  // Instead, call sendHeight after specific actions
-  document.addEventListener('click', () => {
-    setTimeout(sendHeight, 300);
-  });
-</script>
+        function sendHeight() {
+            // Clear any pending resize
+            clearTimeout(resizeTimeout);
+
+            // Debounce to prevent too many updates
+            resizeTimeout = setTimeout(() => {
+                // Get the actual content height
+                const height = document.documentElement.scrollHeight;
+
+                // Only send if height actually changed
+                if (Math.abs(height - lastHeight) > 5) {
+                    lastHeight = height;
+                    window.parent.postMessage({
+                        type: "setHeight",
+                        height: height
+                    }, "*");
+                }
+            }, 100);
+        }
+
+        // Send height on load
+        window.addEventListener("load", sendHeight);
+
+        // Send height on window resize only
+        window.addEventListener("resize", sendHeight);
+
+        // Don't use MutationObserver as it can cause infinite loops
+        // Instead, call sendHeight after specific actions
+        document.addEventListener('click', () => {
+            setTimeout(sendHeight, 300);
+        });
+    </script>
 </body>
 
 </html>
