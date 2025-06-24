@@ -737,21 +737,37 @@
         }
 
         .modal-header {
-            padding: 24px 24px 16px !important;
+            padding: 20px 24px !important;
             border-bottom: 1px solid #f3f4f6 !important;
-            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        
+        .modal-header-main {
+            flex-grow: 1;
+        }
+
+        .modal-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            margin-top: 4px;
         }
 
         .modal-title {
             font-size: 1.5rem !important;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 6px !important;
+            margin: 0 0 4px 0 !important;
         }
 
         .modal-subtitle {
             color: #6b7280;
             font-size: 0.9rem !important;
+            margin: 0 !important;
         }
 
         .modal-body {
@@ -813,34 +829,31 @@
             color: #6366f1;
             font-weight: bold;
         }
-
-        .website-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
-            color: white;
+        
+        .website-link--modal {
+            background: rgba(114, 37, 218, 0.2);
+            color: #f0e6ff;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-decoration: none;
-            padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
         }
 
-        .website-link:hover {
-            background: linear-gradient(135deg, #4f46e5, #3730a3);
+        .website-link--modal:hover {
+            background: rgba(114, 37, 218, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
             color: white;
             text-decoration: none;
         }
 
         .modal-close {
-            position: absolute;
-            top: 16px !important;
-            right: 16px !important;
             background: #f3f4f6;
             border: none;
             color: #281345;
@@ -855,6 +868,7 @@
             transition: all 0.3s ease;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-weight: 600;
+            position: static; /* Removed absolute positioning */
         }
 
         .modal-close:hover {
@@ -917,6 +931,17 @@
 
             .tool-card {
                 padding: 14px; /* Reduced for mobile */
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .modal-header-actions {
+                flex-direction: row-reverse;
+                justify-content: flex-end;
+                margin-top: 12px;
             }
 
             .modal-content {
@@ -1016,7 +1041,7 @@
 
                     <div class="stats-bar">
                         <div class="stat-card">
-                            <div class="stat-number" id="totalTools">33</div>
+                            <div class="stat-number" id="totalTools">34</div>
                             <div class="stat-label">Tools</div>
                         </div>
                         <div class="stat-card">
@@ -1056,7 +1081,7 @@
                         </p>
                     </div>
                     <div class="category-count">
-                        <span class="count-number" id="count-TRMS">12</span>
+                        <span class="count-number" id="count-TRMS">13</span>
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
@@ -1068,7 +1093,7 @@
                 <div class="category-header" data-category="CASH">
                     <div class="category-info">
                         <h2 class="category-title">
-                            💰 <span class="editable" data-key="cash-title" contenteditable="false">Cash Tools</span>
+                            💰 <span class="editable" data-key="cash-title" contenteditable="false">CASH TOOLS</span>
                             <span class="category-badge">Essential</span>
                         </h2>
                         <p class="category-description editable" data-key="cash-desc" contenteditable="false">
@@ -1108,21 +1133,22 @@
         <div class="modal" id="toolModal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button class="modal-close" id="modalClose">×</button>
-                    <h3 class="modal-title" id="modalTitle">Treasury Tool</h3>
-                    <p class="modal-subtitle" id="modalSubtitle">Category</p>
+                    <div class="modal-header-main">
+                        <h3 class="modal-title" id="modalTitle">Treasury Tool</h3>
+                        <p class="modal-subtitle" id="modalSubtitle">Category</p>
+                    </div>
+                    <div class="modal-header-actions">
+                         <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal">
+                            Visit Website →
+                        </a>
+                        <button class="modal-close" id="modalClose">×</button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <!-- Video will be embedded here if available -->
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
                         <p id="modalDescription">Tool description will appear here.</p>
-                    </div>
-                    <div class="feature-section">
-                        <h4>🌐 Visit Website</h4>
-                        <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link">
-                            Visit Official Website →
-                        </a>
                     </div>
                 </div>
             </div>
@@ -1132,9 +1158,12 @@
         <div class="modal" id="categoryModal">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button class="modal-close" id="categoryModalClose">×</button>
-                    <h3 class="modal-title" id="categoryModalTitle">Category Overview</h3>
-                    <p class="modal-subtitle" id="categoryModalSubtitle">Treasury Category</p>
+                     <div class="modal-header-main">
+                        <h3 class="modal-title" id="categoryModalTitle">Category Overview</h3>
+                     </div>
+                     <div class="modal-header-actions">
+                        <button class="modal-close" id="categoryModalClose">×</button>
+                     </div>
                 </div>
                 <div class="modal-body">
                     <!-- Video will be embedded here if available -->
@@ -1166,6 +1195,7 @@
         class TreasuryStack {
             constructor() {
                 this.TREASURY_TOOLS = [
+                    // TRMS
                     { "name": "Kyriba", "category": "TRMS", "desc": "Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.", "features": ["AI-driven cash forecasting", "Real-time risk analytics", "Derivatives management", "Multi-bank connectivity", "Regulatory compliance", "Hedge accounting automation"], "target": "Large enterprises and multinational corporations with complex treasury operations", "videoUrl": "https://youtu.be/WyWeobyqzfQ", "websiteUrl": "https://www.kyriba.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "GTreasury", "category": "TRMS", "desc": "Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.", "features": ["Deep ERP integration", "Multi-entity consolidation", "Advanced analytics", "Customizable workflows", "Real-time reporting", "API connectivity"], "target": "Fortune 500 companies requiring complex consolidation and reporting", "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j", "websiteUrl": "https://gtreasury.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Reval", "category": "TRMS", "desc": "Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.", "features": ["Derivatives valuation", "Hedge accounting", "Market data integration", "Risk analytics", "Regulatory reporting", "Trade capture"], "target": "Financial institutions and corporations with complex derivative portfolios", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/reval/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
@@ -1178,6 +1208,9 @@
                     { "name": "Coupa", "category": "TRMS", "desc": "Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.", "features": ["Spend management", "Treasury integration", "Procurement workflows", "Supplier management", "Analytics dashboard", "Automation tools"], "target": "Large enterprises requiring integrated spend and treasury management", "videoUrl": "https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC", "websiteUrl": "https://www.coupa.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Financial Science", "category": "TRMS", "desc": "Advanced treasury and risk management solutions with sophisticated derivatives pricing, portfolio analytics, and comprehensive risk reporting.", "features": ["Derivatives pricing", "Portfolio analytics", "Risk reporting", "Market data integration", "Advanced calculations", "Compliance tools"], "target": "Financial institutions and corporations requiring advanced risk analytics", "websiteUrl": "https://www.fisci.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "FIS Global", "category": "TRMS", "desc": "Enterprise financial technology platform providing comprehensive treasury management, risk analytics, and global payment solutions.", "features": ["Global payments", "Risk analytics", "Treasury management", "Enterprise integration", "Compliance tools", "Multi-currency support"], "target": "Large financial institutions and multinational corporations", "websiteUrl": "https://www.fisglobal.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
+                    { "name": "SAP", "category": "TRMS", "desc": "An integrated suite within SAP's ERP that provides comprehensive tools for cash and liquidity management, payments, financial risk management, and investment and debt management.", "features": ["Integrated with ERP", "Cash and liquidity management", "Financial risk management", "Debt and investment management", "Payment processing", "Hedge management"], "target": "Companies running on the SAP ecosystem seeking deeply integrated treasury functionality.", "websiteUrl": "https://www.sap.com/products/financial-management/treasury-management.html?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
+
+                    // CASH
                     { "name": "Trovata", "category": "CASH", "desc": "AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.", "features": ["AI forecasting", "Real-time connectivity", "Predictive analytics", "Cash visibility", "Mobile access", "API integration"], "target": "Mid to large companies seeking AI-driven cash management solutions", "videoUrl": "https://youtu.be/Vx4At4BN-og", "websiteUrl": "https://trovata.io/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Tesorio", "category": "CASH", "desc": "Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.", "features": ["ML optimization", "Automated forecasting", "Scenario planning", "Workflow automation", "Integration tools", "Performance analytics"], "target": "Growth companies and mid-market businesses optimizing cash flow", "websiteUrl": "https://www.tesorio.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Autocash.ai", "category": "CASH", "desc": "AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.", "features": ["AI predictions", "Automated scenarios", "Smart recommendations", "Risk assessment", "Cash optimization", "Intelligent alerts"], "target": "Tech-forward companies embracing AI-driven financial operations", "videoUrl": "https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB", "websiteUrl": "https://www.autocash.ai/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
@@ -1190,6 +1223,8 @@
                     { "name": "Vesto", "category": "CASH", "desc": "Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.", "features": ["Yield optimization", "Risk monitoring", "Investment tracking", "Liquidity management", "Performance analytics", "Compliance tools"], "target": "Companies with significant cash positions seeking yield optimization", "websiteUrl": "https://www.vesto.com/about?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Fides Treasury", "category": "CASH", "desc": "Established treasury management platform providing comprehensive cash management, forecasting, and financial workflow solutions.", "features": ["Cash management", "Financial workflows", "Forecasting tools", "Multi-bank connectivity", "Reporting tools", "Integration capabilities"], "target": "Companies seeking established treasury management solutions", "websiteUrl": "https://fides.ch/en/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Treasury4", "category": "CASH", "desc": "Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.", "features": ["Modern UI/UX", "Cloud-native", "Intuitive workflows", "API-first design", "Mobile responsive", "Quick deployment"], "target": "Modern finance teams seeking next-generation treasury technology", "videoUrl": "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P", "websiteUrl": "https://www.treasury4.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
+                    
+                    // LITE
                     { "name": "Treasura", "category": "LITE", "desc": "User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.", "features": ["User-friendly", "Essential features", "Simplified setup", "Competitive pricing", "Basic reporting", "Standard integrations"], "target": "Mid-market companies seeking accessible treasury management solutions", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o", "websiteUrl": "https://iongroup.com/products/treasury/treasura/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Treasury Cube", "category": "LITE", "desc": "Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.", "features": ["Modular design", "Customizable features", "Scalable architecture", "Growth-focused", "Flexible pricing", "Configurable workflows"], "target": "Growing companies requiring scalable and customizable treasury solutions", "websiteUrl": "https://treasurycube.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
                     { "name": "Treasury Curve", "category": "LITE", "desc": "Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.", "features": ["Simplified interface", "Core functionality", "Easy setup", "Streamlined UX", "Basic reporting", "Cost-effective"], "target": "Companies seeking simplified treasury management with core functionality", "videoUrl": "https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv", "websiteUrl": "https://www.treasurycurve.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral" },
@@ -1322,7 +1357,14 @@
 
                 const savedTools = localStorage.getItem('treasuryStackTools');
                 if (savedTools) {
-                    this.TREASURY_TOOLS = JSON.parse(savedTools);
+                    try {
+                        const parsedTools = JSON.parse(savedTools);
+                        if (Array.isArray(parsedTools) && parsedTools.length > 0) {
+                            this.TREASURY_TOOLS = parsedTools;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing saved tools from localStorage", e);
+                    }
                     this.assignTags();
                 }
             }
@@ -1356,7 +1398,6 @@
                     });
                 });
 
-                // Add category header click handlers
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', (e) => {
                         if (!this.isEditMode) {
@@ -1366,6 +1407,17 @@
                             }
                         }
                     });
+                });
+                
+                document.getElementById('mainContent').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('show-more-tags-btn')) {
+                        const toolName = e.target.dataset.toolName;
+                        const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
+                        if (tool) {
+                            const tagsContainer = e.target.parentElement;
+                            tagsContainer.innerHTML = tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                        }
+                    }
                 });
             }
 
@@ -1400,11 +1452,10 @@
                 }
                 if (toolModal) {
                     toolModal.addEventListener('click', (e) => {
-                        if (e.target === toolModal) this.closeModal('toolModal');
+                        if (e.target.closest('.modal-content') === null) this.closeModal('toolModal');
                     });
                 }
 
-                // Category modal setup
                 const categoryModal = document.getElementById('categoryModal');
                 const categoryModalClose = document.getElementById('categoryModalClose');
                 
@@ -1413,7 +1464,7 @@
                 }
                 if (categoryModal) {
                     categoryModal.addEventListener('click', (e) => {
-                        if (e.target === categoryModal) this.closeModal('categoryModal');
+                        if (e.target.closest('.modal-content') === null) this.closeModal('categoryModal');
                     });
                 }
 
@@ -1434,10 +1485,19 @@
                 const modalBody = modal?.querySelector('.modal-body');
                 
                 if (modalTitle) modalTitle.textContent = tool.name;
-                if (modalSubtitle) modalSubtitle.textContent = tool.category;
+                
+                if (modalSubtitle) {
+                    let subtitleText = tool.category;
+                    if (tool.category === 'CASH') {
+                        subtitleText = 'Cash Tools';
+                    } else if (tool.category === 'LITE') {
+                        subtitleText = 'TMS-Lite';
+                    }
+                    modalSubtitle.textContent = subtitleText;
+                }
+
                 if (modalDescription) modalDescription.textContent = tool.desc;
                 
-                // Handle website link
                 if (modalWebsiteLink) {
                     if (tool.websiteUrl) {
                         modalWebsiteLink.href = tool.websiteUrl;
@@ -1447,24 +1507,21 @@
                     }
                 }
                 
-                // Remove any existing video section
                 const existingVideoSection = modalBody?.querySelector('.video-demo-section');
                 if (existingVideoSection) {
                     existingVideoSection.remove();
                 }
                 
-                // Add embedded video if available
                 if (tool.videoUrl && modalBody) {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-demo-section';
                     
-                    // Convert YouTube URL to embed format
                     let embedUrl = tool.videoUrl;
                     if (tool.videoUrl.includes('youtu.be/')) {
                         const videoId = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     } else if (tool.videoUrl.includes('youtube.com/watch')) {
-                        const videoId = tool.videoUrl.split('v=')[1].split('&')[0];
+                        const videoId = new URL(tool.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
                     
@@ -1475,7 +1532,6 @@
                         </div>
                     `;
                     
-                    // Insert video section after the header (as the first section in the body)
                     modalBody.insertBefore(videoSection, modalBody.firstChild);
                 }
                 
@@ -1488,14 +1544,12 @@
             showCategoryModal(categoryInfo, categoryKey) {
                 const modal = document.getElementById('categoryModal');
                 const modalTitle = document.getElementById('categoryModalTitle');
-                const modalSubtitle = document.getElementById('categoryModalSubtitle');
                 const modalDescription = document.getElementById('categoryModalDescription');
                 const modalTarget = document.getElementById('categoryModalTarget');
                 const modalFeatures = document.getElementById('categoryModalFeatures');
                 const modalBody = modal?.querySelector('.modal-body');
                 
                 if (modalTitle) modalTitle.textContent = categoryInfo.name;
-                if (modalSubtitle) modalSubtitle.textContent = `${categoryInfo.badge} Category`;
                 if (modalDescription) modalDescription.textContent = categoryInfo.description;
                 if (modalTarget) modalTarget.textContent = categoryInfo.target;
                 
@@ -1508,24 +1562,21 @@
                     });
                 }
                 
-                // Remove any existing video section
                 const existingVideoSection = modalBody?.querySelector('.video-demo-section');
                 if (existingVideoSection) {
                     existingVideoSection.remove();
                 }
                 
-                // Add embedded video if available
                 if (categoryInfo.videoUrl && modalBody) {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-demo-section';
                     
-                    // Convert YouTube URL to embed format
                     let embedUrl = categoryInfo.videoUrl;
-                    if (categoryInfo.videoUrl.includes('youtu.be/')) {
+                     if (categoryInfo.videoUrl.includes('youtu.be/')) {
                         const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     } else if (categoryInfo.videoUrl.includes('youtube.com/watch')) {
-                        const videoId = categoryInfo.videoUrl.split('v=')[1].split('&')[0];
+                        const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
                     
@@ -1536,7 +1587,6 @@
                         </div>
                     `;
                     
-                    // Insert video section as the first section in the body
                     modalBody.insertBefore(videoSection, modalBody.firstChild);
                 }
                 
@@ -1558,6 +1608,7 @@
                 let tools;
 
                 if (this.searchTerm) {
+                    const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
                     tools = this.TREASURY_TOOLS.filter(tool => {
                         const searchableText = [
                             tool.name,
@@ -1567,7 +1618,7 @@
                             ...(tool.features || [])
                         ].join(' ').toLowerCase();
                         
-                        return searchableText.includes(this.searchTerm);
+                        return searchableText.includes(lowerCaseSearchTerm);
                     });
                 } else {
                     tools = this.currentFilter === 'ALL' 
@@ -1592,7 +1643,9 @@
                     const container = document.getElementById(`tools-${category}`);
                     const categoryTools = this.filteredTools.filter(tool => tool.category === category);
                     
-                    if (section) section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) ? 'block' : 'none';
+                    if (section) {
+                       section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) && categoryTools.length > 0 ? 'block' : 'none';
+                    }
                     
                     if (this.searchTerm && section) {
                         section.style.display = categoryTools.length > 0 ? 'block' : 'none';
@@ -1600,13 +1653,10 @@
 
                     if (container) {
                         container.innerHTML = '';
-                    
-                        if (categoryTools.length > 0) {
-                            categoryTools.forEach(tool => {
-                                const card = this.createToolCard(tool, category);
-                                container.appendChild(card);
-                            });
-                        } 
+                        categoryTools.forEach(tool => {
+                            const card = this.createToolCard(tool, category);
+                            container.appendChild(card);
+                        });
                     }
                 });
             }
@@ -1633,7 +1683,7 @@
                                     ${tool.name}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
-                                <div class="tool-type">${tool.category}</div>
+                                <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category}</div>
                             </div>
                             <div class="tool-icon">${iconMap[tool.category]}</div>
                         </div>
@@ -1642,32 +1692,38 @@
                     <div class="tool-card-actions">
                         <div class="tool-tags">
                             ${displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
-                            ${hasMoreTags ? '<button class="show-more-tags-btn">... more</button>' : ''}
+                            ${hasMoreTags ? `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>` : ''}
                         </div>
                     </div>
                 `;
                 
-                card.addEventListener('click', (e) => {
-                    if (!this.isEditMode && !e.target.closest('.show-more-tags-btn')) {
-                        this.showToolModal(tool);
-                    }
-                });
+                if (!this.isEditMode) {
+                    card.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('show-more-tags-btn')) {
+                           this.showToolModal(tool);
+                        }
+                    });
+                }
                 
                 return card;
             }
 
             updateVisibleCounts() {
                 const categories = ['TRMS', 'CASH', 'LITE'];
+                let visibleTotal = 0;
                 categories.forEach(category => {
                     const count = this.filteredTools.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);
                     if (countElement) {
                         countElement.textContent = count;
                     }
+                    visibleTotal += count;
                 });
                 
                 const totalTools = document.getElementById('totalTools');
-                if (totalTools) totalTools.textContent = this.filteredTools.length;
+                if (totalTools) {
+                    totalTools.textContent = this.searchTerm ? visibleTotal : this.TREASURY_TOOLS.length;
+                }
             }
 
             updateCounts() {
@@ -1681,7 +1737,9 @@
                 });
                 
                 const totalTools = document.getElementById('totalTools');
-                if (totalTools) totalTools.textContent = this.TREASURY_TOOLS.length;
+                if (totalTools) {
+                    totalTools.textContent = this.TREASURY_TOOLS.length;
+                }
             }
 
             setupEditMode() {
@@ -1702,7 +1760,7 @@
                             if (exportBtn) exportBtn.style.display = 'flex';
                             
                             document.querySelectorAll('.editable').forEach(element => {
-                                element.contentEditable = true;
+                                element.contentEditable = "true";
                             });
                             
                         } else {
@@ -1711,12 +1769,12 @@
                             if (exportBtn) exportBtn.style.display = 'none';
                             
                             document.querySelectorAll('.editable').forEach(element => {
-                                element.contentEditable = false;
+                                element.contentEditable = "false";
                             });
                             
                             this.saveData();
                         }
-                        this.filterAndDisplayTools();
+                        this.filterAndDisplayTools(); 
                     });
                 }
 
@@ -1736,14 +1794,14 @@
                         const file = e.target.files[0];
                         if (file) {
                             const reader = new FileReader();
-                            reader.onload = (e) => {
+                            reader.onload = (event) => {
                                 const logoIcon = document.getElementById('logoIcon');
                                 const logoImage = document.getElementById('logoImage');
-                                if (logoIcon && logoImage) {
+                                if (logoIcon && logoImage && event.target) {
                                     logoIcon.style.display = 'none';
-                                    logoImage.src = e.target.result;
+                                    logoImage.src = event.target.result;
                                     logoImage.style.display = 'block';
-                                    localStorage.setItem('treasuryStackLogo', e.target.result);
+                                    localStorage.setItem('treasuryStackLogo', event.target.result);
                                     this.saveData();
                                 }
                             };
@@ -1754,7 +1812,15 @@
             }
 
             exportHTML() {
-                const htmlContent = document.documentElement.outerHTML;
+                const tempBody = document.body.cloneNode(true);
+                tempBody.classList.remove('edit-mode');
+                
+                tempBody.querySelector('#editToggle')?.remove();
+                tempBody.querySelector('#exportBtn')?.remove();
+                tempBody.querySelector('.edit-mode-banner')?.remove();
+                tempBody.querySelectorAll('.editable').forEach(el => el.removeAttribute('contenteditable'));
+                
+                const htmlContent = `<!DOCTYPE html>\n${document.documentElement.cloneNode(true).outerHTML}`;
                 const blob = new Blob([htmlContent], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1767,7 +1833,6 @@
             }
         }
 
-        // Prevent zoom on double-tap (mobile)
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (event) {
             const now = Date.now();
