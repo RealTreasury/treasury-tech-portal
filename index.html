@@ -2163,12 +2163,6 @@
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
                 
-                const tagsHtml = (tool.tags || []).map((tag, index) => {
-                    return `<span class="tool-tag">${tag}</span>`;
-                }).join('');
-
-                const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
-
                 let cardContent;
 
                 if (this.isEditMode) {
@@ -2202,6 +2196,12 @@
                         </div>
                     `;
                 } else {
+                     const tagsHtml = (tool.tags || []).map((tag, index) => {
+                        return `<span class="tool-tag">${tag}</span>`;
+                    }).join('');
+
+                    const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
+
                      cardContent = `
                         <div class="tool-header">
                             <div>
@@ -2226,7 +2226,6 @@
                 card.innerHTML = cardContent;
 
                 if (this.isEditMode) {
-                    // Add event listeners for editable fields
                     card.querySelectorAll('.tool-editable').forEach(element => {
                         element.addEventListener('input', (e) => {
                             const toolIndex = parseInt(e.target.dataset.toolIndex);
@@ -2236,13 +2235,12 @@
                         });
                     });
                     
-                    // Add event listener for video button
                     card.querySelector('.add-video-btn').addEventListener('click', (e) => {
+                         e.stopPropagation();
                         const toolIndex = parseInt(e.target.dataset.toolIndex);
                         this.promptForVideo(toolIndex);
                     });
 
-                    // Add event listeners for tag management
                     card.querySelectorAll('.tag-remove').forEach(button => {
                         button.addEventListener('click', (e) => {
                             e.stopPropagation();
@@ -2258,21 +2256,20 @@
                         this.addTag(toolIndex);
                     });
 
-                    // Make tags editable
-                    card.querySelectorAll('.tool-tag').forEach(tagElement => {
-                        const textNode = tagElement.firstChild;
-                        if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-                            tagElement.addEventListener('click', (e) => {
-                                if (e.target === tagElement) {
-                                    this.editTag(tagElement, parseInt(tagElement.dataset.tagIndex), parseInt(card.querySelector('.tool-tags').dataset.toolIndex));
-                                }
-                            });
-                        }
-                    });
                 } else {
                      card.addEventListener('click', () => {
                         this.showToolModal(tool);
                     });
+
+                    const showMoreBtn = card.querySelector('.show-more-tags-btn');
+                    if (showMoreBtn) {
+                        showMoreBtn.addEventListener('click', (e) => {
+                            e.stopPropagation(); // Prevent modal from opening
+                            const tagsContainer = e.target.closest('.tool-tags');
+                            tagsContainer.classList.toggle('expanded');
+                            e.target.textContent = tagsContainer.classList.contains('expanded') ? '... less' : '... more';
+                        });
+                    }
                 }
                 
                 return card;
@@ -2293,16 +2290,6 @@
             removeTag(toolIndex, tagIndex) {
                 if (this.TREASURY_TOOLS[toolIndex].tags) {
                     this.TREASURY_TOOLS[toolIndex].tags.splice(tagIndex, 1);
-                    this.saveData();
-                    this.filterAndDisplayTools();
-                }
-            }
-
-            editTag(tagElement, tagIndex, toolIndex) {
-                const currentTag = this.TREASURY_TOOLS[toolIndex].tags[tagIndex];
-                const newTag = prompt('Edit tag:', currentTag);
-                if (newTag !== null && newTag.trim() && newTag.trim() !== currentTag) {
-                    this.TREASURY_TOOLS[toolIndex].tags[tagIndex] = newTag.trim();
                     this.saveData();
                     this.filterAndDisplayTools();
                 }
@@ -2376,17 +2363,6 @@
                         }
                     });
                 });
-
-                 // Event delegation for "show more" tags
-                document.getElementById('mainContent').addEventListener('click', (e) => {
-                    if (e.target.classList.contains('show-more-tags-btn')) {
-                        e.stopPropagation();
-                        const tagsContainer = e.target.closest('.tool-tags');
-                        tagsContainer.classList.toggle('expanded');
-                        e.target.textContent = tagsContainer.classList.contains('expanded') ? '... less' : '... more';
-                    }
-                });
-
 
                 // Tool modal close
                 document.getElementById('modalClose').addEventListener('click', () => {
