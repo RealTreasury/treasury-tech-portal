@@ -133,22 +133,21 @@
             transition: all 0.3s ease;
         }
 
-        .edit-mode .editable {
+        .edit-mode .editable, .modal.edit .editable-modal {
             border: 2px dashed #6366f1;
             border-radius: 8px;
             padding: 4px 8px;
             cursor: text;
         }
-
-        .edit-mode .editable:hover {
+        .edit-mode .editable:hover, .modal.edit .editable-modal:hover {
             background: rgba(99, 102, 241, 0.05);
         }
-
-        .edit-mode .editable:focus {
+        .edit-mode .editable:focus, .modal.edit .editable-modal:focus {
             background: rgba(99, 102, 241, 0.1);
             border-color: #6366f1;
             border-style: solid;
         }
+
 
         /* Tag Editing */
         .edit-mode .tool-tags {
@@ -161,57 +160,6 @@
         .edit-mode .tool-tags:hover {
             border-color: #6366f1;
             background: rgba(99, 102, 241, 0.05);
-        }
-
-        .edit-mode .tool-tag {
-            cursor: pointer;
-            position: relative;
-        }
-
-        .edit-mode .tool-tag:hover {
-            background: #e5e7eb;
-        }
-
-        .tag-remove {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 10px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-
-        .edit-mode .tool-tag:hover .tag-remove {
-            display: flex;
-        }
-
-        .add-tag-btn {
-            background: #6366f1;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            margin-left: 6px;
-            display: none;
-        }
-
-        .edit-mode .add-tag-btn {
-            display: inline-block;
-        }
-
-        .add-tag-btn:hover {
-            background: #4f46e5;
         }
         
         /* Collapsible Tags */
@@ -355,7 +303,7 @@
             border-radius: 12px;
             padding: 12px 16px;
             text-align: center;
-            min-width: 80px;
+            min-width: 100px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
@@ -478,17 +426,6 @@
             padding-right: 0;
         }
 
-        /* Make editable elements in category headers more obvious */
-        .edit-mode .category-header .editable {
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .edit-mode .category-header .editable:hover {
-            background: rgba(99, 102, 241, 0.1) !important;
-            cursor: text;
-        }
-
         .category-info {
             flex: 1;
         }
@@ -577,6 +514,8 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .tool-card::before {
@@ -613,74 +552,31 @@
             border-color: #e5e7eb;
         }
 
-        .edit-mode .tool-editable {
-            border: 2px dashed transparent;
-            border-radius: 8px;
-            padding: 4px;
-            transition: all 0.3s ease;
+        .tool-card-content {
+            flex-grow: 1;
         }
-
-        .edit-mode .tool-editable:hover {
-            border-color: #6366f1;
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .edit-mode .tool-editable:focus {
-            outline: none;
-            border-style: solid;
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        /* Video Section */
-        .tool-video {
-            margin-top: 12px;
-            padding-top: 12px;
+        
+        .tool-card-actions {
+            margin-top: auto;
+            padding-top: 16px;
             border-top: 1px solid #e5e7eb;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-
-        .video-link {
-            color: #6366f1;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .video-link:hover {
-            color: #4f46e5;
-        }
-
-        .video-placeholder {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            font-style: italic;
-        }
-
-        .add-video-btn {
+        
+        .edit-details-btn {
             background: #6366f1;
             color: white;
             border: none;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.2s;
         }
-
-        .add-video-btn:hover {
+        .edit-details-btn:hover {
             background: #4f46e5;
         }
 
-        /* Video embed in modal */
-        .video-section {
-            margin-top: 25px;
-        }
 
         .tool-header {
             display: flex;
@@ -738,6 +634,8 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
+            margin-top: auto;
+            padding-top: 16px;
         }
 
         .tool-tag {
@@ -796,15 +694,13 @@
 
         /* Modal content - compact and minimal */
         .modal-content {
-            max-width: 420px !important;      /* Smaller, more compact */
-            width: 85% !important;            /* Responsive */
-            max-height: 70vh !important;      /* Don't dominate screen */
+            max-width: 520px !important;      
+            width: 90% !important;            
+            max-height: 85vh !important;      
             overflow-y: auto !important;
             margin: 0 auto !important;
             position: relative !important;
             transform: none !important;
-            
-            /* Compact styling */
             background: white !important;
             border-radius: 12px !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
@@ -851,7 +747,7 @@
         .feature-list {
             list-style: none;
             display: grid;
-            gap: 4px !important;              /* Tighter list spacing */
+            gap: 8px !important;              
         }
 
         .feature-list li {
@@ -861,13 +757,46 @@
             position: relative;
             line-height: 1.4 !important;
         }
-
-        .feature-list li::before {
+        .feature-list li:not(.edit) {
+             padding-left: 20px;
+        }
+        .feature-list li:not(.edit)::before {
             content: '→';
             position: absolute;
             left: 0;
             color: #6366f1;
             font-weight: bold;
+        }
+        .feature-list li.edit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .feature-list li.edit input {
+            flex-grow: 1;
+            padding: 6px 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+        .feature-list li.edit button {
+             background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .add-feature-btn {
+            background: #10b981 !important;
+            width: 100% !important;
+            border-radius: 6px !important;
+            padding: 8px;
         }
 
         /* Close button - smaller */
@@ -1204,8 +1133,8 @@
                             <div class="stat-label">Categories</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">$B</div>
-                            <div class="stat-label">Value</div>
+                            <div class="stat-number" id="totalFeatures">0</div>
+                            <div class="stat-label">Total Features</div>
                         </div>
                     </div>
                 </div>
@@ -1296,29 +1225,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="modalClose">×</button>
-                    <h3 class="modal-title" id="modalTitle">Quantum</h3>
-                    <p class="modal-subtitle" id="modalSubtitle">Enterprise Treasury</p>
+                    <h3 class="modal-title" id="modalTitle">Tool Name</h3>
+                    <p class="modal-subtitle" id="modalSubtitle">Category</p>
                 </div>
                 <div class="modal-body">
-                    <div class="feature-section">
-                        <h4>🎯 Overview</h4>
-                        <p id="modalDescription" style="color: #4b5563; line-height: 1.6;">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</p>
-                    </div>
-                    <div class="feature-section">
-                        <h4>✨ Key Features</h4>
-                        <ul class="feature-list" id="modalFeatures"><li>Real-time risk monitoring</li><li>Portfolio optimization</li><li>Stress testing</li><li>Automated hedging</li><li>Compliance controls</li><li>Advanced analytics</li></ul>
-                    </div>
-                    <div class="feature-section">
-                        <h4>🏢 Target Market</h4>
-                        <p id="modalTarget" style="color: #4b5563; line-height: 1.6;">Investment banks and large financial institutions</p>
-                    </div>
-                <div class="feature-section video-section">
-                                <h4>🎥 Demo Video</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-                                    <iframe src="https://www.youtube.com/embed/RAWH8-FUdpQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen="">
-                                    </iframe>
-                                </div>
-                            </div></div>
+                </div>
             </div>
         </div>
 
@@ -1331,17 +1242,7 @@
                     <p class="modal-subtitle" id="categoryModalSubtitle">🏢 Treasury Category</p>
                 </div>
                 <div class="modal-body" id="categoryModalBody">
-                    <div class="feature-section">
-                        <h4>🎯 Overview</h4>
-                        <p id="categoryModalDescription" style="color: #4b5563; line-height: 1.6;">Full-scale treasury management platforms designed for complex treasury operations in large organizations. These solutions handle sophisticated derivatives trading, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with complex financial operations requiring extensive controls and reporting.</p>
-                    </div>
-                <div class="feature-section video-section">
-                                <h4>🎥 Category Overview Video</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-                                    <iframe src="https://www.youtube.com/embed/WyWeobyqzfQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen="">
-                                    </iframe>
-                                </div>
-                            </div></div>
+                </div>
             </div>
         </div>
     </div>
@@ -2049,40 +1950,22 @@
                         editText.textContent = 'Save & Exit';
                         exportBtn.style.display = 'flex';
                         
-                        // Make elements editable
                         document.querySelectorAll('.editable').forEach(element => {
                             element.contentEditable = true;
-                            element.addEventListener('input', () => this.saveData());
-                            
-                            // Prevent event bubbling for category header editables
-                            if (element.closest('.category-header')) {
-                                element.addEventListener('click', (e) => {
-                                    e.stopPropagation();
-                                });
-                            }
                         });
                         
-                        // Make tool descriptions editable
-                        this.makeToolsEditable();
-                        
-                        // Scroll to top to see edit banner
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
                         editIcon.textContent = '✏️';
                         editText.textContent = 'Edit Mode';
                         exportBtn.style.display = 'none';
                         
-                        // Make elements non-editable
                         document.querySelectorAll('.editable').forEach(element => {
                             element.contentEditable = false;
                         });
                         
-                        // Save final state
                         this.saveData();
-                        
-                        // Refresh tool cards
-                        this.filterAndDisplayTools();
                     }
+                     this.filterAndDisplayTools();
                 });
 
                 // Export functionality
@@ -2112,7 +1995,6 @@
                             logoImage.src = e.target.result;
                             logoImage.style.display = 'block';
                             
-                            // Save logo to localStorage
                             localStorage.setItem('treasuryStackLogo', e.target.result);
                             this.saveData();
                         };
@@ -2122,18 +2004,12 @@
             }
 
             exportHTML() {
-                // Save current state first
                 this.saveData();
-
-                // Get the current HTML
                 const html = document.documentElement.outerHTML;
-
-                // Create filename with date
                 const date = new Date();
                 const dateStr = date.toISOString().split('T')[0];
                 const filename = `treasury-stack-${dateStr}.html`;
 
-                // Create a blob and download
                 const blob = new Blob([html], { type: 'text/html' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -2144,7 +2020,6 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
 
-                // Show notification
                 const notification = document.getElementById('saveNotification');
                 notification.textContent = 'HTML exported successfully!';
                 notification.style.display = 'block';
@@ -2154,55 +2029,15 @@
                 }, 3000);
             }
 
-            makeToolsEditable() {
-                // This will be handled in createToolCard method
-                this.filterAndDisplayTools();
-            }
-
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
-                
-                let cardContent;
 
-                if (this.isEditMode) {
-                     const editableTagsHtml = (tool.tags || []).map((tag, index) => `
-                        <span class="tool-tag" data-tag-index="${index}">
-                            ${tag}
-                            <button class="tag-remove" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-tag-index="${index}">×</button>
-                        </span>
-                    `).join('');
+                const tagsHtml = (tool.tags || []).map((tag) => `<span class="tool-tag">${tag}</span>`).join('');
+                const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
 
-                    cardContent = `
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="name">${tool.name}</div>
-                                <div class="tool-type">${this.getCategoryName(category)}</div>
-                            </div>
-                            <div class="tool-icon">${this.getCategoryIcon(category)}</div>
-                        </div>
-                        <div class="tool-description tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="desc">${tool.desc}</div>
-                        <div class="tool-tags" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">
-                            ${editableTagsHtml}
-                            <button class="add-tag-btn" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">+ Tag</button>
-                        </div>
-                        <div class="tool-video">
-                            ${tool.videoUrl ? 
-                                `<a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
-                                 <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Change Video</button>` : 
-                                `<span class="video-placeholder">No demo video</span>
-                                 <button class="add-video-btn" onclick="event.stopPropagation()" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">Add Video</button>`
-                            }
-                        </div>
-                    `;
-                } else {
-                     const tagsHtml = (tool.tags || []).map((tag, index) => {
-                        return `<span class="tool-tag">${tag}</span>`;
-                    }).join('');
-
-                    const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
-
-                     cardContent = `
+                card.innerHTML = `
+                    <div class="tool-card-content">
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">${tool.name}</div>
@@ -2215,108 +2050,35 @@
                             ${tagsHtml}
                             ${showMoreButtonHtml}
                         </div>
-                        ${tool.videoUrl ? 
-                            `<div class="tool-video">
-                                <a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
-                            </div>` : ''
-                        }
-                    `;
-                }
+                    </div>
+                    ${this.isEditMode ? `
+                    <div class="tool-card-actions">
+                        <button class="edit-details-btn">Edit Details</button>
+                    </div>` : ''}
+                `;
 
-                card.innerHTML = cardContent;
-
-                if (this.isEditMode) {
-                    card.querySelectorAll('.tool-editable').forEach(element => {
-                        element.addEventListener('input', (e) => {
-                            const toolIndex = parseInt(e.target.dataset.toolIndex);
-                            const field = e.target.dataset.field;
-                            this.TREASURY_TOOLS[toolIndex][field] = e.target.textContent;
-                            this.saveData();
-                        });
-                    });
-                    
-                    card.querySelector('.add-video-btn').addEventListener('click', (e) => {
-                         e.stopPropagation();
-                        const toolIndex = parseInt(e.target.dataset.toolIndex);
-                        this.promptForVideo(toolIndex);
-                    });
-
-                    card.querySelectorAll('.tag-remove').forEach(button => {
-                        button.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const toolIndex = parseInt(e.target.dataset.toolIndex);
-                            const tagIndex = parseInt(e.target.dataset.tagIndex);
-                            this.removeTag(toolIndex, tagIndex);
-                        });
-                    });
-
-                    card.querySelector('.add-tag-btn').addEventListener('click', (e) => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('show-more-tags-btn')) {
                         e.stopPropagation();
-                        const toolIndex = parseInt(e.target.dataset.toolIndex);
-                        this.addTag(toolIndex);
-                    });
-
-                } else {
-                     card.addEventListener('click', () => {
-                        this.showToolModal(tool);
-                    });
-
-                    const showMoreBtn = card.querySelector('.show-more-tags-btn');
-                    if (showMoreBtn) {
-                        showMoreBtn.addEventListener('click', (e) => {
-                            e.stopPropagation(); // Prevent modal from opening
-                            const tagsContainer = e.target.closest('.tool-tags');
-                            tagsContainer.classList.toggle('expanded');
-                            e.target.textContent = tagsContainer.classList.contains('expanded') ? '... less' : '... more';
-                        });
+                        const tagsContainer = e.target.closest('.tool-tags');
+                        tagsContainer.classList.toggle('expanded');
+                        e.target.textContent = tagsContainer.classList.contains('expanded') ? '... less' : '... more';
+                    } else if (e.target.classList.contains('edit-details-btn')) {
+                         e.stopPropagation();
+                         this.showToolModal(tool);
                     }
-                }
+                    else if (!this.isEditMode) {
+                        this.showToolModal(tool);
+                    }
+                });
                 
                 return card;
             }
 
-            addTag(toolIndex) {
-                const newTag = prompt('Enter new tag:');
-                if (newTag && newTag.trim()) {
-                    if (!this.TREASURY_TOOLS[toolIndex].tags) {
-                        this.TREASURY_TOOLS[toolIndex].tags = [];
-                    }
-                    this.TREASURY_TOOLS[toolIndex].tags.push(newTag.trim());
-                    this.saveData();
-                    this.filterAndDisplayTools();
-                }
-            }
-
-            removeTag(toolIndex, tagIndex) {
-                if (this.TREASURY_TOOLS[toolIndex].tags) {
-                    this.TREASURY_TOOLS[toolIndex].tags.splice(tagIndex, 1);
-                    this.saveData();
-                    this.filterAndDisplayTools();
-                }
-            }
-
-            createToolCards() {
-                // This method is now replaced by filterAndDisplayTools
-                this.filterAndDisplayTools();
-            }
-
-            promptForVideo(toolIndex) {
-                const tool = this.TREASURY_TOOLS[toolIndex];
-                const currentUrl = tool.videoUrl || '';
-                const newUrl = prompt('Enter the demo video URL (YouTube, Vimeo, etc.):', currentUrl);
-                
-                if (newUrl !== null) {
-                    tool.videoUrl = newUrl;
-                    this.saveData();
-                    this.filterAndDisplayTools();
-                }
-            }
 
             updateCounts() {
-                // Update total tools count
                 document.getElementById('totalTools').textContent = this.TREASURY_TOOLS.length;
                 
-                // Update category counts
                 const categories = ['TRMS', 'CASH', 'LITE'];
                 categories.forEach(category => {
                     const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
@@ -2325,6 +2087,9 @@
                         countElement.textContent = count;
                     }
                 });
+
+                const totalFeatures = this.TREASURY_TOOLS.reduce((sum, tool) => sum + (tool.features ? tool.features.length : 0), 0);
+                document.getElementById('totalFeatures').textContent = totalFeatures;
             }
 
             getCategoryName(category) {
@@ -2365,26 +2130,17 @@
                 });
 
                 // Tool modal close
-                document.getElementById('modalClose').addEventListener('click', () => {
-                    this.hideToolModal();
-                });
+                document.getElementById('modalClose').addEventListener('click', () => this.hideToolModal());
 
                 // Category modal close
-                document.getElementById('categoryModalClose').addEventListener('click', () => {
-                    this.hideCategoryModal();
-                });
+                document.getElementById('categoryModalClose').addEventListener('click', () => this.hideCategoryModal());
 
                 // Close modals on outside click
                 document.getElementById('toolModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'toolModal') {
-                        this.hideToolModal();
-                    }
+                    if (e.target.id === 'toolModal') this.hideToolModal();
                 });
-
                 document.getElementById('categoryModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'categoryModal') {
-                        this.hideCategoryModal();
-                    }
+                    if (e.target.id === 'categoryModal') this.hideCategoryModal();
                 });
 
                 // Close modals on escape
@@ -2406,120 +2162,25 @@
 
                 // Filter and display tools
                 this.filterAndDisplayTools();
-
-                // Smooth scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             showCategoryModal(category) {
                 const categoryInfo = this.CATEGORY_INFO[category];
                 if (!categoryInfo) return;
-
+                
                 document.getElementById('categoryModalTitle').textContent = categoryInfo.name;
                 document.getElementById('categoryModalSubtitle').textContent = `${this.getCategoryIcon(category)} Treasury Category`;
-                document.getElementById('categoryModalDescription').textContent = categoryInfo.description;
-
-                // Clear existing content
+                
                 const modalBody = document.getElementById('categoryModalBody');
-                modalBody.innerHTML = `
-                    <div class="feature-section">
-                        <h4>🎯 Overview</h4>
-                        <p id="categoryModalDescription" style="color: #4b5563; line-height: 1.6;">${categoryInfo.description}</p>
-                    </div>
-                `;
+                modalBody.innerHTML = `<p>${categoryInfo.description}</p>`;
 
-                // Add video section if available (only in view mode)
-                if (categoryInfo.videoUrl && !this.isEditMode) {
-                    const videoSection = document.createElement('div');
-                    videoSection.className = 'feature-section video-section';
-                    
-                    // Check if it's a YouTube URL and create embed
-                    if (categoryInfo.videoUrl.includes('youtube.com') || categoryInfo.videoUrl.includes('youtu.be')) {
-                        const videoId = this.extractYouTubeId(categoryInfo.videoUrl);
-                        if (videoId) {
-                            videoSection.innerHTML = `
-                                <h4>🎥 Category Overview Video</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
-                            `;
-                        } else {
-                            videoSection.innerHTML = `
-                                <h4>🎥 Category Overview Video</h4>
-                                <a href="${categoryInfo.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Overview Video →</a>
-                            `;
-                        }
-                    } else {
-                        videoSection.innerHTML = `
-                            <h4>🎥 Category Overview Video</h4>
-                            <a href="${categoryInfo.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Overview Video →</a>
-                        `;
-                    }
-                    
-                    modalBody.appendChild(videoSection);
-                }
-
-                // Show edit controls ONLY in edit mode
-                if (this.isEditMode) {
-                    const editSection = document.createElement('div');
-                    editSection.className = 'feature-section edit-section';
-                    editSection.innerHTML = `
-                        <h4>✏️ Edit Category</h4>
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Category Description:</label>
-                            <textarea placeholder="Category description..." style="width: 100%; min-height: 100px; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; font-family: inherit; resize: vertical;" 
-                                onchange="treasuryStack.updateCategoryDescription('${category}', this.value)">${categoryInfo.description}</textarea>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #374151;">Video URL:</label>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="url" placeholder="https://youtube.com/..." value="${categoryInfo.videoUrl || ''}" 
-                                    style="flex: 1; padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.9rem;"
-                                    onchange="treasuryStack.updateCategoryVideo('${category}', this.value)">
-                                <button class="add-video-btn" onclick="treasuryStack.editCategoryVideo('${category}')" style="display: inline-flex; align-items: center; white-space: nowrap;">
-                                    Browse
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    modalBody.appendChild(editSection);
-                } else if (categoryInfo.videoUrl) {
-                    // Only show video in view mode - already handled above
-                }
-
-                // Show modal with proper class system
                 const modal = document.getElementById('categoryModal');
                 modal.style.display = 'flex';
                 modal.classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
 
-            editCategoryVideo(category) {
-                const currentUrl = this.CATEGORY_INFO[category].videoUrl || '';
-                const newUrl = prompt('Enter the category overview video URL (YouTube, Vimeo, etc.):', currentUrl);
-                
-                if (newUrl !== null) {
-                    this.updateCategoryVideo(category, newUrl);
-                    // Update the input field if it exists
-                    const inputField = document.querySelector(`input[onchange*="${category}"]`);
-                    if (inputField) {
-                        inputField.value = newUrl;
-                    }
-                }
-            }
-
-            updateCategoryVideo(category, url) {
-                this.CATEGORY_INFO[category].videoUrl = url;
-                this.saveData();
-            }
-
-            updateCategoryDescription(category, description) {
-                this.CATEGORY_INFO[category].description = description;
-                this.saveData();
-            }
 
             hideCategoryModal() {
                 const modal = document.getElementById('categoryModal');
@@ -2531,55 +2192,105 @@
             }
 
             showToolModal(tool) {
+                const modal = document.getElementById('toolModal');
+                modal.dataset.toolIndex = this.TREASURY_TOOLS.indexOf(tool);
+                
                 document.getElementById('modalTitle').textContent = tool.name;
                 document.getElementById('modalSubtitle').textContent = this.getCategoryName(tool.category);
-                document.getElementById('modalDescription').textContent = tool.desc;
-                document.getElementById('modalTarget').textContent = tool.target;
 
-                const featuresList = document.getElementById('modalFeatures');
-                featuresList.innerHTML = (tool.features || []).map(feature => `<li>${feature}</li>`).join('');
-
-                // Add video section if available
-                const modalBody = document.querySelector('#toolModal .modal-body');
-                const existingVideo = modalBody.querySelector('.video-section');
-                if (existingVideo) existingVideo.remove();
-
-                if (tool.videoUrl) {
-                    const videoSection = document.createElement('div');
-                    videoSection.className = 'feature-section video-section';
-                    
-                    // Check if it's a YouTube URL and create embed
-                    if (tool.videoUrl.includes('youtube.com') || tool.videoUrl.includes('youtu.be')) {
-                        const videoId = this.extractYouTubeId(tool.videoUrl);
-                        if (videoId) {
-                            videoSection.innerHTML = `
-                                <h4>🎥 Demo Video</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-                                    <iframe src="https://www.youtube.com/embed/${videoId}" 
-                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>
-                            `;
-                        } else {
-                            videoSection.innerHTML = `
-                                <h4>🎥 Demo Video</h4>
-                                <a href="${tool.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Demo Video →</a>
-                            `;
-                        }
-                    } else {
-                        videoSection.innerHTML = `
-                            <h4>🎥 Demo Video</h4>
-                            <a href="${tool.videoUrl}" target="_blank" class="video-link" style="font-size: 1rem;">Watch Demo Video →</a>
-                        `;
-                    }
-                    
-                    modalBody.appendChild(videoSection);
-                }
-
-                document.getElementById('toolModal').style.display = 'flex';
-                document.getElementById('toolModal').classList.add('show');
+                this.renderModalBody(tool);
+                
+                modal.style.display = 'flex';
+                modal.classList.toggle('edit', this.isEditMode);
+                modal.classList.add('show');
                 document.body.style.overflow = 'hidden';
+            }
+
+            renderModalBody(tool) {
+                const modalBody = document.getElementById('toolModal').querySelector('.modal-body');
+                if (!this.isEditMode) {
+                    modalBody.innerHTML = `
+                        <div class="feature-section">
+                            <h4>🎯 Overview</h4>
+                            <p>${tool.desc}</p>
+                        </div>
+                        <div class="feature-section">
+                            <h4>✨ Key Features</h4>
+                            <ul class="feature-list">${(tool.features || []).map(f => `<li>${f}</li>`).join('')}</ul>
+                        </div>
+                        <div class="feature-section">
+                            <h4>🏢 Target Market</h4>
+                            <p>${tool.target}</p>
+                        </div>
+                    `;
+                } else {
+                     modalBody.innerHTML = `
+                        <div class="feature-section">
+                            <h4>🎯 Overview</h4>
+                            <p class="editable-modal" contenteditable="true" data-field="desc">${tool.desc}</p>
+                        </div>
+                        <div class="feature-section">
+                            <h4>✨ Key Features</h4>
+                            <ul class="feature-list" id="modalFeaturesEdit">
+                                ${(tool.features || []).map((f, i) => `
+                                    <li class="edit">
+                                        <input type="text" value="${f}" data-index="${i}"/>
+                                        <button class="remove-feature-btn" data-index="${i}">×</button>
+                                    </li>
+                                `).join('')}
+                                <li><button class="add-feature-btn">+</button></li>
+                            </ul>
+                        </div>
+                        <div class="feature-section">
+                            <h4>🏢 Target Market</h4>
+                            <p class="editable-modal" contenteditable="true" data-field="target">${tool.target}</p>
+                        </div>
+                    `;
+                }
+            }
+
+
+            hideToolModal() {
+                if (this.isEditMode) this.saveData();
+
+                const modal = document.getElementById('toolModal');
+                modal.classList.remove('show');
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    this.filterAndDisplayTools();
+                }, 300);
+            }
+
+            handleModalInput(e) {
+                const toolIndex = document.getElementById('toolModal').dataset.toolIndex;
+                if (toolIndex === undefined) return;
+                const tool = this.TREASURY_TOOLS[toolIndex];
+
+                if (e.target.matches('.editable-modal')) {
+                    tool[e.target.dataset.field] = e.target.textContent;
+                }
+                 else if (e.target.matches('#modalFeaturesEdit input')) {
+                    const featureIndex = e.target.dataset.index;
+                    tool.features[featureIndex] = e.target.value;
+                }
+            }
+
+            handleModalClick(e) {
+                 const toolIndex = document.getElementById('toolModal').dataset.toolIndex;
+                if (toolIndex === undefined) return;
+                const tool = this.TREASURY_TOOLS[toolIndex];
+
+                if (e.target.matches('.remove-feature-btn')) {
+                    const featureIndex = e.target.dataset.index;
+                    tool.features.splice(featureIndex, 1);
+                    this.renderModalBody(tool); // Re-render to update list
+                } else if (e.target.matches('.add-feature-btn')) {
+                    if (!tool.features) tool.features = [];
+                    tool.features.push('New Feature');
+                     this.renderModalBody(tool); // Re-render to update list
+                }
             }
 
             extractYouTubeId(url) {
@@ -2588,65 +2299,14 @@
                 return (match && match[7].length === 11) ? match[7] : null;
             }
 
-            hideToolModal() {
-                const modal = document.getElementById('toolModal');
-                modal.classList.remove('show');
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }, 300);
-            }
         }
 
-        // Global variable for edit mode access
         let treasuryStack;
 
-        // Iframe positioning fix for modals
-        function fixModalPositioning() {
-            const isInIframe = window !== window.parent;
-            if (isInIframe) {
-                // Force modals to position relative to iframe viewport
-                const style = document.createElement('style');
-                style.textContent = `
-                    .modal {
-                        position: fixed !important;
-                        top: 0 !important;
-                        left: 0 !important;
-                        width: 100vw !important;
-                        height: 100vh !important;
-                        margin: 0 !important;
-                        transform: translateZ(0) !important;
-                        -webkit-transform: translateZ(0) !important;
-                    }
-                    
-                    .modal-content {
-                        position: relative !important;
-                        max-height: 80vh !important;
-                        max-width: 90vw !important;
-                        overflow-y: auto !important;
-                        margin: auto !important;
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                // Ensure modals appear in viewport center
-                document.addEventListener('click', function(e) {
-                    const modal = document.querySelector('.modal.show');
-                    if (modal) {
-                        // Force recalculation of position
-                        modal.style.top = '0px';
-                        modal.style.left = '0px';
-                        modal.style.position = 'fixed';
-                        modal.style.transform = 'translateZ(0)';
-                    }
-                });
-            }
-        }
-
-        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            fixModalPositioning(); // Fix iframe modal positioning
             treasuryStack = new TreasuryStack();
+            document.getElementById('toolModal').addEventListener('input', (e) => treasuryStack.handleModalInput(e));
+            document.getElementById('toolModal').addEventListener('click', (e) => treasuryStack.handleModalClick(e));
         });
 
         // Prevent zoom on double-tap (mobile)
