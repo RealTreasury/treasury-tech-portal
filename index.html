@@ -2397,39 +2397,41 @@
         }, { passive: false });
     </script>
 <script>
+  let lastHeight = 0;
+  let resizeTimeout;
+  
   function sendHeight() {
-    // Get the actual height of the content
-    const height = Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.clientHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    );
+    // Clear any pending resize
+    clearTimeout(resizeTimeout);
     
-    // Send to parent
-    window.parent.postMessage({ 
-      type: "setHeight", 
-      height: height + 20 // Add a small buffer
-    }, "*");
+    // Debounce to prevent too many updates
+    resizeTimeout = setTimeout(() => {
+      // Get the actual content height
+      const height = document.documentElement.scrollHeight;
+      
+      // Only send if height actually changed
+      if (Math.abs(height - lastHeight) > 5) {
+        lastHeight = height;
+        window.parent.postMessage({ 
+          type: "setHeight", 
+          height: height 
+        }, "*");
+      }
+    }, 100);
   }
 
-  // Send height on various events
+  // Send height on load
   window.addEventListener("load", sendHeight);
+  
+  // Send height on window resize only
   window.addEventListener("resize", sendHeight);
   
-  // Also send height after content changes
-  const observer = new MutationObserver(sendHeight);
-  observer.observe(document.body, { 
-    childList: true, 
-    subtree: true, 
-    attributes: true 
+  // Don't use MutationObserver as it can cause infinite loops
+  // Instead, call sendHeight after specific actions
+  document.addEventListener('click', () => {
+    setTimeout(sendHeight, 300);
   });
-  
-  // Send initial height
-  setTimeout(sendHeight, 100);
 </script>
-
 </body>
 
 </html>
