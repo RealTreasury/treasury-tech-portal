@@ -11,13 +11,82 @@
             box-sizing: border-box;
         }
 
+        /* Edit Mode Banner */
+        .edit-mode-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #7216f4;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            z-index: 200;
+            display: none;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 500;
+        }
+
+        .edit-mode .edit-mode-banner {
+            display: block;
+        }
+
+        /* Save Notification */
+        .save-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 300;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        let treasuryStack;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            treasuryStack = new TreasuryStack();
+            document.getElementById('toolModal').addEventListener('input', (e) => treasuryStack.handleModalInput(e));
+            document.getElementById('toolModal').addEventListener('click', (e) => treasuryStack.handleModalClick(e));
+        });
+
+        // Prevent zoom on double-tap (mobile)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+         // Send height to parent
+function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage({ 
+        type: 'setHeight', 
+        height: height 
+    }, '*');
+}
+
+// Send height on load and resize
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+new ResizeObserver(sendHeight).observe(document.body);
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: #f8f9fa;
-            color: #1a1a1a;
+            color: #281345;
             min-height: 100vh;
             overflow-x: hidden;
             line-height: 1.6;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
@@ -31,23 +100,24 @@
             bottom: 30px;
             right: 30px;
             z-index: 300;
-            background: #6366f1;
+            background: #7216f4;
             color: white;
             border: none;
             border-radius: 50px;
             padding: 15px 25px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 20px rgba(114, 22, 244, 0.3);
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .edit-toggle:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 6px 25px rgba(114, 22, 244, 0.4);
         }
 
         .edit-toggle.active {
@@ -60,23 +130,24 @@
             bottom: 30px;
             right: 200px;
             z-index: 300;
-            background: #3b82f6;
+            background: #7216f4;
             color: white;
             border: none;
             border-radius: 50px;
             padding: 15px 25px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(114, 22, 244, 0.3);
             transition: all 0.3s ease;
             display: none;
             align-items: center;
             gap: 8px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .export-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 6px 25px rgba(114, 22, 244, 0.4);
         }
 
         /* Search Box */
@@ -95,11 +166,12 @@
             background: white;
             transition: all 0.3s ease;
             outline: none;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .search-input:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            border-color: #7216f4;
+            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.1);
         }
 
         .search-icon {
@@ -107,7 +179,7 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #6b7280;
+            color: #7e7e7e;
             font-size: 16px;
         }
 
@@ -118,11 +190,12 @@
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #6b7280;
+            color: #7e7e7e;
             cursor: pointer;
             padding: 4px;
             border-radius: 4px;
             display: none;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .search-clear:hover {
@@ -257,7 +330,7 @@
         .logo {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -265,22 +338,26 @@
             font-size: 20px;
             font-weight: bold;
             color: white;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .title-section h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 4px;
+            line-height: 1.2;
         }
 
         .subtitle {
             font-size: 0.9rem;
-            color: #6b7280;
+            color: #7e7e7e;
             font-weight: 400;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         /* Header Middle Section */
@@ -312,14 +389,16 @@
         .stat-number {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #6366f1;
+            color: #7216f4;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .stat-label {
             font-size: 0.7rem;
-            color: #6b7280;
+            color: #7e7e7e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         /* Filter Tabs */
@@ -336,7 +415,7 @@
         .filter-tab {
             background: transparent;
             border: none;
-            color: #6b7280;
+            color: #7e7e7e;
             padding: 8px 16px;
             border-radius: 12px;
             cursor: pointer;
@@ -346,17 +425,18 @@
             white-space: nowrap;
             position: relative;
             overflow: hidden;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .filter-tab:hover {
-            color: #1a1a1a;
+            color: #281345;
             background: #f3f4f6;
         }
 
         .filter-tab.active {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
             color: #fff;
-            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 2px 10px rgba(114, 22, 244, 0.3);
         }
 
         /* Main Content */
@@ -370,17 +450,24 @@
         .no-results {
             text-align: center;
             padding: 60px 20px;
-            color: #6b7280;
+            color: #7e7e7e;
             display: none;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .no-results h3 {
             font-size: 1.5rem;
             margin-bottom: 10px;
+            color: #281345;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
         }
 
         .no-results p {
             font-size: 1rem;
+            color: #7e7e7e;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         /* Category Section */
@@ -439,7 +526,9 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #1a1a1a;
+            color: #281345;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.2;
         }
 
         .category-badge {
@@ -470,10 +559,11 @@
         }
 
         .category-description {
-            color: #4b5563;
+            color: #7e7e7e;
             font-size: 0.95rem;
             max-width: 800px;
             line-height: 1.5;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .category-count {
@@ -488,15 +578,17 @@
         .count-number {
             font-size: 2rem;
             font-weight: 700;
-            color: #6366f1;
+            color: #7216f4;
             display: block;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .count-label {
             font-size: 0.8rem;
-            color: #6b7280;
+            color: #7e7e7e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         /* Tools Grid */
@@ -580,6 +672,8 @@
         }
         .video-link {
             color: #6366f1;
+            background: none;
+            border: none;
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 500;
@@ -587,6 +681,8 @@
             align-items: center;
             gap: 6px;
             transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 0;
         }
 
         .video-link:hover {
@@ -603,15 +699,18 @@
         .tool-name {
             font-size: 1.3rem;
             font-weight: 700;
-            color: #1a1a1a;
+            color: #281345;
             margin-bottom: 4px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.2;
         }
 
         .tool-type {
             font-size: 0.8rem;
-            color: #6b7280;
+            color: #7e7e7e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .tool-icon {
@@ -627,7 +726,7 @@
         }
 
         .tool-enterprise .tool-icon {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
         }
 
         .tool-cash .tool-icon {
@@ -635,14 +734,15 @@
         }
 
         .tool-lite .tool-icon {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            background: linear-gradient(135deg, #8f47f6, #c77dff);
         }
 
         .tool-description {
-            color: #4b5563;
+            color: #7e7e7e;
             font-size: 0.9rem;
             line-height: 1.6;
             margin-bottom: 16px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .tool-tags {
@@ -710,7 +810,7 @@
 
         /* Modal content - compact and minimal */
         .modal-content {
-            max-width: 520px !important;      
+            max-width: 440px !important;      
             width: 90% !important;            
             max-height: 85vh !important;      
             overflow-y: auto !important;
@@ -720,6 +820,12 @@
             background: white !important;
             border-radius: 12px !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+        }
+
+        /* Video modal content - wider for better video viewing */
+        .modal-content.video-modal {
+            max-width: 640px !important;
+            width: 95% !important;
         }
 
         /* Modal header - more compact */
@@ -793,6 +899,14 @@
             padding: 6px 10px;
             border: 1px solid #e5e7eb;
             border-radius: 6px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: #281345;
+        }
+
+        .feature-list li.edit input:focus {
+            border-color: #7216f4;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(114, 22, 244, 0.1);
         }
         .feature-list li.edit button {
              background: #ef4444;
@@ -809,10 +923,19 @@
             line-height: 1;
         }
         .add-feature-btn {
-            background: #10b981 !important;
+            background: #7216f4 !important;
+            color: white !important;
+            border: none !important;
             width: 100% !important;
             border-radius: 6px !important;
             padding: 8px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+        }
+
+        .add-feature-btn:hover {
+            background: #8f47f6 !important;
         }
 
         /* Close button - smaller */
@@ -822,7 +945,7 @@
             right: 15px !important;
             background: #f3f4f6;
             border: none;
-            color: #1a1a1a;
+            color: #281345;
             width: 32px !important;
             height: 32px !important;
             border-radius: 50%;
@@ -832,6 +955,8 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 600;
         }
 
         .modal-close:hover {
@@ -953,10 +1078,10 @@
 <body class="">
     <div class="container">
         <!-- Loading Screen -->
-        <div class="loading" id="loadingScreen" style="display: none;">
-            <div class="loading-logo">💼</div>
-            <h1 class="editable" data-key="site-title" contenteditable="false">Treasury Stack</h1>
-            <p>Loading financial tools ecosystem...</p>
+        <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+            <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
+            <h1 class="editable" data-key="site-title" contenteditable="false" style="color: #281345; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Treasury Stack</h1>
+            <p style="color: #7e7e7e; font-size: 1rem;">Loading financial tools ecosystem...</p>
         </div>
 
         <!-- Edit Mode Banner -->
@@ -1060,14 +1185,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">Kyriba</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/WyWeobyqzfQ" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WyWeobyqzfQ', 'Kyriba')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1079,14 +1204,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">GTreasury</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j', 'GTreasury')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1098,14 +1223,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">Reval</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'Reval')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1117,14 +1242,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">Quantum</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr', 'Quantum')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1136,14 +1261,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">WallStreet Suite</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'WallStreet Suite')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1155,7 +1280,7 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">ATOM</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
@@ -1174,14 +1299,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">Integrity</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr', 'Integrity')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1193,14 +1318,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">IT2</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'IT2')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1212,14 +1337,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">Datalog</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk', 'Datalog')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1231,14 +1356,14 @@
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name">Coupa</div>
-                                <div class="tool-type">Enterprise Treasury</div>
+                                <div class="tool-type">TRMS</div>
                             </div>
                             <div class="tool-icon">🏢</div>
                         </div>
                         <div class="tool-description">Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC', 'Coupa')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1277,7 +1402,7 @@
                         <div class="tool-description">AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/Vx4At4BN-og" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/Vx4At4BN-og', 'Trovata')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
                             
@@ -1315,7 +1440,7 @@
                         <div class="tool-description">AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB', 'Autocash.ai')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
                             
@@ -1372,7 +1497,7 @@
                         <div class="tool-description">Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa', 'Obol')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
                             
@@ -1391,7 +1516,7 @@
                         <div class="tool-description">Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8', 'Panax')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
                             
@@ -1487,7 +1612,7 @@
                         <div class="tool-description">Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P', 'Treasury4')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1506,7 +1631,7 @@
                         <div class="tool-description">User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'Treasura')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1544,7 +1669,7 @@
                         <div class="tool-description">Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv', 'Treasury Curve')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1582,7 +1707,7 @@
                         <div class="tool-description">Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'City Financials')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1601,7 +1726,7 @@
                         <div class="tool-description">Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                        <a href="https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn', 'HighRadius')">🎥 View Demo</button>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
@@ -1938,336 +2063,3 @@
                     }
                 });
             }
-
-            exportHTML() {
-                this.saveData();
-                const html = document.documentElement.outerHTML;
-                const date = new Date();
-                const dateStr = date.toISOString().split('T')[0];
-                const filename = `treasury-stack-${dateStr}.html`;
-
-                const blob = new Blob([html], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                const notification = document.getElementById('saveNotification');
-                notification.textContent = 'HTML exported successfully!';
-                notification.style.display = 'block';
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                    notification.textContent = 'Changes saved automatically';
-                }, 3000);
-            }
-
-            createToolCard(tool, category) {
-                const card = document.createElement('div');
-                card.className = `tool-card tool-${category.toLowerCase()}`;
-                
-                let videoHtml = '';
-                if (tool.videoUrl && !this.isEditMode) {
-                    videoHtml = `<a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>`;
-                }
-
-                const tagsHtml = (tool.tags || []).map((tag) => `<span class="tool-tag">${tag}</span>`).join('');
-                const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
-
-                card.innerHTML = `
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">${tool.name}</div>
-                                <div class="tool-type">${this.getCategoryName(category)}</div>
-                            </div>
-                            <div class="tool-icon">${this.getCategoryIcon(category)}</div>
-                        </div>
-                        <div class="tool-description">${tool.desc}</div>
-                    </div>
-                    <div class="tool-card-actions">
-                         ${videoHtml}
-                        <div class="tool-tags">
-                            ${tagsHtml}
-                            ${showMoreButtonHtml}
-                        </div>
-                         ${this.isEditMode ? `<button class="edit-details-btn">Edit Details</button>` : ''}
-                    </div>
-                `;
-
-                card.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('show-more-tags-btn')) {
-                        e.stopPropagation();
-                        const tagsContainer = e.target.closest('.tool-tags');
-                        tagsContainer.classList.toggle('expanded');
-                        e.target.textContent = tagsContainer.classList.contains('expanded') ? '... less' : '... more';
-                    } else if (e.target.classList.contains('edit-details-btn')) {
-                         e.stopPropagation();
-                         this.showToolModal(tool);
-                    }
-                    else if (!this.isEditMode && !e.target.closest('a')) {
-                        this.showToolModal(tool);
-                    }
-                });
-                
-                return card;
-            }
-
-
-            updateCounts() {
-                document.getElementById('totalTools').textContent = this.TREASURY_TOOLS.length;
-                
-                const categories = ['TRMS', 'CASH', 'LITE'];
-                categories.forEach(category => {
-                    const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
-                    const countElement = document.getElementById(`count-${category}`);
-                    if (countElement) {
-                        countElement.textContent = count;
-                    }
-                });
-            }
-
-            getCategoryName(category) {
-                const names = {
-                    TRMS: 'Enterprise Treasury',
-                    CASH: 'Cash Tools',
-                    LITE: 'TMS-Lite'
-                };
-                return names[category] || category;
-            }
-
-            getCategoryIcon(category) {
-                const icons = {
-                    TRMS: '🏢',
-                    CASH: '💰',
-                    LITE: '⚡'
-                };
-                return icons[category] || '💼';
-            }
-
-            setupInteractions() {
-                document.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        this.filterByCategory(tab.dataset.category);
-                    });
-                });
-                document.querySelectorAll('.category-header').forEach(header => {
-                    header.addEventListener('click', () => {
-                        if (!this.isEditMode) this.showCategoryModal(header.dataset.category);
-                    });
-                });
-                document.getElementById('modalClose').addEventListener('click', () => this.hideToolModal());
-                document.getElementById('categoryModalClose').addEventListener('click', () => this.hideCategoryModal());
-                document.getElementById('toolModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'toolModal') this.hideToolModal();
-                });
-                document.getElementById('categoryModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'categoryModal') this.hideCategoryModal();
-                });
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        this.hideToolModal();
-                        this.hideCategoryModal();
-                    }
-                });
-            }
-
-            filterByCategory(category) {
-                this.currentFilter = category;
-                document.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.classList.toggle('active', tab.dataset.category === category);
-                });
-                this.filterAndDisplayTools();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-
-            showCategoryModal(category) {
-                const categoryInfo = this.CATEGORY_INFO[category];
-                if (!categoryInfo) return;
-                
-                document.getElementById('categoryModalTitle').textContent = categoryInfo.name;
-                document.getElementById('categoryModalSubtitle').textContent = `${this.getCategoryIcon(category)} Treasury Category`;
-                document.getElementById('categoryModalBody').innerHTML = `<p>${categoryInfo.description}</p>`;
-                const modal = document.getElementById('categoryModal');
-                modal.style.display = 'flex';
-                modal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-
-
-            hideCategoryModal() {
-                const modal = document.getElementById('categoryModal');
-                modal.classList.remove('show');
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }, 300);
-            }
-
-            showToolModal(tool) {
-                const modal = document.getElementById('toolModal');
-                modal.dataset.toolIndex = this.TREASURY_TOOLS.indexOf(tool);
-                document.getElementById('modalTitle').textContent = tool.name;
-                document.getElementById('modalSubtitle').textContent = this.getCategoryName(tool.category);
-                this.renderModalBody(tool);
-                modal.style.display = 'flex';
-                modal.classList.toggle('edit', this.isEditMode);
-                modal.classList.add('show');
-                document.body.style.overflow = 'hidden';
-            }
-
-             renderModalBody(tool) {
-                const modalBody = document.getElementById('toolModal').querySelector('.modal-body');
-                let videoSectionHtml = '';
-                if (tool.videoUrl) {
-                    const videoId = this.extractYouTubeId(tool.videoUrl);
-                    if (videoId) {
-                         videoSectionHtml = `
-                            <div class="feature-section video-section">
-                                <h4>🎥 Demo Video</h4>
-                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
-                                    <iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
-                                </div>
-                            </div>
-                         `;
-                    }
-                }
-
-                if (!this.isEditMode) {
-                    modalBody.innerHTML = `
-                        <div class="feature-section">
-                            <h4>🎯 Overview</h4>
-                            <p>${tool.desc}</p>
-                        </div>
-                        <div class="feature-section">
-                            <h4>✨ Key Features</h4>
-                            <ul class="feature-list">${(tool.features || []).map(f => `<li>${f}</li>`).join('')}</ul>
-                        </div>
-                        <div class="feature-section">
-                            <h4>🏢 Target Market</h4>
-                            <p>${tool.target}</p>
-                        </div>
-                        ${videoSectionHtml}
-                    `;
-                } else {
-                     modalBody.innerHTML = `
-                        <div class="feature-section">
-                            <h4>🎯 Overview</h4>
-                            <p class="editable-modal" contenteditable="true" data-field="desc">${tool.desc}</p>
-                        </div>
-                        <div class="feature-section">
-                            <h4>✨ Key Features</h4>
-                            <ul class="feature-list" id="modalFeaturesEdit">
-                                ${(tool.features || []).map((f, i) => `
-                                    <li class="edit">
-                                        <input type="text" value="${f}" data-index="${i}"/>
-                                        <button class="remove-feature-btn" data-index="${i}">×</button>
-                                    </li>
-                                `).join('')}
-                                <li><button class="add-feature-btn">+</button></li>
-                            </ul>
-                        </div>
-                        <div class="feature-section">
-                            <h4>🏢 Target Market</h4>
-                            <p class="editable-modal" contenteditable="true" data-field="target">${tool.target}</p>
-                        </div>
-                         <div class="feature-section">
-                            <h4>🎥 Video URL</h4>
-                             <input class="editable-modal" type="text" data-field="videoUrl" value="${tool.videoUrl || ''}" placeholder="Enter YouTube video URL" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                         </div>
-                    `;
-                }
-            }
-
-
-            hideToolModal() {
-                if (this.isEditMode) this.saveData();
-
-                const modal = document.getElementById('toolModal');
-                modal.classList.remove('show');
-                
-                setTimeout(() => {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    this.filterAndDisplayTools();
-                }, 300);
-            }
-
-            handleModalInput(e) {
-                const toolIndex = document.getElementById('toolModal').dataset.toolIndex;
-                if (toolIndex === undefined) return;
-                const tool = this.TREASURY_TOOLS[toolIndex];
-
-                if (e.target.matches('.editable-modal')) {
-                    if (e.target.getAttribute('contenteditable')) {
-                        tool[e.target.dataset.field] = e.target.textContent;
-                    } else { // Handle input fields
-                        tool[e.target.dataset.field] = e.target.value;
-                    }
-                }
-                 else if (e.target.matches('#modalFeaturesEdit input')) {
-                    const featureIndex = e.target.dataset.index;
-                    tool.features[featureIndex] = e.target.value;
-                }
-            }
-
-            handleModalClick(e) {
-                 const toolIndex = document.getElementById('toolModal').dataset.toolIndex;
-                if (toolIndex === undefined) return;
-                const tool = this.TREASURY_TOOLS[toolIndex];
-
-                if (e.target.matches('.remove-feature-btn')) {
-                    const featureIndex = e.target.dataset.index;
-                    tool.features.splice(featureIndex, 1);
-                    this.renderModalBody(tool); // Re-render to update list
-                } else if (e.target.matches('.add-feature-btn')) {
-                    if (!tool.features) tool.features = [];
-                    tool.features.push('New Feature');
-                     this.renderModalBody(tool); // Re-render to update list
-                }
-            }
-             extractYouTubeId(url) {
-                if (!url) return null;
-                const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-                const match = url.match(regExp);
-                return (match && match[7].length === 11) ? match[7] : null;
-            }
-
-        }
-
-        let treasuryStack;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            treasuryStack = new TreasuryStack();
-            document.getElementById('toolModal').addEventListener('input', (e) => treasuryStack.handleModalInput(e));
-            document.getElementById('toolModal').addEventListener('click', (e) => treasuryStack.handleModalClick(e));
-        });
-
-        // Prevent zoom on double-tap (mobile)
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, { passive: false });
-         // Send height to parent
-function sendHeight() {
-    const height = document.documentElement.scrollHeight;
-    window.parent.postMessage({ 
-        type: 'setHeight', 
-        height: height 
-    }, '*');
-}
-
-// Send height on load and resize
-window.addEventListener('load', sendHeight);
-window.addEventListener('resize', sendHeight);
-new ResizeObserver(sendHeight).observe(document.body);
-    </script>
-</body>
-</html>
