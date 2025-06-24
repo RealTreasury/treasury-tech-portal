@@ -677,7 +677,8 @@
             border: 1px solid #e5e7eb;
         }
 
-        .show-more-tags-btn {
+        .show-more-tags-btn,
+        .show-less-tags-btn {
             background: none;
             border: none;
             color: #6366f1;
@@ -689,7 +690,8 @@
             margin-left: 4px;
         }
 
-        .show-more-tags-btn:hover {
+        .show-more-tags-btn:hover,
+        .show-less-tags-btn:hover {
             background: #f3f4f6;
         }
 
@@ -1871,7 +1873,8 @@
 
             assignTags() {
                 this.TREASURY_TOOLS.forEach(tool => {
-                    tool.tags = this.CATEGORY_TAGS[tool.category] || [];
+                    const tags = this.CATEGORY_TAGS[tool.category] || [];
+                    tool.tags = [...tags].sort((a, b) => a.localeCompare(b));
                 });
             }
 
@@ -1951,7 +1954,22 @@
                         const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
                         if (tool) {
                             const tagsContainer = e.target.parentElement;
-                            tagsContainer.innerHTML = tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                            const sortedTags = [...tool.tags].sort((a, b) => a.localeCompare(b));
+                            tagsContainer.innerHTML = sortedTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                            tagsContainer.innerHTML += `<button class="show-less-tags-btn" data-tool-name="${tool.name}">Show less</button>`;
+                        }
+                    } else if (e.target.classList.contains('show-less-tags-btn')) {
+                        const toolName = e.target.dataset.toolName;
+                        const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
+                        if (tool) {
+                            const tagsContainer = e.target.parentElement;
+                            const sortedTags = [...tool.tags].sort((a, b) => a.localeCompare(b));
+                            const displayTags = sortedTags.slice(0, 3);
+                            const hasMore = sortedTags.length > 3;
+                            tagsContainer.innerHTML = displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                            if (hasMore) {
+                                tagsContainer.innerHTML += `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>`;
+                            }
                         }
                     }
                 });
@@ -2196,8 +2214,9 @@
                 };
                 
                 const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
-                const displayTags = tags.slice(0, 3);
-                const hasMoreTags = tags.length > 3;
+                const sortedTags = [...tags].sort((a, b) => a.localeCompare(b));
+                const displayTags = sortedTags.slice(0, 3);
+                const hasMoreTags = sortedTags.length > 3;
                 
                 card.innerHTML = `
                     <div class="tool-card-content">
@@ -2223,7 +2242,8 @@
                 
                 if (!this.isEditMode) {
                     card.addEventListener('click', (e) => {
-                        if (!e.target.classList.contains('show-more-tags-btn')) {
+                        if (!e.target.classList.contains('show-more-tags-btn') &&
+                            !e.target.classList.contains('show-less-tags-btn')) {
                            this.showToolModal(tool);
                         }
                     });
