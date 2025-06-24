@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Treasury Stack</title>
@@ -1091,13 +1089,32 @@
        
     </style>
  
-</head>
-<body>
+<style>
+                    .modal {
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        width: 100vw !important;
+                        height: 100vh !important;
+                        margin: 0 !important;
+                        transform: translateZ(0) !important;
+                        -webkit-transform: translateZ(0) !important;
+                    }
+                    
+                    .modal-content {
+                        position: relative !important;
+                        max-height: 80vh !important;
+                        max-width: 90vw !important;
+                        overflow-y: auto !important;
+                        margin: auto !important;
+                    }
+                </style></head>
+<body class="edit-mode" style="overflow: auto;">
     <div class="container">
         <!-- Loading Screen -->
         <div class="loading" id="loadingScreen" style="display: none;">
             <div class="loading-logo">💼</div>
-            <h1 class="editable" data-key="site-title">Treasury Stack</h1>
+            <h1 class="editable" data-key="site-title" contenteditable="true">Treasury Stack</h1>
             <p>Loading financial tools ecosystem...</p>
         </div>
 
@@ -1107,19 +1124,19 @@
         </div>
 
         <!-- Edit Mode Toggle -->
-        <button class="edit-toggle" id="editToggle">
-            <span class="edit-icon">✏️</span>
-            <span class="edit-text">Edit Mode</span>
+        <button class="edit-toggle active" id="editToggle">
+            <span class="edit-icon">💾</span>
+            <span class="edit-text">Save &amp; Exit</span>
         </button>
 
         <!-- Export Button -->
-        <button class="export-btn" id="exportBtn">
+        <button class="export-btn" id="exportBtn" style="display: flex;">
             <span>📥</span>
             <span>Export HTML</span>
         </button>
 
         <!-- Save Notification -->
-        <div class="save-notification" id="saveNotification">
+        <div class="save-notification" id="saveNotification" style="display: block;">
             Changes saved automatically
         </div>
 
@@ -1138,8 +1155,8 @@
                         <input type="file" id="logoInput" accept="image/*" style="display: none;">
                     </div>
                     <div class="title-section">
-                        <h1 class="editable" data-key="header-title">Treasury Tech Stack</h1>
-                        <p class="subtitle editable" data-key="header-subtitle">Discover the complete treasury tech landscape</p>
+                        <h1 class="editable" data-key="header-title" contenteditable="true">Treasury Tech Stack</h1>
+                        <p class="subtitle editable" data-key="header-subtitle" contenteditable="true">Discover the complete treasury tech landscape</p>
                     </div>
                 </div>
 
@@ -1179,7 +1196,7 @@
         <!-- Main Content -->
         <div class="main-content" id="mainContent">
             <!-- No Results Message -->
-            <div class="no-results" id="noResults">
+            <div class="no-results" id="noResults" style="display: none;">
                 <h3>No vendors found</h3>
                 <p>Try adjusting your search terms or filters</p>
             </div>
@@ -1189,10 +1206,10 @@
                 <div class="category-header" data-category="TRMS">
                     <div class="category-info">
                         <h2 class="category-title">
-                            🏢 <span class="editable" data-key="enterprise-title">Enterprise Treasury Systems</span>
+                            🏢 <span class="editable" data-key="enterprise-title" contenteditable="true">Treasury &amp; Risk Management Systems (TRMS)</span>
                             <span class="category-badge">Advanced</span>
                         </h2>
-                        <p class="category-description editable" data-key="enterprise-desc">
+                        <p class="category-description editable" data-key="enterprise-desc" contenteditable="true">
                             Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.
                         </p>
                     </div>
@@ -1201,7 +1218,8 @@
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-TRMS"></div>
+                <div class="tools-grid" id="tools-TRMS">
+                </div>
             </div>
 
             <!-- Cash Tools Section -->
@@ -1209,10 +1227,10 @@
                 <div class="category-header" data-category="CASH">
                     <div class="category-info">
                         <h2 class="category-title">
-                            💰 <span class="editable" data-key="cash-title">Cash Tools</span>
+                            💰 <span class="editable" data-key="cash-title" contenteditable="true">Cash Tools</span>
                             <span class="category-badge">Essential</span>
                         </h2>
-                        <p class="category-description editable" data-key="cash-desc">
+                        <p class="category-description editable" data-key="cash-desc" contenteditable="true">
                             AI-powered cash visibility and forecasting platforms designed for modern finance teams. These tools provide real-time bank connectivity, predictive analytics, and automated workflows to optimize liquidity management and improve cash flow forecasting accuracy.
                         </p>
                     </div>
@@ -1221,7 +1239,8 @@
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-CASH"></div>
+                <div class="tools-grid" id="tools-CASH">
+                </div>
             </div>
 
             <!-- TMS-Lite Section -->
@@ -1229,10 +1248,10 @@
                 <div class="category-header" data-category="LITE">
                     <div class="category-info">
                         <h2 class="category-title">
-                            ⚡ <span class="editable" data-key="lite-title">TMS-Lite Platforms</span>
+                            ⚡ <span class="editable" data-key="lite-title" contenteditable="true">TMS-Lite Platforms</span>
                             <span class="category-badge">Scalable</span>
                         </h2>
-                        <p class="category-description editable" data-key="lite-desc">
+                        <p class="category-description editable" data-key="lite-desc" contenteditable="true">
                             Balanced treasury solutions for growing companies that need more than basic cash management but don't require full enterprise complexity. These platforms offer modular functionality, competitive pricing, and scalable architecture for businesses in transition.
                         </p>
                     </div>
@@ -1241,49 +1260,62 @@
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-LITE"></div>
+                <div class="tools-grid" id="tools-LITE">
+                </div>
             </div>
         </div>
 
         <!-- Tool Modal -->
-        <div class="modal" id="toolModal">
+        <div class="modal" id="toolModal" style="display: none; top: 0px; left: 0px; position: fixed; transform: translateZ(0px);">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="modalClose">×</button>
-                    <h3 class="modal-title" id="modalTitle"></h3>
-                    <p class="modal-subtitle" id="modalSubtitle"></p>
+                    <h3 class="modal-title" id="modalTitle">Quantum</h3>
+                    <p class="modal-subtitle" id="modalSubtitle">Enterprise Treasury</p>
                 </div>
                 <div class="modal-body">
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
-                        <p id="modalDescription" style="color: #4b5563; line-height: 1.6;"></p>
+                        <p id="modalDescription" style="color: #4b5563; line-height: 1.6;">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</p>
                     </div>
                     <div class="feature-section">
                         <h4>✨ Key Features</h4>
-                        <ul class="feature-list" id="modalFeatures"></ul>
+                        <ul class="feature-list" id="modalFeatures"><li>Real-time risk monitoring</li><li>Portfolio optimization</li><li>Stress testing</li><li>Automated hedging</li><li>Compliance controls</li><li>Advanced analytics</li></ul>
                     </div>
                     <div class="feature-section">
                         <h4>🏢 Target Market</h4>
-                        <p id="modalTarget" style="color: #4b5563; line-height: 1.6;"></p>
+                        <p id="modalTarget" style="color: #4b5563; line-height: 1.6;">Investment banks and large financial institutions</p>
                     </div>
-                </div>
+                <div class="feature-section video-section">
+                                <h4>🎥 Demo Video</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                                    <iframe src="https://www.youtube.com/embed/RAWH8-FUdpQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen="">
+                                    </iframe>
+                                </div>
+                            </div></div>
             </div>
         </div>
 
         <!-- Category Modal -->
-        <div class="modal" id="categoryModal">
+        <div class="modal" id="categoryModal" style="display: none; top: 0px; left: 0px; position: fixed; transform: translateZ(0px);">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="categoryModalClose">×</button>
-                    <h3 class="modal-title" id="categoryModalTitle"></h3>
-                    <p class="modal-subtitle" id="categoryModalSubtitle"></p>
+                    <h3 class="modal-title" id="categoryModalTitle">Enterprise Treasury Systems</h3>
+                    <p class="modal-subtitle" id="categoryModalSubtitle">🏢 Treasury Category</p>
                 </div>
                 <div class="modal-body" id="categoryModalBody">
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
-                        <p id="categoryModalDescription" style="color: #4b5563; line-height: 1.6;"></p>
+                        <p id="categoryModalDescription" style="color: #4b5563; line-height: 1.6;">Full-scale treasury management platforms designed for complex treasury operations in large organizations. These solutions handle sophisticated derivatives trading, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with complex financial operations requiring extensive controls and reporting.</p>
                     </div>
-                </div>
+                <div class="feature-section video-section">
+                                <h4>🎥 Category Overview Video</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                                    <iframe src="https://www.youtube.com/embed/WyWeobyqzfQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen="">
+                                    </iframe>
+                                </div>
+                            </div></div>
             </div>
         </div>
     </div>
@@ -1305,12 +1337,7 @@
                             "Hedge accounting automation"
                         ],
                         "target": "Large enterprises and multinational corporations with complex treasury operations",
-                        "tags": [
-                            "AI/ML",
-                            "Cloud",
-                            "Global",
-                            "Risk Management"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/WyWeobyqzfQ"
                     },
                     {
@@ -1326,12 +1353,7 @@
                             "API connectivity"
                         ],
                         "target": "Fortune 500 companies requiring complex consolidation and reporting",
-                        "tags": [
-                            "Integration",
-                            "Analytics",
-                            "Enterprise",
-                            "Consolidation"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j"
                     },
                     {
@@ -1347,12 +1369,7 @@
                             "Trade capture"
                         ],
                         "target": "Financial institutions and corporations with complex derivative portfolios",
-                        "tags": [
-                            "Derivatives",
-                            "Risk",
-                            "Valuation",
-                            "Compliance"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
                     },
                     {
@@ -1368,12 +1385,7 @@
                             "Advanced analytics"
                         ],
                         "target": "Investment banks and large financial institutions",
-                        "tags": [
-                            "Real-time",
-                            "Optimization",
-                            "Banking",
-                            "Hedging"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr"
                     },
                     {
@@ -1389,12 +1401,7 @@
                             "Market data feeds"
                         ],
                         "target": "Large banks and corporations requiring full-scale treasury operations",
-                        "tags": [
-                            "Multi-asset",
-                            "Regulatory",
-                            "Trading",
-                            "Analytics"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
                     },
                     {
@@ -1410,12 +1417,7 @@
                             "Real-time analytics"
                         ],
                         "target": "Large corporations and financial institutions with active trading operations",
-                        "tags": [
-                            "Trading",
-                            "Automation",
-                            "Workflows",
-                            "Derivatives"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Integrity",
@@ -1430,12 +1432,7 @@
                             "Workflow approval"
                         ],
                         "target": "Highly regulated industries requiring strict governance and compliance",
-                        "tags": [
-                            "Governance",
-                            "Compliance",
-                            "Audit",
-                            "Controls"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr"
                     },
                     {
@@ -1451,12 +1448,7 @@
                             "Unified reporting"
                         ],
                         "target": "Large enterprises seeking integrated treasury technology solutions",
-                        "tags": [
-                            "Integration",
-                            "Unified",
-                            "Platform",
-                            "Processing"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
                     },
                     {
@@ -1472,12 +1464,7 @@
                             "Risk monitoring"
                         ],
                         "target": "Large corporations requiring sophisticated analytics and reporting",
-                        "tags": [
-                            "Analytics",
-                            "Reporting",
-                            "Visualization",
-                            "Multi-entity"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk"
                     },
                     {
@@ -1493,12 +1480,7 @@
                             "Automation tools"
                         ],
                         "target": "Large enterprises requiring integrated spend and treasury management",
-                        "tags": [
-                            "Spend Management",
-                            "Procurement",
-                            "Integration",
-                            "Automation"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC"
                     },
                     {
@@ -1514,12 +1496,7 @@
                             "API integration"
                         ],
                         "target": "Mid to large companies seeking AI-driven cash management solutions",
-                        "tags": [
-                            "AI/ML",
-                            "Real-time",
-                            "Mobile",
-                            "Forecasting"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/Vx4At4BN-og"
                     },
                     {
@@ -1535,12 +1512,7 @@
                             "Performance analytics"
                         ],
                         "target": "Growth companies and mid-market businesses optimizing cash flow",
-                        "tags": [
-                            "ML",
-                            "Optimization",
-                            "Automation",
-                            "Scenarios"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Autocash.ai",
@@ -1555,12 +1527,7 @@
                             "Intelligent alerts"
                         ],
                         "target": "Tech-forward companies embracing AI-driven financial operations",
-                        "tags": [
-                            "AI-first",
-                            "Predictions",
-                            "Smart",
-                            "Recommendations"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB"
                     },
                     {
@@ -1576,12 +1543,7 @@
                             "Streamlined UX"
                         ],
                         "target": "Companies needing real-time cash visibility and automated reconciliation",
-                        "tags": [
-                            "Real-time",
-                            "Reconciliation",
-                            "Multi-currency",
-                            "UX"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Nilus",
@@ -1596,12 +1558,7 @@
                             "Precision modeling"
                         ],
                         "target": "Companies requiring sophisticated cash forecasting and scenario analysis",
-                        "tags": [
-                            "Forecasting",
-                            "Scenarios",
-                            "Precision",
-                            "Performance"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Obol",
@@ -1616,12 +1573,7 @@
                             "Automated reporting"
                         ],
                         "target": "Modern finance teams seeking digital-first cash management solutions",
-                        "tags": [
-                            "Digital",
-                            "Modern",
-                            "Liquidity",
-                            "Mobile"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa"
                     },
                     {
@@ -1637,12 +1589,7 @@
                             "Optimization tools"
                         ],
                         "target": "Companies focused on working capital optimization and payment timing",
-                        "tags": [
-                            "Working Capital",
-                            "Optimization",
-                            "Payment Timing",
-                            "Enhancement"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8"
                     },
                     {
@@ -1658,12 +1605,7 @@
                             "API integration"
                         ],
                         "target": "Companies seeking automated bank statement processing and data extraction",
-                        "tags": [
-                            "Automation",
-                            "Processing",
-                            "Extraction",
-                            "Reconciliation"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Treasury Suite",
@@ -1678,12 +1620,7 @@
                             "Integrated platform"
                         ],
                         "target": "Companies requiring a complete cash management suite with integrated functionality",
-                        "tags": [
-                            "Comprehensive",
-                            "Suite",
-                            "Integrated",
-                            "Complete"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Vesto",
@@ -1698,12 +1635,7 @@
                             "Compliance tools"
                         ],
                         "target": "Companies with significant cash positions seeking yield optimization",
-                        "tags": [
-                            "Investment",
-                            "Yield",
-                            "Optimization",
-                            "Returns"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Treasury4",
@@ -1718,12 +1650,7 @@
                             "Quick deployment"
                         ],
                         "target": "Modern finance teams seeking next-generation treasury technology",
-                        "tags": [
-                            "Modern",
-                            "Cloud-native",
-                            "UI/UX",
-                            "Next-gen"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P"
                     },
                     {
@@ -1739,12 +1666,7 @@
                             "Standard integrations"
                         ],
                         "target": "Mid-market companies seeking accessible treasury management solutions",
-                        "tags": [
-                            "User-friendly",
-                            "Accessible",
-                            "Mid-market",
-                            "Essential"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
                     },
                     {
@@ -1760,12 +1682,7 @@
                             "Configurable workflows"
                         ],
                         "target": "Growing companies requiring scalable and customizable treasury solutions",
-                        "tags": [
-                            "Modular",
-                            "Scalable",
-                            "Customizable",
-                            "Growth"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "Treasury Curve",
@@ -1780,12 +1697,7 @@
                             "Cost-effective"
                         ],
                         "target": "Companies seeking simplified treasury management with core functionality",
-                        "tags": [
-                            "Simplified",
-                            "Core",
-                            "Streamlined",
-                            "Cost-effective"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv"
                     },
                     {
@@ -1801,12 +1713,7 @@
                             "Workflow tools"
                         ],
                         "target": "Companies prioritizing payment automation and banking integration",
-                        "tags": [
-                            "Payments",
-                            "Automation",
-                            "Banking",
-                            "Security"
-                        ]
+                        "tags": []
                     },
                     {
                         "name": "City Financials",
@@ -1821,12 +1728,7 @@
                             "Practical features"
                         ],
                         "target": "Mid-market companies seeking practical and growth-oriented solutions",
-                        "tags": [
-                            "Mid-market",
-                            "Growth",
-                            "Practical",
-                            "Scalable"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o"
                     },
                     {
@@ -1842,15 +1744,40 @@
                             "Autonomous finance"
                         ],
                         "target": "Companies seeking AI-powered automation for A/R and treasury operations",
-                        "tags": [
-                            "AI",
-                            "Autonomous",
-                            "A/R",
-                            "Integration"
-                        ],
+                        "tags": [],
                         "videoUrl": "https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn"
                     }
                 ];
+
+                 this.CATEGORY_TAGS = {
+                    CASH: [
+                        "Bank connectivity",
+                        "Basic forecasting tools",
+                        "Cash visibility",
+                        "Transaction search, sort, tag, group"
+                    ],
+                    LITE: [
+                        "Bank connectivity",
+                        "Basic forecasting tools",
+                        "Cash visibility",
+                        "Transaction search, sort, tag, group",
+                        "Cash positioning",
+                        "Market data",
+                        "Treasury payments"
+                    ],
+                    TRMS: [
+                         "Bank connectivity",
+                        "Basic forecasting tools",
+                        "Cash visibility",
+                        "Transaction search, sort, tag, group",
+                        "Cash positioning",
+                        "Market data",
+                        "Treasury payments",
+                        "Derivatives (Interest, FX)",
+                        "Intercompany loans",
+                        "Instrument valuations"
+                    ]
+                };
 
                 this.CATEGORY_INFO = {
                     TRMS: {
@@ -1880,7 +1807,7 @@
 
             init() {
                 console.log('Initializing Treasury Stack...');
-                
+                this.assignTags();
                 this.loadSavedData();
                 this.createToolCards();
                 this.setupInteractions();
@@ -1892,6 +1819,12 @@
                 setTimeout(() => {
                     document.getElementById('loadingScreen').style.display = 'none';
                 }, 800);
+            }
+
+            assignTags() {
+                this.TREASURY_TOOLS.forEach(tool => {
+                    tool.tags = this.CATEGORY_TAGS[tool.category] || [];
+                });
             }
 
             loadSavedData() {
@@ -1924,7 +1857,10 @@
                 const savedTools = localStorage.getItem('treasuryStackTools');
                 if (savedTools) {
                     this.TREASURY_TOOLS = JSON.parse(savedTools);
+                } else {
+                     this.assignTags();
                 }
+
 
                 // Load saved category info
                 const savedCategoryInfo = localStorage.getItem('treasuryStackCategoryInfo');
@@ -2017,36 +1953,38 @@
                 document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
 
                 categories.forEach(category => {
-                    const section = document.querySelector(`[data-category="${category}"]`);
+                    const section = document.querySelector(`.category-section[data-category="${category}"]`);
                     const container = document.getElementById(`tools-${category}`);
                     const categoryTools = this.filteredTools.filter(tool => tool.category === category);
                     
                     // Always show all sections for consistent UI
-                    section.classList.remove('hidden');
+                     if (section) section.classList.remove('hidden');
                     
                     // Clear and populate container
-                    container.innerHTML = '';
+                    if(container) {
+                        container.innerHTML = '';
                     
-                    if (categoryTools.length > 0) {
-                        categoryTools.forEach(tool => {
-                            const card = this.createToolCard(tool, category);
-                            container.appendChild(card);
-                        });
-                    } else {
-                        // Show appropriate message when no tools in this category
-                        let message = '';
-                        if (this.searchTerm) {
-                            message = `No tools found matching "${this.searchTerm}"`;
-                        } else if (this.currentFilter !== 'ALL' && this.currentFilter !== category) {
-                            message = `Switch to "${this.getCategoryName(category)}" or "All" to see these tools`;
-                        }
-                        
-                        if (message) {
-                            container.innerHTML = `
-                                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6b7280;">
-                                    <p>${message}</p>
-                                </div>
-                            `;
+                        if (categoryTools.length > 0) {
+                            categoryTools.forEach(tool => {
+                                const card = this.createToolCard(tool, category);
+                                container.appendChild(card);
+                            });
+                        } else {
+                            // Show appropriate message when no tools in this category
+                            let message = '';
+                            if (this.searchTerm) {
+                                message = `No tools found matching "${this.searchTerm}"`;
+                            } else if (this.currentFilter !== 'ALL' && this.currentFilter !== category) {
+                                message = `Switch to "${this.getCategoryName(category)}" or "All" to see these tools`;
+                            }
+                            
+                            if (message) {
+                                container.innerHTML = `
+                                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6b7280;">
+                                        <p>${message}</p>
+                                    </div>
+                                `;
+                            }
                         }
                     }
                 });
@@ -2213,7 +2151,7 @@
                         </div>
                         <div class="tool-description tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="desc">${tool.desc}</div>
                         <div class="tool-tags" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">
-                            ${tool.tags.map((tag, index) => `
+                            ${(tool.tags || []).map((tag, index) => `
                                 <span class="tool-tag" data-tag-index="${index}">
                                     ${tag}
                                     <button class="tag-remove" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-tag-index="${index}">×</button>
@@ -2285,7 +2223,7 @@
                         </div>
                         <div class="tool-description">${tool.desc}</div>
                         <div class="tool-tags">
-                            ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+                            ${(tool.tags || []).map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
                         </div>
                         ${tool.videoUrl ? 
                             `<div class="tool-video">
@@ -2305,6 +2243,9 @@
             addTag(toolIndex) {
                 const newTag = prompt('Enter new tag:');
                 if (newTag && newTag.trim()) {
+                    if (!this.TREASURY_TOOLS[toolIndex].tags) {
+                        this.TREASURY_TOOLS[toolIndex].tags = [];
+                    }
                     this.TREASURY_TOOLS[toolIndex].tags.push(newTag.trim());
                     this.saveData();
                     this.filterAndDisplayTools();
@@ -2312,9 +2253,11 @@
             }
 
             removeTag(toolIndex, tagIndex) {
-                this.TREASURY_TOOLS[toolIndex].tags.splice(tagIndex, 1);
-                this.saveData();
-                this.filterAndDisplayTools();
+                if (this.TREASURY_TOOLS[toolIndex].tags) {
+                    this.TREASURY_TOOLS[toolIndex].tags.splice(tagIndex, 1);
+                    this.saveData();
+                    this.filterAndDisplayTools();
+                }
             }
 
             editTag(tagElement, tagIndex, toolIndex) {
@@ -2569,7 +2512,7 @@
                 document.getElementById('modalTarget').textContent = tool.target;
 
                 const featuresList = document.getElementById('modalFeatures');
-                featuresList.innerHTML = tool.features.map(feature => `<li>${feature}</li>`).join('');
+                featuresList.innerHTML = (tool.features || []).map(feature => `<li>${feature}</li>`).join('');
 
                 // Add video section if available
                 const modalBody = document.querySelector('#toolModal .modal-body');
@@ -2704,5 +2647,6 @@ window.addEventListener('load', sendHeight);
 window.addEventListener('resize', sendHeight);
 new ResizeObserver(sendHeight).observe(document.body);
     </script>
-</body>
-</html>
+
+
+</body></html>
