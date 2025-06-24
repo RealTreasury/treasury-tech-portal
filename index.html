@@ -213,6 +213,32 @@
         .add-tag-btn:hover {
             background: #4f46e5;
         }
+        
+        /* Collapsible Tags */
+        .tool-tags .tool-tag {
+            display: inline-block;
+        }
+        .tool-tags:not(.expanded) .tool-tag:nth-child(n+4) {
+            display: none;
+        }
+        .tool-tags.expanded .tool-tag {
+            display: inline-block;
+        }
+        .show-more-tags-btn {
+            background: none;
+            border: none;
+            color: #6366f1;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+        .show-more-tags-btn:hover {
+            background: #f3f4f6;
+        }
+
 
         /* Logo Upload Area */
         .logo-upload {
@@ -1186,7 +1212,7 @@
 
                 <div class="filter-tabs">
                     <button class="filter-tab active" data-category="ALL">All</button>
-                    <button class="filter-tab" data-category="TRMS">Enterprise</button>
+                    <button class="filter-tab" data-category="TRMS">TRMS</button>
                     <button class="filter-tab" data-category="CASH">Cash Tools</button>
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                 </div>
@@ -1248,7 +1274,7 @@
                 <div class="category-header" data-category="LITE">
                     <div class="category-info">
                         <h2 class="category-title">
-                            ⚡ <span class="editable" data-key="lite-title" contenteditable="true">TMS-Lite Platforms</span>
+                            ⚡ <span class="editable" data-key="lite-title" contenteditable="true">TMS-Lite</span>
                             <span class="category-badge">Scalable</span>
                         </h2>
                         <p class="category-description editable" data-key="lite-desc" contenteditable="true">
@@ -1748,36 +1774,33 @@
                         "videoUrl": "https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn"
                     }
                 ];
+                
+                const cashTags = [
+                    "Bank Connectivity",
+                    "Basic Forecasting Tools",
+                    "Cash Visibility",
+                    "Transaction Search, Sort, Tag, Group"
+                ];
+                const liteAdditionalTags = [
+                    "Cash Positioning",
+                    "Market Data",
+                    "Treasury Payments"
+                ];
+                const trmsAdditionalTags = [
+                    "Derivatives (Interest, FX)",
+                    "Intercompany Loans",
+                    "Instrument Valuations"
+                ];
 
-                 this.CATEGORY_TAGS = {
-                    CASH: [
-                        "Bank connectivity",
-                        "Basic forecasting tools",
-                        "Cash visibility",
-                        "Transaction search, sort, tag, group"
-                    ],
-                    LITE: [
-                        "Bank connectivity",
-                        "Basic forecasting tools",
-                        "Cash visibility",
-                        "Transaction search, sort, tag, group",
-                        "Cash positioning",
-                        "Market data",
-                        "Treasury payments"
-                    ],
-                    TRMS: [
-                         "Bank connectivity",
-                        "Basic forecasting tools",
-                        "Cash visibility",
-                        "Transaction search, sort, tag, group",
-                        "Cash positioning",
-                        "Market data",
-                        "Treasury payments",
-                        "Derivatives (Interest, FX)",
-                        "Intercompany loans",
-                        "Instrument valuations"
-                    ]
+                const liteTags = [...cashTags, ...liteAdditionalTags];
+                const trmsTags = [...liteTags, ...trmsAdditionalTags];
+
+                this.CATEGORY_TAGS = {
+                    CASH: cashTags,
+                    LITE: liteTags,
+                    TRMS: trmsTags
                 };
+
 
                 this.CATEGORY_INFO = {
                     TRMS: {
@@ -1928,7 +1951,7 @@
                             tool.desc,
                             tool.target,
                             ...tool.tags,
-                            ...tool.features
+                            ...(tool.features || [])
                         ].join(' ').toLowerCase();
                         
                         return searchableText.includes(this.searchTerm);
@@ -2140,8 +2163,23 @@
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
                 
+                const tagsHtml = (tool.tags || []).map((tag, index) => {
+                    return `<span class="tool-tag">${tag}</span>`;
+                }).join('');
+
+                const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
+
+                let cardContent;
+
                 if (this.isEditMode) {
-                    card.innerHTML = `
+                     const editableTagsHtml = (tool.tags || []).map((tag, index) => `
+                        <span class="tool-tag" data-tag-index="${index}">
+                            ${tag}
+                            <button class="tag-remove" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-tag-index="${index}">×</button>
+                        </span>
+                    `).join('');
+
+                    cardContent = `
                         <div class="tool-header">
                             <div>
                                 <div class="tool-name tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="name">${tool.name}</div>
@@ -2151,12 +2189,7 @@
                         </div>
                         <div class="tool-description tool-editable" contenteditable="true" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-field="desc">${tool.desc}</div>
                         <div class="tool-tags" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">
-                            ${(tool.tags || []).map((tag, index) => `
-                                <span class="tool-tag" data-tag-index="${index}">
-                                    ${tag}
-                                    <button class="tag-remove" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}" data-tag-index="${index}">×</button>
-                                </span>
-                            `).join('')}
+                            ${editableTagsHtml}
                             <button class="add-tag-btn" data-tool-index="${this.TREASURY_TOOLS.indexOf(tool)}">+ Tag</button>
                         </div>
                         <div class="tool-video">
@@ -2168,7 +2201,31 @@
                             }
                         </div>
                     `;
-                    
+                } else {
+                     cardContent = `
+                        <div class="tool-header">
+                            <div>
+                                <div class="tool-name">${tool.name}</div>
+                                <div class="tool-type">${this.getCategoryName(category)}</div>
+                            </div>
+                            <div class="tool-icon">${this.getCategoryIcon(category)}</div>
+                        </div>
+                        <div class="tool-description">${tool.desc}</div>
+                        <div class="tool-tags">
+                            ${tagsHtml}
+                            ${showMoreButtonHtml}
+                        </div>
+                        ${tool.videoUrl ? 
+                            `<div class="tool-video">
+                                <a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
+                            </div>` : ''
+                        }
+                    `;
+                }
+
+                card.innerHTML = cardContent;
+
+                if (this.isEditMode) {
                     // Add event listeners for editable fields
                     card.querySelectorAll('.tool-editable').forEach(element => {
                         element.addEventListener('input', (e) => {
@@ -2213,26 +2270,7 @@
                         }
                     });
                 } else {
-                    card.innerHTML = `
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">${tool.name}</div>
-                                <div class="tool-type">${this.getCategoryName(category)}</div>
-                            </div>
-                            <div class="tool-icon">${this.getCategoryIcon(category)}</div>
-                        </div>
-                        <div class="tool-description">${tool.desc}</div>
-                        <div class="tool-tags">
-                            ${(tool.tags || []).map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
-                        </div>
-                        ${tool.videoUrl ? 
-                            `<div class="tool-video">
-                                <a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
-                            </div>` : ''
-                        }
-                    `;
-                    
-                    card.addEventListener('click', () => {
+                     card.addEventListener('click', () => {
                         this.showToolModal(tool);
                     });
                 }
@@ -2306,7 +2344,7 @@
                 const names = {
                     TRMS: 'Enterprise Treasury',
                     CASH: 'Cash Tools',
-                    LITE: 'TMS-Lite Platform'
+                    LITE: 'TMS-Lite'
                 };
                 return names[category] || category;
             }
@@ -2338,6 +2376,17 @@
                         }
                     });
                 });
+
+                 // Event delegation for "show more" tags
+                document.getElementById('mainContent').addEventListener('click', (e) => {
+                    if (e.target.classList.contains('show-more-tags-btn')) {
+                        e.stopPropagation();
+                        const tagsContainer = e.target.closest('.tool-tags');
+                        tagsContainer.classList.toggle('expanded');
+                        e.target.textContent = tagsContainer.classList.contains('expanded') ? '... less' : '... more';
+                    }
+                });
+
 
                 // Tool modal close
                 document.getElementById('modalClose').addEventListener('click', () => {
