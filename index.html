@@ -557,7 +557,7 @@
         }
         
         .tool-card-actions {
-            margin-top: auto;
+            margin-top: 16px;
             padding-top: 16px;
             border-top: 1px solid #e5e7eb;
         }
@@ -576,7 +576,20 @@
         .edit-details-btn:hover {
             background: #4f46e5;
         }
+        .video-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
 
+        .video-link:hover {
+            color: #4f46e5;
+        }
 
         .tool-header {
             display: flex;
@@ -634,8 +647,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-top: auto;
+            margin-top: 16px;
             padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
         }
 
         .tool-tag {
@@ -823,138 +837,6 @@
         }
 
         /* Mobile adjustments */
-        @media (max-width: 600px) {
-            .modal {
-                padding: 10px !important;
-            }
-            
-            .modal-content {
-                max-width: none !important;
-                width: 95% !important;
-                max-height: 85vh !important;
-            }
-            
-            .modal-header,
-            .modal-body {
-                padding: 15px !important;
-            }
-        }
-
-        /* Very small iframe adjustments */
-        @media (max-height: 400px) {
-            .modal-content {
-                max-height: 95vh !important;
-            }
-            
-            .modal-header {
-                padding: 15px 15px 10px !important;
-            }
-            
-            .modal-body {
-                padding: 15px !important;
-            }
-        }
-
-        /* Loading */
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            flex-direction: column;
-        }
-
-        .loading-logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-            color: white;
-        }
-
-        .loading h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .loading p {
-            color: #6b7280;
-            font-size: 1rem;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        /* Edit Mode Banner */
-        .edit-mode-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            color: white;
-            padding: 12px;
-            text-align: center;
-            z-index: 500;
-            display: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .edit-mode .edit-mode-banner {
-            display: block;
-        }
-
-        .edit-mode .header {
-            top: 48px;
-        }
-
-        .edit-mode-banner p {
-            margin: 0;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Save Notification */
-        .save-notification {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10b981;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
-            display: none;
-            z-index: 400;
-        }
-
-        /* Hidden state */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Mobile Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -968,10 +850,13 @@
             }
 
             .stats-bar {
-                justify-content: space-between;
-                gap: 10px;
+                justify-content: space-around;
+                width: 100%;
             }
-
+            .filter-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
             .stat-card {
                 flex: 1;
                 min-width: 0;
@@ -1064,7 +949,7 @@
                         margin: auto !important;
                     }
                 </style></head>
-<body class="edit-mode" style="overflow: auto;">
+<body>
     <div class="container">
         <!-- Loading Screen -->
         <div class="loading" id="loadingScreen">
@@ -1079,19 +964,19 @@
         </div>
 
         <!-- Edit Mode Toggle -->
-        <button class="edit-toggle active" id="editToggle">
-            <span class="edit-icon">💾</span>
-            <span class="edit-text">Save &amp; Exit</span>
+        <button class="edit-toggle" id="editToggle">
+            <span class="edit-icon">✏️</span>
+            <span class="edit-text">Edit Mode</span>
         </button>
 
         <!-- Export Button -->
-        <button class="export-btn" id="exportBtn" style="display: flex;">
+        <button class="export-btn" id="exportBtn">
             <span>📥</span>
             <span>Export HTML</span>
         </button>
 
         <!-- Save Notification -->
-        <div class="save-notification" id="saveNotification" style="display: block;">
+        <div class="save-notification" id="saveNotification">
             Changes saved automatically
         </div>
 
@@ -1131,10 +1016,6 @@
                         <div class="stat-card">
                             <div class="stat-number">3</div>
                             <div class="stat-label">Categories</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalFeatures">0</div>
-                            <div class="stat-label">Total Features</div>
                         </div>
                     </div>
                 </div>
@@ -1221,7 +1102,7 @@
         </div>
 
         <!-- Tool Modal -->
-        <div class="modal" id="toolModal" style="display: none; top: 0px; left: 0px; position: fixed; transform: translateZ(0px);">
+        <div class="modal" id="toolModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="modalClose">×</button>
@@ -1234,7 +1115,7 @@
         </div>
 
         <!-- Category Modal -->
-        <div class="modal" id="categoryModal" style="display: none; top: 0px; left: 0px; position: fixed; transform: translateZ(0px);">
+        <div class="modal" id="categoryModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="categoryModalClose">×</button>
@@ -1314,11 +1195,11 @@
             init() {
                 console.log('Initializing Treasury Stack...');
                 this.loadSavedData();
-                this.filterAndDisplayTools();
                 this.setupInteractions();
                 this.setupEditMode();
                 this.setupSearch();
                 this.updateCounts();
+                this.filterAndDisplayTools();
                 
                 setTimeout(() => {
                     document.getElementById('loadingScreen').style.display = 'none';
@@ -1575,6 +1456,11 @@
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
+                
+                let videoHtml = '';
+                if (tool.videoUrl && !this.isEditMode) {
+                    videoHtml = `<a href="${tool.videoUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>`;
+                }
 
                 const tagsHtml = (tool.tags || []).map((tag) => `<span class="tool-tag">${tag}</span>`).join('');
                 const showMoreButtonHtml = (tool.tags || []).length > 3 ? `<button class="show-more-tags-btn">... more</button>` : '';
@@ -1589,15 +1475,15 @@
                             <div class="tool-icon">${this.getCategoryIcon(category)}</div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>
+                    </div>
+                    <div class="tool-card-actions">
+                         ${videoHtml}
                         <div class="tool-tags">
                             ${tagsHtml}
                             ${showMoreButtonHtml}
                         </div>
+                         ${this.isEditMode ? `<button class="edit-details-btn">Edit Details</button>` : ''}
                     </div>
-                    ${this.isEditMode ? `
-                    <div class="tool-card-actions">
-                        <button class="edit-details-btn">Edit Details</button>
-                    </div>` : ''}
                 `;
 
                 card.addEventListener('click', (e) => {
@@ -1610,7 +1496,7 @@
                          e.stopPropagation();
                          this.showToolModal(tool);
                     }
-                    else if (!this.isEditMode) {
+                    else if (!this.isEditMode && !e.target.closest('a')) {
                         this.showToolModal(tool);
                     }
                 });
@@ -1630,9 +1516,6 @@
                         countElement.textContent = count;
                     }
                 });
-
-                const totalFeatures = this.TREASURY_TOOLS.reduce((sum, tool) => sum + (tool.features ? tool.features.length : 0), 0);
-                document.getElementById('totalFeatures').textContent = totalFeatures;
             }
 
             getCategoryName(category) {
@@ -1724,8 +1607,23 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            renderModalBody(tool) {
+             renderModalBody(tool) {
                 const modalBody = document.getElementById('toolModal').querySelector('.modal-body');
+                let videoSectionHtml = '';
+                if (tool.videoUrl) {
+                    const videoId = this.extractYouTubeId(tool.videoUrl);
+                    if (videoId) {
+                         videoSectionHtml = `
+                            <div class="feature-section video-section">
+                                <h4>🎥 Demo Video</h4>
+                                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px;">
+                                    <iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                         `;
+                    }
+                }
+
                 if (!this.isEditMode) {
                     modalBody.innerHTML = `
                         <div class="feature-section">
@@ -1740,6 +1638,7 @@
                             <h4>🏢 Target Market</h4>
                             <p>${tool.target}</p>
                         </div>
+                        ${videoSectionHtml}
                     `;
                 } else {
                      modalBody.innerHTML = `
@@ -1762,6 +1661,10 @@
                         <div class="feature-section">
                             <h4>🏢 Target Market</h4>
                             <p class="editable-modal" contenteditable="true" data-field="target">${tool.target}</p>
+                        </div>
+                         <div class="feature-section">
+                            <h4>🎥 Video URL</h4>
+                             <input class="editable-modal" type="text" data-field="videoUrl" value="${tool.videoUrl || ''}" placeholder="Enter YouTube video URL" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
                         </div>
                     `;
                 }
@@ -1787,7 +1690,11 @@
                 const tool = this.TREASURY_TOOLS[toolIndex];
 
                 if (e.target.matches('.editable-modal')) {
-                    tool[e.target.dataset.field] = e.target.textContent;
+                    if (e.target.getAttribute('contenteditable')) {
+                        tool[e.target.dataset.field] = e.target.textContent;
+                    } else { // Handle input fields
+                        tool[e.target.dataset.field] = e.target.value;
+                    }
                 }
                  else if (e.target.matches('#modalFeaturesEdit input')) {
                     const featureIndex = e.target.dataset.index;
@@ -1810,6 +1717,13 @@
                      this.renderModalBody(tool); // Re-render to update list
                 }
             }
+             extractYouTubeId(url) {
+                if (!url) return null;
+                const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[7].length === 11) ? match[7] : null;
+            }
+
         }
 
         let treasuryStack;
