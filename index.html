@@ -46,37 +46,6 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
-        let treasuryStack;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            treasuryStack = new TreasuryStack();
-            document.getElementById('toolModal').addEventListener('input', (e) => treasuryStack.handleModalInput(e));
-            document.getElementById('toolModal').addEventListener('click', (e) => treasuryStack.handleModalClick(e));
-        });
-
-        // Prevent zoom on double-tap (mobile)
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, { passive: false });
-         // Send height to parent
-function sendHeight() {
-    const height = document.documentElement.scrollHeight;
-    window.parent.postMessage({ 
-        type: 'setHeight', 
-        height: height 
-    }, '*');
-}
-
-// Send height on load and resize
-window.addEventListener('load', sendHeight);
-window.addEventListener('resize', sendHeight);
-new ResizeObserver(sendHeight).observe(document.body);
-
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: #f8f9fa;
@@ -208,60 +177,20 @@ new ResizeObserver(sendHeight).observe(document.body);
             transition: all 0.3s ease;
         }
 
-        .edit-mode .editable, .modal.edit .editable-modal {
+        .edit-mode .editable {
             border: 2px dashed #6366f1;
             border-radius: 8px;
             padding: 4px 8px;
             cursor: text;
         }
-        .edit-mode .editable:hover, .modal.edit .editable-modal:hover {
+        .edit-mode .editable:hover {
             background: rgba(99, 102, 241, 0.05);
         }
-        .edit-mode .editable:focus, .modal.edit .editable-modal:focus {
+        .edit-mode .editable:focus {
             background: rgba(99, 102, 241, 0.1);
             border-color: #6366f1;
             border-style: solid;
         }
-
-
-        /* Tag Editing */
-        .edit-mode .tool-tags {
-            border: 2px dashed transparent;
-            border-radius: 8px;
-            padding: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .edit-mode .tool-tags:hover {
-            border-color: #6366f1;
-            background: rgba(99, 102, 241, 0.05);
-        }
-        
-        /* Collapsible Tags */
-        .tool-tags .tool-tag {
-            display: inline-block;
-        }
-        .tool-tags:not(.expanded) .tool-tag:nth-child(n+4) {
-            display: none;
-        }
-        .tool-tags.expanded .tool-tag {
-            display: inline-block;
-        }
-        .show-more-tags-btn {
-            background: none;
-            border: none;
-            color: #6366f1;
-            cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: 500;
-            padding: 2px 4px;
-            border-radius: 4px;
-            margin-left: 4px;
-        }
-        .show-more-tags-btn:hover {
-            background: #f3f4f6;
-        }
-
 
         /* Logo Upload Area */
         .logo-upload {
@@ -491,7 +420,7 @@ new ResizeObserver(sendHeight).observe(document.body);
             transition: all 0.3s ease;
         }
 
-        .category-header:hover {
+        .category-header:hover:not(.edit-mode-header) {
             background: rgba(99, 102, 241, 0.02);
             margin: -15px -15px 25px -15px;
             padding: 15px 15px 15px 15px;
@@ -504,15 +433,15 @@ new ResizeObserver(sendHeight).observe(document.body);
         }
 
         .edit-mode .category-header:hover {
-            background: transparent;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            margin-top: 0;
-            margin-left: 0;
-            margin-right: 0;
-            padding-top: 0;
-            padding-left: 0;
-            padding-right: 0;
+            background: transparent !important;
+            margin-bottom: 25px !important;
+            padding-bottom: 15px !important;
+            margin-top: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-top: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
         }
 
         .category-info {
@@ -591,19 +520,19 @@ new ResizeObserver(sendHeight).observe(document.body);
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        /* Tools Grid */
+        /* Tools Grid - TIGHTENED SPACING */
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            gap: 12px; /* Reduced from 20px */
         }
 
-        /* Tool Card */
+        /* Tool Card - TIGHTENED SPACING */
         .tool-card {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 12px; /* Reduced from 16px */
+            padding: 16px; /* Reduced from 24px */
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
@@ -650,58 +579,44 @@ new ResizeObserver(sendHeight).observe(document.body);
         }
         
         .tool-card-actions {
-            margin-top: 16px;
-            padding-top: 16px;
+            margin-top: 12px; /* Reduced from 16px */
+            padding-top: 12px; /* Reduced from 16px */
             border-top: 1px solid #e5e7eb;
-        }
-        
-        .edit-details-btn {
-            background: #6366f1;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .edit-details-btn:hover {
-            background: #4f46e5;
-        }
-        .video-link {
-            color: #6366f1;
-            background: none;
-            border: none;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .video-link:hover {
-            color: #4f46e5;
         }
 
         .tool-header {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 10px; /* Reduced from 16px */
         }
 
         .tool-name {
-            font-size: 1.3rem;
+            font-size: 1.2rem; /* Reduced from 1.3rem */
             font-weight: 700;
             color: #281345;
-            margin-bottom: 4px;
+            margin-bottom: 2px; /* Reduced from 4px */
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .video-indicator {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover .video-indicator {
+            opacity: 1;
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.4);
         }
 
         .tool-type {
@@ -713,18 +628,18 @@ new ResizeObserver(sendHeight).observe(document.body);
         }
 
         .tool-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 36px; /* Reduced from 40px */
+            height: 36px; /* Reduced from 40px */
+            border-radius: 8px; /* Reduced from 10px */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px; /* Reduced from 18px */
             flex-shrink: 0;
             color: white;
         }
 
-        .tool-enterprise .tool-icon {
+        .tool-trms .tool-icon {
             background: linear-gradient(135deg, #7216f4, #8f47f6);
         }
 
@@ -738,32 +653,48 @@ new ResizeObserver(sendHeight).observe(document.body);
 
         .tool-description {
             color: #7e7e7e;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 16px;
+            font-size: 0.85rem; /* Reduced from 0.9rem */
+            line-height: 1.4; /* Reduced from 1.6 */
+            margin-bottom: 0; /* Reduced from 16px, now handled by tool-card-actions margin */
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
         .tool-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #f3f4f6;
+            gap: 4px; /* Reduced from 6px */
+            margin-top: 0; /* Removed as spacing is handled by parent */
+            padding-top: 0; /* Removed as spacing is handled by parent */
+            border-top: none; /* Removed as border is on parent */
         }
 
         .tool-tag {
             background: #f3f4f6;
             color: #6b7280;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.7rem;
+            padding: 3px 6px; /* Reduced from 4px 8px */
+            border-radius: 4px; /* Reduced from 6px */
+            font-size: 0.65rem; /* Reduced from 0.7rem */
             font-weight: 500;
             border: 1px solid #e5e7eb;
         }
 
-        /* IFRAME-COMPATIBLE MODAL STYLES */
+        .show-more-tags-btn {
+            background: none;
+            border: none;
+            color: #6366f1;
+            cursor: pointer;
+            font-size: 0.65rem; /* Reduced from 0.7rem */
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        .show-more-tags-btn:hover {
+            background: #f3f4f6;
+        }
+
+        /* MODAL STYLES */
         .modal {
             position: fixed !important;
             top: 0 !important;
@@ -773,94 +704,89 @@ new ResizeObserver(sendHeight).observe(document.body);
             z-index: 999999 !important;
             padding: 15px !important;
             box-sizing: border-box !important;
-            display: flex !important;
+            display: none !important;
             align-items: center !important;
             justify-content: center !important;
-            
-            /* Force viewport positioning for iframes */
-            transform: translateZ(0) !important;
-            -webkit-transform: translateZ(0) !important;
-            
-            /* WordPress compatible visibility */
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            
-            /* Lighter backdrop */
-            background: rgba(0, 0, 0, 0.4) !important;
+            background: rgba(0, 0, 0, 0.5) !important;
             backdrop-filter: blur(8px) !important;
-            
-            /* Iframe-specific positioning fix */
-            margin: 0 !important;
-            max-width: 100vw !important;
-            max-height: 100vh !important;
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        /* Hide modal by default */
-        .modal:not(.show) {
-            display: none !important;
-        }
-
-        /* Show modal when active */
         .modal.show {
-            opacity: 1 !important;
-            visibility: visible !important;
             display: flex !important;
+            opacity: 1 !important;
         }
 
-        /* Modal content - compact and minimal */
         .modal-content {
-            max-width: 440px !important;      
+            max-width: 600px !important;      
             width: 90% !important;            
             max-height: 85vh !important;      
             overflow-y: auto !important;
             margin: 0 auto !important;
             position: relative !important;
-            transform: none !important;
             background: white !important;
-            border-radius: 12px !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3) !important;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
         }
 
-        /* Video modal content - wider for better video viewing */
-        .modal-content.video-modal {
-            max-width: 640px !important;
-            width: 95% !important;
+        .modal.show .modal-content {
+            transform: scale(1);
         }
 
-        /* Modal header - more compact */
         .modal-header {
-            padding: 20px 20px 15px !important;
+            padding: 24px 24px 16px !important;
             border-bottom: 1px solid #f3f4f6 !important;
             position: relative;
         }
 
         .modal-title {
-            font-size: 1.4rem !important;   /* Smaller title */
+            font-size: 1.5rem !important;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 4px !important;
+            margin-bottom: 6px !important;
         }
 
         .modal-subtitle {
             color: #6b7280;
-            font-size: 0.85rem !important;   /* Smaller subtitle */
+            font-size: 0.9rem !important;
         }
 
-        /* Modal body - tighter spacing */
         .modal-body {
-            padding: 20px !important;
+            padding: 24px !important;
+        }
+
+        .video-container {
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            margin-bottom: 20px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .feature-section {
-            margin-bottom: 20px !important;  /* Less space between sections */
+            margin-bottom: 24px !important;
         }
 
         .feature-section h4 {
-            font-size: 1rem !important;      /* Smaller section headers */
+            font-size: 1.1rem !important;
             font-weight: 600;
             color: #1a1a1a;
-            margin-bottom: 8px !important;
+            margin-bottom: 12px !important;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -869,88 +795,37 @@ new ResizeObserver(sendHeight).observe(document.body);
         .feature-list {
             list-style: none;
             display: grid;
-            gap: 8px !important;            
+            gap: 10px !important;            
         }
 
         .feature-list li {
             color: #4b5563;
-            font-size: 0.85rem !important;   /* Smaller feature text */
+            font-size: 0.9rem !important;
             padding-left: 20px;
             position: relative;
-            line-height: 1.4 !important;
+            line-height: 1.5 !important;
         }
-        .feature-list li:not(.edit) {
-             padding-left: 20px;
-        }
-        .feature-list li:not(.edit)::before {
+
+        .feature-list li::before {
             content: '→';
             position: absolute;
             left: 0;
             color: #6366f1;
             font-weight: bold;
         }
-        .feature-list li.edit {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .feature-list li.edit input {
-            flex-grow: 1;
-            padding: 6px 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            color: #281345;
-        }
 
-        .feature-list li.edit input:focus {
-            border-color: #7216f4;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(114, 22, 244, 0.1);
-        }
-        .feature-list li.edit button {
-             background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-        .add-feature-btn {
-            background: #7216f4 !important;
-            color: white !important;
-            border: none !important;
-            width: 100% !important;
-            border-radius: 6px !important;
-            padding: 8px;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-            font-weight: 600 !important;
-            cursor: pointer !important;
-        }
-
-        .add-feature-btn:hover {
-            background: #8f47f6 !important;
-        }
-
-        /* Close button - smaller */
         .modal-close {
             position: absolute;
-            top: 15px !important;
-            right: 15px !important;
+            top: 16px !important;
+            right: 16px !important;
             background: #f3f4f6;
             border: none;
             color: #281345;
-            width: 32px !important;
-            height: 32px !important;
+            width: 36px !important;
+            height: 36px !important;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 16px !important;
+            font-size: 18px !important;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -961,6 +836,7 @@ new ResizeObserver(sendHeight).observe(document.body);
 
         .modal-close:hover {
             background: #e5e7eb;
+            transform: scale(1.1);
         }
 
         /* Mobile adjustments */
@@ -1013,16 +889,17 @@ new ResizeObserver(sendHeight).observe(document.body);
 
             .tools-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 10px; /* Reduced for mobile too */
             }
 
             .tool-card {
-                padding: 20px;
+                padding: 14px; /* Reduced for mobile */
             }
 
             .modal-content {
                 margin: 10px;
                 max-height: calc(100vh - 20px);
+                max-width: 95%;
             }
 
             .modal-header,
@@ -1046,35 +923,15 @@ new ResizeObserver(sendHeight).observe(document.body);
             }
 
             .tool-name {
-                font-size: 1.1rem;
+                font-size: 1.1rem; /* Adjusted for mobile */
             }
 
             .search-container {
                 max-width: 100%;
             }
         }
-        
     </style>
-<style>
-                  .modal {
-                        position: fixed !important;
-                        top: 0 !important;
-                        left: 0 !important;
-                        width: 100vw !important;
-                        height: 100vh !important;
-                        margin: 0 !important;
-                        transform: translateZ(0) !important;
-                        -webkit-transform: translateZ(0) !important;
-                  }
-                  
-                  .modal-content {
-                        position: relative !important;
-                        max-height: 80vh !important;
-                        max-width: 90vw !important;
-                        overflow-y: auto !important;
-                        margin: auto !important;
-                  }
-              </style></head>
+</head>
 <body class="">
     <div class="container">
         <!-- Loading Screen -->
@@ -1180,197 +1037,7 @@ new ResizeObserver(sendHeight).observe(document.body);
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-TRMS"><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Kyriba</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WyWeobyqzfQ', 'Kyriba')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">GTreasury</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j', 'GTreasury')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Reval</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'Reval')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Quantum</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr', 'Quantum')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">WallStreet Suite</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'WallStreet Suite')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">ATOM</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Integrity</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr', 'Integrity')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">IT2</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'IT2')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Datalog</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk', 'Datalog')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-trms">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Coupa</div>
-                                <div class="tool-type">TRMS</div>
-                            </div>
-                            <div class="tool-icon">🏢</div>
-                        </div>
-                        <div class="tool-description">Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC', 'Coupa')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div></div>
+                <div class="tools-grid" id="tools-TRMS"></div>
             </div>
 
             <!-- Cash Tools Section -->
@@ -1390,197 +1057,7 @@ new ResizeObserver(sendHeight).observe(document.body);
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-CASH"><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Trovata</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/Vx4At4BN-og', 'Trovata')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Tesorio</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Autocash.ai</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB', 'Autocash.ai')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Balance</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Nilus</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Obol</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa', 'Obol')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Panax</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8', 'Panax')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Statement</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Treasury Suite</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-cash">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Vesto</div>
-                                <div class="tool-type">Cash Tools</div>
-                            </div>
-                            <div class="tool-icon">💰</div>
-                        </div>
-                        <div class="tool-description">Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            
-                        </div>
-                        
-                    </div>
-                </div></div>
+                <div class="tools-grid" id="tools-CASH"></div>
             </div>
 
             <!-- TMS-Lite Section -->
@@ -1600,187 +1077,73 @@ new ResizeObserver(sendHeight).observe(document.body);
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-LITE"><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Treasury4</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P', 'Treasury4')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Treasura</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'Treasura')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Treasury Cube</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Treasury Curve</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv', 'Treasury Curve')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">Bottomline</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">City Financials</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o', 'City Financials')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div><div class="tool-card tool-lite">
-                    <div class="tool-card-content">
-                        <div class="tool-header">
-                            <div>
-                                <div class="tool-name">HighRadius</div>
-                                <div class="tool-type">TMS-Lite</div>
-                            </div>
-                            <div class="tool-icon">⚡</div>
-                        </div>
-                        <div class="tool-description">Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.</div>
-                    </div>
-                    <div class="tool-card-actions">
-                        <button class="video-link" onclick="event.stopPropagation(); treasuryStack.showVideoModal('https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn', 'HighRadius')">🎥 View Demo</button>
-                        <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
-                            <button class="show-more-tags-btn">... more</button>
-                        </div>
-                        
-                    </div>
-                </div></div>
+                <div class="tools-grid" id="tools-LITE"></div>
             </div>
         </div>
 
-        <!-- Tool Modal -->
+        <!-- Tool Details Modal -->
         <div class="modal" id="toolModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="modalClose">×</button>
-                    <h3 class="modal-title" id="modalTitle">Treasury Cube</h3>
-                    <p class="modal-subtitle" id="modalSubtitle">TMS-Lite</p>
+                    <h3 class="modal-title" id="modalTitle">Treasury Tool</h3>
+                    <p class="modal-subtitle" id="modalSubtitle">Category</p>
                 </div>
                 <div class="modal-body">
+                    <!-- Video will be embedded here if available -->
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
-                        <p>Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</p>
+                        <p id="modalDescription">Tool description will appear here.</p>
                     </div>
                     <div class="feature-section">
                         <h4>✨ Key Features</h4>
-                        <ul class="feature-list"><li>Modular design</li><li>Customizable features</li><li>Scalable architecture</li><li>Growth-focused</li><li>Flexible pricing</li><li>Configurable workflows</li></ul>
+                        <ul class="feature-list" id="modalFeatures"></ul>
                     </div>
                     <div class="feature-section">
                         <h4>🏢 Target Market</h4>
-                        <p>Growing companies requiring scalable and customizable treasury solutions</p>
+                        <p id="modalTarget">Target market information will appear here.</p>
                     </div>
-                    
                 </div>
             </div>
         </div>
 
-        <!-- Category Modal -->
+        <!-- Category Details Modal -->
         <div class="modal" id="categoryModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="categoryModalClose">×</button>
-                    <h3 class="modal-title" id="categoryModalTitle">Enterprise Treasury Systems</h3>
-                    <p class="modal-subtitle" id="categoryModalSubtitle">🏢 Treasury Category</p>
+                    <h3 class="modal-title" id="categoryModalTitle">Category Overview</h3>
+                    <p class="modal-subtitle" id="categoryModalSubtitle">Treasury Category</p>
                 </div>
-                <div class="modal-body" id="categoryModalBody">
+                <div class="modal-body">
+                    <!-- Video will be embedded here if available -->
+                    <div class="feature-section">
+                        <h4>📋 Description</h4>
+                        <p id="categoryModalDescription">Category description will appear here.</p>
+                    </div>
+                    <div class="feature-section">
+                        <h4>🎯 Key Characteristics</h4>
+                        <ul class="feature-list" id="categoryModalFeatures"></ul>
+                    </div>
+                    <div class="feature-section">
+                        <h4>🏢 Ideal For</h4>
+                        <p id="categoryModalTarget">Target organizations will appear here.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        let treasuryStack;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing Treasury Stack...');
+            treasuryStack = new TreasuryStack();
+        });
+
         class TreasuryStack {
             constructor() {
-                // --- DATA ---
                 this.TREASURY_TOOLS = [
                     { "name": "Kyriba", "category": "TRMS", "desc": "Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.", "features": ["AI-driven cash forecasting", "Real-time risk analytics", "Derivatives management", "Multi-bank connectivity", "Regulatory compliance", "Hedge accounting automation"], "target": "Large enterprises and multinational corporations with complex treasury operations", "videoUrl": "https://youtu.be/WyWeobyqzfQ" },
                     { "name": "GTreasury", "category": "TRMS", "desc": "Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.", "features": ["Deep ERP integration", "Multi-entity consolidation", "Advanced analytics", "Customizable workflows", "Real-time reporting", "API connectivity"], "target": "Fortune 500 companies requiring complex consolidation and reporting", "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j" },
@@ -1810,16 +1173,65 @@ new ResizeObserver(sendHeight).observe(document.body);
                     { "name": "City Financials", "category": "LITE", "desc": "Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.", "features": ["Mid-market focus", "Growth-oriented", "Quick implementation", "Scalable pricing", "Support included", "Practical features"], "target": "Mid-market companies seeking practical and growth-oriented solutions", "videoUrl": "https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" },
                     { "name": "HighRadius", "category": "LITE", "desc": "Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.", "features": ["AI automation", "A/R optimization", "Treasury integration", "Machine learning", "Process automation", "Autonomous finance"], "target": "Companies seeking AI-powered automation for A/R and treasury operations", "videoUrl": "https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn" }
                 ];
+
+                // Category information with videos
+                this.CATEGORY_INFO = {
+                    TRMS: {
+                        name: "Treasury & Risk Management Systems (TRMS)",
+                        badge: "Advanced",
+                        description: "Treasury & Risk Management Systems (TRMS) are comprehensive platforms for large, complex organizations. They offer a broad suite of tightly integrated modules far beyond cash visibility, covering debt and investment management, advanced financial risk analysis (FX, interest rates, commodities), hedge accounting, global payments, and in-house banking. These systems are designed to centralize and automate sophisticated treasury workflows.",
+                        features: [
+                            "Comprehensive multi-module integration",
+                            "Advanced derivatives and risk management",
+                            "Hedge accounting automation",
+                            "Global payment infrastructure",
+                            "In-house banking capabilities",
+                            "Regulatory compliance and reporting",
+                            "Complex multi-entity consolidation",
+                            "Sophisticated workflow automation"
+                        ],
+                        target: "Large enterprises, multinational corporations, and financial institutions with complex treasury operations requiring full-scale treasury management capabilities.",
+                        videoUrl: "https://youtu.be/WyWeobyqzfQ" // Add your category overview video here
+                    },
+                    CASH: {
+                        name: "Cash Tools",
+                        badge: "Essential",
+                        description: "Cash Tools are the essential first step for treasury teams moving away from manual spreadsheets. These platforms provide a single, unified view of bank balances and transactions through direct bank connections (via API or files). They excel at providing clear, real-time cash visibility and basic forecasting, allowing businesses to understand their current cash position and anticipate future needs without the complexity of a full TRMS.",
+                        features: [
+                            "Real-time bank connectivity",
+                            "Unified cash visibility dashboard",
+                            "Basic cash forecasting tools",
+                            "Transaction categorization and tagging",
+                            "Automated bank reconciliation",
+                            "Multi-currency support",
+                            "Simple reporting and alerts",
+                            "Easy implementation and setup"
+                        ],
+                        target: "Growing businesses, mid-market companies, and finance teams seeking to automate manual cash management processes and gain real-time visibility.",
+                        videoUrl: "https://youtu.be/Vx4At4BN-og" // Add your category overview video here
+                    },
+                    LITE: {
+                        name: "TMS-Lite",
+                        badge: "Scalable",
+                        description: "TMS-Lite solutions bridge the gap between basic Cash Tools and enterprise TRMS platforms. They build upon cash visibility by adding crucial treasury functions like multi-currency cash positioning, initiating treasury payments (wires, transfers), and managing basic financial instruments like foreign exchange contracts. These systems are ideal for growing companies whose needs have outpaced simple cash tools but do not yet require the full complexity of an enterprise system.",
+                        features: [
+                            "Enhanced cash positioning and forecasting",
+                            "Treasury payment initiation",
+                            "Multi-currency management",
+                            "Basic FX contract management",
+                            "Market data integration",
+                            "Improved workflow automation",
+                            "Scalable modular architecture",
+                            "Mid-market focused pricing"
+                        ],
+                        target: "Growing companies, mid-market enterprises, and organizations that have outgrown basic cash tools but don't need full TRMS complexity.",
+                        videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" // Add your category overview video here
+                    }
+                };
                 
-                const cashTags = [
-                    "Bank Connectivity", "Basic Forecasting Tools", "Cash Visibility", "Transaction Search, Sort, Tag, Group"
-                ];
-                const liteTags = [
-                    ...cashTags, "Cash Positioning", "Market Data", "Treasury Payments"
-                ];
-                const trmsTags = [
-                    ...liteTags, "AI Forecasting", "AI Insights", "AP Payments", "Bank Account Management", "Basic FX (Spots, FWD)", "Cash Accounting", "Debt Management", "Deal Accounting", "In-House Banking", "Investments", "SWIFT Connectivity", "Derivatives (Interest, FX)", "Intercompany Loans", "Instrument Valuations"
-                ];
+                const cashTags = ["Bank Connectivity", "Basic Forecasting Tools", "Cash Visibility", "Transaction Search, Sort, Tag, Group"];
+                const liteTags = [...cashTags, "Cash Positioning", "Market Data", "Treasury Payments"];
+                const trmsTags = [...liteTags, "AI Forecasting", "AI Insights", "AP Payments", "Bank Account Management", "Basic FX (Spots, FWD)", "Cash Accounting", "Debt Management", "Deal Accounting", "In-House Banking", "Investments", "SWIFT Connectivity", "Derivatives (Interest, FX)", "Intercompany Loans", "Instrument Valuations"];
 
                 this.CATEGORY_TAGS = {
                     CASH: cashTags,
@@ -1827,38 +1239,33 @@ new ResizeObserver(sendHeight).observe(document.body);
                     TRMS: trmsTags
                 };
 
-                // UPDATED CATEGORY DESCRIPTIONS
-                this.CATEGORY_INFO = {
-                    TRMS: { name: "Treasury & Risk Management Systems (TRMS)", description: "Treasury & Risk Management Systems (TRMS) are comprehensive platforms for large, complex organizations. They offer a broad suite of tightly integrated modules far beyond cash visibility, covering debt and investment management, advanced financial risk analysis (FX, interest rates, commodities), hedge accounting, global payments, and in-house banking. These systems are designed to centralize and automate sophisticated treasury workflows.", videoUrl: "https://youtu.be/WyWeobyqzfQ" },
-                    CASH: { name: "Cash Tools", description: "Cash Tools are the essential first step for treasury teams moving away from manual spreadsheets. These platforms provide a single, unified view of bank balances and transactions through direct bank connections (via API or files). They excel at providing clear, real-time cash visibility and basic forecasting, allowing businesses to understand their current cash position and anticipate future needs without the complexity of a full TRMS.", videoUrl: "https://youtu.be/Vx4At4BN-og" },
-                    LITE: { name: "TMS-Lite Platforms", description: "TMS-Lite solutions bridge the gap between basic Cash Tools and enterprise TRMS platforms. They build upon cash visibility by adding crucial treasury functions like multi-currency cash positioning, initiating treasury payments (wires, transfers), and managing basic financial instruments like foreign exchange contracts. These systems are ideal for growing companies whose needs have outpaced simple cash tools but do not yet require the full complexity of an enterprise system.", videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" }
-                };
-
-                // --- STATE ---
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.isEditMode = false;
                 this.editableContent = {};
                 this.filteredTools = [];
+                
                 this.init();
             }
 
             init() {
-                console.log('Initializing Treasury Stack...');
+                this.assignTags();
                 this.loadSavedData();
                 this.setupInteractions();
                 this.setupEditMode();
                 this.setupSearch();
+                this.setupModals();
                 this.updateCounts();
                 this.filterAndDisplayTools();
                 
                 setTimeout(() => {
-                    document.getElementById('loadingScreen').style.display = 'none';
+                    const loading = document.getElementById('loadingScreen');
+                    if (loading) loading.style.display = 'none';
                 }, 800);
             }
 
             assignTags() {
-                 this.TREASURY_TOOLS.forEach(tool => {
+                this.TREASURY_TOOLS.forEach(tool => {
                     tool.tags = this.CATEGORY_TAGS[tool.category] || [];
                 });
             }
@@ -1870,7 +1277,7 @@ new ResizeObserver(sendHeight).observe(document.body);
                     document.querySelectorAll('.editable').forEach(element => {
                         const key = element.dataset.key;
                         if (this.editableContent[key]) {
-                            element.innerHTML = this.editableContent[key]; // Use innerHTML to preserve formatting
+                            element.innerHTML = this.editableContent[key];
                         }
                     });
                 }
@@ -1879,58 +1286,246 @@ new ResizeObserver(sendHeight).observe(document.body);
                 if (savedLogo) {
                     const logoIcon = document.getElementById('logoIcon');
                     const logoImage = document.getElementById('logoImage');
-                    logoIcon.style.display = 'none';
-                    logoImage.src = savedLogo;
-                    logoImage.style.display = 'block';
+                    if (logoIcon && logoImage) {
+                        logoIcon.style.display = 'none';
+                        logoImage.src = savedLogo;
+                        logoImage.style.display = 'block';
+                    }
                 }
 
                 const savedTools = localStorage.getItem('treasuryStackTools');
                 if (savedTools) {
                     this.TREASURY_TOOLS = JSON.parse(savedTools);
-                } 
-                
-                this.assignTags(); 
-
-                const savedCategoryInfo = localStorage.getItem('treasuryStackCategoryInfo');
-                if (savedCategoryInfo) {
-                    this.CATEGORY_INFO = { ...this.CATEGORY_INFO, ...JSON.parse(savedCategoryInfo) };
+                    this.assignTags();
                 }
             }
 
             saveData() {
                 document.querySelectorAll('.editable').forEach(element => {
                     const key = element.dataset.key;
-                    this.editableContent[key] = element.innerHTML; // Use innerHTML
+                    this.editableContent[key] = element.innerHTML;
                 });
                 
                 localStorage.setItem('treasuryStackContent', JSON.stringify(this.editableContent));
                 localStorage.setItem('treasuryStackTools', JSON.stringify(this.TREASURY_TOOLS));
-                localStorage.setItem('treasuryStackCategoryInfo', JSON.stringify(this.CATEGORY_INFO));
                 
                 const notification = document.getElementById('saveNotification');
-                notification.style.display = 'block';
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 2000);
-                 this.updateCounts();
+                if (notification) {
+                    notification.style.display = 'block';
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 2000);
+                }
+                this.updateCounts();
+            }
+
+            setupInteractions() {
+                document.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        document.querySelector('.filter-tab.active')?.classList.remove('active');
+                        e.target.classList.add('active');
+                        this.currentFilter = e.target.dataset.category;
+                        this.filterAndDisplayTools();
+                    });
+                });
+
+                // Add category header click handlers
+                document.querySelectorAll('.category-header').forEach(header => {
+                    header.addEventListener('click', (e) => {
+                        if (!this.isEditMode) {
+                            const category = header.dataset.category;
+                            if (category && this.CATEGORY_INFO[category]) {
+                                this.showCategoryModal(this.CATEGORY_INFO[category], category);
+                            }
+                        }
+                    });
+                });
             }
 
             setupSearch() {
                 const searchInput = document.getElementById('searchInput');
                 const searchClear = document.getElementById('searchClear');
 
-                searchInput.addEventListener('input', (e) => {
-                    this.searchTerm = e.target.value.toLowerCase();
-                    searchClear.style.display = this.searchTerm ? 'block' : 'none';
-                    this.filterAndDisplayTools();
-                });
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.searchTerm = e.target.value.toLowerCase();
+                        if (searchClear) searchClear.style.display = this.searchTerm ? 'block' : 'none';
+                        this.filterAndDisplayTools();
+                    });
+                }
 
-                searchClear.addEventListener('click', () => {
-                    searchInput.value = '';
-                    this.searchTerm = '';
-                    searchClear.style.display = 'none';
-                    this.filterAndDisplayTools();
+                if (searchClear) {
+                    searchClear.addEventListener('click', () => {
+                        if (searchInput) searchInput.value = '';
+                        this.searchTerm = '';
+                        searchClear.style.display = 'none';
+                        this.filterAndDisplayTools();
+                    });
+                }
+            }
+
+            setupModals() {
+                const toolModal = document.getElementById('toolModal');
+                const toolModalClose = document.getElementById('modalClose');
+                
+                if (toolModalClose) {
+                    toolModalClose.addEventListener('click', () => this.closeModal('toolModal'));
+                }
+                if (toolModal) {
+                    toolModal.addEventListener('click', (e) => {
+                        if (e.target === toolModal) this.closeModal('toolModal');
+                    });
+                }
+
+                // Category modal setup
+                const categoryModal = document.getElementById('categoryModal');
+                const categoryModalClose = document.getElementById('categoryModalClose');
+                
+                if (categoryModalClose) {
+                    categoryModalClose.addEventListener('click', () => this.closeModal('categoryModal'));
+                }
+                if (categoryModal) {
+                    categoryModal.addEventListener('click', (e) => {
+                        if (e.target === categoryModal) this.closeModal('categoryModal');
+                    });
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeModal('toolModal');
+                        this.closeModal('categoryModal');
+                    }
                 });
+            }
+
+            showToolModal(tool) {
+                const modal = document.getElementById('toolModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalSubtitle = document.getElementById('modalSubtitle');
+                const modalDescription = document.getElementById('modalDescription');
+                const modalTarget = document.getElementById('modalTarget');
+                const modalFeatures = document.getElementById('modalFeatures');
+                const modalBody = modal?.querySelector('.modal-body');
+                
+                if (modalTitle) modalTitle.textContent = tool.name;
+                if (modalSubtitle) modalSubtitle.textContent = tool.category;
+                if (modalDescription) modalDescription.textContent = tool.desc;
+                if (modalTarget) modalTarget.textContent = tool.target;
+                
+                if (modalFeatures) {
+                    modalFeatures.innerHTML = '';
+                    tool.features.forEach(feature => {
+                        const li = document.createElement('li');
+                        li.textContent = feature;
+                        modalFeatures.appendChild(li);
+                    });
+                }
+                
+                // Remove any existing video section
+                const existingVideoSection = modalBody?.querySelector('.video-demo-section');
+                if (existingVideoSection) {
+                    existingVideoSection.remove();
+                }
+                
+                // Add embedded video if available
+                if (tool.videoUrl && modalBody) {
+                    const videoSection = document.createElement('div');
+                    videoSection.className = 'feature-section video-demo-section';
+                    
+                    // Convert YouTube URL to embed format
+                    let embedUrl = tool.videoUrl;
+                    if (tool.videoUrl.includes('youtu.be/')) {
+                        const videoId = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    } else if (tool.videoUrl.includes('youtube.com/watch')) {
+                        const videoId = tool.videoUrl.split('v=')[1].split('&')[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    }
+                    
+                    videoSection.innerHTML = `
+                        <h4>🎥 Demo Video</h4>
+                        <div class="video-container">
+                            <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    `;
+                    
+                    // Insert video section after the header (as the first section in the body)
+                    modalBody.insertBefore(videoSection, modalBody.firstChild);
+                }
+                
+                if (modal) {
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            showCategoryModal(categoryInfo, categoryKey) {
+                const modal = document.getElementById('categoryModal');
+                const modalTitle = document.getElementById('categoryModalTitle');
+                const modalSubtitle = document.getElementById('categoryModalSubtitle');
+                const modalDescription = document.getElementById('categoryModalDescription');
+                const modalTarget = document.getElementById('categoryModalTarget');
+                const modalFeatures = document.getElementById('categoryModalFeatures');
+                const modalBody = modal?.querySelector('.modal-body');
+                
+                if (modalTitle) modalTitle.textContent = categoryInfo.name;
+                if (modalSubtitle) modalSubtitle.textContent = `${categoryInfo.badge} Category`;
+                if (modalDescription) modalDescription.textContent = categoryInfo.description;
+                if (modalTarget) modalTarget.textContent = categoryInfo.target;
+                
+                if (modalFeatures) {
+                    modalFeatures.innerHTML = '';
+                    categoryInfo.features.forEach(feature => {
+                        const li = document.createElement('li');
+                        li.textContent = feature;
+                        modalFeatures.appendChild(li);
+                    });
+                }
+                
+                // Remove any existing video section
+                const existingVideoSection = modalBody?.querySelector('.video-demo-section');
+                if (existingVideoSection) {
+                    existingVideoSection.remove();
+                }
+                
+                // Add embedded video if available
+                if (categoryInfo.videoUrl && modalBody) {
+                    const videoSection = document.createElement('div');
+                    videoSection.className = 'feature-section video-demo-section';
+                    
+                    // Convert YouTube URL to embed format
+                    let embedUrl = categoryInfo.videoUrl;
+                    if (categoryInfo.videoUrl.includes('youtu.be/')) {
+                        const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    } else if (categoryInfo.videoUrl.includes('youtube.com/watch')) {
+                        const videoId = categoryInfo.videoUrl.split('v=')[1].split('&')[0];
+                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    }
+                    
+                    videoSection.innerHTML = `
+                        <h4>🎥 Category Overview Video</h4>
+                        <div class="video-container">
+                            <iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    `;
+                    
+                    // Insert video section as the first section in the body
+                    modalBody.insertBefore(videoSection, modalBody.firstChild);
+                }
+                
+                if (modal) {
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                }
             }
 
             filterAndDisplayTools() {
@@ -1963,21 +1558,21 @@ new ResizeObserver(sendHeight).observe(document.body);
                 const categories = ['TRMS', 'CASH', 'LITE'];
                 const hasResults = this.filteredTools.length > 0;
                 
-                document.getElementById('noResults').style.display = hasResults ? 'none' : 'block';
+                const noResults = document.getElementById('noResults');
+                if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
 
                 categories.forEach(category => {
                     const section = document.querySelector(`.category-section[data-category="${category}"]`);
                     const container = document.getElementById(`tools-${category}`);
                     const categoryTools = this.filteredTools.filter(tool => tool.category === category);
                     
-                     if (section) section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) ? 'block' : 'none';
+                    if (section) section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) ? 'block' : 'none';
                     
-                     if (this.searchTerm && section) {
+                    if (this.searchTerm && section) {
                         section.style.display = categoryTools.length > 0 ? 'block' : 'none';
-                     }
+                    }
 
-
-                    if(container) {
+                    if (container) {
                         container.innerHTML = '';
                     
                         if (categoryTools.length > 0) {
@@ -1990,6 +1585,51 @@ new ResizeObserver(sendHeight).observe(document.body);
                 });
             }
 
+            createToolCard(tool, category) {
+                const card = document.createElement('div');
+                card.className = `tool-card tool-${category.toLowerCase()}`;
+                
+                const iconMap = {
+                    'TRMS': '🏢',
+                    'CASH': '💰',
+                    'LITE': '⚡'
+                };
+                
+                const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
+                const displayTags = tags.slice(0, 3);
+                const hasMoreTags = tags.length > 3;
+                
+                card.innerHTML = `
+                    <div class="tool-card-content">
+                        <div class="tool-header">
+                            <div>
+                                <div class="tool-name">
+                                    ${tool.name}
+                                    ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
+                                </div>
+                                <div class="tool-type">${tool.category}</div>
+                            </div>
+                            <div class="tool-icon">${iconMap[tool.category]}</div>
+                        </div>
+                        <div class="tool-description">${tool.desc}</div>
+                    </div>
+                    <div class="tool-card-actions">
+                        <div class="tool-tags">
+                            ${displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+                            ${hasMoreTags ? '<button class="show-more-tags-btn">... more</button>' : ''}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', (e) => {
+                    if (!this.isEditMode && !e.target.closest('.show-more-tags-btn')) {
+                        this.showToolModal(tool);
+                    }
+                });
+                
+                return card;
+            }
+
             updateVisibleCounts() {
                 const categories = ['TRMS', 'CASH', 'LITE'];
                 categories.forEach(category => {
@@ -2000,66 +1640,116 @@ new ResizeObserver(sendHeight).observe(document.body);
                     }
                 });
                 
-                document.getElementById('totalTools').textContent = this.filteredTools.length;
+                const totalTools = document.getElementById('totalTools');
+                if (totalTools) totalTools.textContent = this.filteredTools.length;
+            }
+
+            updateCounts() {
+                const categories = ['TRMS', 'CASH', 'LITE'];
+                categories.forEach(category => {
+                    const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
+                    const countElement = document.getElementById(`count-${category}`);
+                    if (countElement) {
+                        countElement.textContent = count;
+                    }
+                });
+                
+                const totalTools = document.getElementById('totalTools');
+                if (totalTools) totalTools.textContent = this.TREASURY_TOOLS.length;
             }
 
             setupEditMode() {
                 const editToggle = document.getElementById('editToggle');
-                const editIcon = editToggle.querySelector('.edit-icon');
-                const editText = editToggle.querySelector('.edit-text');
+                const editIcon = editToggle?.querySelector('.edit-icon');
+                const editText = editToggle?.querySelector('.edit-text');
                 const exportBtn = document.getElementById('exportBtn');
                 
-                editToggle.addEventListener('click', () => {
-                    this.isEditMode = !this.isEditMode;
-                    document.body.classList.toggle('edit-mode', this.isEditMode);
-                    editToggle.classList.toggle('active', this.isEditMode);
-                    
-                    if (this.isEditMode) {
-                        editIcon.textContent = '💾';
-                        editText.textContent = 'Save & Exit';
-                        exportBtn.style.display = 'flex';
+                if (editToggle) {
+                    editToggle.addEventListener('click', () => {
+                        this.isEditMode = !this.isEditMode;
+                        document.body.classList.toggle('edit-mode', this.isEditMode);
+                        editToggle.classList.toggle('active', this.isEditMode);
                         
-                        document.querySelectorAll('.editable').forEach(element => {
-                            element.contentEditable = true;
-                        });
-                        
-                    } else {
-                        editIcon.textContent = '✏️';
-                        editText.textContent = 'Edit Mode';
-                        exportBtn.style.display = 'none';
-                        
-                        document.querySelectorAll('.editable').forEach(element => {
-                            element.contentEditable = false;
-                        });
-                        
-                        this.saveData();
-                    }
-                     this.filterAndDisplayTools();
-                });
+                        if (this.isEditMode) {
+                            if (editIcon) editIcon.textContent = '💾';
+                            if (editText) editText.textContent = 'Save & Exit';
+                            if (exportBtn) exportBtn.style.display = 'flex';
+                            
+                            document.querySelectorAll('.editable').forEach(element => {
+                                element.contentEditable = true;
+                            });
+                            
+                        } else {
+                            if (editIcon) editIcon.textContent = '✏️';
+                            if (editText) editText.textContent = 'Edit Mode';
+                            if (exportBtn) exportBtn.style.display = 'none';
+                            
+                            document.querySelectorAll('.editable').forEach(element => {
+                                element.contentEditable = false;
+                            });
+                            
+                            this.saveData();
+                        }
+                        this.filterAndDisplayTools();
+                    });
+                }
 
-                exportBtn.addEventListener('click', () => this.exportHTML());
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => this.exportHTML());
+                }
 
                 const logoUpload = document.getElementById('logoUpload');
                 const logoInput = document.getElementById('logoInput');
                 
-                logoUpload.addEventListener('click', () => {
-                    if (this.isEditMode) logoInput.click();
-                });
+                if (logoUpload && logoInput) {
+                    logoUpload.addEventListener('click', () => {
+                        if (this.isEditMode) logoInput.click();
+                    });
 
-                logoInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const logoIcon = document.getElementById('logoIcon');
-                            const logoImage = document.getElementById('logoImage');
-                            logoIcon.style.display = 'none';
-                            logoImage.src = e.target.result;
-                            logoImage.style.display = 'block';
-                            localStorage.setItem('treasuryStackLogo', e.target.result);
-                            this.saveData();
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+                    logoInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const logoIcon = document.getElementById('logoIcon');
+                                const logoImage = document.getElementById('logoImage');
+                                if (logoIcon && logoImage) {
+                                    logoIcon.style.display = 'none';
+                                    logoImage.src = e.target.result;
+                                    logoImage.style.display = 'block';
+                                    localStorage.setItem('treasuryStackLogo', e.target.result);
+                                    this.saveData();
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
             }
+
+            exportHTML() {
+                const htmlContent = document.documentElement.outerHTML;
+                const blob = new Blob([htmlContent], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'treasury-stack.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // Prevent zoom on double-tap (mobile)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+    </script>
+</body>
+</html>
