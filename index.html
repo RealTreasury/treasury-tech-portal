@@ -619,14 +619,14 @@ new ResizeObserver(sendHeight).observe(document.body);
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, transparent, #6366f1, transparent);
+            background: linear-gradient(90deg, transparent, #7216f4, transparent);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
         .tool-card:hover {
             background: white;
-            border-color: #6366f1;
+            border-color: #7216f4;
             transform: translateY(-4px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
@@ -638,7 +638,6 @@ new ResizeObserver(sendHeight).observe(document.body);
         /* Edit mode tool card styles */
         .edit-mode .tool-card {
             cursor: default;
-            transform: none !important;
         }
 
         .edit-mode .tool-card:hover {
@@ -797,15 +796,16 @@ new ResizeObserver(sendHeight).observe(document.body);
             max-height: 100vh !important;
         }
 
+        /* Hide modal by default */
+        .modal:not(.show) {
+            display: none !important;
+        }
+
         /* Show modal when active */
         .modal.show {
             opacity: 1 !important;
             visibility: visible !important;
-        }
-
-        /* Hide modal by default */
-        .modal:not(.show) {
-            display: none !important;
+            display: flex !important;
         }
 
         /* Modal content - compact and minimal */
@@ -1738,7 +1738,7 @@ new ResizeObserver(sendHeight).observe(document.body);
         </div>
 
         <!-- Tool Modal -->
-        <div class="modal" id="toolModal" data-tool-index="23" style="display: flex; overflow: hidden;"_>
+        <div class="modal" id="toolModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="modalClose">×</button>
