@@ -1,4 +1,6 @@
-<html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Treasury Stack</title>
@@ -470,7 +472,7 @@
         .category-description {
             color: #4b5563;
             font-size: 0.95rem;
-            max-width: 600px;
+            max-width: 800px;
             line-height: 1.5;
         }
 
@@ -728,7 +730,7 @@
         }
 
         .modal-title {
-            font-size: 1.4rem !important;     /* Smaller title */
+            font-size: 1.4rem !important;   /* Smaller title */
             font-weight: 700;
             color: #1a1a1a;
             margin-bottom: 4px !important;
@@ -736,7 +738,7 @@
 
         .modal-subtitle {
             color: #6b7280;
-            font-size: 0.85rem !important;    /* Smaller subtitle */
+            font-size: 0.85rem !important;   /* Smaller subtitle */
         }
 
         /* Modal body - tighter spacing */
@@ -745,11 +747,11 @@
         }
 
         .feature-section {
-            margin-bottom: 20px !important;   /* Less space between sections */
+            margin-bottom: 20px !important;  /* Less space between sections */
         }
 
         .feature-section h4 {
-            font-size: 1rem !important;       /* Smaller section headers */
+            font-size: 1rem !important;      /* Smaller section headers */
             font-weight: 600;
             color: #1a1a1a;
             margin-bottom: 8px !important;
@@ -761,12 +763,12 @@
         .feature-list {
             list-style: none;
             display: grid;
-            gap: 8px !important;              
+            gap: 8px !important;            
         }
 
         .feature-list li {
             color: #4b5563;
-            font-size: 0.85rem !important;    /* Smaller feature text */
+            font-size: 0.85rem !important;   /* Smaller feature text */
             padding-left: 20px;
             position: relative;
             line-height: 1.4 !important;
@@ -926,11 +928,10 @@
                 max-width: 100%;
             }
         }
-       
+        
     </style>
- 
 <style>
-                    .modal {
+                  .modal {
                         position: fixed !important;
                         top: 0 !important;
                         left: 0 !important;
@@ -939,22 +940,22 @@
                         margin: 0 !important;
                         transform: translateZ(0) !important;
                         -webkit-transform: translateZ(0) !important;
-                    }
-                    
-                    .modal-content {
+                  }
+                  
+                  .modal-content {
                         position: relative !important;
                         max-height: 80vh !important;
                         max-width: 90vw !important;
                         overflow-y: auto !important;
                         margin: auto !important;
-                    }
-                </style></head>
-<body class="edit-mode" style="overflow: auto;">
+                  }
+              </style></head>
+<body class="">
     <div class="container">
         <!-- Loading Screen -->
         <div class="loading" id="loadingScreen" style="display: none;">
             <div class="loading-logo">💼</div>
-            <h1 class="editable" data-key="site-title" contenteditable="true">Treasury Stack</h1>
+            <h1 class="editable" data-key="site-title" contenteditable="false">Treasury Stack</h1>
             <p>Loading financial tools ecosystem...</p>
         </div>
 
@@ -964,19 +965,19 @@
         </div>
 
         <!-- Edit Mode Toggle -->
-        <button class="edit-toggle active" id="editToggle">
-            <span class="edit-icon">💾</span>
-            <span class="edit-text">Save &amp; Exit</span>
+        <button class="edit-toggle" id="editToggle">
+            <span class="edit-icon">✏️</span>
+            <span class="edit-text">Edit Mode</span>
         </button>
 
         <!-- Export Button -->
-        <button class="export-btn" id="exportBtn" style="display: flex;">
+        <button class="export-btn" id="exportBtn" style="display: none;">
             <span>📥</span>
             <span>Export HTML</span>
         </button>
 
         <!-- Save Notification -->
-        <div class="save-notification" id="saveNotification" style="display: block;">
+        <div class="save-notification" id="saveNotification" style="display: none;">
             Changes saved automatically
         </div>
 
@@ -995,8 +996,8 @@
                         <input type="file" id="logoInput" accept="image/*" style="display: none;">
                     </div>
                     <div class="title-section">
-                        <h1 class="editable" data-key="header-title" contenteditable="true">Treasury Tech Stack</h1>
-                        <p class="subtitle editable" data-key="header-subtitle" contenteditable="true">Discover the complete treasury tech landscape</p>
+                        <h1 class="editable" data-key="header-title" contenteditable="false">Treasury Tech Stack</h1>
+                        <p class="subtitle editable" data-key="header-subtitle" contenteditable="false">Discover the complete treasury tech landscape</p>
                     </div>
                 </div>
 
@@ -1005,7 +1006,7 @@
                     <div class="search-container">
                         <span class="search-icon">🔍</span>
                         <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
-                        <button class="search-clear" id="searchClear">×</button>
+                        <button class="search-clear" id="searchClear" style="display: none;">×</button>
                     </div>
 
                     <div class="stats-bar">
@@ -1042,11 +1043,11 @@
                 <div class="category-header" data-category="TRMS">
                     <div class="category-info">
                         <h2 class="category-title">
-                            🏢 <span class="editable" data-key="enterprise-title" contenteditable="true">Treasury &amp; Risk Management Systems (TRMS)</span>
+                            🏢 <span class="editable" data-key="enterprise-title" contenteditable="false">Treasury &amp; Risk Management Systems (TRMS)</span>
                             <span class="category-badge">Advanced</span>
                         </h2>
-                        <p class="category-description editable" data-key="enterprise-desc" contenteditable="true">
-                            The Treasury &amp; Risk Management Systems category contains products that meet the needs of complex treasury operations. These tools have a wide range of interconnected functionality, available packaged or “a la carte” for tailored solution.
+                        <p class="category-description editable" data-key="enterprise-desc" contenteditable="false">
+                            Treasury &amp; Risk Management Systems (TRMS) are comprehensive platforms for large, complex organizations. They offer a broad suite of tightly integrated modules far beyond cash visibility, covering debt and investment management, advanced financial risk analysis (FX, interest rates, commodities), hedge accounting, global payments, and in-house banking. These systems are designed to centralize and automate sophisticated treasury workflows.
                         </p>
                     </div>
                     <div class="category-count">
@@ -1066,12 +1067,12 @@
                         <div class="tool-description">Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/WyWeobyqzfQ" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1085,12 +1086,12 @@
                         <div class="tool-description">Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1104,12 +1105,12 @@
                         <div class="tool-description">Comprehensive treasury and risk platform owned by ION Group, specializing in sophisticated derivatives valuation, hedge accounting, and regulatory reporting.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1123,12 +1124,12 @@
                         <div class="tool-description">Advanced treasury management system with real-time risk analytics, portfolio optimization, and sophisticated hedging strategies for financial institutions.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1142,12 +1143,12 @@
                         <div class="tool-description">Complete treasury and risk platform with multi-asset support, advanced analytics, and comprehensive regulatory reporting for complex financial operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1161,12 +1162,12 @@
                         <div class="tool-description">Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1180,12 +1181,12 @@
                         <div class="tool-description">Enterprise treasury solution emphasizing governance, compliance, and audit trails for highly regulated financial environments and complex organizational structures.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/RAWH8-FUdpQ?si=2E8JU7N-pP0rtqUr" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1199,12 +1200,12 @@
                         <div class="tool-description">Integrated treasury technology platform combining cash management, risk analytics, and payment processing in a unified enterprise solution.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1218,12 +1219,12 @@
                         <div class="tool-description">Treasury management system with powerful analytics engine, multi-entity support, and comprehensive reporting capabilities for complex treasury operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/qX_iOGiuNwM?si=omRZs79-y3pyZRdk" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-trms">
                     <div class="tool-card-content">
@@ -1237,12 +1238,12 @@
                         <div class="tool-description">Business spend management platform with integrated treasury operations, procurement workflows, and comprehensive spend analytics for enterprise organizations.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/NSeXuo6f-dw?si=sxvZ3KpwVcPA8eMC" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span><span class="tool-tag">AI Forecasting</span><span class="tool-tag">AI Insights</span><span class="tool-tag">AP Payments</span><span class="tool-tag">Bank Account Management</span><span class="tool-tag">Basic FX (Spots, FWD)</span><span class="tool-tag">Cash Accounting</span><span class="tool-tag">Debt Management</span><span class="tool-tag">Deal Accounting</span><span class="tool-tag">In-House Banking</span><span class="tool-tag">Investments</span><span class="tool-tag">SWIFT Connectivity</span><span class="tool-tag">Derivatives (Interest, FX)</span><span class="tool-tag">Intercompany Loans</span><span class="tool-tag">Instrument Valuations</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div></div>
             </div>
@@ -1252,11 +1253,11 @@
                 <div class="category-header" data-category="CASH">
                     <div class="category-info">
                         <h2 class="category-title">
-                            💰 <span class="editable" data-key="cash-title" contenteditable="true">Cash Tools</span>
+                            💰 <span class="editable" data-key="cash-title" contenteditable="false">Cash Tools</span>
                             <span class="category-badge">Essential</span>
                         </h2>
-                        <p class="category-description editable" data-key="cash-desc" contenteditable="true">
-                            Products in the Cash Tools category provide a single portal to view your bank account balances and transactions and create basic forecasts.&nbsp;
+                        <p class="category-description editable" data-key="cash-desc" contenteditable="false">
+                            Cash Tools are the essential first step for treasury teams moving away from manual spreadsheets. These platforms provide a single, unified view of bank balances and transactions through direct bank connections (via API or files). They excel at providing clear, real-time cash visibility and basic forecasting, allowing businesses to understand their current cash position and anticipate future needs without the complexity of a full TRMS.
                         </p>
                     </div>
                     <div class="category-count">
@@ -1276,12 +1277,12 @@
                         <div class="tool-description">AI-powered cash management platform providing real-time bank connectivity, predictive forecasting, and intelligent cash visibility for modern finance teams.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/Vx4At4BN-og" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1295,12 +1296,12 @@
                         <div class="tool-description">Machine learning-powered cash flow optimization platform that automates forecasting, scenario planning, and cash management workflows.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1314,12 +1315,12 @@
                         <div class="tool-description">AI-first cash management solution with predictive analytics, automated scenario modeling, and intelligent cash optimization recommendations.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/vcSdH5wcx5c?si=rhvCylzfg54nLuxB" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1333,12 +1334,12 @@
                         <div class="tool-description">Real-time cash visibility platform with automated bank reconciliation, multi-currency support, and streamlined cash positioning capabilities.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1352,12 +1353,12 @@
                         <div class="tool-description">Advanced cash forecasting platform with sophisticated scenario planning, variance analysis, and performance tracking for precise liquidity management.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1371,12 +1372,12 @@
                         <div class="tool-description">Digital treasury platform focused on liquidity optimization, real-time cash visibility, and modern workflow automation for finance teams.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/7XGzkaVSZzc?si=uxCD7HYRUmssywNa" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1390,12 +1391,12 @@
                         <div class="tool-description">Working capital optimization platform specializing in payment timing analytics, A/R and A/P integration, and cash flow enhancement strategies.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/p2svAyM74nI?si=zFPF_QZkgBo2rbz8" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1409,12 +1410,12 @@
                         <div class="tool-description">Automated bank statement processing platform with intelligent data extraction, reconciliation tools, and seamless integration capabilities.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1428,12 +1429,12 @@
                         <div class="tool-description">Comprehensive cash management suite combining forecasting, positioning, liquidity optimization, and workflow management in an integrated platform.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-cash">
                     <div class="tool-card-content">
@@ -1447,12 +1448,12 @@
                         <div class="tool-description">Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
                             <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span>
-                            <button class="show-more-tags-btn">... more</button>
+                            
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div></div>
             </div>
@@ -1462,11 +1463,11 @@
                 <div class="category-header" data-category="LITE">
                     <div class="category-info">
                         <h2 class="category-title">
-                            ⚡ <span class="editable" data-key="lite-title" contenteditable="true">TMS-Lite</span>
+                            ⚡ <span class="editable" data-key="lite-title" contenteditable="false">TMS-Lite</span>
                             <span class="category-badge">Scalable</span>
                         </h2>
-                        <p class="category-description editable" data-key="lite-desc" contenteditable="true">
-                            The TMS-Lite category includes products that have grown out of the Cash Tools category and offer additional functionality. The core functions of the TMS-Lite category are cash positioning, including transaction reconciliation, market data feeds to convert foreign currencies, and treasury-initiated payments including external wires and transfers between accounts.
+                        <p class="category-description editable" data-key="lite-desc" contenteditable="false">
+                           TMS-Lite solutions bridge the gap between basic Cash Tools and enterprise TRMS platforms. They build upon cash visibility by adding crucial treasury functions like multi-currency cash positioning, initiating treasury payments (wires, transfers), and managing basic financial instruments like foreign exchange contracts. These systems are ideal for growing companies whose needs have outpaced simple cash tools but do not yet require the full complexity of an enterprise system.
                         </p>
                     </div>
                     <div class="category-count">
@@ -1486,12 +1487,12 @@
                         <div class="tool-description">Next-generation treasury platform with modern UI/UX, cloud-native architecture, and intuitive workflows designed for the modern finance professional.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-lite">
                     <div class="tool-card-content">
@@ -1505,12 +1506,12 @@
                         <div class="tool-description">User-friendly treasury management system offering essential cash and risk management features with simplified implementation and competitive pricing.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-lite">
                     <div class="tool-card-content">
@@ -1524,12 +1525,12 @@
                         <div class="tool-description">Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-lite">
                     <div class="tool-card-content">
@@ -1543,12 +1544,12 @@
                         <div class="tool-description">Simplified treasury management solution focusing on core functionality with intuitive interface and streamlined user experience.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/5pD7P1fOYPU?si=lgolb0x0I9dJWTcv" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-lite">
                     <div class="tool-card-content">
@@ -1562,12 +1563,12 @@
                         <div class="tool-description">Payment automation and cash management platform with strong banking integration, fraud protection, and multi-bank connectivity.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-lite">
                     <div class="tool-card-content">
@@ -1581,12 +1582,12 @@
                         <div class="tool-description">Treasury system specifically designed for mid-market companies with growth-oriented features, quick implementation, and scalable pricing.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/WTYKRBzst-w?si=YiP8RFt1VOkFwH0o" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div><div class="tool-card tool-lite">
                     <div class="tool-card-content">
@@ -1600,76 +1601,40 @@
                         <div class="tool-description">Autonomous finance platform combining AI-powered accounts receivable optimization with treasury management for integrated financial operations.</div>
                     </div>
                     <div class="tool-card-actions">
-                         
+                        <a href="https://youtu.be/B0gngAz85js?si=K2r1E4GwX5VaGwVn" target="_blank" class="video-link" onclick="event.stopPropagation()">🎥 View Demo</a>
                         <div class="tool-tags">
-                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span><span class="tool-tag">Transaction Search, Sort, Tag, Group</span><span class="tool-tag">Cash Positioning</span><span class="tool-tag">Market Data</span><span class="tool-tag">Treasury Payments</span>
+                            <span class="tool-tag">Bank Connectivity</span><span class="tool-tag">Basic Forecasting Tools</span><span class="tool-tag">Cash Visibility</span>
                             <button class="show-more-tags-btn">... more</button>
                         </div>
-                         <button class="edit-details-btn">Edit Details</button>
+                        
                     </div>
                 </div></div>
             </div>
         </div>
 
         <!-- Tool Modal -->
-        <div class="modal edit" id="toolModal" data-tool-index="5" style="display: none;">
+        <div class="modal" id="toolModal" data-tool-index="23" style="display: flex; overflow: hidden;"_>
             <div class="modal-content">
                 <div class="modal-header">
                     <button class="modal-close" id="modalClose">×</button>
-                    <h3 class="modal-title" id="modalTitle">ATOM</h3>
-                    <p class="modal-subtitle" id="modalSubtitle">Enterprise Treasury</p>
+                    <h3 class="modal-title" id="modalTitle">Treasury Cube</h3>
+                    <p class="modal-subtitle" id="modalSubtitle">TMS-Lite</p>
                 </div>
                 <div class="modal-body">
-                        <div class="feature-section">
-                            <h4>🎯 Overview</h4>
-                            <p class="editable-modal" contenteditable="true" data-field="desc">Enterprise treasury platform focused on derivatives trading, risk management, and automated workflow processing for sophisticated financial operations.</p>
-                        </div>
-                        <div class="feature-section">
-                            <h4>✨ Key Features</h4>
-                            <ul class="feature-list" id="modalFeaturesEdit">
-                                
-                                    <li class="edit">
-                                        <input type="text" value="Derivatives trading" data-index="0">
-                                        <button class="remove-feature-btn" data-index="0">×</button>
-                                    </li>
-                                
-                                    <li class="edit">
-                                        <input type="text" value="Automated workflows" data-index="1">
-                                        <button class="remove-feature-btn" data-index="1">×</button>
-                                    </li>
-                                
-                                    <li class="edit">
-                                        <input type="text" value="Risk management" data-index="2">
-                                        <button class="remove-feature-btn" data-index="2">×</button>
-                                    </li>
-                                
-                                    <li class="edit">
-                                        <input type="text" value="Trade processing" data-index="3">
-                                        <button class="remove-feature-btn" data-index="3">×</button>
-                                    </li>
-                                
-                                    <li class="edit">
-                                        <input type="text" value="Compliance monitoring" data-index="4">
-                                        <button class="remove-feature-btn" data-index="4">×</button>
-                                    </li>
-                                
-                                    <li class="edit">
-                                        <input type="text" value="Real-time analytics" data-index="5">
-                                        <button class="remove-feature-btn" data-index="5">×</button>
-                                    </li>
-                                
-                                <li><button class="add-feature-btn">+</button></li>
-                            </ul>
-                        </div>
-                        <div class="feature-section">
-                            <h4>🏢 Target Market</h4>
-                            <p class="editable-modal" contenteditable="true" data-field="target">Large corporations and financial institutions with active trading operations</p>
-                        </div>
-                         <div class="feature-section">
-                            <h4>🎥 Video URL</h4>
-                             <input class="editable-modal" type="text" data-field="videoUrl" value="" placeholder="Enter YouTube video URL" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                        </div>
+                    <div class="feature-section">
+                        <h4>🎯 Overview</h4>
+                        <p>Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.</p>
                     </div>
+                    <div class="feature-section">
+                        <h4>✨ Key Features</h4>
+                        <ul class="feature-list"><li>Modular design</li><li>Customizable features</li><li>Scalable architecture</li><li>Growth-focused</li><li>Flexible pricing</li><li>Configurable workflows</li></ul>
+                    </div>
+                    <div class="feature-section">
+                        <h4>🏢 Target Market</h4>
+                        <p>Growing companies requiring scalable and customizable treasury solutions</p>
+                    </div>
+                    
+                </div>
             </div>
         </div>
 
@@ -1690,6 +1655,7 @@
     <script>
         class TreasuryStack {
             constructor() {
+                // --- DATA ---
                 this.TREASURY_TOOLS = [
                     { "name": "Kyriba", "category": "TRMS", "desc": "Market-leading cloud treasury platform serving 3,000+ global clients with AI-powered cash forecasting, comprehensive risk management, and advanced derivatives trading capabilities.", "features": ["AI-driven cash forecasting", "Real-time risk analytics", "Derivatives management", "Multi-bank connectivity", "Regulatory compliance", "Hedge accounting automation"], "target": "Large enterprises and multinational corporations with complex treasury operations", "videoUrl": "https://youtu.be/WyWeobyqzfQ" },
                     { "name": "GTreasury", "category": "TRMS", "desc": "Enterprise treasury platform known for deep ERP integration, advanced reporting, and sophisticated multi-entity consolidation for complex organizational structures.", "features": ["Deep ERP integration", "Multi-entity consolidation", "Advanced analytics", "Customizable workflows", "Real-time reporting", "API connectivity"], "target": "Fortune 500 companies requiring complex consolidation and reporting", "videoUrl": "https://youtu.be/06Kjx3X748I?si=inoxdyJF9LEfuP_j" },
@@ -1736,13 +1702,14 @@
                     TRMS: trmsTags
                 };
 
-
+                // UPDATED CATEGORY DESCRIPTIONS
                 this.CATEGORY_INFO = {
-                    TRMS: { name: "Enterprise Treasury Systems", description: "Full-scale treasury management platforms designed for complex treasury operations in large organizations. These solutions handle sophisticated derivatives trading, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with complex financial operations requiring extensive controls and reporting.", videoUrl: "https://youtu.be/WyWeobyqzfQ" },
-                    CASH: { name: "Cash Tools", description: "AI-powered cash visibility and forecasting platforms designed for modern finance teams. These innovative tools provide real-time bank connectivity, predictive analytics, and automated workflows to optimize liquidity management and significantly improve cash flow forecasting accuracy across all business sizes.", videoUrl: "https://youtu.be/Vx4At4BN-og" },
-                    LITE: { name: "TMS-Lite Platforms", description: "Balanced treasury solutions for growing companies that need more than basic cash management but don't require full enterprise complexity. These platforms offer modular functionality, competitive pricing, and scalable architecture perfect for businesses in transition from spreadsheets to sophisticated treasury management.", videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" }
+                    TRMS: { name: "Treasury & Risk Management Systems (TRMS)", description: "Treasury & Risk Management Systems (TRMS) are comprehensive platforms for large, complex organizations. They offer a broad suite of tightly integrated modules far beyond cash visibility, covering debt and investment management, advanced financial risk analysis (FX, interest rates, commodities), hedge accounting, global payments, and in-house banking. These systems are designed to centralize and automate sophisticated treasury workflows.", videoUrl: "https://youtu.be/WyWeobyqzfQ" },
+                    CASH: { name: "Cash Tools", description: "Cash Tools are the essential first step for treasury teams moving away from manual spreadsheets. These platforms provide a single, unified view of bank balances and transactions through direct bank connections (via API or files). They excel at providing clear, real-time cash visibility and basic forecasting, allowing businesses to understand their current cash position and anticipate future needs without the complexity of a full TRMS.", videoUrl: "https://youtu.be/Vx4At4BN-og" },
+                    LITE: { name: "TMS-Lite Platforms", description: "TMS-Lite solutions bridge the gap between basic Cash Tools and enterprise TRMS platforms. They build upon cash visibility by adding crucial treasury functions like multi-currency cash positioning, initiating treasury payments (wires, transfers), and managing basic financial instruments like foreign exchange contracts. These systems are ideal for growing companies whose needs have outpaced simple cash tools but do not yet require the full complexity of an enterprise system.", videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P" }
                 };
 
+                // --- STATE ---
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.isEditMode = false;
@@ -1778,7 +1745,7 @@
                     document.querySelectorAll('.editable').forEach(element => {
                         const key = element.dataset.key;
                         if (this.editableContent[key]) {
-                            element.textContent = this.editableContent[key];
+                            element.innerHTML = this.editableContent[key]; // Use innerHTML to preserve formatting
                         }
                     });
                 }
@@ -1808,7 +1775,7 @@
             saveData() {
                 document.querySelectorAll('.editable').forEach(element => {
                     const key = element.dataset.key;
-                    this.editableContent[key] = element.textContent;
+                    this.editableContent[key] = element.innerHTML; // Use innerHTML
                 });
                 
                 localStorage.setItem('treasuryStackContent', JSON.stringify(this.editableContent));
@@ -1878,8 +1845,13 @@
                     const container = document.getElementById(`tools-${category}`);
                     const categoryTools = this.filteredTools.filter(tool => tool.category === category);
                     
-                     if (section) section.classList.remove('hidden');
+                     if (section) section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) ? 'block' : 'none';
                     
+                     if (this.searchTerm && section) {
+                        section.style.display = categoryTools.length > 0 ? 'block' : 'none';
+                     }
+
+
                     if(container) {
                         container.innerHTML = '';
                     
@@ -1888,41 +1860,22 @@
                                 const card = this.createToolCard(tool, category);
                                 container.appendChild(card);
                             });
-                        } else {
-                            let message = '';
-                            if (this.searchTerm) {
-                                message = `No tools found matching "${this.searchTerm}"`;
-                            } else if (this.currentFilter !== 'ALL' && this.currentFilter !== category) {
-                                message = `Switch to "${this.getCategoryName(category)}" or "All" to see these tools`;
-                            }
-                            
-                            if (message) {
-                                container.innerHTML = `
-                                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #6b7280;">
-                                        <p>${message}</p>
-                                    </div>
-                                `;
-                            }
-                        }
+                        } 
                     }
                 });
             }
 
             updateVisibleCounts() {
-                if (this.searchTerm) {
-                    const categories = ['TRMS', 'CASH', 'LITE'];
-                    categories.forEach(category => {
-                        const count = this.filteredTools.filter(tool => tool.category === category).length;
-                        const countElement = document.getElementById(`count-${category}`);
-                        if (countElement) {
-                            countElement.textContent = count;
-                        }
-                    });
-                    
-                    document.getElementById('totalTools').textContent = this.filteredTools.length;
-                } else {
-                    this.updateCounts();
-                }
+                const categories = ['TRMS', 'CASH', 'LITE'];
+                categories.forEach(category => {
+                    const count = this.filteredTools.filter(tool => tool.category === category).length;
+                    const countElement = document.getElementById(`count-${category}`);
+                    if (countElement) {
+                        countElement.textContent = count;
+                    }
+                });
+                
+                document.getElementById('totalTools').textContent = this.filteredTools.length;
             }
 
             setupEditMode() {
@@ -2224,7 +2177,7 @@
                          <div class="feature-section">
                             <h4>🎥 Video URL</h4>
                              <input class="editable-modal" type="text" data-field="videoUrl" value="${tool.videoUrl || ''}" placeholder="Enter YouTube video URL" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                        </div>
+                         </div>
                     `;
                 }
             }
@@ -2316,7 +2269,5 @@ window.addEventListener('load', sendHeight);
 window.addEventListener('resize', sendHeight);
 new ResizeObserver(sendHeight).observe(document.body);
     </script>
-
-
-
-</body></html>
+</body>
+</html>
