@@ -1731,8 +1731,8 @@
 
             init() {
                 console.log('Initializing Treasury Stack...');
-                this.assignTags();
                 this.loadSavedData();
+                this.assignTags();
                 this.createToolCards();
                 this.setupInteractions();
                 this.setupEditMode();
@@ -1781,9 +1781,9 @@
                 const savedTools = localStorage.getItem('treasuryStackTools');
                 if (savedTools) {
                     this.TREASURY_TOOLS = JSON.parse(savedTools);
-                } else {
-                     this.assignTags();
-                }
+                } 
+                
+                this.assignTags(); // Always re-assign tags to ensure rules are current
 
 
                 // Load saved category info
@@ -1810,6 +1810,7 @@
                 setTimeout(() => {
                     notification.style.display = 'none';
                 }, 2000);
+                 this.updateCounts();
             }
 
             setupSearch() {
