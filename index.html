@@ -831,26 +831,28 @@
         }
         
         .website-link--modal {
-            background: rgba(114, 37, 218, 0.2);
-            color: #f0e6ff;
+            background: linear-gradient(135deg, rgba(114, 22, 244, 0.6), rgba(80, 15, 171, 0.7)) !important;
+            color: #ffffff !important;
+            text-shadow: 0 1px 3px rgba(40, 19, 69, 0.5);
             padding: 8px 16px;
             font-size: 0.85rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             text-decoration: none;
             border-radius: 8px;
             font-weight: 600;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(199, 125, 255, 0.4) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .website-link--modal:hover {
-            background: rgba(114, 37, 218, 0.4);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, rgba(114, 22, 244, 0.7), rgba(80, 15, 171, 0.8)) !important;
+            border-color: rgba(220, 180, 255, 0.7) !important;
+            transform: translateY(-2px);
             color: white;
             text-decoration: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
         .modal-close {
@@ -868,7 +870,7 @@
             transition: all 0.3s ease;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-weight: 600;
-            position: static; /* Removed absolute positioning */
+            position: static;
         }
 
         .modal-close:hover {
@@ -1135,7 +1137,6 @@
                 <div class="modal-header">
                     <div class="modal-header-main">
                         <h3 class="modal-title" id="modalTitle">Treasury Tool</h3>
-                        <p class="modal-subtitle" id="modalSubtitle">Category</p>
                     </div>
                     <div class="modal-header-actions">
                          <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal">
@@ -1479,23 +1480,11 @@
             showToolModal(tool) {
                 const modal = document.getElementById('toolModal');
                 const modalTitle = document.getElementById('modalTitle');
-                const modalSubtitle = document.getElementById('modalSubtitle');
                 const modalDescription = document.getElementById('modalDescription');
                 const modalWebsiteLink = document.getElementById('modalWebsiteLink');
                 const modalBody = modal?.querySelector('.modal-body');
                 
                 if (modalTitle) modalTitle.textContent = tool.name;
-                
-                if (modalSubtitle) {
-                    let subtitleText = tool.category;
-                    if (tool.category === 'CASH') {
-                        subtitleText = 'Cash Tools';
-                    } else if (tool.category === 'LITE') {
-                        subtitleText = 'TMS-Lite';
-                    }
-                    modalSubtitle.textContent = subtitleText;
-                }
-
                 if (modalDescription) modalDescription.textContent = tool.desc;
                 
                 if (modalWebsiteLink) {
