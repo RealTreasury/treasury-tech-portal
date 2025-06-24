@@ -2396,5 +2396,16 @@
             lastTouchEnd = now;
         }, { passive: false });
     </script>
+<script>
+  function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: "setHeight", height: height }, "*");
+  }
 
-</body></html>
+  window.addEventListener("load", sendHeight);
+  window.addEventListener("resize", sendHeight);
+</script>
+
+</body>
+
+</html>
