@@ -1088,6 +1088,19 @@
                 max-width: 100%;
             }
         }
+        // Send height to parent
+function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage({ 
+        type: 'setHeight', 
+        height: height 
+    }, '*');
+}
+
+// Send height on load and resize
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+new ResizeObserver(sendHeight).observe(document.body);
     </style>
  
 </head>
