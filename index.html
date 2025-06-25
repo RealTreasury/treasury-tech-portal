@@ -1179,6 +1179,122 @@
         .action-btn.secondary:hover {
             background: #f8f9ff;
         }
+
+        /* Shortlist Menu */
+        .shortlist-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 340px;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(248,248,248,0.75) 100%);
+            backdrop-filter: blur(10px) saturate(140%);
+            -webkit-backdrop-filter: blur(10px) saturate(140%);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+            border-left: 1px solid rgba(199,125,255,0.3);
+            border-radius: 20px 0 0 20px;
+            z-index: 1001;
+            transform: translateX(280px);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1);
+            overflow-y: auto;
+        }
+
+        .shortlist-menu.open {
+            transform: translateX(0);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        body.shortlist-menu-pinned .shortlist-menu-overlay { display:none; }
+        body.shortlist-menu-pinned .container { margin-right:340px; }
+        body.shortlist-menu-pinned #shortlistMenuToggle { display:none; }
+
+        .shortlist-menu-overlay {
+            position: fixed;
+            top:0;
+            right:0;
+            width:100%;
+            height:100%;
+            background: rgba(40,19,69,0.05);
+            z-index:1000;
+            opacity:0;
+            visibility:hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .shortlist-menu-overlay.show {
+            opacity:1;
+            visibility:visible;
+        }
+
+        .shortlist-menu-header {
+            padding:20px;
+            border-bottom:1px solid #e5e7eb;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            background: linear-gradient(135deg, #f6f7fb 0%, #e8ecfc 100%);
+            color:#281345;
+        }
+
+        .shortlist-menu-title {
+            font-size:1.2rem;
+            font-weight:700;
+            margin:0;
+        }
+
+        .shortlist-menu:not(.open) .shortlist-menu-title,
+        .shortlist-menu:not(.open) .shortlist-menu-pin,
+        .shortlist-menu:not(.open) .shortlist-section { display:none; }
+
+        .shortlist-menu:not(.open) { overflow:visible; }
+
+        .shortlist-menu-pin {
+            background: rgba(255,255,255,0.25);
+            border:none;
+            color: var(--primary-purple);
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transition: all 0.3s ease;
+            margin-left:8px;
+        }
+
+        .shortlist-menu-pin:hover { background: rgba(255,255,255,0.35); }
+        .shortlist-menu-pin.pinned { background: rgba(255,255,255,0.45); }
+
+        .shortlist-menu-content { padding:0; }
+        .shortlist-section { border-bottom:1px solid #f3f4f6; }
+
+        .shortlist-container {
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+            margin-top:12px;
+        }
+
+        .shortlist-card {
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:8px;
+            padding:8px 12px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
+
+        .remove-shortlist {
+            background:none;
+            border:none;
+            color:#7216f4;
+            cursor:pointer;
+            font-size:1rem;
+        }
     </style>
 </head>
 
@@ -1221,10 +1337,10 @@
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                     <button class="filter-tab" data-category="TRMS">TRMS</button>
                 </div>
-            </div>
         </div>
-        <div class="side-menu-overlay" id="sideMenuOverlay"></div>
-        <div class="side-menu" id="sideMenu">
+    </div>
+    <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+    <div class="side-menu" id="sideMenu">
             <div class="side-menu-header">
                 <button class="menu-toggle" id="sideMenuToggle">
                     <span class="chevron"></span>
@@ -1300,9 +1416,31 @@
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
 
-        <!-- Main Content -->
+    <div class="shortlist-menu-overlay" id="shortlistMenuOverlay"></div>
+    <div class="shortlist-menu" id="shortlistMenu">
+        <div class="shortlist-menu-header">
+            <button class="menu-toggle" id="shortlistMenuToggle">
+                <span class="chevron"></span>
+            </button>
+            <h3 class="shortlist-menu-title">Shortlist</h3>
+            <div>
+                <button class="shortlist-menu-pin" id="shortlistMenuPin">📌</button>
+            </div>
+        </div>
+        <div class="shortlist-menu-content">
+            <div class="shortlist-section">
+                <div class="menu-section-content">
+                    <p style="font-size:0.85rem;color:#4b5563;">Drag vendor cards here to build your shortlist.</p>
+                    <div id="shortlistContainer" class="shortlist-container"></div>
+                    <button class="action-btn secondary" id="clearShortlist" style="margin-top:12px;">Clear Shortlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
         <div class="main-content" id="mainContent">
             <!-- No Results Message -->
             <div class="no-results" id="noResults" style="display: none;">
@@ -1740,6 +1878,9 @@
                 this.gridSize = 'auto';
                 this.sideMenuOpen = false;
                 this.sideMenuPinned = false;
+                this.shortlist = [];
+                this.shortlistMenuOpen = false;
+                this.shortlistMenuPinned = false;
 
                 this.init();
             }
@@ -1750,6 +1891,7 @@
                 this.setupSearch();
                 this.setupModals();
                 this.setupSideMenu();
+                this.setupShortlistMenu();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
@@ -2142,6 +2284,7 @@
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
+                card.draggable = true;
 
                 const iconMap = {
                     'TRMS': '🏢',
@@ -2181,6 +2324,10 @@
                         !e.target.closest('.show-less-tags-btn')) {
                         this.showToolModal(tool);
                     }
+                });
+
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', tool.name);
                 });
 
                 return card;
@@ -2404,6 +2551,116 @@
                     this.closeSideMenu();
                     pinBtn?.classList.remove('pinned');
                 }
+            }
+
+            setupShortlistMenu() {
+                const menuToggle = document.getElementById('shortlistMenuToggle');
+                const overlay = document.getElementById('shortlistMenuOverlay');
+                const pinBtn = document.getElementById('shortlistMenuPin');
+                const container = document.getElementById('shortlistContainer');
+                const clearBtn = document.getElementById('clearShortlist');
+
+                if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
+                if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
+                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
+                if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
+
+                if (container) {
+                    container.addEventListener('dragover', e => e.preventDefault());
+                    container.addEventListener('drop', e => {
+                        e.preventDefault();
+                        const name = e.dataTransfer.getData('text/plain');
+                        const tool = this.TREASURY_TOOLS.find(t => t.name === name);
+                        if (tool && !this.shortlist.some(t => t.name === name)) {
+                            this.shortlist.push(tool);
+                            this.renderShortlist();
+                        }
+                    });
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.shortlistMenuOpen) this.closeShortlistMenu();
+                });
+
+                this.renderShortlist();
+            }
+
+            toggleShortlistMenu() {
+                if (this.shortlistMenuOpen) this.closeShortlistMenu();
+                else this.openShortlistMenu();
+            }
+
+            openShortlistMenu(pinned = false) {
+                const menu = document.getElementById('shortlistMenu');
+                const overlay = document.getElementById('shortlistMenuOverlay');
+                const toggle = document.getElementById('shortlistMenuToggle');
+
+                menu?.classList.add('open');
+                if (pinned) {
+                    overlay?.classList.remove('show');
+                    toggle?.classList.remove('active');
+                    document.body.classList.add('shortlist-menu-pinned');
+                    document.body.style.overflow = '';
+                } else {
+                    overlay?.classList.add('show');
+                    toggle?.classList.add('active');
+                    document.body.classList.remove('shortlist-menu-pinned');
+                    document.body.style.overflow = 'hidden';
+                }
+                this.shortlistMenuOpen = true;
+            }
+
+            closeShortlistMenu() {
+                const menu = document.getElementById('shortlistMenu');
+                const overlay = document.getElementById('shortlistMenuOverlay');
+                const toggle = document.getElementById('shortlistMenuToggle');
+                const pinBtn = document.getElementById('shortlistMenuPin');
+
+                menu?.classList.remove('open');
+                overlay?.classList.remove('show');
+                toggle?.classList.remove('active');
+                document.body.classList.remove('shortlist-menu-pinned');
+                document.body.style.overflow = '';
+                this.shortlistMenuOpen = false;
+                this.shortlistMenuPinned = false;
+                pinBtn?.classList.remove('pinned');
+            }
+
+            togglePinShortlistMenu() {
+                this.shortlistMenuPinned = !this.shortlistMenuPinned;
+                const pinBtn = document.getElementById('shortlistMenuPin');
+                if (this.shortlistMenuPinned) {
+                    this.openShortlistMenu(true);
+                    pinBtn?.classList.add('pinned');
+                } else {
+                    this.closeShortlistMenu();
+                    pinBtn?.classList.remove('pinned');
+                }
+            }
+
+            renderShortlist() {
+                const container = document.getElementById('shortlistContainer');
+                if (!container) return;
+                container.innerHTML = '';
+                this.shortlist.forEach(tool => {
+                    const div = document.createElement('div');
+                    div.className = 'shortlist-card';
+                    div.innerHTML = `<span class="shortlist-card-title">${tool.name}</span>` +
+                        `<button class="remove-shortlist" data-name="${tool.name}">×</button>`;
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.remove-shortlist').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const name = e.target.dataset.name;
+                        this.shortlist = this.shortlist.filter(t => t.name !== name);
+                        this.renderShortlist();
+                    });
+                });
+            }
+
+            clearShortlist() {
+                this.shortlist = [];
+                this.renderShortlist();
             }
 
             updateFeatureFilters() {
