@@ -1395,17 +1395,27 @@
             padding:8px;
         }
 
-        /* Show instructions when the shortlist is empty */
-        .shortlist-container:empty {
+        .shortlist-container.empty {
             justify-content:center;
             align-items:center;
         }
 
-        .shortlist-container:empty::before {
-            content: 'Drag and drop vendor cards here';
+        .shortlist-empty-message {
             color: #4b5563;
             font-size: 0.85rem;
             text-align: center;
+        }
+
+        .visually-hidden {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0 0 0 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
         }
 
         .shortlist-card {
@@ -1589,8 +1599,9 @@
         <div class="shortlist-menu-content">
             <div class="shortlist-section">
                 <div class="menu-section-content">
-                    <p style="font-size:0.85rem;color:#4b5563;">Drag vendor cards here to build your shortlist.</p>
-                    <div id="shortlistContainer" class="shortlist-container"></div>
+                    <div id="shortlistContainer" class="shortlist-container empty">
+                        <p id="shortlistEmptyMessage" class="shortlist-empty-message">Drag vendor cards here to build your shortlist.</p>
+                    </div>
                     <button class="action-btn secondary" id="clearShortlist" style="margin-top:12px;">Clear Shortlist</button>
                     <button class="action-btn primary" id="exportShortlistBtn" style="margin-top:12px;" disabled>Export Shortlist</button>
                 </div>
@@ -2825,19 +2836,32 @@
 
             renderShortlist() {
                 const container = document.getElementById('shortlistContainer');
+                const emptyMsg = document.getElementById('shortlistEmptyMessage');
                 if (!container) return;
+
                 container.innerHTML = '';
-                this.shortlist.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'shortlist-card';
-                    div.innerHTML = `
-                        <div class="shortlist-card-header">
-                            <span class="shortlist-card-title">${item.tool.name}</span>
-                            <button class="remove-shortlist" data-name="${item.tool.name}">×</button>
-                        </div>
-                        <textarea class="shortlist-note" data-name="${item.tool.name}" placeholder="Notes...">${item.notes || ''}</textarea>`;
-                    container.appendChild(div);
-                });
+
+                if (emptyMsg) container.appendChild(emptyMsg);
+
+                if (this.shortlist.length === 0) {
+                    container.classList.add('empty');
+                    if (emptyMsg) emptyMsg.classList.remove('visually-hidden');
+                } else {
+                    container.classList.remove('empty');
+                    if (emptyMsg) emptyMsg.classList.add('visually-hidden');
+
+                    this.shortlist.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'shortlist-card';
+                        div.innerHTML = `
+                            <div class="shortlist-card-header">
+                                <span class="shortlist-card-title">${item.tool.name}</span>
+                                <button class="remove-shortlist" data-name="${item.tool.name}">×</button>
+                            </div>
+                            <textarea class="shortlist-note" data-name="${item.tool.name}" placeholder="Notes...">${item.notes || ''}</textarea>`;
+                        container.appendChild(div);
+                    });
+                }
                 container.querySelectorAll('.remove-shortlist').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const name = e.target.dataset.name;
