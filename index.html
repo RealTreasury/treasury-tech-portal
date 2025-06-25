@@ -1387,8 +1387,7 @@
 
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', (e) => {
-                        if (e.target.closest('.show-more-category-tags-btn') ||
-                            e.target.closest('.show-less-category-tags-btn')) {
+                        if (e.target.closest('[data-action="toggle-category-tags"]')) {
                             return;
                         }
 
@@ -1400,49 +1399,44 @@
                 });
 
                 document.getElementById('mainContent').addEventListener('click', (e) => {
-                    if (e.target.classList.contains('show-more-tags-btn')) {
+                    const action = e.target.dataset.action;
+                    if (action === 'toggle-tags') {
                         e.stopPropagation();
                         const toolName = e.target.dataset.toolName;
                         const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
                         if (tool) {
                             const tagsContainer = e.target.parentElement;
                             const sortedTags = [...tool.tags].sort((a, b) => a.localeCompare(b));
-                            tagsContainer.innerHTML = sortedTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
-                            tagsContainer.innerHTML += `<button class="show-less-tags-btn" data-tool-name="${tool.name}">Show less</button>`;
-                        }
-                    } else if (e.target.classList.contains('show-less-tags-btn')) {
-                        e.stopPropagation();
-                        const toolName = e.target.dataset.toolName;
-                        const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
-                        if (tool) {
-                            const tagsContainer = e.target.parentElement;
-                            const sortedTags = [...tool.tags].sort((a, b) => a.localeCompare(b));
-                            const displayTags = sortedTags.slice(0, 3);
-                            const hasMore = sortedTags.length > 3;
-                            tagsContainer.innerHTML = displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
-                            if (hasMore) {
-                                tagsContainer.innerHTML += `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>`;
+                            const expanded = e.target.dataset.expanded === 'true';
+                            if (expanded) {
+                                const displayTags = sortedTags.slice(0, 3);
+                                const hasMore = sortedTags.length > 3;
+                                tagsContainer.innerHTML = displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                                if (hasMore) {
+                                    tagsContainer.innerHTML += `<button class="show-more-tags-btn" data-action="toggle-tags" data-tool-name="${tool.name}" data-expanded="false">... more</button>`;
+                                }
+                            } else {
+                                tagsContainer.innerHTML = sortedTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                                tagsContainer.innerHTML += `<button class="show-less-tags-btn" data-action="toggle-tags" data-tool-name="${tool.name}" data-expanded="true">Show less</button>`;
                             }
                         }
-                    } else if (e.target.classList.contains('show-more-category-tags-btn')) {
+                    } else if (action === 'toggle-category-tags') {
                         e.stopPropagation();
                         const category = e.target.dataset.category;
                         const tagsContainer = e.target.parentElement;
                         const tags = this.CATEGORY_TAGS[category] || [];
                         const sorted = [...tags].sort((a, b) => a.localeCompare(b));
-                        tagsContainer.innerHTML = sorted.map(tag => `<span class="category-tag">${tag}</span>`).join('');
-                        tagsContainer.innerHTML += `<button class="show-less-category-tags-btn" data-category="${category}">Show less</button>`;
-                    } else if (e.target.classList.contains('show-less-category-tags-btn')) {
-                        e.stopPropagation();
-                        const category = e.target.dataset.category;
-                        const tagsContainer = e.target.parentElement;
-                        const tags = this.CATEGORY_TAGS[category] || [];
-                        const sorted = [...tags].sort((a, b) => a.localeCompare(b));
-                        const displayTags = sorted.slice(0, 3);
-                        const hasMore = sorted.length > 3;
-                        tagsContainer.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
-                        if (hasMore) {
-                            tagsContainer.innerHTML += `<button class="show-more-category-tags-btn" data-category="${category}">... more</button>`;
+                        const expanded = e.target.dataset.expanded === 'true';
+                        if (expanded) {
+                            const displayTags = sorted.slice(0, 3);
+                            const hasMore = sorted.length > 3;
+                            tagsContainer.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
+                            if (hasMore) {
+                                tagsContainer.innerHTML += `<button class="show-more-category-tags-btn" data-action="toggle-category-tags" data-category="${category}" data-expanded="false">... more</button>`;
+                            }
+                        } else {
+                            tagsContainer.innerHTML = sorted.map(tag => `<span class="category-tag">${tag}</span>`).join('');
+                            tagsContainer.innerHTML += `<button class="show-less-category-tags-btn" data-action="toggle-category-tags" data-category="${category}" data-expanded="true">Show less</button>`;
                         }
                     }
                 });
@@ -1743,14 +1737,13 @@
                     <div class="tool-card-actions">
                         <div class="tool-tags">
                             ${displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
-                            ${hasMoreTags ? `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>` : ''}
+                            ${hasMoreTags ? `<button class="show-more-tags-btn" data-action="toggle-tags" data-tool-name="${tool.name}" data-expanded="false">... more</button>` : ''}
                         </div>
                     </div>
                 `;
 
                 card.addEventListener('click', (e) => {
-                    if (!e.target.closest('.show-more-tags-btn') &&
-                        !e.target.closest('.show-less-tags-btn')) {
+                    if (!e.target.closest('[data-action="toggle-tags"]')) {
                         this.showToolModal(tool);
                     }
                 });
@@ -1769,7 +1762,7 @@
                         const hasMore = sorted.length > 3;
                         container.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
                         if (hasMore) {
-                            container.innerHTML += `<button class="show-more-category-tags-btn" data-category="${category}">... more</button>`;
+                            container.innerHTML += `<button class="show-more-category-tags-btn" data-action="toggle-category-tags" data-category="${category}" data-expanded="false">... more</button>`;
                         }
                     }
                 });
