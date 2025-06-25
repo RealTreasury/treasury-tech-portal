@@ -1584,7 +1584,9 @@
                 categories.forEach(category => {
                     const section = document.querySelector(`.category-section[data-category="${category}"]`);
                     const container = document.getElementById(`tools-${category}`);
-                    const categoryTools = this.filteredTools.filter(tool => tool.category === category);
+                    const categoryTools = this.filteredTools
+                        .filter(tool => tool.category === category)
+                        .sort((a, b) => a.name.localeCompare(b.name));
 
                     // Clear the container first
                     if (container) {
