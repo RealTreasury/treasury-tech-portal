@@ -1398,6 +1398,11 @@
             padding:8px;
         }
 
+        .shortlist-container.drag-over {
+            background:#eceffd;
+            border-color:#7216f4;
+        }
+
             justify-content:center;
             align-items:center;
         }
@@ -1428,6 +1433,7 @@
             display:flex;
             flex-direction:column;
             gap:4px;
+            cursor:move;
         }
 
         .shortlist-card-header {
@@ -1453,6 +1459,20 @@
             color:#7216f4;
             cursor:pointer;
             font-size:1rem;
+        }
+
+        .move-up, .move-down {
+            background:none;
+            border:none;
+            color:#7216f4;
+            cursor:pointer;
+            font-size:1rem;
+        }
+
+        .shortlist-card-buttons {
+            display:flex;
+            gap:4px;
+            align-items:center;
         }
 
 
@@ -2755,20 +2775,52 @@
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
 
                 if (container) {
+                    let draggedCard = null;
                     const addHighlight = () => container.classList.add('drag-over');
                     const removeHighlight = () => container.classList.remove('drag-over');
 
+                    container.addEventListener('dragstart', e => {
+                        if (e.target.classList.contains('shortlist-card')) {
+                            draggedCard = e.target;
+                            e.dataTransfer.setData('text/plain', e.target.dataset.name);
+                            e.dataTransfer.effectAllowed = 'move';
+                        } else {
+                            draggedCard = null;
+                        }
+                    });
+
                     container.addEventListener('dragenter', addHighlight);
-                    container.addEventListener('dragleave', removeHighlight);
-                    container.addEventListener('dragover', e => e.preventDefault());
+                    container.addEventListener('dragleave', e => {
+                        if (e.target === container) removeHighlight();
+                    });
+                    container.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        if (draggedCard) {
+                            const target = e.target.closest('.shortlist-card');
+                            if (target && target !== draggedCard) {
+                                const rect = target.getBoundingClientRect();
+                                const next = (e.clientY - rect.top) > rect.height / 2;
+                                container.insertBefore(draggedCard, next ? target.nextSibling : target);
+                            }
+                        }
+                    });
                     container.addEventListener('drop', e => {
                         e.preventDefault();
                         removeHighlight();
-                        const name = e.dataTransfer.getData('text/plain');
-                        const tool = this.TREASURY_TOOLS.find(t => t.name === name);
-                        if (tool && !this.shortlist.some(i => i.tool.name === name)) {
-                            this.shortlist.push({ tool, notes: '' });
+                        if (draggedCard) {
+                            this.shortlist = Array.from(container.querySelectorAll('.shortlist-card')).map(card => {
+                                const name = card.dataset.name;
+                                return this.shortlist.find(i => i.tool.name === name);
+                            });
+                            draggedCard = null;
                             this.renderShortlist();
+                        } else {
+                            const name = e.dataTransfer.getData('text/plain');
+                            const tool = this.TREASURY_TOOLS.find(t => t.name === name);
+                            if (tool && !this.shortlist.some(i => i.tool.name === name)) {
+                                this.shortlist.push({ tool, notes: '' });
+                                this.renderShortlist();
+                            }
                         }
                     });
                 }
@@ -2854,10 +2906,16 @@
                     this.shortlist.forEach(item => {
                         const div = document.createElement('div');
                         div.className = 'shortlist-card';
+                        div.draggable = true;
+                        div.dataset.name = item.tool.name;
                         div.innerHTML = `
                             <div class="shortlist-card-header">
                                 <span class="shortlist-card-title">${item.tool.name}</span>
-                                <button class="remove-shortlist" data-name="${item.tool.name}">×</button>
+                                <div class="shortlist-card-buttons">
+                                    <button class="move-up" data-name="${item.tool.name}" aria-label="Move up">▲</button>
+                                    <button class="move-down" data-name="${item.tool.name}" aria-label="Move down">▼</button>
+                                    <button class="remove-shortlist" data-name="${item.tool.name}" aria-label="Remove">×</button>
+                                </div>
                             </div>
                             <textarea class="shortlist-note" data-name="${item.tool.name}" placeholder="Notes...">${item.notes || ''}</textarea>`;
                         container.appendChild(div);
@@ -2868,6 +2926,28 @@
                         const name = e.target.dataset.name;
                         this.shortlist = this.shortlist.filter(i => i.tool.name !== name);
                         this.renderShortlist();
+                    });
+                });
+                container.querySelectorAll('.move-up').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const name = e.target.dataset.name;
+                        const idx = this.shortlist.findIndex(i => i.tool.name === name);
+                        if (idx > 0) {
+                            const [item] = this.shortlist.splice(idx, 1);
+                            this.shortlist.splice(idx - 1, 0, item);
+                            this.renderShortlist();
+                        }
+                    });
+                });
+                container.querySelectorAll('.move-down').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const name = e.target.dataset.name;
+                        const idx = this.shortlist.findIndex(i => i.tool.name === name);
+                        if (idx < this.shortlist.length - 1 && idx !== -1) {
+                            const [item] = this.shortlist.splice(idx, 1);
+                            this.shortlist.splice(idx + 1, 0, item);
+                            this.renderShortlist();
+                        }
                     });
                 });
                 container.querySelectorAll('.shortlist-note').forEach(area => {
