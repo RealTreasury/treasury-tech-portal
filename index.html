@@ -929,6 +929,10 @@
                             <div class="stat-number">3</div>
                             <div class="stat-label">Categories</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="mostSearched">-</div>
+                            <div class="stat-label">Most searched</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1386,6 +1390,7 @@
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.populateSearchTags();
+                this.updateMostSearched();
                 this.filterAndDisplayTools();
 
                 setTimeout(() => {
@@ -1516,6 +1521,8 @@
                             const tag = e.target.textContent;
                             if (searchInput) searchInput.value = tag;
                             this.searchTerm = tag.toLowerCase();
+                            this.incrementTagStat(tag);
+                            this.updateMostSearched();
                             if (searchClear) searchClear.style.display = 'block';
                             searchSuggestions.style.display = 'none';
                             this.filterAndDisplayTools();
@@ -1821,8 +1828,10 @@
                 Object.values(this.CATEGORY_TAGS).forEach(tagArr => {
                     (tagArr || []).forEach(tag => tagsSet.add(tag));
                 });
-                const tags = Array.from(tagsSet).sort((a, b) => a.localeCompare(b)).slice(0, 8);
-                container.innerHTML = tags.map(tag => `<span class="search-suggestion">${tag}</span>`).join('');
+                const allTags = Array.from(tagsSet).sort((a, b) => a.localeCompare(b));
+                const popular = this.getSortedTagStats().map(([tag]) => tag).filter(t => tagsSet.has(t));
+                const combined = Array.from(new Set([...popular, ...allTags])).slice(0, 8);
+                container.innerHTML = combined.map(tag => `<span class="search-suggestion">${tag}</span>`).join('');
             }
 
             updateVisibleCounts() {
@@ -1840,6 +1849,26 @@
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
                     totalTools.textContent = this.searchTerm ? visibleTotal : this.TREASURY_TOOLS.length;
+                }
+            }
+
+            incrementTagStat(tag) {
+                const stats = JSON.parse(localStorage.getItem('tagStats') || '{}');
+                stats[tag] = (stats[tag] || 0) + 1;
+                localStorage.setItem('tagStats', JSON.stringify(stats));
+            }
+
+            getSortedTagStats() {
+                const stats = JSON.parse(localStorage.getItem('tagStats') || '{}');
+                return Object.entries(stats).sort((a, b) => b[1] - a[1]);
+            }
+
+            updateMostSearched() {
+                const sorted = this.getSortedTagStats();
+                const topTags = sorted.slice(0, 3).map(([tag]) => tag);
+                const most = document.getElementById('mostSearched');
+                if (most) {
+                    most.textContent = topTags.length ? topTags.join(', ') : '-';
                 }
             }
 
