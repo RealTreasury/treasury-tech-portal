@@ -1013,7 +1013,7 @@
         }
 
         .side-menu:not(.open) .side-menu-title,
-        .side-menu:not(.open) .side-menu-pin,
+        .side-menu:not(.open) .pin-toggle,
         .side-menu:not(.open) .side-menu-close,
         .side-menu:not(.open) .menu-section {
             display: none;
@@ -1038,27 +1038,50 @@
             transition: all 0.3s ease;
         }
 
-        .side-menu-pin {
-            background: rgba(255, 255, 255, 0.25);
-            border: none;
-            color: var(--primary-purple);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+        .pin-toggle {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 24px;
             margin-right: 8px;
         }
 
-        .side-menu-pin:hover {
-            background: rgba(255, 255, 255, 0.35);
+        .pin-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
 
-        .side-menu-pin.pinned {
-            background: rgba(255, 255, 255, 0.45);
+        .pin-toggle .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.25);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .pin-toggle .slider:before {
+            position: absolute;
+            content: '';
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .pin-toggle input:checked + .slider {
+            background: var(--primary-purple);
+        }
+
+        .pin-toggle input:checked + .slider:before {
+            transform: translateX(18px);
         }
 
         .side-menu-close:hover {
@@ -1215,6 +1238,39 @@
         .action-btn.secondary:hover {
             background: #f8f9ff;
         }
+
+        .shortlist-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: auto;
+            color: #f59e0b;
+        }
+
+        .shortlist-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .shortlist-item {
+            background: #f3f4f6;
+            border-radius: 6px;
+            padding: 6px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shortlist-remove {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #7216f4;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -1271,7 +1327,10 @@
                 </button>
                 <h3 class="side-menu-title">Menu</h3>
                 <div>
-                    <button class="side-menu-pin" id="sideMenuPin">📌</button>
+                    <label class="pin-toggle">
+                        <input type="checkbox" id="sideMenuPin">
+                        <span class="slider"></span>
+                    </label>
                     <button class="side-menu-close" id="sideMenuClose">❮</button>
                 </div>
             </div>
@@ -1338,6 +1397,13 @@
                             <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
                             <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
                         </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-header">Shortlist</div>
+                    <div class="menu-section-content">
+                        <div id="shortlistContainer" class="shortlist-container"></div>
                     </div>
                 </div>
             </div>
@@ -1779,7 +1845,9 @@
                 this.currentView = 'grid';
                 this.gridSize = 'auto';
                 this.sideMenuOpen = false;
-                this.sideMenuPinned = false;
+                this.sideMenuPinned = localStorage.getItem('sideMenuPinned') === 'true';
+
+                this.shortlist = [];
 
                 this.init();
             }
@@ -1790,6 +1858,7 @@
                 this.setupSearch();
                 this.setupModals();
                 this.setupSideMenu();
+                this.loadShortlist();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
@@ -2193,6 +2262,7 @@
                             ${displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
                             ${hasMoreTags ? `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>` : ''}
                         </div>
+                        <button class="shortlist-btn" data-name="${tool.name}">${this.shortlist.some(s => s.name === tool.name) ? '★' : '☆'}</button>
                     </div>
                 `;
 
@@ -2201,6 +2271,12 @@
                         !e.target.closest('.show-less-tags-btn')) {
                         this.showToolModal(tool);
                     }
+                });
+
+                card.querySelector('.shortlist-btn')?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggleShortlist(tool);
+                    e.currentTarget.textContent = this.shortlist.some(s => s.name === tool.name) ? '★' : '☆';
                 });
 
                 return card;
@@ -2287,7 +2363,12 @@
                 [overlay, closeBtn].forEach(el => {
                     if (el) el.addEventListener('click', () => this.closeSideMenu());
                 });
-                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
+                if (pinBtn) pinBtn.addEventListener('change', () => this.togglePinSideMenu());
+
+                if (this.sideMenuPinned) {
+                    pinBtn.checked = true;
+                    this.openSideMenu(true);
+                }
 
                 this.setupAdvancedFilters();
                 this.setupViewOptions();
@@ -2392,6 +2473,7 @@
                     toggle?.classList.remove('active');
                     document.body.classList.add('side-menu-pinned');
                     document.body.style.overflow = '';
+                    localStorage.setItem('sideMenuPinned', 'true');
                 } else {
                     overlay?.classList.add('show');
                     toggle?.classList.add('active');
@@ -2414,19 +2496,69 @@
                 document.body.style.overflow = '';
                 this.sideMenuOpen = false;
                 this.sideMenuPinned = false;
-                pinBtn?.classList.remove('pinned');
+                if (pinBtn) pinBtn.checked = false;
+                localStorage.setItem('sideMenuPinned', 'false');
             }
 
             togglePinSideMenu() {
-                this.sideMenuPinned = !this.sideMenuPinned;
                 const pinBtn = document.getElementById('sideMenuPin');
+                this.sideMenuPinned = pinBtn?.checked || false;
+                localStorage.setItem('sideMenuPinned', this.sideMenuPinned);
                 if (this.sideMenuPinned) {
                     this.openSideMenu(true);
-                    pinBtn?.classList.add('pinned');
                 } else {
                     this.closeSideMenu();
-                    pinBtn?.classList.remove('pinned');
                 }
+            }
+
+            loadShortlist() {
+                const data = localStorage.getItem('shortlist');
+                if (data) {
+                    try { this.shortlist = JSON.parse(data); } catch(e) { this.shortlist = []; }
+                }
+                this.renderShortlist();
+            }
+
+            saveShortlist() {
+                localStorage.setItem('shortlist', JSON.stringify(this.shortlist));
+            }
+
+            toggleShortlist(tool) {
+                const index = this.shortlist.findIndex(t => t.name === tool.name);
+                if (index > -1) {
+                    this.shortlist.splice(index, 1);
+                } else {
+                    this.shortlist.push({ name: tool.name });
+                }
+                this.saveShortlist();
+                this.renderShortlist();
+                document.querySelectorAll(`.shortlist-btn[data-name="${tool.name}"]`).forEach(btn => {
+                    btn.textContent = this.shortlist.some(s => s.name === tool.name) ? '★' : '☆';
+                });
+            }
+
+            renderShortlist() {
+                const container = document.getElementById('shortlistContainer');
+                if (!container) return;
+                if (!this.shortlist.length) {
+                    container.innerHTML = '<p style="font-size:0.8rem;color:#6b7280;">No vendors saved</p>';
+                    return;
+                }
+                container.innerHTML = this.shortlist.map(item => `
+                    <div class="shortlist-item">
+                        <span>${item.name}</span>
+                        <button class="shortlist-remove" data-name="${item.name}">×</button>
+                    </div>
+                `).join('');
+                container.querySelectorAll('.shortlist-remove').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const name = btn.getAttribute('data-name');
+                        this.shortlist = this.shortlist.filter(i => i.name !== name);
+                        this.saveShortlist();
+                        this.renderShortlist();
+                        document.querySelectorAll(`.shortlist-btn[data-name="${name}"]`).forEach(b => b.textContent = '☆');
+                    });
+                });
             }
 
             updateFeatureFilters() {
