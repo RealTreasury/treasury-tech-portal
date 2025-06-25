@@ -1956,14 +1956,28 @@
     <script>
         let treasuryStack;
 
-        function notifyHeight() {
+        function postHeight() {
             if (window.parent !== window) {
                 const h = document.documentElement.scrollHeight;
                 window.parent.postMessage({ type: 'treasury-height', height: h }, '*');
             }
         }
-        window.addEventListener('load', notifyHeight);
-        window.addEventListener('resize', notifyHeight);
+
+        function debounce(fn, delay) {
+            let timer;
+            return function() {
+                clearTimeout(timer);
+                timer = setTimeout(fn, delay);
+            };
+        }
+
+        const debouncedPostHeight = debounce(postHeight, 100);
+
+        window.addEventListener('load', debouncedPostHeight);
+        window.addEventListener('resize', debouncedPostHeight);
+
+        new ResizeObserver(debouncedPostHeight).observe(document.body);
+        new MutationObserver(debouncedPostHeight).observe(document.body, { childList: true, subtree: true });
 
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Initializing Treasury Stack...');
