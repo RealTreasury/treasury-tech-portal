@@ -1398,6 +1398,7 @@
 
                 document.getElementById('mainContent').addEventListener('click', (e) => {
                     if (e.target.classList.contains('show-more-tags-btn')) {
+                        e.stopPropagation();
                         const toolName = e.target.dataset.toolName;
                         const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
                         if (tool) {
@@ -1407,6 +1408,7 @@
                             tagsContainer.innerHTML += `<button class="show-less-tags-btn" data-tool-name="${tool.name}">Show less</button>`;
                         }
                     } else if (e.target.classList.contains('show-less-tags-btn')) {
+                        e.stopPropagation();
                         const toolName = e.target.dataset.toolName;
                         const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
                         if (tool) {
@@ -1420,6 +1422,7 @@
                             }
                         }
                     } else if (e.target.classList.contains('show-more-category-tags-btn')) {
+                        e.stopPropagation();
                         const category = e.target.dataset.category;
                         const tagsContainer = e.target.parentElement;
                         const tags = this.CATEGORY_TAGS[category] || [];
@@ -1427,6 +1430,7 @@
                         tagsContainer.innerHTML = sorted.map(tag => `<span class="category-tag">${tag}</span>`).join('');
                         tagsContainer.innerHTML += `<button class="show-less-category-tags-btn" data-category="${category}">Show less</button>`;
                     } else if (e.target.classList.contains('show-less-category-tags-btn')) {
+                        e.stopPropagation();
                         const category = e.target.dataset.category;
                         const tagsContainer = e.target.parentElement;
                         const tags = this.CATEGORY_TAGS[category] || [];
@@ -1722,8 +1726,8 @@
                 `;
 
                 card.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('show-more-tags-btn') &&
-                        !e.target.classList.contains('show-less-tags-btn')) {
+                    if (!e.target.closest('.show-more-tags-btn') &&
+                        !e.target.closest('.show-less-tags-btn')) {
                         this.showToolModal(tool);
                     }
                 });
