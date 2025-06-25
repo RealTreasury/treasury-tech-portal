@@ -2997,7 +2997,7 @@
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
                     if (!this.shortlistMenuOpen && e.target === shortlistMenu) {
                         e.stopPropagation();
-                        this.openShortlistMenu();
+                        this.openShortlistMenu(true);
                     }
                 });
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
@@ -3093,7 +3093,7 @@
 
             toggleShortlistMenu() {
                 if (this.shortlistMenuOpen) this.closeShortlistMenu();
-                else this.openShortlistMenu();
+                else this.openShortlistMenu(true);
             }
 
             openShortlistMenu(pinned = false) {
