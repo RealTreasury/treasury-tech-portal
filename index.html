@@ -31,6 +31,8 @@
         .container {
             min-height: 100vh;
             position: relative;
+            margin-left: 60px;
+            transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Search Box */
@@ -917,8 +919,8 @@
         .side-menu {
             position: fixed;
             top: 0;
-            left: -380px;
-            width: 380px;
+            left: 0;
+            width: 60px;
             height: 100vh;
             background: linear-gradient(135deg,
                 rgba(255, 255, 255, 0.95) 0%,
@@ -929,16 +931,12 @@
             border-right: 1px solid rgba(199, 125, 255, 0.2);
             border-radius: 0 16px 16px 0;
             z-index: 1001;
-            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
         }
 
         .side-menu.open {
-            left: 0;
-        }
-
-        body.side-menu-pinned .side-menu {
-            left: 0;
+            width: 380px;
         }
 
         body.side-menu-pinned .side-menu-overlay {
@@ -949,7 +947,7 @@
             margin-left: 380px;
         }
 
-        body.side-menu-pinned #menuToggle {
+        body.side-menu-pinned #sideMenuToggle {
             display: none;
         }
 
@@ -987,6 +985,17 @@
             font-size: 1.2rem;
             font-weight: 700;
             margin: 0;
+        }
+
+        .side-menu:not(.open) .side-menu-title,
+        .side-menu:not(.open) .side-menu-pin,
+        .side-menu:not(.open) .side-menu-close,
+        .side-menu:not(.open) .menu-section {
+            display: none;
+        }
+
+        .side-menu:not(.open) {
+            overflow: visible;
         }
 
         .side-menu-close {
@@ -1203,12 +1212,6 @@
                 </div>
 
                 <div class="header-middle">
-                    <!-- Search Container -->
-                    <div class="search-container">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
-                        <button class="search-clear" id="searchClear" style="display: none;">×</button>
-                    </div>
 
                     <div class="stats-bar">
                         <div class="stat-card">
@@ -1228,19 +1231,18 @@
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                     <button class="filter-tab" data-category="TRMS">TRMS</button>
                 </div>
-                <button id="menuToggle" class="menu-toggle">
-                    <div class="hamburger">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    Menu
-                </button>
             </div>
         </div>
         <div class="side-menu-overlay" id="sideMenuOverlay"></div>
         <div class="side-menu" id="sideMenu">
             <div class="side-menu-header">
+                <button class="menu-toggle" id="sideMenuToggle">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
                 <h3 class="side-menu-title">Menu</h3>
                 <div>
                     <button class="side-menu-pin" id="sideMenuPin">📌</button>
@@ -1248,6 +1250,17 @@
                 </div>
             </div>
             <div class="side-menu-content">
+                <div class="menu-section">
+                    <div class="menu-section-header">Search</div>
+                    <div class="menu-section-content">
+                        <div class="search-container">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
+                            <button class="search-clear" id="searchClear" style="display: none;">×</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="menu-section">
                     <div class="menu-section-header">Filters</div>
                     <div class="menu-section-content">
@@ -2225,7 +2238,7 @@
             }
 
             setupSideMenu() {
-                const menuToggle = document.getElementById('menuToggle');
+                const menuToggle = document.getElementById('sideMenuToggle');
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const closeBtn = document.getElementById('sideMenuClose');
@@ -2316,7 +2329,7 @@
             openSideMenu(pinned = false) {
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
-                const toggle = document.getElementById('menuToggle');
+                const toggle = document.getElementById('sideMenuToggle');
 
                 sideMenu?.classList.add('open');
                 if (pinned) {
@@ -2336,7 +2349,7 @@
             closeSideMenu() {
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
-                const toggle = document.getElementById('menuToggle');
+                const toggle = document.getElementById('sideMenuToggle');
                 const pinBtn = document.getElementById('sideMenuPin');
 
                 sideMenu?.classList.remove('open');
