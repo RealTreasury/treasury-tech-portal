@@ -890,52 +890,37 @@
         }
         }
 
-        /* Hamburger Menu Button */
+        /* Side Menu Toggle Button */
         .menu-toggle {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 10px;
+            background: #7216f4;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #281345;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            justify-content: center;
+            color: #fff;
+            transition: background 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
         }
 
         .menu-toggle:hover {
-            background: #f9fafb;
-            border-color: #7216f4;
+            background: #5b0ee3;
         }
 
-        .hamburger {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+        .chevron {
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
         }
 
-        .hamburger span {
-            width: 18px;
-            height: 2px;
-            background: #7216f4;
-            border-radius: 1px;
-            transition: all 0.3s ease;
-        }
-
-        .menu-toggle.active .hamburger span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
-        }
-
-        .menu-toggle.active .hamburger span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active .hamburger span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -6px);
+        .menu-toggle.active .chevron {
+            transform: rotate(-135deg);
         }
 
         /* Side Menu */
@@ -1243,11 +1228,7 @@
         <div class="side-menu" id="sideMenu">
             <div class="side-menu-header">
                 <button class="menu-toggle" id="sideMenuToggle">
-                    <div class="hamburger">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+                    <span class="chevron"></span>
                 </button>
                 <h3 class="side-menu-title">Menu</h3>
                 <div>
@@ -1270,14 +1251,14 @@
                     <div class="menu-section-header">Filters</div>
                     <div class="menu-section-content">
                         <div class="filter-group">
-                            <span class="filter-label">Tags</span>
-                            <div class="checkbox-group" id="tagFilters"></div>
-                        </div>
-                        <div class="filter-group">
                             <div class="checkbox-item">
                                 <input type="checkbox" id="hasVideoFilter">
                                 <label for="hasVideoFilter">Has Video</label>
                             </div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Tags</span>
+                            <div class="checkbox-group" id="tagFilters"></div>
                         </div>
                         <div class="filter-group">
                             <label class="filter-label" for="sortFilter">Sort By</label>
