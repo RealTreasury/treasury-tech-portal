@@ -2854,7 +2854,7 @@
                 if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
                 if (sideMenu) sideMenu.addEventListener('click', (e) => {
-                    if (!this.sideMenuOpen) {
+                    if (!this.sideMenuOpen && e.target === sideMenu) {
                         e.stopPropagation();
                         this.openSideMenu();
                     }
@@ -3024,7 +3024,7 @@
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
                 const shortlistMenu = document.getElementById('shortlistMenu');
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
-                    if (!this.shortlistMenuOpen) {
+                    if (!this.shortlistMenuOpen && e.target === shortlistMenu) {
                         e.stopPropagation();
                         this.openShortlistMenu();
                     }
