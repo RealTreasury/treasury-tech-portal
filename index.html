@@ -1389,6 +1389,11 @@
 
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', (e) => {
+                        if (e.target.closest('.show-more-category-tags-btn') ||
+                            e.target.closest('.show-less-category-tags-btn')) {
+                            return;
+                        }
+
                         const category = header.dataset.category;
                         if (category && this.CATEGORY_INFO[category]) {
                             this.showCategoryModal(this.CATEGORY_INFO[category], category);
