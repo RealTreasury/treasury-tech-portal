@@ -40,23 +40,28 @@
             position: relative;
             max-width: 400px;
             width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
 
         .search-input {
             width: 100%;
             padding: 12px 20px 12px 45px;
-            border: 1px solid #e5e7eb;
+            border: none;
             border-radius: 12px;
             font-size: 0.9rem;
-            background: white;
+            background: transparent;
             transition: all 0.3s ease;
             outline: none;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
 
         .search-input:focus {
-            border-color: #7216f4;
-            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.1);
+            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.15);
         }
 
         .search-icon {
@@ -375,6 +380,24 @@
 
         .show-more-category-tags-btn:hover,
         .show-less-category-tags-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .show-more-filter-tags-btn,
+        .show-less-filter-tags-btn {
+            background: none;
+            border: none;
+            color: #6366f1;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .show-more-filter-tags-btn:hover,
+        .show-less-filter-tags-btn:hover {
             background: #f3f4f6;
         }
 
@@ -959,7 +982,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(40, 19, 69, 0.55);
+            background: rgba(40, 19, 69, 0.15);
             backdrop-filter: blur(8px) saturate(130%);
             -webkit-backdrop-filter: blur(8px) saturate(130%);
             z-index: 1000;
@@ -979,8 +1002,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
-            color: #ffffff;
+            background: linear-gradient(135deg, #f6f7fb 0%, #e8ecfc 100%);
+            color: #281345;
         }
 
         .side-menu-title {
@@ -1001,6 +1024,7 @@
         }
 
         .side-menu-close {
+            font-size: 18px;
             background: rgba(255, 255, 255, 0.25);
             border: none;
             color: var(--primary-purple);
@@ -1248,7 +1272,7 @@
                 <h3 class="side-menu-title">Menu</h3>
                 <div>
                     <button class="side-menu-pin" id="sideMenuPin">📌</button>
-                    <button class="side-menu-close" id="sideMenuClose">×</button>
+                    <button class="side-menu-close" id="sideMenuClose">❮</button>
                 </div>
             </div>
             <div class="side-menu-content">
@@ -2203,10 +2227,19 @@
                 const container = document.getElementById('tagFilters');
                 if (!container) return;
                 const tags = [...new Set(Object.values(this.CATEGORY_TAGS).flat())].sort((a, b) => a.localeCompare(b));
-                container.innerHTML = tags.map(tag => {
+                const displayCount = 6;
+                const visible = tags.slice(0, displayCount);
+                const hidden = tags.slice(displayCount);
+                const makeCb = (tag) => {
                     const id = `tag-${tag.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
                     return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${tag}"><label for="${id}">${tag}</label></div>`;
-                }).join('');
+                };
+                container.innerHTML = visible.map(makeCb).join('');
+                if (hidden.length) {
+                    container.innerHTML += `<div id="extraTagFilters" style="display:none;">${hidden.map(makeCb).join('')}</div>`;
+                    container.innerHTML += `<button class="show-more-filter-tags-btn" id="showMoreTagFilters">Show more</button>`;
+                    container.innerHTML += `<button class="show-less-filter-tags-btn" id="showLessTagFilters" style="display:none;">Show less</button>`;
+                }
             }
 
             updateVisibleCounts() {
@@ -2267,6 +2300,21 @@
 
             setupAdvancedFilters() {
                 this.populateTagFilters();
+                const showMore = document.getElementById('showMoreTagFilters');
+                const showLess = document.getElementById('showLessTagFilters');
+                const extra = document.getElementById('extraTagFilters');
+                if (showMore && showLess && extra) {
+                    showMore.addEventListener('click', () => {
+                        extra.style.display = 'block';
+                        showMore.style.display = 'none';
+                        showLess.style.display = 'inline-block';
+                    });
+                    showLess.addEventListener('click', () => {
+                        extra.style.display = 'none';
+                        showLess.style.display = 'none';
+                        showMore.style.display = 'inline-block';
+                    });
+                }
 
                 const featureCheckboxes = document.querySelectorAll('#tagFilters input[type="checkbox"]');
                 featureCheckboxes.forEach(cb => {
