@@ -1216,29 +1216,46 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.15);
             border: 1px solid rgba(255,255,255,0.3);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 56px;
+            height: 30px;
+            border-radius: 15px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
+            padding: 3px;
             color: #7216f4;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             z-index: 1002;
         }
 
         .external-menu-toggle:hover {
-            background: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.25);
+        }
+
+        .external-menu-toggle .icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
         }
 
         .external-menu-toggle .icon::before {
             content: '\2630';
+        }
+
+        .external-menu-toggle.active .icon {
+            transform: translateX(24px);
+            background: rgba(114,22,244,0.9);
+            color: #fff;
         }
 
         .external-menu-toggle.active .icon::before {
