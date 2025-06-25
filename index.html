@@ -342,6 +342,41 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+        .category-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .category-tag {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+        }
+
+        .show-more-category-tags-btn,
+        .show-less-category-tags-btn {
+            background: none;
+            border: none;
+            color: #6366f1;
+            cursor: pointer;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
+
+        .show-more-category-tags-btn:hover,
+        .show-less-category-tags-btn:hover {
+            background: #f3f4f6;
+        }
+
         .category-count {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -902,6 +937,7 @@
                         <p class="category-description">
                             Built in the cloud for modern finance, these cash visibility and forecasting platforms combine real-time connectivity, intelligent analytics, and automation to elevate liquidity and cash flow planning.
                         </p>
+                        <div class="category-tags" id="category-tags-CASH"></div>
                     </div>
                     <div class="category-count">
                         <span class="count-number" id="count-CASH">10</span>
@@ -924,6 +960,7 @@
                         <p class="category-description">
                             Built for more than visibility, these treasury platforms support treasury payments, detailed cash positioning, and growing complexity—without jumping to a full enterprise solution.
                         </p>
+                        <div class="category-tags" id="category-tags-LITE"></div>
                     </div>
                     <div class="category-count">
                         <span class="count-number" id="count-LITE">6</span>
@@ -946,6 +983,7 @@
                         <p class="category-description">
                             Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.
                         </p>
+                        <div class="category-tags" id="category-tags-TRMS"></div>
                     </div>
                     <div class="category-count">
                         <span class="count-number" id="count-TRMS">11</span>
@@ -1323,6 +1361,7 @@
                 this.setupSearch();
                 this.setupModals();
                 this.updateCounts();
+                this.populateCategoryTags();
                 this.filterAndDisplayTools();
 
                 setTimeout(() => {
@@ -1379,6 +1418,24 @@
                             if (hasMore) {
                                 tagsContainer.innerHTML += `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>`;
                             }
+                        }
+                    } else if (e.target.classList.contains('show-more-category-tags-btn')) {
+                        const category = e.target.dataset.category;
+                        const tagsContainer = e.target.parentElement;
+                        const tags = this.CATEGORY_TAGS[category] || [];
+                        const sorted = [...tags].sort((a, b) => a.localeCompare(b));
+                        tagsContainer.innerHTML = sorted.map(tag => `<span class="category-tag">${tag}</span>`).join('');
+                        tagsContainer.innerHTML += `<button class="show-less-category-tags-btn" data-category="${category}">Show less</button>`;
+                    } else if (e.target.classList.contains('show-less-category-tags-btn')) {
+                        const category = e.target.dataset.category;
+                        const tagsContainer = e.target.parentElement;
+                        const tags = this.CATEGORY_TAGS[category] || [];
+                        const sorted = [...tags].sort((a, b) => a.localeCompare(b));
+                        const displayTags = sorted.slice(0, 3);
+                        const hasMore = sorted.length > 3;
+                        tagsContainer.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
+                        if (hasMore) {
+                            tagsContainer.innerHTML += `<button class="show-more-category-tags-btn" data-category="${category}">... more</button>`;
                         }
                     }
                 });
@@ -1672,6 +1729,23 @@
                 });
 
                 return card;
+            }
+
+            populateCategoryTags() {
+                const categories = ['CASH', 'LITE', 'TRMS'];
+                categories.forEach(category => {
+                    const container = document.getElementById(`category-tags-${category}`);
+                    if (container) {
+                        const tags = this.CATEGORY_TAGS[category] || [];
+                        const sorted = [...tags].sort((a, b) => a.localeCompare(b));
+                        const displayTags = sorted.slice(0, 3);
+                        const hasMore = sorted.length > 3;
+                        container.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
+                        if (hasMore) {
+                            container.innerHTML += `<button class="show-more-category-tags-btn" data-category="${category}">... more</button>`;
+                        }
+                    }
+                });
             }
 
             updateVisibleCounts() {
