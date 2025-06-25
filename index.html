@@ -932,6 +932,22 @@
             left: 0;
         }
 
+        body.side-menu-pinned .side-menu {
+            left: 0;
+        }
+
+        body.side-menu-pinned .side-menu-overlay {
+            display: none;
+        }
+
+        body.side-menu-pinned .container {
+            margin-left: 400px;
+        }
+
+        body.side-menu-pinned #menuToggle {
+            display: none;
+        }
+
         .side-menu-overlay {
             position: fixed;
             top: 0;
@@ -979,6 +995,29 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
+        }
+
+        .side-menu-pin {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+
+        .side-menu-pin:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .side-menu-pin.pinned {
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .side-menu-close:hover {
@@ -1151,9 +1190,6 @@
         <div class="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <div class="logo">
-                        <img alt="Logo" src="https://aisbee08e5bdvaliantmaker.wpcomstaging.com/wp-content/uploads/2025/06/White-No-Background-Picture.png">
-                    </div>
                     <div class="title-section">
                         <h1>Treasury Tech Stack</h1>
                         <p class="subtitle">Discover the complete treasury tech landscape</p>
@@ -1200,7 +1236,10 @@
         <div class="side-menu" id="sideMenu">
             <div class="side-menu-header">
                 <h3 class="side-menu-title">Menu</h3>
-                <button class="side-menu-close" id="sideMenuClose">×</button>
+                <div>
+                    <button class="side-menu-pin" id="sideMenuPin">📌</button>
+                    <button class="side-menu-close" id="sideMenuClose">×</button>
+                </div>
             </div>
             <div class="side-menu-content">
                 <div class="menu-section">
@@ -1701,6 +1740,7 @@
                 this.currentView = 'grid';
                 this.gridSize = 'auto';
                 this.sideMenuOpen = false;
+                this.sideMenuPinned = false;
 
                 this.init();
             }
@@ -2183,11 +2223,13 @@
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const closeBtn = document.getElementById('sideMenuClose');
+                const pinBtn = document.getElementById('sideMenuPin');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleSideMenu());
                 [overlay, closeBtn].forEach(el => {
                     if (el) el.addEventListener('click', () => this.closeSideMenu());
                 });
+                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
 
                 this.setupAdvancedFilters();
                 this.setupViewOptions();
@@ -2265,15 +2307,23 @@
                 else this.openSideMenu();
             }
 
-            openSideMenu() {
+            openSideMenu(pinned = false) {
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('menuToggle');
 
                 sideMenu?.classList.add('open');
-                overlay?.classList.add('show');
-                toggle?.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                if (pinned) {
+                    overlay?.classList.remove('show');
+                    toggle?.classList.remove('active');
+                    document.body.classList.add('side-menu-pinned');
+                    document.body.style.overflow = '';
+                } else {
+                    overlay?.classList.add('show');
+                    toggle?.classList.add('active');
+                    document.body.classList.remove('side-menu-pinned');
+                    document.body.style.overflow = 'hidden';
+                }
                 this.sideMenuOpen = true;
             }
 
@@ -2281,12 +2331,28 @@
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('menuToggle');
+                const pinBtn = document.getElementById('sideMenuPin');
 
                 sideMenu?.classList.remove('open');
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
+                document.body.classList.remove('side-menu-pinned');
                 document.body.style.overflow = '';
                 this.sideMenuOpen = false;
+                this.sideMenuPinned = false;
+                pinBtn?.classList.remove('pinned');
+            }
+
+            togglePinSideMenu() {
+                this.sideMenuPinned = !this.sideMenuPinned;
+                const pinBtn = document.getElementById('sideMenuPin');
+                if (this.sideMenuPinned) {
+                    this.openSideMenu(true);
+                    pinBtn?.classList.add('pinned');
+                } else {
+                    this.closeSideMenu();
+                    pinBtn?.classList.remove('pinned');
+                }
             }
 
             updateFeatureFilters() {
