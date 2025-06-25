@@ -2059,6 +2059,7 @@
                 this.shortlist = [];
                 this.shortlistMenuOpen = false;
                 this.shortlistMenuPinned = false;
+                this.touchDragTool = null;
 
                 this.init();
             }
@@ -2464,6 +2465,7 @@
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
                 card.draggable = true;
+                card.dataset.name = tool.name;
 
                 const iconMap = {
                     'TRMS': '🏢',
@@ -2508,6 +2510,38 @@
                 card.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', tool.name);
                     this.openShortlistMenu(true);
+                });
+
+                card.addEventListener('touchstart', () => {
+                    this.touchDragTool = tool;
+                    this.openShortlistMenu(true);
+                });
+                card.addEventListener('touchmove', (e) => {
+                    const container = document.getElementById('shortlistContainer');
+                    if (!container) return;
+                    const touch = e.touches[0];
+                    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (el && container.contains(el)) {
+                        container.classList.add('drag-over');
+                    } else {
+                        container.classList.remove('drag-over');
+                    }
+                    e.preventDefault();
+                });
+                card.addEventListener('touchend', (e) => {
+                    const container = document.getElementById('shortlistContainer');
+                    if (container) {
+                        container.classList.remove('drag-over');
+                    }
+                    if (this.touchDragTool && container) {
+                        const touch = e.changedTouches[0];
+                        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (el && container.contains(el) && !this.shortlist.some(i => i.tool.name === this.touchDragTool.name)) {
+                            this.shortlist.push({ tool: this.touchDragTool, notes: '' });
+                            this.renderShortlist();
+                        }
+                    }
+                    this.touchDragTool = null;
                 });
 
                 return card;
@@ -2754,6 +2788,7 @@
 
                 if (container) {
                     let draggedCard = null;
+                    let touchDraggedCard = null;
                     const addHighlight = () => container.classList.add('drag-over');
                     const removeHighlight = () => container.classList.remove('drag-over');
 
@@ -2800,6 +2835,35 @@
                                 this.renderShortlist();
                             }
                         }
+                    });
+
+                    container.addEventListener('touchstart', e => {
+                        const card = e.target.closest('.shortlist-card');
+                        if (card) {
+                            touchDraggedCard = card;
+                            addHighlight();
+                        }
+                    });
+                    container.addEventListener('touchmove', e => {
+                        if (!touchDraggedCard) return;
+                        const touch = e.touches[0];
+                        const target = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.shortlist-card');
+                        if (target && target !== touchDraggedCard) {
+                            const rect = target.getBoundingClientRect();
+                            const next = (touch.clientY - rect.top) > rect.height / 2;
+                            container.insertBefore(touchDraggedCard, next ? target.nextSibling : target);
+                        }
+                        e.preventDefault();
+                    });
+                    container.addEventListener('touchend', () => {
+                        if (!touchDraggedCard) return;
+                        removeHighlight();
+                        this.shortlist = Array.from(container.querySelectorAll('.shortlist-card')).map(card => {
+                            const name = card.dataset.name;
+                            return this.shortlist.find(i => i.tool.name === name);
+                        });
+                        touchDraggedCard = null;
+                        this.renderShortlist();
                     });
                 }
 
