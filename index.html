@@ -2393,8 +2393,10 @@
                 if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
 
                 const listContainer = document.getElementById('listViewContainer');
+                const ungroup = this.currentView === 'list' || this.searchTerm ||
+                                this.advancedFilters.features.length || this.advancedFilters.hasVideo;
 
-                if (this.currentView === 'list') {
+                if (ungroup) {
                     categories.forEach(cat => {
                         const section = document.querySelector(`.category-section[data-category="${cat}"]`);
                         if (section) section.style.display = 'none';
