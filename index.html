@@ -880,6 +880,13 @@
             .modal-body {
                 padding: 16px;
             }
+            .side-menu {
+                width: 260px;
+                transform: translateX(-220px);
+            }
+            body.side-menu-pinned .container {
+                margin-left: 260px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -901,9 +908,16 @@
                 letter-spacing: 0.5px;
         }
 
-        .search-container {
-            max-width: 100%;
-        }
+            .search-container {
+                max-width: 100%;
+            }
+            .side-menu {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+            body.side-menu-pinned .container {
+                margin-left: 0;
+            }
         }
 
         /* Side Menu Toggle Button */
@@ -950,7 +964,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 340px;
+            width: 300px;
             height: 100vh;
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
@@ -959,7 +973,7 @@
             border-right: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 0 20px 20px 0;
             z-index: 1001;
-            transform: translateX(-280px);
+            transform: translateX(-240px);
             opacity: 1;
             pointer-events: none;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -980,7 +994,7 @@
         }
 
         body.side-menu-pinned .container {
-            margin-left: 340px;
+            margin-left: 300px;
         }
 
         body.side-menu-open #sideMenuToggle {
