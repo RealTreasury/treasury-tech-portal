@@ -884,9 +884,6 @@
                 width: 260px;
                 transform: translateX(-220px);
             }
-            body.side-menu-pinned .container {
-                margin-left: 260px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -906,7 +903,7 @@
             .tool-name {
                 font-size: 1.1rem;
                 letter-spacing: 0.5px;
-        }
+            }
 
             .search-container {
                 max-width: 100%;
@@ -914,9 +911,6 @@
             .side-menu {
                 width: 100%;
                 transform: translateX(-100%);
-            }
-            body.side-menu-pinned .container {
-                margin-left: 0;
             }
         }
 
@@ -987,23 +981,11 @@
             box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
             opacity: 1;
             pointer-events: auto;
-        }
-
-        body.side-menu-pinned .side-menu-overlay {
-            display: none;
-        }
-
-        body.side-menu-pinned .container {
-            margin-left: 300px;
-        }
+        }        }        }
 
         body.side-menu-open #sideMenuToggle {
             display: flex;
-        }
-
-        body.side-menu-pinned #sideMenuToggle {
-            display: none;
-        }
+        }        }
 
         .side-menu-overlay {
             position: fixed;
@@ -1042,7 +1024,6 @@
         }
 
         .side-menu:not(.open) .side-menu-title,
-        .side-menu:not(.open) .side-menu-pin,
         .side-menu:not(.open) .menu-section {
             display: none;
         }
@@ -1057,28 +1038,6 @@
             display: none;
         }
 
-        .side-menu-pin {
-            background: rgba(255, 255, 255, 0.25);
-            border: none;
-            color: #7216f4;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            margin-right: 8px;
-        }
-
-        .side-menu-pin:hover {
-            background: rgba(255, 255, 255, 0.35);
-        }
-
-        .side-menu-pin.pinned {
-            background: rgba(255, 255, 255, 0.45);
-        }
 
         .side-menu-content {
             padding: 0;
@@ -1285,10 +1244,7 @@
             content: '\2715';
         }
 
-        body.side-menu-open .external-menu-toggle,
-        body.side-menu-pinned .external-menu-toggle {
-            display: none;
-        }
+        body.side-menu-open .external-menu-toggle,        }
 
         .external-shortlist-toggle {
             position: fixed;
@@ -1339,8 +1295,7 @@
             content: '\2715';
         }
 
-        body.shortlist-menu-open .external-shortlist-toggle,
-        body.shortlist-menu-pinned .external-shortlist-toggle {
+        body.shortlist-menu-open .external-shortlist-toggle {
             display: none;
         }
 
@@ -1372,9 +1327,6 @@
             pointer-events: auto;
         }
 
-        body.shortlist-menu-pinned .shortlist-menu-overlay { display:none; }
-        body.shortlist-menu-pinned .container { margin-right:340px; }
-        body.shortlist-menu-pinned #shortlistMenuToggle { display:none; }
 
         .shortlist-menu-overlay {
             position: fixed;
@@ -1417,7 +1369,6 @@
         }
 
         .shortlist-menu:not(.open) .shortlist-menu-title,
-        .shortlist-menu:not(.open) .shortlist-menu-pin,
         .shortlist-menu:not(.open) .shortlist-section { display:none; }
 
         .shortlist-menu:not(.open) { overflow:visible; }
@@ -1427,23 +1378,6 @@
             pointer-events: auto;
         }
 
-        .shortlist-menu-pin {
-            background: rgba(255,255,255,0.25);
-            border:none;
-            color: #7216f4;
-            width:32px;
-            height:32px;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            transition: all 0.3s ease;
-            margin-left:8px;
-        }
-
-        .shortlist-menu-pin:hover { background: rgba(255,255,255,0.35); }
-        .shortlist-menu-pin.pinned { background: rgba(255,255,255,0.45); }
 
         .shortlist-menu-content { padding:0; }
         .shortlist-section { border-bottom:1px solid #f3f4f6; }
@@ -1652,9 +1586,7 @@
     <div class="side-menu-overlay" id="sideMenuOverlay"></div>
     <div class="side-menu" id="sideMenu">
             <div class="side-menu-header">
-                <div>
-                    <button class="side-menu-pin" id="sideMenuPin">📌</button>
-                </div>
+                <div></div>
                 <h3 class="side-menu-title">Menu</h3>
                 <button class="menu-toggle" id="sideMenuToggle">
                     <span class="icon"></span>
@@ -1728,9 +1660,7 @@
     <div class="shortlist-menu-overlay" id="shortlistMenuOverlay"></div>
     <div class="shortlist-menu" id="shortlistMenu">
         <div class="shortlist-menu-header">
-            <div>
-                <button class="shortlist-menu-pin" id="shortlistMenuPin">📌</button>
-            </div>
+            <div></div>
             <h3 class="shortlist-menu-title">Shortlist</h3>
             <button class="menu-toggle" id="shortlistMenuToggle" aria-label="Open shortlist menu" title="Shortlist">
                 <span class="icon"></span>
@@ -2238,10 +2168,8 @@
                 this.gridSize = 'auto';
                 this.groupByCategory = true;
                 this.sideMenuOpen = false;
-                this.sideMenuPinned = false;
                 this.shortlist = [];
                 this.shortlistMenuOpen = false;
-                this.shortlistMenuPinned = false;
                 this.touchDragTool = null;
 
                 this.init();
@@ -2705,12 +2633,12 @@
 
                 card.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', tool.name);
-                    this.openShortlistMenu(true);
+                    this.openShortlistMenu();
                 });
 
                 card.addEventListener('touchstart', () => {
                     this.touchDragTool = tool;
-                    this.openShortlistMenu(true);
+                    this.openShortlistMenu();
                 });
                 card.addEventListener('touchmove', (e) => {
                     const container = document.getElementById('shortlistContainer');
@@ -2818,12 +2746,10 @@
                 const externalMenuToggle = document.getElementById('externalMenuToggle');
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
-                const pinBtn = document.getElementById('sideMenuPin');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleSideMenu());
                 if (externalMenuToggle) externalMenuToggle.addEventListener('click', () => this.toggleSideMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
-                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
                 if (sideMenu) sideMenu.addEventListener('click', (e) => {
                     if (!this.sideMenuOpen && e.target === sideMenu) {
                         e.stopPropagation();
@@ -2925,7 +2851,7 @@
                 else this.openSideMenu();
             }
 
-            openSideMenu(pinned = false) {
+            openSideMenu() {
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
@@ -2933,19 +2859,10 @@
 
                 sideMenu?.classList.add('open');
                 document.body.classList.add('side-menu-open');
-                if (pinned) {
-                    overlay?.classList.remove('show');
-                    toggle?.classList.remove('active');
-                    externalToggle?.classList.remove('active');
-                    document.body.classList.add('side-menu-pinned');
-                    document.body.style.overflow = '';
-                } else {
-                    overlay?.classList.add('show');
-                    toggle?.classList.add('active');
-                    externalToggle?.classList.add('active');
-                    document.body.classList.remove('side-menu-pinned');
-                    document.body.style.overflow = 'hidden';
-                }
+                overlay?.classList.add('show');
+                toggle?.classList.add('active');
+                externalToggle?.classList.add('active');
+                document.body.style.overflow = 'hidden';
                 this.sideMenuOpen = true;
             }
 
@@ -2954,36 +2871,20 @@
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
                 const externalToggle = document.getElementById('externalMenuToggle');
-                const pinBtn = document.getElementById('sideMenuPin');
 
                 sideMenu?.classList.remove('open');
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
                 externalToggle?.classList.remove('active');
                 document.body.classList.remove('side-menu-open');
-                document.body.classList.remove('side-menu-pinned');
                 document.body.style.overflow = '';
                 this.sideMenuOpen = false;
-                this.sideMenuPinned = false;
-                pinBtn?.classList.remove('pinned');
             }
 
-            togglePinSideMenu() {
-                this.sideMenuPinned = !this.sideMenuPinned;
-                const pinBtn = document.getElementById('sideMenuPin');
-                if (this.sideMenuPinned) {
-                    this.openSideMenu(true);
-                    pinBtn?.classList.add('pinned');
-                } else {
-                    this.closeSideMenu();
-                    pinBtn?.classList.remove('pinned');
-                }
-            }
 
             setupShortlistMenu() {
                 const menuToggle = document.getElementById('shortlistMenuToggle');
                 const overlay = document.getElementById('shortlistMenuOverlay');
-                const pinBtn = document.getElementById('shortlistMenuPin');
                 const externalToggle = document.getElementById('externalShortlistToggle');
                 const container = document.getElementById('shortlistContainer');
                 const clearBtn = document.getElementById('clearShortlist');
@@ -2992,7 +2893,6 @@
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (externalToggle) externalToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
-                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
                 const shortlistMenu = document.getElementById('shortlistMenu');
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
                     if (!this.shortlistMenuOpen && e.target === shortlistMenu) {
@@ -3096,7 +2996,7 @@
                 else this.openShortlistMenu();
             }
 
-            openShortlistMenu(pinned = false) {
+            openShortlistMenu() {
                 const menu = document.getElementById('shortlistMenu');
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const toggle = document.getElementById('shortlistMenuToggle');
@@ -3104,19 +3004,10 @@
 
                 menu?.classList.add('open');
                 document.body.classList.add('shortlist-menu-open');
-                if (pinned) {
-                    overlay?.classList.remove('show');
-                    toggle?.classList.remove('active');
-                    externalToggle?.classList.remove('active');
-                    document.body.classList.add('shortlist-menu-pinned');
-                    document.body.style.overflow = '';
-                } else {
-                    overlay?.classList.add('show');
-                    toggle?.classList.add('active');
-                    externalToggle?.classList.add('active');
-                    document.body.classList.remove('shortlist-menu-pinned');
-                    document.body.style.overflow = 'hidden';
-                }
+                overlay?.classList.add('show');
+                toggle?.classList.add('active');
+                externalToggle?.classList.add('active');
+                document.body.style.overflow = 'hidden';
                 this.shortlistMenuOpen = true;
             }
 
@@ -3125,31 +3016,16 @@
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const toggle = document.getElementById('shortlistMenuToggle');
                 const externalToggle = document.getElementById('externalShortlistToggle');
-                const pinBtn = document.getElementById('shortlistMenuPin');
 
                 menu?.classList.remove('open');
                 document.body.classList.remove('shortlist-menu-open');
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
                 externalToggle?.classList.remove('active');
-                document.body.classList.remove('shortlist-menu-pinned');
                 document.body.style.overflow = '';
                 this.shortlistMenuOpen = false;
-                this.shortlistMenuPinned = false;
-                pinBtn?.classList.remove('pinned');
             }
 
-            togglePinShortlistMenu() {
-                this.shortlistMenuPinned = !this.shortlistMenuPinned;
-                const pinBtn = document.getElementById('shortlistMenuPin');
-                if (this.shortlistMenuPinned) {
-                    this.openShortlistMenu(true);
-                    pinBtn?.classList.add('pinned');
-                } else {
-                    this.closeShortlistMenu();
-                    pinBtn?.classList.remove('pinned');
-                }
-            }
 
             renderShortlist() {
                 const container = document.getElementById('shortlistContainer');
