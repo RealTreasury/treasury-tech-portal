@@ -1006,8 +1006,14 @@
             display: none;
         }
 
+
         .side-menu:not(.open) {
             overflow: visible;
+        }
+
+        /* Ensure toggle remains clickable when menu is closed */
+        .side-menu:not(.open) .menu-toggle {
+            pointer-events: auto;
         }
 
         .side-menu-pin {
@@ -1256,6 +1262,11 @@
         .shortlist-menu:not(.open) .shortlist-section { display:none; }
 
         .shortlist-menu:not(.open) { overflow:visible; }
+
+        /* Ensure toggle remains clickable when shortlist menu is closed */
+        .shortlist-menu:not(.open) .menu-toggle {
+            pointer-events: auto;
+        }
 
         .shortlist-menu-pin {
             background: rgba(255,255,255,0.25);
