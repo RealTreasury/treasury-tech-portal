@@ -917,19 +917,19 @@
         .side-menu {
             position: fixed;
             top: 0;
-            right: -400px;
+            left: -400px;
             width: 400px;
             height: 100vh;
             background: white;
-            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
             z-index: 1001;
-            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
-            border-left: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
         }
 
         .side-menu.open {
-            right: 0;
+            left: 0;
         }
 
         .side-menu-overlay {
@@ -1206,15 +1206,6 @@
                 <div class="menu-section">
                     <div class="menu-section-header">Filters</div>
                     <div class="menu-section-content">
-                        <div class="filter-group">
-                            <label class="filter-label" for="companySizeFilter">Company Size</label>
-                            <select id="companySizeFilter" class="filter-select">
-                                <option value="">All</option>
-                                <option value="small">SMB</option>
-                                <option value="mid">Mid-Market</option>
-                                <option value="large">Enterprise</option>
-                            </select>
-                        </div>
                         <div class="filter-group">
                             <span class="filter-label">Features</span>
                             <div class="checkbox-group">
@@ -1705,7 +1696,7 @@
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
-                this.advancedFilters = { companySize: '', features: [], hasVideo: false };
+                this.advancedFilters = { features: [], hasVideo: false };
                 this.currentSort = 'name';
                 this.currentView = 'grid';
                 this.gridSize = 'auto';
@@ -2025,12 +2016,8 @@
                 }
 
                 // Advanced Filters
-                if (this.advancedFilters.companySize) {
-                    const size = this.advancedFilters.companySize.toLowerCase();
-                    tools = tools.filter(t => (t.target || '').toLowerCase().includes(size));
-                }
                 if (this.advancedFilters.features.length) {
-                    tools = tools.filter(t => this.advancedFilters.features.every(f => (t.features || []).includes(f)));
+                    tools = tools.filter(t => this.advancedFilters.features.every(f => (t.tags || []).includes(f)));
                 }
                 if (this.advancedFilters.hasVideo) {
                     tools = tools.filter(t => t.videoUrl);
@@ -2212,14 +2199,6 @@
             }
 
             setupAdvancedFilters() {
-                const companySizeFilter = document.getElementById('companySizeFilter');
-                if (companySizeFilter) {
-                    companySizeFilter.addEventListener('change', (e) => {
-                        this.advancedFilters.companySize = e.target.value;
-                        this.filterAndDisplayTools();
-                        this.updateFilterCount();
-                    });
-                }
 
                 const featureCheckboxes = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature');
                 featureCheckboxes.forEach(cb => {
@@ -2388,10 +2367,7 @@
                 document.querySelector('.filter-tab[data-category="ALL"]')?.classList.add('active');
                 this.currentFilter = 'ALL';
 
-                this.advancedFilters = { companySize:'', features:[], hasVideo:false };
-
-                const companySizeFilter = document.getElementById('companySizeFilter');
-                if (companySizeFilter) companySizeFilter.value = '';
+                this.advancedFilters = { features:[], hasVideo:false };
 
                 const checkboxes = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature,#hasVideoFilter');
                 checkboxes.forEach(cb => cb.checked = false);
@@ -2419,9 +2395,8 @@
             }
 
             updateFilterCount() {
-                const { companySize, features, hasVideo } = this.advancedFilters;
+                const { features, hasVideo } = this.advancedFilters;
                 let count = 0;
-                if (companySize) count++;
                 count += features.length;
                 if (hasVideo) count++;
                 const el = document.getElementById('filterCount');
