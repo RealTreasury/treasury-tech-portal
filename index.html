@@ -55,6 +55,12 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
 
+        /* Compact search variant used for tag search */
+        .search-container.tag-search {
+            max-width: 100%;
+            box-shadow: none;
+        }
+
         .search-input {
             width: 100%;
             padding: 12px 20px 12px 45px;
@@ -65,6 +71,12 @@
             transition: all 0.3s ease;
             outline: none;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .search-container.tag-search .search-input {
+            padding: 8px 12px;
+            padding-left: 12px;
+            border-radius: 8px;
         }
         .search-input::placeholder {
             color: #9ca3af;
@@ -1625,8 +1637,7 @@
                         </div>
                         <div class="filter-group">
                             <span class="filter-label">Tags</span>
-                            <div class="search-container">
-                                <span class="search-icon">🔍</span>
+                            <div class="search-container tag-search">
                                 <input type="text" id="tagSearchInput" class="search-input" placeholder="Search tags...">
                                 <button class="search-clear" id="tagSearchClear" style="display: none;">×</button>
                             </div>
