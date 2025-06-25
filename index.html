@@ -912,6 +912,16 @@
                 width: 100%;
                 transform: translateX(-100%);
             }
+<<<<<<< codex/fix-mobile-side-menu-layout
+            body.side-menu-pinned .container {
+                margin-left: 0;
+            }
+            .side-menu-pin,
+            .shortlist-menu-pin {
+                display: none;
+            }
+=======
+>>>>>>> main
         }
 
         /* Side Menu Toggle Button */
@@ -2898,7 +2908,7 @@
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
                     if (!this.shortlistMenuOpen && e.target === shortlistMenu) {
                         e.stopPropagation();
-                        this.openShortlistMenu(true);
+                        this.openShortlistMenu();
                     }
                 });
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
@@ -2994,7 +3004,7 @@
 
             toggleShortlistMenu() {
                 if (this.shortlistMenuOpen) this.closeShortlistMenu();
-                else this.openShortlistMenu(true);
+                else this.openShortlistMenu();
             }
 
             openShortlistMenu() {
