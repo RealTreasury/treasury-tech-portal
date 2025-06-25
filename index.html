@@ -930,24 +930,27 @@
             left: 0;
             width: 340px;
             height: 100vh;
-            background: linear-gradient(135deg,
-                rgba(255, 255, 255, 0.7) 0%,
-                rgba(248, 248, 248, 0.75) 100%);
-            backdrop-filter: blur(10px) saturate(140%);
-            -webkit-backdrop-filter: blur(10px) saturate(140%);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
-            border-right: 1px solid rgba(199, 125, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 0 20px 20px 0;
             z-index: 1001;
             transform: translateX(-280px);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.3s ease;
             overflow-y: auto;
         }
 
         .side-menu.open {
             transform: translateX(0);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         body.side-menu-pinned .side-menu-overlay {
@@ -968,7 +971,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(40, 19, 69, 0.05);
+            background: rgba(40, 19, 69, 0.1);
+            backdrop-filter: blur(2px);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -1187,21 +1191,25 @@
             right: 0;
             width: 340px;
             height: 100vh;
-            background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(248,248,248,0.75) 100%);
-            backdrop-filter: blur(10px) saturate(140%);
-            -webkit-backdrop-filter: blur(10px) saturate(140%);
-            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
-            border-left: 1px solid rgba(199,125,255,0.3);
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+            border-left: 1px solid rgba(255,255,255,0.3);
             border-radius: 20px 0 0 20px;
             z-index: 1001;
             transform: translateX(280px);
-            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
             overflow-y: auto;
         }
 
         .shortlist-menu.open {
             transform: translateX(0);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         body.shortlist-menu-pinned .shortlist-menu-overlay { display:none; }
@@ -1214,7 +1222,8 @@
             right:0;
             width:100%;
             height:100%;
-            background: rgba(40,19,69,0.05);
+            background: rgba(40,19,69,0.1);
+            backdrop-filter: blur(2px);
             z-index:1000;
             opacity:0;
             visibility:hidden;
