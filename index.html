@@ -346,6 +346,13 @@
             flex-wrap: wrap;
             gap: 4px;
             margin-top: 10px;
+            overflow: hidden;
+            max-height: 2rem;
+            transition: max-height 0.3s ease;
+        }
+
+        .category-tags.expanded {
+            max-height: 500px;
         }
 
         .category-tag {
@@ -358,22 +365,32 @@
             border: 1px solid #e5e7eb;
         }
 
-        .show-more-category-tags-btn,
-        .show-less-category-tags-btn {
+        .extra-tag {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-tags.expanded .extra-tag,
+        .tool-tags.expanded .extra-tag {
+            display: inline-block;
+            opacity: 1;
+        }
+
+        .tags-toggle-btn {
             background: none;
             border: none;
             color: #6366f1;
             cursor: pointer;
-            font-size: 0.65rem;
-            font-weight: 500;
+            font-size: 0.7rem;
             padding: 2px 4px;
             border-radius: 4px;
             margin-left: 4px;
+            transition: transform 0.3s ease;
         }
 
-        .show-more-category-tags-btn:hover,
-        .show-less-category-tags-btn:hover {
-            background: #f3f4f6;
+        .category-tags.expanded .tags-toggle-btn {
+            transform: rotate(180deg);
         }
 
         .category-count {
@@ -543,6 +560,13 @@
             margin-top: 0;
             padding-top: 0;
             border-top: none;
+            overflow: hidden;
+            max-height: 2rem;
+            transition: max-height 0.3s ease;
+        }
+
+        .tool-tags.expanded {
+            max-height: 500px;
         }
 
         .tool-tag {
@@ -555,22 +579,8 @@
             border: 1px solid #e5e7eb;
         }
 
-        .show-more-tags-btn,
-        .show-less-tags-btn {
-            background: none;
-            border: none;
-            color: #6366f1;
-            cursor: pointer;
-            font-size: 0.65rem;
-            font-weight: 500;
-            padding: 2px 4px;
-            border-radius: 4px;
-            margin-left: 4px;
-        }
-
-        .show-more-tags-btn:hover,
-        .show-less-tags-btn:hover {
-            background: #f3f4f6;
+        .tool-tags.expanded .tags-toggle-btn {
+            transform: rotate(180deg);
         }
 
         /* Modal uses position: fixed to always be in the viewport */
@@ -1387,8 +1397,7 @@
 
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', (e) => {
-                        if (e.target.closest('.show-more-category-tags-btn') ||
-                            e.target.closest('.show-less-category-tags-btn')) {
+                        if (e.target.closest('.tags-toggle-btn')) {
                             return;
                         }
 
@@ -1400,50 +1409,11 @@
                 });
 
                 document.getElementById('mainContent').addEventListener('click', (e) => {
-                    if (e.target.classList.contains('show-more-tags-btn')) {
+                    const toggle = e.target.closest('.tags-toggle-btn');
+                    if (toggle) {
                         e.stopPropagation();
-                        const toolName = e.target.dataset.toolName;
-                        const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
-                        if (tool) {
-                            const tagsContainer = e.target.parentElement;
-                            const sortedTags = [...tool.tags].sort((a, b) => a.localeCompare(b));
-                            tagsContainer.innerHTML = sortedTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
-                            tagsContainer.innerHTML += `<button class="show-less-tags-btn" data-tool-name="${tool.name}">Show less</button>`;
-                        }
-                    } else if (e.target.classList.contains('show-less-tags-btn')) {
-                        e.stopPropagation();
-                        const toolName = e.target.dataset.toolName;
-                        const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
-                        if (tool) {
-                            const tagsContainer = e.target.parentElement;
-                            const sortedTags = [...tool.tags].sort((a, b) => a.localeCompare(b));
-                            const displayTags = sortedTags.slice(0, 3);
-                            const hasMore = sortedTags.length > 3;
-                            tagsContainer.innerHTML = displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
-                            if (hasMore) {
-                                tagsContainer.innerHTML += `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>`;
-                            }
-                        }
-                    } else if (e.target.classList.contains('show-more-category-tags-btn')) {
-                        e.stopPropagation();
-                        const category = e.target.dataset.category;
-                        const tagsContainer = e.target.parentElement;
-                        const tags = this.CATEGORY_TAGS[category] || [];
-                        const sorted = [...tags].sort((a, b) => a.localeCompare(b));
-                        tagsContainer.innerHTML = sorted.map(tag => `<span class="category-tag">${tag}</span>`).join('');
-                        tagsContainer.innerHTML += `<button class="show-less-category-tags-btn" data-category="${category}">Show less</button>`;
-                    } else if (e.target.classList.contains('show-less-category-tags-btn')) {
-                        e.stopPropagation();
-                        const category = e.target.dataset.category;
-                        const tagsContainer = e.target.parentElement;
-                        const tags = this.CATEGORY_TAGS[category] || [];
-                        const sorted = [...tags].sort((a, b) => a.localeCompare(b));
-                        const displayTags = sorted.slice(0, 3);
-                        const hasMore = sorted.length > 3;
-                        tagsContainer.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
-                        if (hasMore) {
-                            tagsContainer.innerHTML += `<button class="show-more-category-tags-btn" data-category="${category}">... more</button>`;
-                        }
+                        const container = toggle.parentElement;
+                        container.classList.toggle('expanded');
                     }
                 });
             }
@@ -1723,7 +1693,9 @@
 
                 const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
                 const sortedTags = [...tags].sort((a, b) => a.localeCompare(b));
-                const displayTags = sortedTags.slice(0, 3);
+                const tagsHtml = sortedTags
+                    .map((tag, i) => `<span class="tool-tag${i >= 3 ? ' extra-tag' : ''}">${tag}</span>`)
+                    .join('');
                 const hasMoreTags = sortedTags.length > 3;
 
                 card.innerHTML = `
@@ -1742,15 +1714,14 @@
                     </div>
                     <div class="tool-card-actions">
                         <div class="tool-tags">
-                            ${displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
-                            ${hasMoreTags ? `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>` : ''}
+                            ${tagsHtml}
+                            ${hasMoreTags ? `<button class="tags-toggle-btn" aria-label="Toggle tags">\u25BC</button>` : ''}
                         </div>
                     </div>
                 `;
 
                 card.addEventListener('click', (e) => {
-                    if (!e.target.closest('.show-more-tags-btn') &&
-                        !e.target.closest('.show-less-tags-btn')) {
+                    if (!e.target.closest('.tags-toggle-btn')) {
                         this.showToolModal(tool);
                     }
                 });
@@ -1765,12 +1736,11 @@
                     if (container) {
                         const tags = this.CATEGORY_TAGS[category] || [];
                         const sorted = [...tags].sort((a, b) => a.localeCompare(b));
-                        const displayTags = sorted.slice(0, 3);
+                        const tagsHtml = sorted
+                            .map((tag, i) => `<span class="category-tag${i >= 3 ? ' extra-tag' : ''}">${tag}</span>`)
+                            .join('');
                         const hasMore = sorted.length > 3;
-                        container.innerHTML = displayTags.map(tag => `<span class="category-tag">${tag}</span>`).join('');
-                        if (hasMore) {
-                            container.innerHTML += `<button class="show-more-category-tags-btn" data-category="${category}">... more</button>`;
-                        }
+                        container.innerHTML = tagsHtml + (hasMore ? '<button class="tags-toggle-btn" aria-label="Toggle tags">\u25BC</button>' : '');
                     }
                 });
             }
