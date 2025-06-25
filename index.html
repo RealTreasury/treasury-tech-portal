@@ -973,6 +973,10 @@
             margin-left: 340px;
         }
 
+        body.side-menu-open #sideMenuToggle {
+            display: flex;
+        }
+
         body.side-menu-pinned #sideMenuToggle {
             display: none;
         }
@@ -1235,6 +1239,7 @@
             content: '\2715';
         }
 
+        body.side-menu-open .external-menu-toggle,
         body.side-menu-pinned .external-menu-toggle {
             display: none;
         }
@@ -2662,18 +2667,17 @@
                 const externalToggle = document.getElementById('externalMenuToggle');
 
                 sideMenu?.classList.add('open');
+                document.body.classList.add('side-menu-open');
                 if (pinned) {
                     overlay?.classList.remove('show');
                     toggle?.classList.remove('active');
                     externalToggle?.classList.remove('active');
-                    externalToggle?.style.setProperty('display', 'none');
                     document.body.classList.add('side-menu-pinned');
                     document.body.style.overflow = '';
                 } else {
                     overlay?.classList.add('show');
                     toggle?.classList.add('active');
                     externalToggle?.classList.add('active');
-                    externalToggle?.style.setProperty('display', 'none');
                     document.body.classList.remove('side-menu-pinned');
                     document.body.style.overflow = 'hidden';
                 }
@@ -2691,7 +2695,7 @@
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
                 externalToggle?.classList.remove('active');
-                externalToggle?.style.removeProperty('display');
+                document.body.classList.remove('side-menu-open');
                 document.body.classList.remove('side-menu-pinned');
                 document.body.style.overflow = '';
                 this.sideMenuOpen = false;
