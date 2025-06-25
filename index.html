@@ -1315,6 +1315,7 @@
             z-index:1000;
             opacity:0;
             visibility:hidden;
+            pointer-events:none;
             transition: opacity 0.3s ease;
         }
 
@@ -1395,7 +1396,6 @@
             padding:8px;
         }
 
-        .shortlist-container.empty {
             justify-content:center;
             align-items:center;
         }
@@ -2404,8 +2404,10 @@
                 if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
 
                 const listContainer = document.getElementById('listViewContainer');
+                const ungroup = this.currentView === 'list' || this.searchTerm ||
+                                this.advancedFilters.features.length || this.advancedFilters.hasVideo;
 
-                if (this.currentView === 'list') {
+                if (ungroup) {
                     categories.forEach(cat => {
                         const section = document.querySelector(`.category-section[data-category="${cat}"]`);
                         if (section) section.style.display = 'none';
@@ -2760,9 +2762,15 @@
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
 
                 if (container) {
+                    const addHighlight = () => container.classList.add('drag-over');
+                    const removeHighlight = () => container.classList.remove('drag-over');
+
+                    container.addEventListener('dragenter', addHighlight);
+                    container.addEventListener('dragleave', removeHighlight);
                     container.addEventListener('dragover', e => e.preventDefault());
                     container.addEventListener('drop', e => {
                         e.preventDefault();
+                        removeHighlight();
                         const name = e.dataTransfer.getData('text/plain');
                         const tool = this.TREASURY_TOOLS.find(t => t.name === name);
                         if (tool && !this.shortlist.some(i => i.tool.name === name)) {
