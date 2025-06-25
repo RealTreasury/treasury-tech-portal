@@ -576,7 +576,7 @@
 
         /* IFRAME-OPTIMIZED MODAL STYLES */
         .modal {
-            position: fixed !important;
+            position: absolute !important;
             top: 0 !important;
             left: 0 !important;
             width: 100% !important;
@@ -1553,8 +1553,11 @@
                 }
 
                 if (modal) {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    modal.style.top = `${scrollTop}px`;
                     modal.classList.add('show');
                     document.body.classList.add('modal-open');
+                    setTimeout(sendHeight, 50);
                 }
             }
 
@@ -1618,6 +1621,8 @@
                 if (modal) {
                     modal.classList.remove('show');
                     document.body.classList.remove('modal-open');
+                    modal.style.top = '';
+                    setTimeout(sendHeight, 50);
                 }
             }
 
