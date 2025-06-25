@@ -858,11 +858,282 @@
 
             .tool-name {
                 font-size: 1.1rem;
-            }
+        }
 
-            .search-container {
-                max-width: 100%;
-            }
+        .search-container {
+            max-width: 100%;
+        }
+        }
+
+        /* Hamburger Menu Button */
+        .menu-toggle {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #281345;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .menu-toggle:hover {
+            background: #f9fafb;
+            border-color: #7216f4;
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .hamburger span {
+            width: 18px;
+            height: 2px;
+            background: #7216f4;
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active .hamburger span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-toggle.active .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active .hamburger span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            border-left: 1px solid #e5e7eb;
+        }
+
+        .side-menu.open {
+            right: 0;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(40, 19, 69, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
+            color: white;
+        }
+
+        .side-menu-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .side-menu-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .side-menu-content {
+            padding: 0;
+        }
+
+        .menu-section {
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .menu-section-header {
+            padding: 16px 20px;
+            background: #f9fafb;
+            font-weight: 600;
+            color: #281345;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .menu-section-content {
+            padding: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 24px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .filter-select,
+        .filter-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: #7216f4;
+            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #7216f4;
+        }
+
+        .checkbox-item label {
+            font-size: 0.85rem;
+            color: #4b5563;
+            cursor: pointer;
+            line-height: 1.2;
+        }
+
+        .view-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .view-option {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .view-option.active {
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: white;
+            border-color: #7216f4;
+        }
+
+        .view-option:hover:not(.active) {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: white;
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #8f47f6, #7216f4);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: #7216f4;
+            border: 1px solid #7216f4;
+        }
+
+        .action-btn.secondary:hover {
+            background: #f8f9ff;
         }
     </style>
 </head>
@@ -914,6 +1185,91 @@
                     <button class="filter-tab" data-category="CASH">Cash Tools</button>
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                     <button class="filter-tab" data-category="TRMS">TRMS</button>
+                </div>
+                <button id="menuToggle" class="menu-toggle">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    Menu
+                </button>
+            </div>
+        </div>
+        <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+        <div class="side-menu" id="sideMenu">
+            <div class="side-menu-header">
+                <h3 class="side-menu-title">Menu</h3>
+                <button class="side-menu-close" id="sideMenuClose">×</button>
+            </div>
+            <div class="side-menu-content">
+                <div class="menu-section">
+                    <div class="menu-section-header">Filters</div>
+                    <div class="menu-section-content">
+                        <div class="filter-group">
+                            <label class="filter-label" for="companySizeFilter">Company Size</label>
+                            <select id="companySizeFilter" class="filter-select">
+                                <option value="">All</option>
+                                <option value="small">SMB</option>
+                                <option value="mid">Mid-Market</option>
+                                <option value="large">Enterprise</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Features</span>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item"><input type="checkbox" id="aiFeature" value="AI"><label for="aiFeature">AI</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="apiFeature" value="API"><label for="apiFeature">API</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="paymentsFeature" value="Payments"><label for="paymentsFeature">Payments</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="riskFeature" value="Risk"><label for="riskFeature">Risk</label></div>
+                                <div class="checkbox-item"><input type="checkbox" id="forecastingFeature" value="Forecasting"><label for="forecastingFeature">Forecasting</label></div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hasVideoFilter">
+                                <label for="hasVideoFilter">Has Video</label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="sortFilter">Sort By</label>
+                            <select id="sortFilter" class="filter-select">
+                                <option value="name">Name</option>
+                                <option value="category">Category</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-header">View Options</div>
+                    <div class="menu-section-content">
+                        <div class="view-options">
+                            <div class="view-option active" data-view="grid">Grid</div>
+                            <div class="view-option" data-view="list">List</div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="gridSizeFilter">Grid Size</label>
+                            <select id="gridSizeFilter" class="filter-select">
+                                <option value="auto">Auto</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-header">Quick Actions</div>
+                    <div class="menu-section-content">
+                        <div class="action-buttons">
+                            <button class="action-btn primary" id="exportResults">Export Results</button>
+                            <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
+                            <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1349,6 +1705,11 @@
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
+                this.advancedFilters = { companySize: '', features: [], hasVideo: false };
+                this.currentSort = 'name';
+                this.currentView = 'grid';
+                this.gridSize = 'auto';
+                this.sideMenuOpen = false;
 
                 this.init();
             }
@@ -1358,9 +1719,11 @@
                 this.setupInteractions();
                 this.setupSearch();
                 this.setupModals();
+                this.setupSideMenu();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
+                this.applyViewStyles();
 
                 setTimeout(() => {
                     const loading = document.getElementById('loadingScreen');
@@ -1661,6 +2024,25 @@
                         this.TREASURY_TOOLS.filter(tool => tool.category === this.currentFilter);
                 }
 
+                // Advanced Filters
+                if (this.advancedFilters.companySize) {
+                    const size = this.advancedFilters.companySize.toLowerCase();
+                    tools = tools.filter(t => (t.target || '').toLowerCase().includes(size));
+                }
+                if (this.advancedFilters.features.length) {
+                    tools = tools.filter(t => this.advancedFilters.features.every(f => (t.features || []).includes(f)));
+                }
+                if (this.advancedFilters.hasVideo) {
+                    tools = tools.filter(t => t.videoUrl);
+                }
+
+                // Sorting
+                if (this.currentSort === 'name') {
+                    tools = tools.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (this.currentSort === 'category') {
+                    tools = tools.sort((a, b) => a.category.localeCompare(b.category));
+                }
+
                 this.filteredTools = tools;
                 this.displayFilteredTools();
                 this.updateVisibleCounts();
@@ -1807,6 +2189,243 @@
                 if (totalTools) {
                     totalTools.textContent = this.TREASURY_TOOLS.length;
                 }
+            }
+
+            setupSideMenu() {
+                const menuToggle = document.getElementById('menuToggle');
+                const sideMenu = document.getElementById('sideMenu');
+                const overlay = document.getElementById('sideMenuOverlay');
+                const closeBtn = document.getElementById('sideMenuClose');
+
+                if (menuToggle) menuToggle.addEventListener('click', () => this.toggleSideMenu());
+                [overlay, closeBtn].forEach(el => {
+                    if (el) el.addEventListener('click', () => this.closeSideMenu());
+                });
+
+                this.setupAdvancedFilters();
+                this.setupViewOptions();
+                this.setupQuickActions();
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.sideMenuOpen) this.closeSideMenu();
+                });
+            }
+
+            setupAdvancedFilters() {
+                const companySizeFilter = document.getElementById('companySizeFilter');
+                if (companySizeFilter) {
+                    companySizeFilter.addEventListener('change', (e) => {
+                        this.advancedFilters.companySize = e.target.value;
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                }
+
+                const featureCheckboxes = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature');
+                featureCheckboxes.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        this.updateFeatureFilters();
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                });
+
+                const hasVideoFilter = document.getElementById('hasVideoFilter');
+                if (hasVideoFilter) {
+                    hasVideoFilter.addEventListener('change', (e) => {
+                        this.advancedFilters.hasVideo = e.target.checked;
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                }
+
+                const sortFilter = document.getElementById('sortFilter');
+                if (sortFilter) {
+                    sortFilter.addEventListener('change', (e) => {
+                        this.currentSort = e.target.value;
+                        this.filterAndDisplayTools();
+                    });
+                }
+            }
+
+            setupViewOptions() {
+                const viewOptions = document.querySelectorAll('.view-option');
+                viewOptions.forEach(opt => {
+                    opt.addEventListener('click', () => {
+                        viewOptions.forEach(o => o.classList.remove('active'));
+                        opt.classList.add('active');
+                        this.currentView = opt.dataset.view;
+                        this.applyViewStyles();
+                    });
+                });
+
+                const gridSizeFilter = document.getElementById('gridSizeFilter');
+                if (gridSizeFilter) {
+                    gridSizeFilter.addEventListener('change', (e) => {
+                        this.gridSize = e.target.value;
+                        this.applyGridSize();
+                    });
+                }
+            }
+
+            setupQuickActions() {
+                const exportResults = document.getElementById('exportResults');
+                if (exportResults) {
+                    exportResults.addEventListener('click', () => this.exportCurrentResults());
+                }
+
+                const clearAll = document.getElementById('clearAllFilters');
+                if (clearAll) clearAll.addEventListener('click', () => this.clearAllFilters());
+
+                const resetBtn = document.getElementById('resetToDefaults');
+                if (resetBtn) resetBtn.addEventListener('click', () => this.resetToDefaults());
+            }
+
+            toggleSideMenu() {
+                if (this.sideMenuOpen) this.closeSideMenu();
+                else this.openSideMenu();
+            }
+
+            openSideMenu() {
+                const sideMenu = document.getElementById('sideMenu');
+                const overlay = document.getElementById('sideMenuOverlay');
+                const toggle = document.getElementById('menuToggle');
+
+                sideMenu?.classList.add('open');
+                overlay?.classList.add('show');
+                toggle?.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                this.sideMenuOpen = true;
+            }
+
+            closeSideMenu() {
+                const sideMenu = document.getElementById('sideMenu');
+                const overlay = document.getElementById('sideMenuOverlay');
+                const toggle = document.getElementById('menuToggle');
+
+                sideMenu?.classList.remove('open');
+                overlay?.classList.remove('show');
+                toggle?.classList.remove('active');
+                document.body.style.overflow = '';
+                this.sideMenuOpen = false;
+            }
+
+            updateFeatureFilters() {
+                const cbs = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature');
+                this.advancedFilters.features = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
+            }
+
+            applyViewStyles() {
+                const grids = document.querySelectorAll('.tools-grid');
+                grids.forEach(grid => {
+                    grid.classList.remove('list-view');
+                    grid.classList.remove('grid-1','grid-2','grid-3','grid-4');
+                    if (this.currentView === 'list') {
+                        grid.classList.add('list-view');
+                        grid.style.gridTemplateColumns = '1fr';
+                    } else {
+                        this.applyGridSize();
+                    }
+                });
+            }
+
+            applyGridSize() {
+                const grids = document.querySelectorAll('.tools-grid');
+                grids.forEach(grid => {
+                    grid.classList.remove('grid-1','grid-2','grid-3','grid-4');
+                    if (this.gridSize === 'auto') {
+                        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+                    } else {
+                        grid.classList.add(`grid-${this.gridSize}`);
+                    }
+                });
+            }
+
+            exportCurrentResults() {
+                const results = this.filteredTools.map(t => ({
+                    name: t.name,
+                    category: t.category,
+                    description: t.desc,
+                    features: (t.features || []).join(', '),
+                    target: t.target || '',
+                    hasVideo: !!t.videoUrl,
+                    website: t.websiteUrl || ''
+                }));
+                const csv = this.convertToCSV(results);
+                this.downloadCSV(csv, 'treasury-tools-export.csv');
+            }
+
+            convertToCSV(data) {
+                if (!data.length) return '';
+                const headers = Object.keys(data[0]);
+                return [
+                    headers.join(','),
+                    ...data.map(row => headers.map(h => `"${String(row[h]).replace(/"/g,'""')}"`).join(','))
+                ].join('\n');
+            }
+
+            downloadCSV(csv, filename) {
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+                const link = document.createElement('a');
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+
+            clearAllFilters() {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = '';
+                    this.searchTerm = '';
+                }
+                document.querySelector('.filter-tab.active')?.classList.remove('active');
+                document.querySelector('.filter-tab[data-category="ALL"]')?.classList.add('active');
+                this.currentFilter = 'ALL';
+
+                this.advancedFilters = { companySize:'', features:[], hasVideo:false };
+
+                const companySizeFilter = document.getElementById('companySizeFilter');
+                if (companySizeFilter) companySizeFilter.value = '';
+
+                const checkboxes = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature,#hasVideoFilter');
+                checkboxes.forEach(cb => cb.checked = false);
+
+                this.filterAndDisplayTools();
+                this.updateFilterCount();
+            }
+
+            resetToDefaults() {
+                this.clearAllFilters();
+                const sortFilter = document.getElementById('sortFilter');
+                if (sortFilter) sortFilter.value = 'name';
+                this.currentSort = 'name';
+
+                document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+                document.querySelector('.view-option[data-view="grid"]')?.classList.add('active');
+                this.currentView = 'grid';
+
+                const gridSizeFilter = document.getElementById('gridSizeFilter');
+                if (gridSizeFilter) gridSizeFilter.value = 'auto';
+                this.gridSize = 'auto';
+
+                this.applyViewStyles();
+                this.filterAndDisplayTools();
+            }
+
+            updateFilterCount() {
+                const { companySize, features, hasVideo } = this.advancedFilters;
+                let count = 0;
+                if (companySize) count++;
+                count += features.length;
+                if (hasVideo) count++;
+                const el = document.getElementById('filterCount');
+                if (el) el.textContent = count > 0 ? `(${count})` : '';
             }
         }
 
