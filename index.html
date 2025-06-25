@@ -41,6 +41,28 @@
             width: 100%;
         }
 
+        .search-suggestions {
+            display: none;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .search-suggestion {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+        }
+
+        .search-suggestion:hover {
+            background: #e5e7eb;
+        }
+
         .search-input {
             width: 100%;
             padding: 12px 20px 12px 45px;
@@ -896,6 +918,7 @@
                         <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
                         <button class="search-clear" id="searchClear" style="display: none;">×</button>
                     </div>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
 
                     <div class="stats-bar">
                         <div class="stat-card">
@@ -1362,6 +1385,7 @@
                 this.setupModals();
                 this.updateCounts();
                 this.populateCategoryTags();
+                this.populateSearchTags();
                 this.filterAndDisplayTools();
 
                 setTimeout(() => {
@@ -1453,12 +1477,26 @@
             setupSearch() {
                 const searchInput = document.getElementById('searchInput');
                 const searchClear = document.getElementById('searchClear');
+                const searchSuggestions = document.getElementById('searchSuggestions');
 
                 if (searchInput) {
                     searchInput.addEventListener('input', (e) => {
                         this.searchTerm = e.target.value.toLowerCase();
                         if (searchClear) searchClear.style.display = this.searchTerm ? 'block' : 'none';
+                        if (searchSuggestions) searchSuggestions.style.display = this.searchTerm ? 'none' : 'flex';
                         this.filterAndDisplayTools();
+                    });
+
+                    searchInput.addEventListener('focus', () => {
+                        if (!this.searchTerm && searchSuggestions) {
+                            searchSuggestions.style.display = 'flex';
+                        }
+                    });
+
+                    searchInput.addEventListener('blur', () => {
+                        setTimeout(() => {
+                            if (searchSuggestions) searchSuggestions.style.display = 'none';
+                        }, 100);
                     });
                 }
 
@@ -1467,7 +1505,21 @@
                         if (searchInput) searchInput.value = '';
                         this.searchTerm = '';
                         searchClear.style.display = 'none';
+                        if (searchSuggestions) searchSuggestions.style.display = 'flex';
                         this.filterAndDisplayTools();
+                    });
+                }
+
+                if (searchSuggestions) {
+                    searchSuggestions.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('search-suggestion')) {
+                            const tag = e.target.textContent;
+                            if (searchInput) searchInput.value = tag;
+                            this.searchTerm = tag.toLowerCase();
+                            if (searchClear) searchClear.style.display = 'block';
+                            searchSuggestions.style.display = 'none';
+                            this.filterAndDisplayTools();
+                        }
                     });
                 }
             }
@@ -1755,6 +1807,17 @@
                         }
                     }
                 });
+            }
+
+            populateSearchTags() {
+                const container = document.getElementById('searchSuggestions');
+                if (!container) return;
+                const tagsSet = new Set();
+                Object.values(this.CATEGORY_TAGS).forEach(tagArr => {
+                    (tagArr || []).forEach(tag => tagsSet.add(tag));
+                });
+                const tags = Array.from(tagsSet).sort((a, b) => a.localeCompare(b)).slice(0, 8);
+                container.innerHTML = tags.map(tag => `<span class="search-suggestion">${tag}</span>`).join('');
             }
 
             updateVisibleCounts() {
