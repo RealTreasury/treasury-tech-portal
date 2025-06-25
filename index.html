@@ -1592,16 +1592,29 @@
                     const container = document.getElementById(`tools-${category}`);
                     const categoryTools = this.filteredTools.filter(tool => tool.category === category);
 
-                    if (section) {
-                        section.style.display = (this.currentFilter === 'ALL' || this.currentFilter === category) && categoryTools.length > 0 ? 'block' : 'none';
-                    }
-
-                    if (this.searchTerm && section) {
-                        section.style.display = categoryTools.length > 0 ? 'block' : 'none';
-                    }
-
+                    // Clear the container first
                     if (container) {
                         container.innerHTML = '';
+                    }
+
+                    // Determine if this section should be visible
+                    let shouldShowSection = false;
+
+                    if (this.searchTerm) {
+                        // When searching, show section only if it has matching tools
+                        shouldShowSection = categoryTools.length > 0;
+                    } else {
+                        // When filtering by category, show section if it matches filter and has tools
+                        shouldShowSection = (this.currentFilter === 'ALL' || this.currentFilter === category) && categoryTools.length > 0;
+                    }
+
+                    // Show/hide the section
+                    if (section) {
+                        section.style.display = shouldShowSection ? 'block' : 'none';
+                    }
+
+                    // Populate the container only if section is visible
+                    if (shouldShowSection && container) {
                         categoryTools.forEach(tool => {
                             const card = this.createToolCard(tool, category);
                             container.appendChild(card);
