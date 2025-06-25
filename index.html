@@ -12,21 +12,18 @@
             box-sizing: border-box;
         }
 
+        /* Allow vertical scrolling inside the iframe */
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: #f8f9fa;
             color: #281345;
             min-height: 100vh;
+            overflow-y: auto;
             overflow-x: hidden;
             line-height: 1.6;
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* This class is added to the body via JS to prevent background scroll */
-        body.modal-open {
-            overflow: hidden !important;
         }
 
         .container {
@@ -574,11 +571,7 @@
             background: #f3f4f6;
         }
 
-        /* ===============================================================
-         * NEW MODAL STYLES
-         * =============================================================== */
-
-        /* Modal Overlay: Full screen, fixed, for centering */
+        /* Modal Overlay: Now uses position:fixed, which works inside a 100vh iframe */
         .modal {
             position: fixed;
             top: 0;
@@ -775,10 +768,6 @@
             box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.2);
             color: #281345;
         }
-        
-        /* ===============================================================
-         * END NEW MODAL STYLES
-         * =============================================================== */
 
         /* Mobile adjustments */
         @media (max-width: 768px) {
@@ -1572,8 +1561,6 @@
 
                 // 4. Show the modal
                 modal.classList.add('show');
-                document.body.classList.add('modal-open');
-                setTimeout(sendHeight, 50);
             }
 
             showCategoryModal(categoryInfo, categoryKey) {
@@ -1628,7 +1615,6 @@
 
                 if (modal) {
                     modal.classList.add('show');
-                    document.body.classList.add('modal-open');
                 }
             }
 
@@ -1643,13 +1629,6 @@
                         const iframeSrc = iframe.src;
                         iframe.src = iframeSrc; // This reloads the iframe
                     }
-
-                    // Only remove modal-open class if no other modals are open
-                    const otherModals = document.querySelector('.modal.show');
-                    if(!otherModals) {
-                       document.body.classList.remove('modal-open');
-                    }
-                    setTimeout(sendHeight, 50);
                 }
             }
 
@@ -1833,42 +1812,6 @@
             lastTouchEnd = now;
         }, {
             passive: false
-        });
-    </script>
-    <script>
-        let lastHeight = 0;
-        let resizeTimeout;
-
-        function sendHeight() {
-            clearTimeout(resizeTimeout);
-
-            resizeTimeout = setTimeout(() => {
-                const height = document.documentElement.scrollHeight;
-
-                if (Math.abs(height - lastHeight) > 5) {
-                    lastHeight = height;
-                    window.parent.postMessage({
-                        type: "setHeight",
-                        height: height
-                    }, "*");
-                }
-            }, 100);
-        }
-
-        window.addEventListener("load", sendHeight);
-        window.addEventListener("resize", sendHeight);
-
-        document.addEventListener('click', () => {
-            setTimeout(sendHeight, 300);
-        });
-    </script>
-    <script>
-        if ('scrollRestoration' in history) {
-            history.scrollRestoration = 'manual';
-        }
-
-        window.addEventListener('load', () => {
-            window.scrollTo(0, 0);
         });
     </script>
 </body>
