@@ -876,9 +876,9 @@
 
                 <div class="filter-tabs">
                     <button class="filter-tab active" data-category="ALL">All</button>
-                    <button class="filter-tab" data-category="TRMS">TRMS</button>
                     <button class="filter-tab" data-category="CASH">Cash Tools</button>
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
+                    <button class="filter-tab" data-category="TRMS">TRMS</button>
                 </div>
             </div>
         </div>
@@ -889,28 +889,6 @@
             <div class="no-results" id="noResults" style="display: none;">
                 <h3>No vendors found</h3>
                 <p>Try adjusting your search terms or filters</p>
-            </div>
-
-            <!-- Enterprise Section -->
-            <div class="category-section category-enterprise" data-category="TRMS" style="display: block;">
-                <div class="category-header" data-category="TRMS">
-                    <div class="category-info">
-                        <h2 class="category-title">
-                            🏢 <span>Treasury & Risk Management Systems (TRMS)</span>
-                            <span class="category-badge">Advanced</span>
-                        </h2>
-                        <p class="category-description">
-                            Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.
-                        </p>
-                    </div>
-                    <div class="category-count">
-                        <span class="count-number" id="count-TRMS">11</span>
-                        <span class="count-label">Solutions</span>
-                    </div>
-                </div>
-                <div class="tools-grid" id="tools-TRMS">
-                    <!-- Tools will be populated by JavaScript -->
-                </div>
             </div>
 
             <!-- Cash Tools Section -->
@@ -953,6 +931,28 @@
                     </div>
                 </div>
                 <div class="tools-grid" id="tools-LITE">
+                    <!-- Tools will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Enterprise Section -->
+            <div class="category-section category-enterprise" data-category="TRMS" style="display: block;">
+                <div class="category-header" data-category="TRMS">
+                    <div class="category-info">
+                        <h2 class="category-title">
+                            🏢 <span>Treasury & Risk Management Systems (TRMS)</span>
+                            <span class="category-badge">Advanced</span>
+                        </h2>
+                        <p class="category-description">
+                            Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.
+                        </p>
+                    </div>
+                    <div class="category-count">
+                        <span class="count-number" id="count-TRMS">11</span>
+                        <span class="count-label">Solutions</span>
+                    </div>
+                </div>
+                <div class="tools-grid" id="tools-TRMS">
                     <!-- Tools will be populated by JavaScript -->
                 </div>
             </div>
@@ -1239,23 +1239,6 @@
 
                 // Category information with videos
                 this.CATEGORY_INFO = {
-                    TRMS: {
-                        name: "Treasury & Risk Management Systems (TRMS)",
-                        badge: "Advanced",
-                        description: "Treasury & Risk Management Systems (TRMS) are comprehensive platforms for large, complex organizations. They offer a broad suite of tightly integrated modules far beyond cash visibility, covering debt and investment management, advanced financial risk analysis (FX, interest rates, commodities), hedge accounting, global payments, and in-house banking. These systems are designed to centralize and automate sophisticated treasury workflows.",
-                        features: [
-                            "Comprehensive multi-module integration",
-                            "Advanced derivatives and risk management",
-                            "Hedge accounting automation",
-                            "Global payment infrastructure",
-                            "In-house banking capabilities",
-                            "Regulatory compliance and reporting",
-                            "Complex multi-entity consolidation",
-                            "Sophisticated workflow automation"
-                        ],
-                        target: "Large enterprises, multinational corporations, and financial institutions with complex treasury operations requiring full-scale treasury management capabilities.",
-                        videoUrl: "https://youtu.be/WyWeobyqzfQ"
-                    },
                     CASH: {
                         name: "Cash Tools",
                         badge: "Essential",
@@ -1289,6 +1272,23 @@
                         ],
                         target: "Growing companies, mid-market enterprises, and organizations that have outgrown basic cash tools but don't need full TRMS complexity.",
                         videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P"
+                    },
+                    TRMS: {
+                        name: "Treasury & Risk Management Systems (TRMS)",
+                        badge: "Advanced",
+                        description: "Treasury & Risk Management Systems (TRMS) are comprehensive platforms for large, complex organizations. They offer a broad suite of tightly integrated modules far beyond cash visibility, covering debt and investment management, advanced financial risk analysis (FX, interest rates, commodities), hedge accounting, global payments, and in-house banking. These systems are designed to centralize and automate sophisticated treasury workflows.",
+                        features: [
+                            "Comprehensive multi-module integration",
+                            "Advanced derivatives and risk management",
+                            "Hedge accounting automation",
+                            "Global payment infrastructure",
+                            "In-house banking capabilities",
+                            "Regulatory compliance and reporting",
+                            "Complex multi-entity consolidation",
+                            "Sophisticated workflow automation"
+                        ],
+                        target: "Large enterprises, multinational corporations, and financial institutions with complex treasury operations requiring full-scale treasury management capabilities.",
+                        videoUrl: "https://youtu.be/WyWeobyqzfQ"
                     }
                 };
 
@@ -1575,7 +1575,7 @@
             }
 
             displayFilteredTools() {
-                const categories = ['TRMS', 'CASH', 'LITE'];
+                const categories = ['CASH', 'LITE', 'TRMS'];
                 const hasResults = this.filteredTools.length > 0;
 
                 const noResults = document.getElementById('noResults');
@@ -1665,7 +1665,7 @@
             }
 
             updateVisibleCounts() {
-                const categories = ['TRMS', 'CASH', 'LITE'];
+                const categories = ['CASH', 'LITE', 'TRMS'];
                 let visibleTotal = 0;
                 categories.forEach(category => {
                     const count = this.filteredTools.filter(tool => tool.category === category).length;
@@ -1683,7 +1683,7 @@
             }
 
             updateCounts() {
-                const categories = ['TRMS', 'CASH', 'LITE'];
+                const categories = ['CASH', 'LITE', 'TRMS'];
                 categories.forEach(category => {
                     const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);
