@@ -1179,11 +1179,54 @@
         .action-btn.secondary:hover {
             background: #f8f9ff;
         }
+
+        .external-menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #7216f4;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            z-index: 1002;
+        }
+
+        .external-menu-toggle:hover {
+            background: #5b0ee3;
+        }
+
+        .external-menu-toggle .chevron {
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            transition: transform 0.25s ease;
+        }
+
+        .external-menu-toggle.active .chevron {
+            transform: rotate(-135deg);
+        }
+
+        body.side-menu-pinned .external-menu-toggle {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <button class="external-menu-toggle" id="externalMenuToggle">
+            <span class="chevron"></span>
+        </button>
         <!-- Loading Screen -->
         <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
             <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
@@ -2258,11 +2301,13 @@
 
             setupSideMenu() {
                 const menuToggle = document.getElementById('sideMenuToggle');
+                const externalMenuToggle = document.getElementById('externalMenuToggle');
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const pinBtn = document.getElementById('sideMenuPin');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleSideMenu());
+                if (externalMenuToggle) externalMenuToggle.addEventListener('click', () => this.toggleSideMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
 
@@ -2362,16 +2407,19 @@
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
+                const externalToggle = document.getElementById('externalMenuToggle');
 
                 sideMenu?.classList.add('open');
                 if (pinned) {
                     overlay?.classList.remove('show');
                     toggle?.classList.remove('active');
+                    externalToggle?.classList.remove('active');
                     document.body.classList.add('side-menu-pinned');
                     document.body.style.overflow = '';
                 } else {
                     overlay?.classList.add('show');
                     toggle?.classList.add('active');
+                    externalToggle?.classList.add('active');
                     document.body.classList.remove('side-menu-pinned');
                     document.body.style.overflow = 'hidden';
                 }
@@ -2382,11 +2430,13 @@
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
+                const externalToggle = document.getElementById('externalMenuToggle');
                 const pinBtn = document.getElementById('sideMenuPin');
 
                 sideMenu?.classList.remove('open');
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
+                externalToggle?.classList.remove('active');
                 document.body.classList.remove('side-menu-pinned');
                 document.body.style.overflow = '';
                 this.sideMenuOpen = false;
