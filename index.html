@@ -2328,6 +2328,7 @@
 
                 card.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', tool.name);
+                    this.openShortlistMenu(true);
                 });
 
                 return card;
