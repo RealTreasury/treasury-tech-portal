@@ -896,8 +896,10 @@
 
         /* Side Menu Toggle Button */
         .menu-toggle {
-            background: #7216f4;
-            border: none;
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -905,26 +907,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #7216f4;
             transition: background 0.3s ease;
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
         }
 
         .menu-toggle:hover {
-            background: #5b0ee3;
+            background: rgba(255,255,255,0.4);
         }
 
-        .chevron {
-            width: 12px;
-            height: 12px;
-            border-right: 2px solid currentColor;
-            border-bottom: 2px solid currentColor;
-            transform: rotate(45deg);
-            transition: transform 0.25s ease;
+        .icon {
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            width:100%;
+            height:100%;
+            font-size:16px;
         }
 
-        .menu-toggle.active .chevron {
-            transform: rotate(-135deg);
+        .menu-toggle .icon::before {
+            content: '\2630';
+        }
+
+        .menu-toggle.active .icon::before {
+            content: '\2715';
         }
 
         /* Side Menu */
@@ -1023,7 +1029,7 @@
         .side-menu-pin {
             background: rgba(255, 255, 255, 0.25);
             border: none;
-            color: var(--primary-purple);
+            color: #7216f4;
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -1198,8 +1204,10 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: #7216f4;
-            border: none;
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -1207,27 +1215,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
+            color: #7216f4;
             transition: all 0.3s ease;
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
             z-index: 1002;
         }
 
         .external-menu-toggle:hover {
-            background: #5b0ee3;
+            background: rgba(255,255,255,0.4);
         }
 
-        .external-menu-toggle .chevron {
-            width: 12px;
-            height: 12px;
-            border-right: 2px solid currentColor;
-            border-bottom: 2px solid currentColor;
-            transform: rotate(45deg);
-            transition: transform 0.25s ease;
+        .external-menu-toggle .icon::before {
+            content: '\2630';
         }
 
-        .external-menu-toggle.active .chevron {
-            transform: rotate(-135deg);
+        .external-menu-toggle.active .icon::before {
+            content: '\2715';
         }
 
         body.side-menu-pinned .external-menu-toggle {
@@ -1315,7 +1318,7 @@
         .shortlist-menu-pin {
             background: rgba(255,255,255,0.25);
             border:none;
-            color: var(--primary-purple);
+            color: #7216f4;
             width:32px;
             height:32px;
             border-radius:50%;
@@ -1383,7 +1386,7 @@
 <body>
     <div class="container">
         <button class="external-menu-toggle" id="externalMenuToggle">
-            <span class="chevron"></span>
+            <span class="icon"></span>
         </button>
         <!-- Loading Screen -->
         <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
@@ -1432,7 +1435,7 @@
                 </div>
                 <h3 class="side-menu-title">Menu</h3>
                 <button class="menu-toggle" id="sideMenuToggle">
-                    <span class="chevron"></span>
+                    <span class="icon"></span>
                 </button>
             </div>
             <div class="side-menu-content">
@@ -1507,7 +1510,7 @@
     <div class="shortlist-menu" id="shortlistMenu">
         <div class="shortlist-menu-header">
             <button class="menu-toggle" id="shortlistMenuToggle" aria-label="Open shortlist menu" title="Shortlist">
-                <span class="chevron"></span>
+                <span class="icon"></span>
             </button>
             <h3 class="shortlist-menu-title">Shortlist</h3>
             <div>
@@ -2648,12 +2651,14 @@
                     overlay?.classList.remove('show');
                     toggle?.classList.remove('active');
                     externalToggle?.classList.remove('active');
+                    externalToggle?.style.setProperty('display', 'none');
                     document.body.classList.add('side-menu-pinned');
                     document.body.style.overflow = '';
                 } else {
                     overlay?.classList.add('show');
                     toggle?.classList.add('active');
                     externalToggle?.classList.add('active');
+                    externalToggle?.style.setProperty('display', 'none');
                     document.body.classList.remove('side-menu-pinned');
                     document.body.style.overflow = 'hidden';
                 }
@@ -2671,6 +2676,7 @@
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
                 externalToggle?.classList.remove('active');
+                externalToggle?.style.removeProperty('display');
                 document.body.classList.remove('side-menu-pinned');
                 document.body.style.overflow = '';
                 this.sideMenuOpen = false;
