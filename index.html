@@ -1372,45 +1372,7 @@
             border-radius: 8px;
         }
 
-        .external-menu-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: #7216f4;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-            z-index: 1002;
-        }
 
-        .external-menu-toggle:hover {
-            background: #5b0ee3;
-        }
-
-        .external-menu-toggle .chevron {
-            width: 12px;
-            height: 12px;
-            border-right: 2px solid currentColor;
-            border-bottom: 2px solid currentColor;
-            transform: rotate(45deg);
-            transition: transform 0.25s ease;
-        }
-
-        .external-menu-toggle.active .chevron {
-            transform: rotate(-135deg);
-        }
-
-        body.side-menu-pinned .external-menu-toggle {
-            display: none;
-        }
     </style>
 </head>
 
@@ -1540,7 +1502,7 @@
     <div class="shortlist-menu-overlay" id="shortlistMenuOverlay"></div>
     <div class="shortlist-menu" id="shortlistMenu">
         <div class="shortlist-menu-header">
-            <button class="menu-toggle" id="shortlistMenuToggle">
+            <button class="menu-toggle" id="shortlistMenuToggle" aria-label="Open shortlist menu" title="Shortlist">
                 <span class="chevron"></span>
             </button>
             <h3 class="shortlist-menu-title">Shortlist</h3>
@@ -1944,7 +1906,7 @@
                             "Transaction Search, Sort, Tag, Group"
                         ],
                         target: "Growing businesses, mid-market companies, and finance teams seeking to automate manual cash management processes and gain real-time visibility.",
-                        videoUrl: "https://youtu.be/Vx4At4BN-og"
+                        videoUrl: ""
                     },
                     LITE: {
                         name: "TMS-Lite",
@@ -1960,7 +1922,7 @@
                             "Treasury Payments (API, SFTP)"
                         ],
                         "target": "Growing companies, mid-market enterprises, and organizations that have outgrown basic cash tools but don't need full TRMS complexity.",
-                        videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P"
+                        videoUrl: ""
                     },
                     TRMS: {
                         name: "Treasury & Risk Management Systems (TRMS)",
@@ -1990,7 +1952,7 @@
                             "SWIFT Connectivity"
                         ],
                         target: "Large enterprises, multinational corporations, and financial institutions with complex treasury operations requiring full-scale treasury management capabilities.",
-                        videoUrl: "https://youtu.be/WyWeobyqzfQ"
+                        videoUrl: ""
                     }
                 };
 
