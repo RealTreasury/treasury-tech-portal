@@ -1575,7 +1575,6 @@
                     <div class="menu-section-header">Quick Actions</div>
                     <div class="menu-section-content">
                         <div class="action-buttons">
-                            <button class="action-btn primary" id="exportResults">Export Results</button>
                             <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
                             <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
                         </div>
@@ -2666,11 +2665,6 @@
             }
 
             setupQuickActions() {
-                const exportResults = document.getElementById('exportResults');
-                if (exportResults) {
-                    exportResults.addEventListener('click', () => this.exportCurrentResults());
-                }
-
                 const clearAll = document.getElementById('clearAllFilters');
                 if (clearAll) clearAll.addEventListener('click', () => this.clearAllFilters());
 
