@@ -1588,6 +1588,13 @@
                                 <option value="4">4</option>
                             </select>
                         </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="groupByFilter">Group Vendors</label>
+                            <select id="groupByFilter" class="filter-select">
+                                <option value="category" selected>By Category</option>
+                                <option value="none">No Grouping</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -2069,6 +2076,7 @@
                 this.currentSort = 'name';
                 this.currentView = 'grid';
                 this.gridSize = 'auto';
+                this.groupByCategory = true;
                 this.sideMenuOpen = false;
                 this.sideMenuPinned = false;
                 this.shortlist = [];
@@ -2416,7 +2424,7 @@
                 if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
 
                 const listContainer = document.getElementById('listViewContainer');
-                const ungroup = this.currentView === 'list' || this.searchTerm ||
+                const ungroup = !this.groupByCategory || this.currentView === 'list' || this.searchTerm ||
                                 this.advancedFilters.features.length || this.advancedFilters.hasVideo;
 
                 if (ungroup) {
@@ -2680,6 +2688,14 @@
                     gridSizeFilter.addEventListener('change', (e) => {
                         this.gridSize = e.target.value;
                         this.applyGridSize();
+                    });
+                }
+
+                const groupByFilter = document.getElementById('groupByFilter');
+                if (groupByFilter) {
+                    groupByFilter.addEventListener('change', (e) => {
+                        this.groupByCategory = e.target.value === 'category';
+                        this.filterAndDisplayTools();
                     });
                 }
             }
@@ -3074,6 +3090,10 @@
                 const gridSizeFilter = document.getElementById('gridSizeFilter');
                 if (gridSizeFilter) gridSizeFilter.value = 'auto';
                 this.gridSize = 'auto';
+
+                const groupByFilter = document.getElementById('groupByFilter');
+                if (groupByFilter) groupByFilter.value = 'category';
+                this.groupByCategory = true;
 
                 this.applyViewStyles();
                 this.filterAndDisplayTools();
