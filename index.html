@@ -1911,12 +1911,13 @@
 
 
     <script>
+        const EMBED_ORIGIN = 'https://realtreasury.com';
         let treasuryStack;
 
         function postHeight() {
             if (window.parent !== window) {
                 const h = document.documentElement.scrollHeight;
-                window.parent.postMessage({ type: 'treasury-height', height: h }, '*');
+                window.parent.postMessage({ type: 'treasury-height', height: h }, EMBED_ORIGIN);
             }
         }
 
@@ -2542,7 +2543,7 @@
                     // Stop video from playing in the background
                     const iframe = modal.querySelector('iframe');
                     if (iframe && iframe.contentWindow) {
-                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
                     }
                 }
             }
