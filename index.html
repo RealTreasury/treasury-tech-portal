@@ -1548,6 +1548,48 @@
             font-size: 0.95rem;
         }
 
+        .project-form-section {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 40px auto;
+            max-width: 800px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .project-form-section input,
+        .project-form-section textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .project-form-section button {
+            background: #7216f4;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .project-form-section button:hover {
+            background: #6112c2;
+        }
+
+        .project-form-section pre {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+
 
 
 
@@ -1832,6 +1874,21 @@
                 <li>Ask for references or case studies from similar companies.</li>
                 <li>Consider future scalability and support options.</li>
             </ul>
+        </div>
+
+        <div class="project-form-section">
+            <h3>Project Summary Generator</h3>
+            <form id="projectForm">
+                <input type="text" id="psCompany" placeholder="Company Name" required>
+                <input type="text" id="psObjective" placeholder="Project Objective" required>
+                <input type="date" id="psDeadline" required>
+                <textarea id="psNotes" placeholder="Key Requirements or Notes"></textarea>
+                <button type="button" id="generateSummary">Generate Summary</button>
+            </form>
+            <div id="summaryContainer" style="display:none;">
+                <h4>Project Summary</h4>
+                <pre id="summaryOutput"></pre>
+            </div>
         </div>
     </div>
 
@@ -3250,6 +3307,23 @@
             lastTouchEnd = now;
         }, {
             passive: false
+        });
+    </script>
+    <script>
+        document.getElementById('generateSummary')?.addEventListener('click', function() {
+            const company = document.getElementById('psCompany').value.trim();
+            const objective = document.getElementById('psObjective').value.trim();
+            const deadline = document.getElementById('psDeadline').value;
+            const notes = document.getElementById('psNotes').value.trim();
+
+            const parts = [];
+            if (company) parts.push(`Company: ${company}`);
+            if (objective) parts.push(`Objective: ${objective}`);
+            if (deadline) parts.push(`Deadline: ${deadline}`);
+            if (notes) parts.push(`Notes: ${notes}`);
+
+            document.getElementById('summaryOutput').textContent = parts.join('\n');
+            document.getElementById('summaryContainer').style.display = 'block';
         });
     </script>
 </body>
