@@ -31,6 +31,8 @@
         .container {
             min-height: 100vh;
             position: relative;
+            margin-left: 60px;
+            transition: margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Search Box */
@@ -38,23 +40,28 @@
             position: relative;
             max-width: 400px;
             width: 100%;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
         }
 
         .search-input {
             width: 100%;
             padding: 12px 20px 12px 45px;
-            border: 1px solid #e5e7eb;
+            border: none;
             border-radius: 12px;
             font-size: 0.9rem;
-            background: white;
+            background: transparent;
             transition: all 0.3s ease;
             outline: none;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
 
         .search-input:focus {
-            border-color: #7216f4;
-            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.1);
+            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.15);
         }
 
         .search-icon {
@@ -96,8 +103,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid #e5e7eb;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
@@ -376,6 +383,24 @@
             background: #f3f4f6;
         }
 
+        .show-more-filter-tags-btn,
+        .show-less-filter-tags-btn {
+            background: none;
+            border: none;
+            color: #6366f1;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .show-more-filter-tags-btn:hover,
+        .show-less-filter-tags-btn:hover {
+            background: #f3f4f6;
+        }
+
         .category-count {
             background: #f9fafb;
             border: 1px solid #e5e7eb;
@@ -575,15 +600,15 @@
 
         /* Modal uses position: fixed to always be in the viewport */
         .modal {
-            position: fixed; 
-            top: 0; 
+            position: fixed;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1000;
-            background: rgba(40, 19, 69, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(40, 19, 69, 0.25);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -858,11 +883,302 @@
 
             .tool-name {
                 font-size: 1.1rem;
-            }
+        }
 
-            .search-container {
-                max-width: 100%;
-            }
+        .search-container {
+            max-width: 100%;
+        }
+        }
+
+        /* Side Menu Toggle Button */
+        .menu-toggle {
+            background: #7216f4;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            transition: background 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .menu-toggle:hover {
+            background: #5b0ee3;
+        }
+
+        .chevron {
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle.active .chevron {
+            transform: rotate(-135deg);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 70px;
+            height: 100vh;
+            background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.7) 0%,
+                rgba(248, 248, 248, 0.75) 100%);
+            backdrop-filter: blur(10px) saturate(140%);
+            -webkit-backdrop-filter: blur(10px) saturate(140%);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(199, 125, 255, 0.3);
+            border-radius: 0 20px 20px 0;
+            z-index: 1001;
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow-y: auto;
+        }
+
+        .side-menu.open {
+            width: 340px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body.side-menu-pinned .side-menu-overlay {
+            display: none;
+        }
+
+        body.side-menu-pinned .container {
+            margin-left: 340px;
+        }
+
+        body.side-menu-pinned #sideMenuToggle {
+            display: none;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(40, 19, 69, 0.05);
+            backdrop-filter: blur(3px) saturate(130%);
+            -webkit-backdrop-filter: blur(3px) saturate(130%);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .side-menu-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #f6f7fb 0%, #e8ecfc 100%);
+            color: #281345;
+        }
+
+        .side-menu-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .side-menu:not(.open) .side-menu-title,
+        .side-menu:not(.open) .side-menu-pin,
+        .side-menu:not(.open) .menu-section {
+            display: none;
+        }
+
+        .side-menu:not(.open) {
+            overflow: visible;
+        }
+
+        .side-menu-pin {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            color: var(--primary-purple);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+
+        .side-menu-pin:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .side-menu-pin.pinned {
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        .side-menu-content {
+            padding: 0;
+        }
+
+        .menu-section {
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .menu-section-header {
+            padding: 16px 20px;
+            background: rgba(249, 250, 251, 0.8);
+            font-weight: 600;
+            color: #281345;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .menu-section-content {
+            padding: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 24px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .filter-select,
+        .filter-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: #7216f4;
+            box-shadow: 0 0 0 3px rgba(114, 22, 244, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #7216f4;
+        }
+
+        .checkbox-item label {
+            font-size: 0.85rem;
+            color: #4b5563;
+            cursor: pointer;
+            line-height: 1.2;
+        }
+
+        .view-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .view-option {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .view-option.active {
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: white;
+            border-color: #7216f4;
+        }
+
+        .view-option:hover:not(.active) {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: white;
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #8f47f6, #7216f4);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: #7216f4;
+            border: 1px solid #7216f4;
+        }
+
+        .action-btn.secondary:hover {
+            background: #f8f9ff;
         }
     </style>
 </head>
@@ -880,9 +1196,6 @@
         <div class="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <div class="logo">
-                        <img alt="Logo" src="https://aisbee08e5bdvaliantmaker.wpcomstaging.com/wp-content/uploads/2025/06/White-No-Background-Picture.png">
-                    </div>
                     <div class="title-section">
                         <h1>Treasury Tech Stack</h1>
                         <p class="subtitle">Discover the complete treasury tech landscape</p>
@@ -890,12 +1203,6 @@
                 </div>
 
                 <div class="header-middle">
-                    <!-- Search Container -->
-                    <div class="search-container">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
-                        <button class="search-clear" id="searchClear" style="display: none;">×</button>
-                    </div>
 
                     <div class="stats-bar">
                         <div class="stat-card">
@@ -917,6 +1224,84 @@
                 </div>
             </div>
         </div>
+        <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+        <div class="side-menu" id="sideMenu">
+            <div class="side-menu-header">
+                <button class="menu-toggle" id="sideMenuToggle">
+                    <span class="chevron"></span>
+                </button>
+                <h3 class="side-menu-title">Menu</h3>
+                <div>
+                    <button class="side-menu-pin" id="sideMenuPin">📌</button>
+                </div>
+            </div>
+            <div class="side-menu-content">
+                <div class="menu-section">
+                    <div class="menu-section-header">Search</div>
+                    <div class="menu-section-content">
+                        <div class="search-container">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
+                            <button class="search-clear" id="searchClear" style="display: none;">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-header">Filters</div>
+                    <div class="menu-section-content">
+                        <div class="filter-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="hasVideoFilter">
+                                <label for="hasVideoFilter">Has Video</label>
+                            </div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Tags</span>
+                            <div class="checkbox-group" id="tagFilters"></div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="sortFilter">Sort By</label>
+                            <select id="sortFilter" class="filter-select">
+                                <option value="name">Name</option>
+                                <option value="category">Category</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-header">View Options</div>
+                    <div class="menu-section-content">
+                        <div class="view-options">
+                            <div class="view-option active" data-view="grid">Grid</div>
+                            <div class="view-option" data-view="list">List</div>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="gridSizeFilter">Grid Size</label>
+                            <select id="gridSizeFilter" class="filter-select">
+                                <option value="auto">Auto</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-header">Quick Actions</div>
+                    <div class="menu-section-content">
+                        <div class="action-buttons">
+                            <button class="action-btn primary" id="exportResults">Export Results</button>
+                            <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
+                            <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Main Content -->
         <div class="main-content" id="mainContent">
@@ -925,6 +1310,7 @@
                 <h3>No vendors found</h3>
                 <p>Try adjusting your search terms or filters</p>
             </div>
+            <div class="tools-grid" id="listViewContainer" style="display:none;"></div>
 
             <!-- Cash Tools Section -->
             <div class="category-section category-cash" data-category="CASH" style="display: block;">
@@ -1349,6 +1735,12 @@
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
+                this.advancedFilters = { features: [], hasVideo: false };
+                this.currentSort = 'name';
+                this.currentView = 'grid';
+                this.gridSize = 'auto';
+                this.sideMenuOpen = false;
+                this.sideMenuPinned = false;
 
                 this.init();
             }
@@ -1358,9 +1750,11 @@
                 this.setupInteractions();
                 this.setupSearch();
                 this.setupModals();
+                this.setupSideMenu();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
+                this.applyViewStyles();
 
                 setTimeout(() => {
                     const loading = document.getElementById('loadingScreen');
@@ -1661,6 +2055,21 @@
                         this.TREASURY_TOOLS.filter(tool => tool.category === this.currentFilter);
                 }
 
+                // Advanced Filters
+                if (this.advancedFilters.features.length) {
+                    tools = tools.filter(t => this.advancedFilters.features.every(f => (t.tags || []).includes(f)));
+                }
+                if (this.advancedFilters.hasVideo) {
+                    tools = tools.filter(t => t.videoUrl);
+                }
+
+                // Sorting
+                if (this.currentSort === 'name') {
+                    tools = tools.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (this.currentSort === 'category') {
+                    tools = tools.sort((a, b) => a.category.localeCompare(b.category));
+                }
+
                 this.filteredTools = tools;
                 this.displayFilteredTools();
                 this.updateVisibleCounts();
@@ -1672,6 +2081,26 @@
 
                 const noResults = document.getElementById('noResults');
                 if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
+
+                const listContainer = document.getElementById('listViewContainer');
+
+                if (this.currentView === 'list') {
+                    categories.forEach(cat => {
+                        const section = document.querySelector(`.category-section[data-category="${cat}"]`);
+                        if (section) section.style.display = 'none';
+                    });
+                    if (listContainer) {
+                        listContainer.innerHTML = '';
+                        this.filteredTools.sort((a,b) => a.name.localeCompare(b.name)).forEach(tool => {
+                            const card = this.createToolCard(tool, tool.category);
+                            listContainer.appendChild(card);
+                        });
+                        listContainer.style.display = hasResults ? 'grid' : 'none';
+                    }
+                    return;
+                } else {
+                    if (listContainer) listContainer.style.display = 'none';
+                }
 
                 categories.forEach(category => {
                     const section = document.querySelector(`.category-section[data-category="${category}"]`);
@@ -1775,6 +2204,25 @@
                 });
             }
 
+            populateTagFilters() {
+                const container = document.getElementById('tagFilters');
+                if (!container) return;
+                const tags = [...new Set(Object.values(this.CATEGORY_TAGS).flat())].sort((a, b) => a.localeCompare(b));
+                const displayCount = 6;
+                const visible = tags.slice(0, displayCount);
+                const hidden = tags.slice(displayCount);
+                const makeCb = (tag) => {
+                    const id = `tag-${tag.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${tag}"><label for="${id}">${tag}</label></div>`;
+                };
+                container.innerHTML = visible.map(makeCb).join('');
+                if (hidden.length) {
+                    container.innerHTML += `<div id="extraTagFilters" style="display:none;">${hidden.map(makeCb).join('')}</div>`;
+                    container.innerHTML += `<button class="show-more-filter-tags-btn" id="showMoreTagFilters">Show more</button>`;
+                    container.innerHTML += `<button class="show-less-filter-tags-btn" id="showLessTagFilters" style="display:none;">Show less</button>`;
+                }
+            }
+
             updateVisibleCounts() {
                 const categories = ['CASH', 'LITE', 'TRMS'];
                 let visibleTotal = 0;
@@ -1807,6 +2255,270 @@
                 if (totalTools) {
                     totalTools.textContent = this.TREASURY_TOOLS.length;
                 }
+            }
+
+            setupSideMenu() {
+                const menuToggle = document.getElementById('sideMenuToggle');
+                const sideMenu = document.getElementById('sideMenu');
+                const overlay = document.getElementById('sideMenuOverlay');
+                const pinBtn = document.getElementById('sideMenuPin');
+
+                if (menuToggle) menuToggle.addEventListener('click', () => this.toggleSideMenu());
+                if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
+                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
+
+                this.setupAdvancedFilters();
+                this.setupViewOptions();
+                this.setupQuickActions();
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.sideMenuOpen) this.closeSideMenu();
+                });
+            }
+
+            setupAdvancedFilters() {
+                this.populateTagFilters();
+                const showMore = document.getElementById('showMoreTagFilters');
+                const showLess = document.getElementById('showLessTagFilters');
+                const extra = document.getElementById('extraTagFilters');
+                if (showMore && showLess && extra) {
+                    showMore.addEventListener('click', () => {
+                        extra.style.display = 'block';
+                        showMore.style.display = 'none';
+                        showLess.style.display = 'inline-block';
+                    });
+                    showLess.addEventListener('click', () => {
+                        extra.style.display = 'none';
+                        showLess.style.display = 'none';
+                        showMore.style.display = 'inline-block';
+                    });
+                }
+
+                const featureCheckboxes = document.querySelectorAll('#tagFilters input[type="checkbox"]');
+                featureCheckboxes.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        this.updateFeatureFilters();
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                });
+
+                const hasVideoFilter = document.getElementById('hasVideoFilter');
+                if (hasVideoFilter) {
+                    hasVideoFilter.addEventListener('change', (e) => {
+                        this.advancedFilters.hasVideo = e.target.checked;
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                }
+
+                const sortFilter = document.getElementById('sortFilter');
+                if (sortFilter) {
+                    sortFilter.addEventListener('change', (e) => {
+                        this.currentSort = e.target.value;
+                        this.filterAndDisplayTools();
+                    });
+                }
+            }
+
+            setupViewOptions() {
+                const viewOptions = document.querySelectorAll('.view-option');
+                viewOptions.forEach(opt => {
+                    opt.addEventListener('click', () => {
+                        viewOptions.forEach(o => o.classList.remove('active'));
+                        opt.classList.add('active');
+                        this.currentView = opt.dataset.view;
+                        this.applyViewStyles();
+                    });
+                });
+
+                const gridSizeFilter = document.getElementById('gridSizeFilter');
+                if (gridSizeFilter) {
+                    gridSizeFilter.addEventListener('change', (e) => {
+                        this.gridSize = e.target.value;
+                        this.applyGridSize();
+                    });
+                }
+            }
+
+            setupQuickActions() {
+                const exportResults = document.getElementById('exportResults');
+                if (exportResults) {
+                    exportResults.addEventListener('click', () => this.exportCurrentResults());
+                }
+
+                const clearAll = document.getElementById('clearAllFilters');
+                if (clearAll) clearAll.addEventListener('click', () => this.clearAllFilters());
+
+                const resetBtn = document.getElementById('resetToDefaults');
+                if (resetBtn) resetBtn.addEventListener('click', () => this.resetToDefaults());
+            }
+
+            toggleSideMenu() {
+                if (this.sideMenuOpen) this.closeSideMenu();
+                else this.openSideMenu();
+            }
+
+            openSideMenu(pinned = false) {
+                const sideMenu = document.getElementById('sideMenu');
+                const overlay = document.getElementById('sideMenuOverlay');
+                const toggle = document.getElementById('sideMenuToggle');
+
+                sideMenu?.classList.add('open');
+                if (pinned) {
+                    overlay?.classList.remove('show');
+                    toggle?.classList.remove('active');
+                    document.body.classList.add('side-menu-pinned');
+                    document.body.style.overflow = '';
+                } else {
+                    overlay?.classList.add('show');
+                    toggle?.classList.add('active');
+                    document.body.classList.remove('side-menu-pinned');
+                    document.body.style.overflow = 'hidden';
+                }
+                this.sideMenuOpen = true;
+            }
+
+            closeSideMenu() {
+                const sideMenu = document.getElementById('sideMenu');
+                const overlay = document.getElementById('sideMenuOverlay');
+                const toggle = document.getElementById('sideMenuToggle');
+                const pinBtn = document.getElementById('sideMenuPin');
+
+                sideMenu?.classList.remove('open');
+                overlay?.classList.remove('show');
+                toggle?.classList.remove('active');
+                document.body.classList.remove('side-menu-pinned');
+                document.body.style.overflow = '';
+                this.sideMenuOpen = false;
+                this.sideMenuPinned = false;
+                pinBtn?.classList.remove('pinned');
+            }
+
+            togglePinSideMenu() {
+                this.sideMenuPinned = !this.sideMenuPinned;
+                const pinBtn = document.getElementById('sideMenuPin');
+                if (this.sideMenuPinned) {
+                    this.openSideMenu(true);
+                    pinBtn?.classList.add('pinned');
+                } else {
+                    this.closeSideMenu();
+                    pinBtn?.classList.remove('pinned');
+                }
+            }
+
+            updateFeatureFilters() {
+                const cbs = document.querySelectorAll('#tagFilters input[type="checkbox"]');
+                this.advancedFilters.features = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
+            }
+
+            applyViewStyles() {
+                const grids = document.querySelectorAll('.tools-grid');
+                grids.forEach(grid => {
+                    grid.classList.remove('list-view');
+                    grid.classList.remove('grid-1','grid-2','grid-3','grid-4');
+                    if (this.currentView === 'list') {
+                        grid.classList.add('list-view');
+                        grid.style.gridTemplateColumns = '1fr';
+                    } else {
+                        this.applyGridSize();
+                    }
+                });
+            }
+
+            applyGridSize() {
+                const grids = document.querySelectorAll('.tools-grid');
+                grids.forEach(grid => {
+                    grid.classList.remove('grid-1','grid-2','grid-3','grid-4');
+                    if (this.gridSize === 'auto') {
+                        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+                    } else {
+                        grid.classList.add(`grid-${this.gridSize}`);
+                    }
+                });
+            }
+
+            exportCurrentResults() {
+                const results = this.filteredTools.map(t => ({
+                    name: t.name,
+                    category: t.category,
+                    description: t.desc,
+                    features: (t.features || []).join(', '),
+                    target: t.target || '',
+                    hasVideo: !!t.videoUrl,
+                    website: t.websiteUrl || ''
+                }));
+                const csv = this.convertToCSV(results);
+                this.downloadCSV(csv, 'treasury-tools-export.csv');
+            }
+
+            convertToCSV(data) {
+                if (!data.length) return '';
+                const headers = Object.keys(data[0]);
+                return [
+                    headers.join(','),
+                    ...data.map(row => headers.map(h => `"${String(row[h]).replace(/"/g,'""')}"`).join(','))
+                ].join('\n');
+            }
+
+            downloadCSV(csv, filename) {
+                const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+                const link = document.createElement('a');
+                if (link.download !== undefined) {
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+
+            clearAllFilters() {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = '';
+                    this.searchTerm = '';
+                }
+                document.querySelector('.filter-tab.active')?.classList.remove('active');
+                document.querySelector('.filter-tab[data-category="ALL"]')?.classList.add('active');
+                this.currentFilter = 'ALL';
+
+                this.advancedFilters = { features:[], hasVideo:false };
+
+                const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"],#hasVideoFilter');
+                checkboxes.forEach(cb => cb.checked = false);
+
+                this.filterAndDisplayTools();
+                this.updateFilterCount();
+            }
+
+            resetToDefaults() {
+                this.clearAllFilters();
+                const sortFilter = document.getElementById('sortFilter');
+                if (sortFilter) sortFilter.value = 'name';
+                this.currentSort = 'name';
+
+                document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
+                document.querySelector('.view-option[data-view="grid"]')?.classList.add('active');
+                this.currentView = 'grid';
+
+                const gridSizeFilter = document.getElementById('gridSizeFilter');
+                if (gridSizeFilter) gridSizeFilter.value = 'auto';
+                this.gridSize = 'auto';
+
+                this.applyViewStyles();
+                this.filterAndDisplayTools();
+            }
+
+            updateFilterCount() {
+                const { features, hasVideo } = this.advancedFilters;
+                let count = 0;
+                count += features.length;
+                if (hasVideo) count++;
+                const el = document.getElementById('filterCount');
+                if (el) el.textContent = count > 0 ? `(${count})` : '';
             }
         }
 
