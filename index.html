@@ -1321,6 +1321,9 @@
         }
 
         .shortlist-menu-header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
             padding:20px;
             border-bottom:1px solid #e5e7eb;
             display:flex;
@@ -1328,6 +1331,17 @@
             justify-content:space-between;
             background: linear-gradient(135deg, #f6f7fb 0%, #e8ecfc 100%);
             color:#281345;
+        }
+
+        .shortlist-menu-actions {
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .shortlist-menu-close {
+            width:32px;
+            height:32px;
         }
 
         .shortlist-menu-title {
@@ -1397,8 +1411,23 @@
             border-radius:8px;
             padding:8px 12px;
             display:flex;
+            flex-direction:column;
+            gap:4px;
+        }
+
+        .shortlist-card-header {
+            display:flex;
             justify-content:space-between;
             align-items:center;
+        }
+
+        .shortlist-note {
+            width:100%;
+            font-size:0.8rem;
+            padding:4px;
+            border:1px solid #e5e7eb;
+            border-radius:4px;
+            resize:vertical;
         }
 
         .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
@@ -1547,8 +1576,11 @@
                 <span class="icon"></span>
             </button>
             <h3 class="shortlist-menu-title">Shortlist</h3>
-            <div>
+            <div class="shortlist-menu-actions">
                 <button class="shortlist-menu-pin" id="shortlistMenuPin">📌</button>
+                <button class="menu-toggle active shortlist-menu-close" id="shortlistMenuClose" aria-label="Close shortlist menu" title="Close">
+                    <span class="icon"></span>
+                </button>
             </div>
         </div>
         <div class="shortlist-menu-content">
@@ -2701,12 +2733,14 @@
                 const menuToggle = document.getElementById('shortlistMenuToggle');
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const pinBtn = document.getElementById('shortlistMenuPin');
+                const closeBtn = document.getElementById('shortlistMenuClose');
                 const container = document.getElementById('shortlistContainer');
                 const clearBtn = document.getElementById('clearShortlist');
                 const exportBtn = document.getElementById('exportShortlistBtn');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
+                if (closeBtn) closeBtn.addEventListener('click', () => this.closeShortlistMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
@@ -2717,8 +2751,8 @@
                         e.preventDefault();
                         const name = e.dataTransfer.getData('text/plain');
                         const tool = this.TREASURY_TOOLS.find(t => t.name === name);
-                        if (tool && !this.shortlist.some(t => t.name === name)) {
-                            this.shortlist.push(tool);
+                        if (tool && !this.shortlist.some(i => i.tool.name === name)) {
+                            this.shortlist.push({ tool, notes: '' });
                             this.renderShortlist();
                         }
                     });
@@ -2788,18 +2822,29 @@
                 const container = document.getElementById('shortlistContainer');
                 if (!container) return;
                 container.innerHTML = '';
-                this.shortlist.forEach(tool => {
+                this.shortlist.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'shortlist-card';
-                    div.innerHTML = `<span class="shortlist-card-title">${tool.name}</span>` +
-                        `<button class="remove-shortlist" data-name="${tool.name}">×</button>`;
+                    div.innerHTML = `
+                        <div class="shortlist-card-header">
+                            <span class="shortlist-card-title">${item.tool.name}</span>
+                            <button class="remove-shortlist" data-name="${item.tool.name}">×</button>
+                        </div>
+                        <textarea class="shortlist-note" data-name="${item.tool.name}" placeholder="Notes...">${item.notes || ''}</textarea>`;
                     container.appendChild(div);
                 });
                 container.querySelectorAll('.remove-shortlist').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const name = e.target.dataset.name;
-                        this.shortlist = this.shortlist.filter(t => t.name !== name);
+                        this.shortlist = this.shortlist.filter(i => i.tool.name !== name);
                         this.renderShortlist();
+                    });
+                });
+                container.querySelectorAll('.shortlist-note').forEach(area => {
+                    area.addEventListener('input', (e) => {
+                        const name = e.target.dataset.name;
+                        const item = this.shortlist.find(i => i.tool.name === name);
+                        if (item) item.notes = e.target.value;
                     });
                 });
 
@@ -2860,10 +2905,11 @@
             }
 
             exportShortlist() {
-                const data = this.shortlist.map(t => ({
-                    name: t.name,
-                    category: t.category,
-                    website: t.websiteUrl || ''
+                const data = this.shortlist.map(item => ({
+                    name: item.tool.name,
+                    category: item.tool.category,
+                    website: item.tool.websiteUrl || '',
+                    notes: item.notes || ''
                 }));
                 const csv = this.convertToCSV(data);
                 this.downloadCSV(csv, 'shortlist.csv');
