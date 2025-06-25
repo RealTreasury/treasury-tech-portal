@@ -1732,10 +1732,6 @@
                             <!-- Features will be populated by JavaScript -->
                         </ul>
                     </div>
-                    <div class="feature-section">
-                        <h4>🏢 Ideal For</h4>
-                        <p id="categoryModalTarget"></p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1989,7 +1985,6 @@
                             "Cash Visibility",
                             "Transaction Search, Sort, Tag, Group"
                         ],
-                        target: "Growing businesses, mid-market companies, and finance teams seeking to automate manual cash management processes and gain real-time visibility.",
                         videoUrl: ""
                     },
                     LITE: {
@@ -2005,7 +2000,6 @@
                             "Market Data",
                             "Treasury Payments (API, SFTP)"
                         ],
-                        "target": "Growing companies, mid-market enterprises, and organizations that have outgrown basic cash tools but don't need full TRMS complexity.",
                         videoUrl: ""
                     },
                     TRMS: {
@@ -2035,7 +2029,6 @@
                             "Investments",
                             "SWIFT Connectivity"
                         ],
-                        target: "Large enterprises, multinational corporations, and financial institutions with complex treasury operations requiring full-scale treasury management capabilities.",
                         videoUrl: ""
                     }
                 };
@@ -2291,13 +2284,11 @@
                 const modal = document.getElementById('categoryModal');
                 const modalTitle = document.getElementById('categoryModalTitle');
                 const modalDescription = document.getElementById('categoryModalDescription');
-                const modalTarget = document.getElementById('categoryModalTarget');
                 const modalFeatures = document.getElementById('categoryModalFeatures');
                 const modalBody = modal?.querySelector('.modal-body');
 
                 if (modalTitle) modalTitle.textContent = categoryInfo.name;
                 if (modalDescription) modalDescription.textContent = categoryInfo.description;
-                if (modalTarget) modalTarget.textContent = categoryInfo.target;
 
                 if (modalFeatures) {
                     modalFeatures.innerHTML = '';
