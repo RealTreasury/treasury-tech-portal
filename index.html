@@ -930,24 +930,27 @@
             left: 0;
             width: 340px;
             height: 100vh;
-            background: linear-gradient(135deg,
-                rgba(255, 255, 255, 0.7) 0%,
-                rgba(248, 248, 248, 0.75) 100%);
-            backdrop-filter: blur(10px) saturate(140%);
-            -webkit-backdrop-filter: blur(10px) saturate(140%);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
-            border-right: 1px solid rgba(199, 125, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 0 20px 20px 0;
             z-index: 1001;
             transform: translateX(-280px);
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.3s ease;
             overflow-y: auto;
         }
 
         .side-menu.open {
             transform: translateX(0);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         body.side-menu-pinned .side-menu-overlay {
@@ -968,7 +971,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(40, 19, 69, 0.05);
+            background: rgba(40, 19, 69, 0.1);
+            backdrop-filter: blur(2px);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -1002,8 +1006,14 @@
             display: none;
         }
 
+
         .side-menu:not(.open) {
             overflow: visible;
+        }
+
+        /* Ensure toggle remains clickable when menu is closed */
+        .side-menu:not(.open) .menu-toggle {
+            pointer-events: auto;
         }
 
         .side-menu-pin {
@@ -1219,6 +1229,191 @@
         body.side-menu-pinned .external-menu-toggle {
             display: none;
         }
+<<<<<<< codex/add-shortlist-drag-and-drop-menu
+
+        /* Shortlist Menu */
+        .shortlist-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 340px;
+            height: 100vh;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+            border-left: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px 0 0 20px;
+            z-index: 1001;
+            transform: translateX(280px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .shortlist-menu.open {
+            transform: translateX(0);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.2);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        body.shortlist-menu-pinned .shortlist-menu-overlay { display:none; }
+        body.shortlist-menu-pinned .container { margin-right:340px; }
+        body.shortlist-menu-pinned #shortlistMenuToggle { display:none; }
+
+        .shortlist-menu-overlay {
+            position: fixed;
+            top:0;
+            right:0;
+            width:100%;
+            height:100%;
+            background: rgba(40,19,69,0.1);
+            backdrop-filter: blur(2px);
+            z-index:1000;
+            opacity:0;
+            visibility:hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        .shortlist-menu-overlay.show {
+            opacity:1;
+            visibility:visible;
+        }
+
+        .shortlist-menu-header {
+            padding:20px;
+            border-bottom:1px solid #e5e7eb;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            background: linear-gradient(135deg, #f6f7fb 0%, #e8ecfc 100%);
+            color:#281345;
+        }
+
+        .shortlist-menu-title {
+            font-size:1.2rem;
+            font-weight:700;
+            margin:0;
+        }
+
+        .shortlist-menu:not(.open) .shortlist-menu-title,
+        .shortlist-menu:not(.open) .shortlist-menu-pin,
+        .shortlist-menu:not(.open) .shortlist-section { display:none; }
+
+        .shortlist-menu:not(.open) { overflow:visible; }
+
+        /* Ensure toggle remains clickable when shortlist menu is closed */
+        .shortlist-menu:not(.open) .menu-toggle {
+            pointer-events: auto;
+        }
+
+        .shortlist-menu-pin {
+            background: rgba(255,255,255,0.25);
+            border:none;
+            color: var(--primary-purple);
+            width:32px;
+            height:32px;
+            border-radius:50%;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transition: all 0.3s ease;
+            margin-left:8px;
+        }
+
+        .shortlist-menu-pin:hover { background: rgba(255,255,255,0.35); }
+        .shortlist-menu-pin.pinned { background: rgba(255,255,255,0.45); }
+
+        .shortlist-menu-content { padding:0; }
+        .shortlist-section { border-bottom:1px solid #f3f4f6; }
+
+        .shortlist-container {
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+            margin-top:12px;
+            min-height:80px;
+            border:1px dashed #e5e7eb;
+            padding:8px;
+        }
+
+        .shortlist-card {
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:8px;
+            padding:8px 12px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
+
+        .remove-shortlist {
+            background:none;
+            border:none;
+            color:#7216f4;
+            cursor:pointer;
+            font-size:1rem;
+        }
+
+        .video-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        }
+
+        .compare-video iframe {
+            width: 100%;
+            height: 135px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        .external-menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #7216f4;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+            z-index: 1002;
+        }
+
+        .external-menu-toggle:hover {
+            background: #5b0ee3;
+        }
+
+        .external-menu-toggle .chevron {
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            transition: transform 0.25s ease;
+        }
+
+        .external-menu-toggle.active .chevron {
+            transform: rotate(-135deg);
+        }
+
+        body.side-menu-pinned .external-menu-toggle {
+            display: none;
+        }
+=======
+>>>>>>> main
     </style>
 </head>
 
@@ -1264,18 +1459,18 @@
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                     <button class="filter-tab" data-category="TRMS">TRMS</button>
                 </div>
-            </div>
         </div>
-        <div class="side-menu-overlay" id="sideMenuOverlay"></div>
-        <div class="side-menu" id="sideMenu">
+    </div>
+    <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+    <div class="side-menu" id="sideMenu">
             <div class="side-menu-header">
-                <button class="menu-toggle" id="sideMenuToggle">
-                    <span class="chevron"></span>
-                </button>
-                <h3 class="side-menu-title">Menu</h3>
                 <div>
                     <button class="side-menu-pin" id="sideMenuPin">📌</button>
                 </div>
+                <h3 class="side-menu-title">Menu</h3>
+                <button class="menu-toggle" id="sideMenuToggle">
+                    <span class="chevron"></span>
+                </button>
             </div>
             <div class="side-menu-content">
                 <div class="menu-section">
@@ -1343,9 +1538,32 @@
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
 
-        <!-- Main Content -->
+    <div class="shortlist-menu-overlay" id="shortlistMenuOverlay"></div>
+    <div class="shortlist-menu" id="shortlistMenu">
+        <div class="shortlist-menu-header">
+            <button class="menu-toggle" id="shortlistMenuToggle">
+                <span class="chevron"></span>
+            </button>
+            <h3 class="shortlist-menu-title">Shortlist</h3>
+            <div>
+                <button class="shortlist-menu-pin" id="shortlistMenuPin">📌</button>
+            </div>
+        </div>
+        <div class="shortlist-menu-content">
+            <div class="shortlist-section">
+                <div class="menu-section-content">
+                    <p style="font-size:0.85rem;color:#4b5563;">Drag vendor cards here to build your shortlist.</p>
+                    <div id="shortlistContainer" class="shortlist-container"></div>
+                    <button class="action-btn secondary" id="clearShortlist" style="margin-top:12px;">Clear Shortlist</button>
+                    <button class="action-btn secondary" id="compareVideosBtn" style="margin-top:12px; display:none;">Compare Videos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
         <div class="main-content" id="mainContent">
             <!-- No Results Message -->
             <div class="no-results" id="noResults" style="display: none;">
@@ -1471,6 +1689,21 @@
                         <p id="categoryModalTarget"></p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Compare Modal -->
+    <div class="modal" id="videoCompareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Video Comparison</h3>
+                <div class="modal-header-actions">
+                    <button class="modal-close" id="videoCompareClose">×</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="videoGrid" class="video-grid"></div>
             </div>
         </div>
     </div>
@@ -1783,6 +2016,9 @@
                 this.gridSize = 'auto';
                 this.sideMenuOpen = false;
                 this.sideMenuPinned = false;
+                this.shortlist = [];
+                this.shortlistMenuOpen = false;
+                this.shortlistMenuPinned = false;
 
                 this.init();
             }
@@ -1793,6 +2029,7 @@
                 this.setupSearch();
                 this.setupModals();
                 this.setupSideMenu();
+                this.setupShortlistMenu();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
@@ -1938,6 +2175,7 @@
                     if (e.key === 'Escape') {
                         this.closeModal('toolModal');
                         this.closeModal('categoryModal');
+                        this.closeModal('videoCompareModal');
                     }
                 });
             }
@@ -2075,6 +2313,33 @@
                 }
             }
 
+            showCompareVideos() {
+                const modal = document.getElementById('videoCompareModal');
+                const grid = document.getElementById('videoGrid');
+                if (!modal || !grid) return;
+
+                grid.innerHTML = '';
+                this.shortlist.forEach(tool => {
+                    if (!tool.videoUrl) return;
+                    let embedUrl = tool.videoUrl;
+                    if (tool.videoUrl.includes('youtu.be/')) {
+                        const vid = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
+                        embedUrl = `https://www.youtube.com/embed/${vid}`;
+                    } else if (tool.videoUrl.includes('youtube.com/watch')) {
+                        const vid = new URL(tool.videoUrl).searchParams.get('v');
+                        embedUrl = `https://www.youtube.com/embed/${vid}`;
+                    }
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'mute=1';
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'compare-video';
+                    wrapper.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    grid.appendChild(wrapper);
+                });
+
+                this.openModal(modal);
+            }
+
             filterAndDisplayTools() {
                 let tools;
 
@@ -2185,6 +2450,7 @@
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
+                card.draggable = true;
 
                 const iconMap = {
                     'TRMS': '🏢',
@@ -2224,6 +2490,11 @@
                         !e.target.closest('.show-less-tags-btn')) {
                         this.showToolModal(tool);
                     }
+                });
+
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', tool.name);
+                    this.openShortlistMenu(true);
                 });
 
                 return card;
@@ -2454,6 +2725,132 @@
                     this.closeSideMenu();
                     pinBtn?.classList.remove('pinned');
                 }
+            }
+
+            setupShortlistMenu() {
+                const menuToggle = document.getElementById('shortlistMenuToggle');
+                const overlay = document.getElementById('shortlistMenuOverlay');
+                const pinBtn = document.getElementById('shortlistMenuPin');
+                const container = document.getElementById('shortlistContainer');
+                const clearBtn = document.getElementById('clearShortlist');
+                const compareBtn = document.getElementById('compareVideosBtn');
+                const compareClose = document.getElementById('videoCompareClose');
+                const compareModal = document.getElementById('videoCompareModal');
+
+                if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
+                if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
+                if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
+                if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
+                if (compareBtn) compareBtn.addEventListener('click', () => this.showCompareVideos());
+                if (compareClose) compareClose.addEventListener('click', () => this.closeModal('videoCompareModal'));
+                if (compareModal) {
+                    compareModal.addEventListener('click', (e) => {
+                        if (e.target.closest('.modal-content') === null) this.closeModal('videoCompareModal');
+                    });
+                }
+
+                if (container) {
+                    container.addEventListener('dragover', e => e.preventDefault());
+                    container.addEventListener('drop', e => {
+                        e.preventDefault();
+                        const name = e.dataTransfer.getData('text/plain');
+                        const tool = this.TREASURY_TOOLS.find(t => t.name === name);
+                        if (tool && !this.shortlist.some(t => t.name === name)) {
+                            this.shortlist.push(tool);
+                            this.renderShortlist();
+                        }
+                    });
+                }
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.shortlistMenuOpen) this.closeShortlistMenu();
+                });
+
+                this.renderShortlist();
+            }
+
+            toggleShortlistMenu() {
+                if (this.shortlistMenuOpen) this.closeShortlistMenu();
+                else this.openShortlistMenu();
+            }
+
+            openShortlistMenu(pinned = false) {
+                const menu = document.getElementById('shortlistMenu');
+                const overlay = document.getElementById('shortlistMenuOverlay');
+                const toggle = document.getElementById('shortlistMenuToggle');
+
+                menu?.classList.add('open');
+                if (pinned) {
+                    overlay?.classList.remove('show');
+                    toggle?.classList.remove('active');
+                    document.body.classList.add('shortlist-menu-pinned');
+                    document.body.style.overflow = '';
+                } else {
+                    overlay?.classList.add('show');
+                    toggle?.classList.add('active');
+                    document.body.classList.remove('shortlist-menu-pinned');
+                    document.body.style.overflow = 'hidden';
+                }
+                this.shortlistMenuOpen = true;
+            }
+
+            closeShortlistMenu() {
+                const menu = document.getElementById('shortlistMenu');
+                const overlay = document.getElementById('shortlistMenuOverlay');
+                const toggle = document.getElementById('shortlistMenuToggle');
+                const pinBtn = document.getElementById('shortlistMenuPin');
+
+                menu?.classList.remove('open');
+                overlay?.classList.remove('show');
+                toggle?.classList.remove('active');
+                document.body.classList.remove('shortlist-menu-pinned');
+                document.body.style.overflow = '';
+                this.shortlistMenuOpen = false;
+                this.shortlistMenuPinned = false;
+                pinBtn?.classList.remove('pinned');
+            }
+
+            togglePinShortlistMenu() {
+                this.shortlistMenuPinned = !this.shortlistMenuPinned;
+                const pinBtn = document.getElementById('shortlistMenuPin');
+                if (this.shortlistMenuPinned) {
+                    this.openShortlistMenu(true);
+                    pinBtn?.classList.add('pinned');
+                } else {
+                    this.closeShortlistMenu();
+                    pinBtn?.classList.remove('pinned');
+                }
+            }
+
+            renderShortlist() {
+                const container = document.getElementById('shortlistContainer');
+                if (!container) return;
+                container.innerHTML = '';
+                this.shortlist.forEach(tool => {
+                    const div = document.createElement('div');
+                    div.className = 'shortlist-card';
+                    div.innerHTML = `<span class="shortlist-card-title">${tool.name}</span>` +
+                        `<button class="remove-shortlist" data-name="${tool.name}">×</button>`;
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.remove-shortlist').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const name = e.target.dataset.name;
+                        this.shortlist = this.shortlist.filter(t => t.name !== name);
+                        this.renderShortlist();
+                    });
+                });
+
+                const compareBtn = document.getElementById('compareVideosBtn');
+                if (compareBtn) {
+                    const hasVideos = this.shortlist.some(t => t.videoUrl);
+                    compareBtn.style.display = hasVideos ? 'block' : 'none';
+                }
+            }
+
+            clearShortlist() {
+                this.shortlist = [];
+                this.renderShortlist();
             }
 
             updateFeatureFilters() {
