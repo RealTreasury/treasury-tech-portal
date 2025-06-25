@@ -920,23 +920,25 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 60px;
+            width: 70px;
             height: 100vh;
             background: linear-gradient(135deg,
-                rgba(255, 255, 255, 0.95) 0%,
-                rgba(248, 248, 248, 0.98) 100%);
-            backdrop-filter: blur(20px) saturate(130%);
-            -webkit-backdrop-filter: blur(20px) saturate(130%);
-            box-shadow: 10px 0 30px rgba(114, 22, 244, 0.15);
-            border-right: 1px solid rgba(199, 125, 255, 0.2);
-            border-radius: 0 16px 16px 0;
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(248, 248, 248, 0.96) 100%);
+            backdrop-filter: blur(25px) saturate(140%);
+            -webkit-backdrop-filter: blur(25px) saturate(140%);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(199, 125, 255, 0.3);
+            border-radius: 0 20px 20px 0;
             z-index: 1001;
-            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow-y: auto;
         }
 
         .side-menu.open {
-            width: 380px;
+            width: 340px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         }
 
         body.side-menu-pinned .side-menu-overlay {
@@ -944,7 +946,7 @@
         }
 
         body.side-menu-pinned .container {
-            margin-left: 380px;
+            margin-left: 340px;
         }
 
         body.side-menu-pinned #sideMenuToggle {
@@ -957,9 +959,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(40, 19, 69, 0.45);
-            backdrop-filter: blur(6px) saturate(120%);
-            -webkit-backdrop-filter: blur(6px) saturate(120%);
+            background: rgba(40, 19, 69, 0.55);
+            backdrop-filter: blur(8px) saturate(130%);
+            -webkit-backdrop-filter: blur(8px) saturate(130%);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -977,8 +979,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+            color: #ffffff;
         }
 
         .side-menu-title {
@@ -999,9 +1001,9 @@
         }
 
         .side-menu-close {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             border: none;
-            color: white;
+            color: var(--primary-purple);
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -1013,9 +1015,9 @@
         }
 
         .side-menu-pin {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             border: none;
-            color: white;
+            color: var(--primary-purple);
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -1028,15 +1030,15 @@
         }
 
         .side-menu-pin:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.35);
         }
 
         .side-menu-pin.pinned {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.45);
         }
 
         .side-menu-close:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.35);
         }
 
         .side-menu-content {
@@ -1049,7 +1051,7 @@
 
         .menu-section-header {
             padding: 16px 20px;
-            background: #f9fafb;
+            background: rgba(249, 250, 251, 0.8);
             font-weight: 600;
             color: #281345;
             font-size: 0.9rem;
