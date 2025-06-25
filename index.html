@@ -1830,6 +1830,15 @@
             setTimeout(sendHeight, 300);
         });
     </script>
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        window.addEventListener('load', () => {
+            window.scrollTo(0, 0);
+        });
+    </script>
 </body>
 
 </html>
