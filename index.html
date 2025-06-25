@@ -1395,6 +1395,11 @@
             padding:8px;
         }
 
+        .shortlist-container.drag-over {
+            border-color:#7216f4;
+            background:rgba(114,22,244,0.05);
+        }
+
         /* Show instructions when the shortlist is empty */
         .shortlist-container:empty {
             justify-content:center;
@@ -2749,9 +2754,15 @@
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
 
                 if (container) {
+                    const addHighlight = () => container.classList.add('drag-over');
+                    const removeHighlight = () => container.classList.remove('drag-over');
+
+                    container.addEventListener('dragenter', addHighlight);
+                    container.addEventListener('dragleave', removeHighlight);
                     container.addEventListener('dragover', e => e.preventDefault());
                     container.addEventListener('drop', e => {
                         e.preventDefault();
+                        removeHighlight();
                         const name = e.dataTransfer.getData('text/plain');
                         const tool = this.TREASURY_TOOLS.find(t => t.name === name);
                         if (tool && !this.shortlist.some(i => i.tool.name === name)) {
