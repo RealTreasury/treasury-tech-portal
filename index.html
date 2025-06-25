@@ -1579,16 +1579,6 @@
                             <div class="view-option" data-view="list">List</div>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label" for="gridSizeFilter">Grid Size</label>
-                            <select id="gridSizeFilter" class="filter-select">
-                                <option value="auto">Auto</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
                             <label class="filter-label" for="groupByFilter">Group Vendors</label>
                             <select id="groupByFilter" class="filter-select">
                                 <option value="category" selected>By Category</option>
@@ -2683,13 +2673,6 @@
                     });
                 });
 
-                const gridSizeFilter = document.getElementById('gridSizeFilter');
-                if (gridSizeFilter) {
-                    gridSizeFilter.addEventListener('change', (e) => {
-                        this.gridSize = e.target.value;
-                        this.applyGridSize();
-                    });
-                }
 
                 const groupByFilter = document.getElementById('groupByFilter');
                 if (groupByFilter) {
@@ -3087,8 +3070,6 @@
                 document.querySelector('.view-option[data-view="grid"]')?.classList.add('active');
                 this.currentView = 'grid';
 
-                const gridSizeFilter = document.getElementById('gridSizeFilter');
-                if (gridSizeFilter) gridSizeFilter.value = 'auto';
                 this.gridSize = 'auto';
 
                 const groupByFilter = document.getElementById('groupByFilter');
