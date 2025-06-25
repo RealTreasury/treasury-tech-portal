@@ -44,23 +44,28 @@
 
         .search-suggestions {
             display: none;
-            flex-wrap: wrap;
-            gap: 6px;
+            flex-direction: column;
+            gap: 4px;
             position: absolute;
-            top: 100%;
+            top: calc(100% + 8px);
             left: 0;
             right: 0;
-            margin-top: 8px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            z-index: 10;
         }
 
         .search-suggestion {
             background: #f3f4f6;
             color: #6b7280;
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-size: 0.65rem;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
             font-weight: 500;
-            border: 1px solid #e5e7eb;
+            border: none;
             cursor: pointer;
         }
 
