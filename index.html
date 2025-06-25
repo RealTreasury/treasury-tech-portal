@@ -103,8 +103,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid #e5e7eb;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
@@ -600,15 +600,15 @@
 
         /* Modal uses position: fixed to always be in the viewport */
         .modal {
-            position: fixed; 
-            top: 0; 
+            position: fixed;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1000;
-            background: rgba(40, 19, 69, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(40, 19, 69, 0.25);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -946,10 +946,10 @@
             width: 70px;
             height: 100vh;
             background: linear-gradient(135deg,
-                rgba(255, 255, 255, 0.9) 0%,
-                rgba(248, 248, 248, 0.96) 100%);
-            backdrop-filter: blur(25px) saturate(140%);
-            -webkit-backdrop-filter: blur(25px) saturate(140%);
+                rgba(255, 255, 255, 0.7) 0%,
+                rgba(248, 248, 248, 0.75) 100%);
+            backdrop-filter: blur(10px) saturate(140%);
+            -webkit-backdrop-filter: blur(10px) saturate(140%);
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
             border-right: 1px solid rgba(199, 125, 255, 0.3);
             border-radius: 0 20px 20px 0;
@@ -982,9 +982,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(40, 19, 69, 0.15);
-            backdrop-filter: blur(8px) saturate(130%);
-            -webkit-backdrop-filter: blur(8px) saturate(130%);
+            background: rgba(40, 19, 69, 0.05);
+            backdrop-filter: blur(3px) saturate(130%);
+            -webkit-backdrop-filter: blur(3px) saturate(130%);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
@@ -1014,28 +1014,12 @@
 
         .side-menu:not(.open) .side-menu-title,
         .side-menu:not(.open) .side-menu-pin,
-        .side-menu:not(.open) .side-menu-close,
         .side-menu:not(.open) .menu-section {
             display: none;
         }
 
         .side-menu:not(.open) {
             overflow: visible;
-        }
-
-        .side-menu-close {
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.25);
-            border: none;
-            color: var(--primary-purple);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
         }
 
         .side-menu-pin {
@@ -1059,10 +1043,6 @@
 
         .side-menu-pin.pinned {
             background: rgba(255, 255, 255, 0.45);
-        }
-
-        .side-menu-close:hover {
-            background: rgba(255, 255, 255, 0.35);
         }
 
         .side-menu-content {
@@ -1272,7 +1252,6 @@
                 <h3 class="side-menu-title">Menu</h3>
                 <div>
                     <button class="side-menu-pin" id="sideMenuPin">📌</button>
-                    <button class="side-menu-close" id="sideMenuClose">❮</button>
                 </div>
             </div>
             <div class="side-menu-content">
@@ -1350,6 +1329,7 @@
                 <h3>No vendors found</h3>
                 <p>Try adjusting your search terms or filters</p>
             </div>
+            <div class="tools-grid" id="listViewContainer" style="display:none;"></div>
 
             <!-- Cash Tools Section -->
             <div class="category-section category-cash" data-category="CASH" style="display: block;">
@@ -2121,6 +2101,26 @@
                 const noResults = document.getElementById('noResults');
                 if (noResults) noResults.style.display = hasResults ? 'none' : 'block';
 
+                const listContainer = document.getElementById('listViewContainer');
+
+                if (this.currentView === 'list') {
+                    categories.forEach(cat => {
+                        const section = document.querySelector(`.category-section[data-category="${cat}"]`);
+                        if (section) section.style.display = 'none';
+                    });
+                    if (listContainer) {
+                        listContainer.innerHTML = '';
+                        this.filteredTools.sort((a,b) => a.name.localeCompare(b.name)).forEach(tool => {
+                            const card = this.createToolCard(tool, tool.category);
+                            listContainer.appendChild(card);
+                        });
+                        listContainer.style.display = hasResults ? 'grid' : 'none';
+                    }
+                    return;
+                } else {
+                    if (listContainer) listContainer.style.display = 'none';
+                }
+
                 categories.forEach(category => {
                     const section = document.querySelector(`.category-section[data-category="${category}"]`);
                     const container = document.getElementById(`tools-${category}`);
@@ -2280,13 +2280,10 @@
                 const menuToggle = document.getElementById('sideMenuToggle');
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
-                const closeBtn = document.getElementById('sideMenuClose');
                 const pinBtn = document.getElementById('sideMenuPin');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleSideMenu());
-                [overlay, closeBtn].forEach(el => {
-                    if (el) el.addEventListener('click', () => this.closeSideMenu());
-                });
+                if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
 
                 this.setupAdvancedFilters();
