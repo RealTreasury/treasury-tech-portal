@@ -18,12 +18,14 @@
             background: #f8f9fa;
             color: #281345;
             min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
             line-height: 1.6;
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body.modal-open {
+            overflow: hidden;
         }
 
         .container {
@@ -571,10 +573,10 @@
             background: #f3f4f6;
         }
 
-        /* Modal Overlay: Now uses position:fixed, which works inside a 100vh iframe */
+        /* Modal uses position: fixed to always be in the viewport */
         .modal {
-            position: fixed;
-            top: 0;
+            position: fixed; 
+            top: 0; 
             left: 0;
             width: 100%;
             height: 100%;
@@ -707,7 +709,7 @@
         
         /* Added class specifically for dynamically added video sections */
         .video-demo-section {
-            /* This class is just a marker for JS, but you can add styles if needed */
+            /* This class is just a marker for JS */
         }
 
         .feature-section h4 {
@@ -743,12 +745,9 @@
         }
 
         .website-link--modal {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #281345; /* Darker text for readability */
-            text-shadow: none; /* Remove text shadow */
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             padding: 10px 18px;
             font-size: 0.9rem;
             text-decoration: none;
@@ -758,15 +757,15 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px -5px rgba(114, 22, 244, 0.5);
+            border: none;
         }
 
         .website-link--modal:hover {
-            background: rgba(255, 255, 255, 0.4);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: linear-gradient(135deg, #8f47f6, #7216f4);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.2);
-            color: #281345;
+            box-shadow: 0 8px 25px -8px rgba(114, 22, 244, 0.6);
+            color: #ffffff;
         }
 
         /* Mobile adjustments */
@@ -1219,7 +1218,6 @@
                         "desc": "Cash investment platform with yield optimization, risk monitoring, and liquidity management for maximizing returns on excess cash positions.",
                         "features": ["Yield optimization", "Risk monitoring", "Investment tracking", "Liquidity management", "Performance analytics", "Compliance tools"],
                         "target": "Companies with significant cash positions seeking yield optimization",
-                        "videoUrl": "https://aisbee08e5bdvaliantmaker.wpcomstaging.com/wp-content/uploads/2025/06/Vesto-06-2025.mp4",
                         "websiteUrl": "https://www.vesto.com/about?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
                     },
 
@@ -1302,7 +1300,7 @@
                             "Market Data",
                             "Treasury Payments (API, SFTP)"
                         ],
-                        target: "Growing companies, mid-market enterprises, and organizations that have outgrown basic cash tools but don't need full TRMS complexity.",
+                        "target": "Growing companies, mid-market enterprises, and organizations that have outgrown basic cash tools but don't need full TRMS complexity.",
                         videoUrl: "https://youtu.be/dYBPUYNZ_nE?si=BHMRUFAYJlvs1a6P"
                     },
                     TRMS: {
@@ -1506,6 +1504,13 @@
                     }
                 });
             }
+            
+            openModal(modal) {
+                 if (modal) {
+                    modal.classList.add('show');
+                    document.body.classList.add('modal-open');
+                }
+            }
 
             showToolModal(tool) {
                 const modal = document.getElementById('toolModal');
@@ -1561,7 +1566,7 @@
                 }
 
                 // 4. Show the modal
-                modal.classList.add('show');
+                this.openModal(modal);
             }
 
             showCategoryModal(categoryInfo, categoryKey) {
@@ -1614,15 +1619,14 @@
                     modalBody.insertBefore(videoSection, modalBody.firstChild);
                 }
 
-                if (modal) {
-                    modal.classList.add('show');
-                }
+                this.openModal(modal);
             }
 
             closeModal(modalId) {
                 const modal = document.getElementById(modalId);
                 if (modal && modal.classList.contains('show')) {
                     modal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
                     
                     // Stop video from playing in the background
                     const iframe = modal.querySelector('iframe');
