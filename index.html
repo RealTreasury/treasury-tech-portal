@@ -1678,6 +1678,15 @@
     <script>
         let treasuryStack;
 
+        function notifyHeight() {
+            if (window.parent !== window) {
+                const h = document.documentElement.scrollHeight;
+                window.parent.postMessage({ type: 'treasury-height', height: h }, '*');
+            }
+        }
+        window.addEventListener('load', notifyHeight);
+        window.addEventListener('resize', notifyHeight);
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Initializing Treasury Stack...');
             treasuryStack = new TreasuryStack();
