@@ -23,6 +23,15 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body.side-menu-open,
+        body.shortlist-menu-open {
+            overflow: hidden;
+        }
         
         body.modal-open {
             overflow: hidden;
@@ -54,7 +63,7 @@
             border: none;
             border-radius: 12px;
             font-size: 0.9rem;
-            background: transparent;
+            background: white;
             transition: all 0.3s ease;
             outline: none;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -2714,6 +2723,7 @@
                 const toggle = document.getElementById('shortlistMenuToggle');
 
                 menu?.classList.add('open');
+                document.body.classList.add('shortlist-menu-open');
                 if (pinned) {
                     overlay?.classList.remove('show');
                     toggle?.classList.remove('active');
@@ -2735,6 +2745,7 @@
                 const pinBtn = document.getElementById('shortlistMenuPin');
 
                 menu?.classList.remove('open');
+                document.body.classList.remove('shortlist-menu-open');
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
                 document.body.classList.remove('shortlist-menu-pinned');
