@@ -2913,7 +2913,7 @@
                 const data = this.shortlist.map(item => ({
                     name: item.tool.name,
                     category: item.tool.category,
-                    website: item.tool.websiteUrl || '',
+                    website: item.tool.websiteUrl ? item.tool.websiteUrl.split('?')[0] : '',
                     notes: item.notes || ''
                 }));
                 const csv = this.convertToCSV(data);
