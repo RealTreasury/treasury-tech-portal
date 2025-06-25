@@ -1295,6 +1295,19 @@
             cursor:pointer;
             font-size:1rem;
         }
+
+        .video-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        }
+
+        .compare-video iframe {
+            width: 100%;
+            height: 135px;
+            border: none;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -1435,6 +1448,7 @@
                     <p style="font-size:0.85rem;color:#4b5563;">Drag vendor cards here to build your shortlist.</p>
                     <div id="shortlistContainer" class="shortlist-container"></div>
                     <button class="action-btn secondary" id="clearShortlist" style="margin-top:12px;">Clear Shortlist</button>
+                    <button class="action-btn secondary" id="compareVideosBtn" style="margin-top:12px; display:none;">Compare Videos</button>
                 </div>
             </div>
         </div>
@@ -1566,6 +1580,21 @@
                         <p id="categoryModalTarget"></p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Compare Modal -->
+    <div class="modal" id="videoCompareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Video Comparison</h3>
+                <div class="modal-header-actions">
+                    <button class="modal-close" id="videoCompareClose">×</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="videoGrid" class="video-grid"></div>
             </div>
         </div>
     </div>
@@ -2037,6 +2066,7 @@
                     if (e.key === 'Escape') {
                         this.closeModal('toolModal');
                         this.closeModal('categoryModal');
+                        this.closeModal('videoCompareModal');
                     }
                 });
             }
@@ -2172,6 +2202,33 @@
                         iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                     }
                 }
+            }
+
+            showCompareVideos() {
+                const modal = document.getElementById('videoCompareModal');
+                const grid = document.getElementById('videoGrid');
+                if (!modal || !grid) return;
+
+                grid.innerHTML = '';
+                this.shortlist.forEach(tool => {
+                    if (!tool.videoUrl) return;
+                    let embedUrl = tool.videoUrl;
+                    if (tool.videoUrl.includes('youtu.be/')) {
+                        const vid = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
+                        embedUrl = `https://www.youtube.com/embed/${vid}`;
+                    } else if (tool.videoUrl.includes('youtube.com/watch')) {
+                        const vid = new URL(tool.videoUrl).searchParams.get('v');
+                        embedUrl = `https://www.youtube.com/embed/${vid}`;
+                    }
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'mute=1';
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'compare-video';
+                    wrapper.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    grid.appendChild(wrapper);
+                });
+
+                this.openModal(modal);
             }
 
             filterAndDisplayTools() {
@@ -2560,11 +2617,21 @@
                 const pinBtn = document.getElementById('shortlistMenuPin');
                 const container = document.getElementById('shortlistContainer');
                 const clearBtn = document.getElementById('clearShortlist');
+                const compareBtn = document.getElementById('compareVideosBtn');
+                const compareClose = document.getElementById('videoCompareClose');
+                const compareModal = document.getElementById('videoCompareModal');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
+                if (compareBtn) compareBtn.addEventListener('click', () => this.showCompareVideos());
+                if (compareClose) compareClose.addEventListener('click', () => this.closeModal('videoCompareModal'));
+                if (compareModal) {
+                    compareModal.addEventListener('click', (e) => {
+                        if (e.target.closest('.modal-content') === null) this.closeModal('videoCompareModal');
+                    });
+                }
 
                 if (container) {
                     container.addEventListener('dragover', e => e.preventDefault());
@@ -2657,6 +2724,12 @@
                         this.renderShortlist();
                     });
                 });
+
+                const compareBtn = document.getElementById('compareVideosBtn');
+                if (compareBtn) {
+                    const hasVideos = this.shortlist.some(t => t.videoUrl);
+                    compareBtn.style.display = hasVideos ? 'block' : 'none';
+                }
             }
 
             clearShortlist() {
