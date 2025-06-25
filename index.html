@@ -880,6 +880,13 @@
             .modal-body {
                 padding: 16px;
             }
+            .side-menu {
+                width: 260px;
+                transform: translateX(-220px);
+            }
+            body.side-menu-pinned .container {
+                margin-left: 260px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -901,9 +908,16 @@
                 letter-spacing: 0.5px;
         }
 
-        .search-container {
-            max-width: 100%;
-        }
+            .search-container {
+                max-width: 100%;
+            }
+            .side-menu {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+            body.side-menu-pinned .container {
+                margin-left: 0;
+            }
         }
 
         /* Side Menu Toggle Button */
@@ -950,7 +964,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 340px;
+            width: 300px;
             height: 100vh;
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(10px);
@@ -959,9 +973,9 @@
             border-right: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 0 20px 20px 0;
             z-index: 1001;
-            transform: translateX(-280px);
+            transform: translateX(-240px);
             opacity: 1;
-            pointer-events: none;
+            pointer-events: auto;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         opacity 0.3s ease;
@@ -980,7 +994,7 @@
         }
 
         body.side-menu-pinned .container {
-            margin-left: 340px;
+            margin-left: 300px;
         }
 
         body.side-menu-open #sideMenuToggle {
@@ -1337,14 +1351,16 @@
             right: 0;
             width: 340px;
             height: 100vh;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(31,38,135,0.37);
-            border-left: 1px solid rgba(255,255,255,0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 20px 0 0 20px;
             z-index: 1001;
             transform: translateX(280px);
             opacity: 1;
-            pointer-events: none;
+            pointer-events: auto;
             transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
             overflow-y: auto;
         }
@@ -1548,8 +1564,24 @@
             font-size: 0.95rem;
         }
 
+<<<<<<< codex/create-user-form-for-project-summary
         #projectSummaryModal input,
         #projectSummaryModal textarea {
+=======
+        .project-form-section {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 40px auto;
+            max-width: 800px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .project-form-section input,
+        .project-form-section textarea {
+>>>>>>> main
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -1558,7 +1590,11 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+<<<<<<< codex/create-user-form-for-project-summary
         #projectSummaryModal button {
+=======
+        .project-form-section button {
+>>>>>>> main
             background: #7216f4;
             color: #fff;
             border: none;
@@ -1568,11 +1604,19 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+<<<<<<< codex/create-user-form-for-project-summary
         #projectSummaryModal button:hover {
             background: #6112c2;
         }
 
         #projectSummaryModal pre {
+=======
+        .project-form-section button:hover {
+            background: #6112c2;
+        }
+
+        .project-form-section pre {
+>>>>>>> main
             background: #f3f4f6;
             padding: 10px;
             border-radius: 8px;
@@ -1866,6 +1910,7 @@
             </ul>
         </div>
 
+<<<<<<< codex/create-user-form-for-project-summary
         <!-- Project Summary Modal -->
         <div class="modal" id="projectSummaryModal">
             <div class="modal-content">
@@ -1888,6 +1933,20 @@
                         <pre id="summaryOutput"></pre>
                     </div>
                 </div>
+=======
+        <div class="project-form-section">
+            <h3>Project Summary Generator</h3>
+            <form id="projectForm">
+                <input type="text" id="psCompany" placeholder="Company Name" required>
+                <input type="text" id="psObjective" placeholder="Project Objective" required>
+                <input type="date" id="psDeadline" required>
+                <textarea id="psNotes" placeholder="Key Requirements or Notes"></textarea>
+                <button type="button" id="generateSummary">Generate Summary</button>
+            </form>
+            <div id="summaryContainer" style="display:none;">
+                <h4>Project Summary</h4>
+                <pre id="summaryOutput"></pre>
+>>>>>>> main
             </div>
         </div>
     </div>
@@ -2793,6 +2852,12 @@
                 if (externalMenuToggle) externalMenuToggle.addEventListener('click', () => this.toggleSideMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
+                if (sideMenu) sideMenu.addEventListener('click', (e) => {
+                    if (!this.sideMenuOpen) {
+                        e.stopPropagation();
+                        this.openSideMenu();
+                    }
+                });
 
                 this.setupAdvancedFilters();
                 this.setupViewOptions();
@@ -2956,6 +3021,13 @@
                 if (externalToggle) externalToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
+                const shortlistMenu = document.getElementById('shortlistMenu');
+                if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
+                    if (!this.shortlistMenuOpen) {
+                        e.stopPropagation();
+                        this.openShortlistMenu();
+                    }
+                });
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
 
