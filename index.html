@@ -1339,16 +1339,6 @@
             color:#281345;
         }
 
-        .shortlist-menu-actions {
-            display:flex;
-            align-items:center;
-            gap:8px;
-        }
-
-        .shortlist-menu-close {
-            width:32px;
-            height:32px;
-        }
 
         .shortlist-menu-title {
             font-size:1.2rem;
@@ -1603,16 +1593,13 @@
     <div class="shortlist-menu-overlay" id="shortlistMenuOverlay"></div>
     <div class="shortlist-menu" id="shortlistMenu">
         <div class="shortlist-menu-header">
+            <div>
+                <button class="shortlist-menu-pin" id="shortlistMenuPin">📌</button>
+            </div>
+            <h3 class="shortlist-menu-title">Shortlist</h3>
             <button class="menu-toggle" id="shortlistMenuToggle" aria-label="Open shortlist menu" title="Shortlist">
                 <span class="icon"></span>
             </button>
-            <h3 class="shortlist-menu-title">Shortlist</h3>
-            <div class="shortlist-menu-actions">
-                <button class="shortlist-menu-pin" id="shortlistMenuPin">📌</button>
-                <button class="menu-toggle active shortlist-menu-close" id="shortlistMenuClose" aria-label="Close shortlist menu" title="Close">
-                    <span class="icon"></span>
-                </button>
-            </div>
         </div>
         <div class="shortlist-menu-content">
             <div class="shortlist-section">
@@ -2755,14 +2742,12 @@
                 const menuToggle = document.getElementById('shortlistMenuToggle');
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const pinBtn = document.getElementById('shortlistMenuPin');
-                const closeBtn = document.getElementById('shortlistMenuClose');
                 const container = document.getElementById('shortlistContainer');
                 const clearBtn = document.getElementById('clearShortlist');
                 const exportBtn = document.getElementById('exportShortlistBtn');
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
-                if (closeBtn) closeBtn.addEventListener('click', () => this.closeShortlistMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
