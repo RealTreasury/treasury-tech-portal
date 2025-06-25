@@ -1564,6 +1564,10 @@
             font-size: 0.95rem;
         }
 
+<<<<<<< codex/create-user-form-for-project-summary
+        #projectSummaryModal input,
+        #projectSummaryModal textarea {
+=======
         .project-form-section {
             background: #fff;
             border: 1px solid #e5e7eb;
@@ -1577,6 +1581,7 @@
 
         .project-form-section input,
         .project-form-section textarea {
+>>>>>>> main
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -1585,7 +1590,11 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+<<<<<<< codex/create-user-form-for-project-summary
+        #projectSummaryModal button {
+=======
         .project-form-section button {
+>>>>>>> main
             background: #7216f4;
             color: #fff;
             border: none;
@@ -1595,11 +1604,19 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+<<<<<<< codex/create-user-form-for-project-summary
+        #projectSummaryModal button:hover {
+            background: #6112c2;
+        }
+
+        #projectSummaryModal pre {
+=======
         .project-form-section button:hover {
             background: #6112c2;
         }
 
         .project-form-section pre {
+>>>>>>> main
             background: #f3f4f6;
             padding: 10px;
             border-radius: 8px;
@@ -1728,6 +1745,7 @@
                         <div class="action-buttons">
                             <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
                             <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
+                            <button class="action-btn secondary" id="projectSummaryBtn">Project Summary</button>
                         </div>
                     </div>
                 </div>
@@ -1892,6 +1910,30 @@
             </ul>
         </div>
 
+<<<<<<< codex/create-user-form-for-project-summary
+        <!-- Project Summary Modal -->
+        <div class="modal" id="projectSummaryModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Project Summary Generator</h3>
+                    <div class="modal-header-actions">
+                        <button class="modal-close" id="projectSummaryModalClose">×</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <form id="projectForm">
+                        <input type="text" id="psCompany" placeholder="Company Name" required>
+                        <input type="text" id="psObjective" placeholder="Project Objective" required>
+                        <input type="date" id="psDeadline" required>
+                        <textarea id="psNotes" placeholder="Key Requirements or Notes"></textarea>
+                        <button type="button" id="generateSummary">Generate Summary</button>
+                    </form>
+                    <div id="summaryContainer" style="display:none;">
+                        <h4>Project Summary</h4>
+                        <pre id="summaryOutput"></pre>
+                    </div>
+                </div>
+=======
         <div class="project-form-section">
             <h3>Project Summary Generator</h3>
             <form id="projectForm">
@@ -1904,6 +1946,7 @@
             <div id="summaryContainer" style="display:none;">
                 <h4>Project Summary</h4>
                 <pre id="summaryOutput"></pre>
+>>>>>>> main
             </div>
         </div>
     </div>
@@ -2380,10 +2423,23 @@
                     });
                 }
 
+                const psModal = document.getElementById('projectSummaryModal');
+                const psModalClose = document.getElementById('projectSummaryModalClose');
+
+                if (psModalClose) {
+                    psModalClose.addEventListener('click', () => this.closeModal('projectSummaryModal'));
+                }
+                if (psModal) {
+                    psModal.addEventListener('click', (e) => {
+                        if (e.target.closest('.modal-content') === null) this.closeModal('projectSummaryModal');
+                    });
+                }
+
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         this.closeModal('toolModal');
                         this.closeModal('categoryModal');
+                        this.closeModal('projectSummaryModal');
                     }
                 });
             }
@@ -2884,6 +2940,12 @@
 
                 const resetBtn = document.getElementById('resetToDefaults');
                 if (resetBtn) resetBtn.addEventListener('click', () => this.resetToDefaults());
+
+                const psBtn = document.getElementById('projectSummaryBtn');
+                if (psBtn) psBtn.addEventListener('click', () => {
+                    this.closeSideMenu();
+                    this.openModal(document.getElementById('projectSummaryModal'));
+                });
             }
 
             toggleSideMenu() {
