@@ -1554,6 +1554,7 @@
                         const videoId = new URL(tool.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1';
 
                     videoSection.innerHTML = `
                         <h4>🎥 Demo Video</h4>
@@ -1608,6 +1609,7 @@
                         const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1';
 
                     videoSection.innerHTML = `
                         <h4>🎥 Category Overview Video</h4>
@@ -1630,9 +1632,8 @@
                     
                     // Stop video from playing in the background
                     const iframe = modal.querySelector('iframe');
-                    if(iframe) {
-                        const iframeSrc = iframe.src;
-                        iframe.src = iframeSrc; // This reloads the iframe
+                    if (iframe && iframe.contentWindow) {
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                     }
                 }
             }
