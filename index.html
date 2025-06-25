@@ -1267,14 +1267,8 @@
                     <div class="menu-section-header">Filters</div>
                     <div class="menu-section-content">
                         <div class="filter-group">
-                            <span class="filter-label">Features</span>
-                            <div class="checkbox-group">
-                                <div class="checkbox-item"><input type="checkbox" id="aiFeature" value="AI"><label for="aiFeature">AI</label></div>
-                                <div class="checkbox-item"><input type="checkbox" id="apiFeature" value="API"><label for="apiFeature">API</label></div>
-                                <div class="checkbox-item"><input type="checkbox" id="paymentsFeature" value="Payments"><label for="paymentsFeature">Payments</label></div>
-                                <div class="checkbox-item"><input type="checkbox" id="riskFeature" value="Risk"><label for="riskFeature">Risk</label></div>
-                                <div class="checkbox-item"><input type="checkbox" id="forecastingFeature" value="Forecasting"><label for="forecastingFeature">Forecasting</label></div>
-                            </div>
+                            <span class="filter-label">Tags</span>
+                            <div class="checkbox-group" id="tagFilters"></div>
                         </div>
                         <div class="filter-group">
                             <div class="checkbox-item">
@@ -2205,6 +2199,16 @@
                 });
             }
 
+            populateTagFilters() {
+                const container = document.getElementById('tagFilters');
+                if (!container) return;
+                const tags = [...new Set(Object.values(this.CATEGORY_TAGS).flat())].sort((a, b) => a.localeCompare(b));
+                container.innerHTML = tags.map(tag => {
+                    const id = `tag-${tag.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${tag}"><label for="${id}">${tag}</label></div>`;
+                }).join('');
+            }
+
             updateVisibleCounts() {
                 const categories = ['CASH', 'LITE', 'TRMS'];
                 let visibleTotal = 0;
@@ -2262,8 +2266,9 @@
             }
 
             setupAdvancedFilters() {
+                this.populateTagFilters();
 
-                const featureCheckboxes = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature');
+                const featureCheckboxes = document.querySelectorAll('#tagFilters input[type="checkbox"]');
                 featureCheckboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
                         this.updateFeatureFilters();
@@ -2377,7 +2382,7 @@
             }
 
             updateFeatureFilters() {
-                const cbs = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature');
+                const cbs = document.querySelectorAll('#tagFilters input[type="checkbox"]');
                 this.advancedFilters.features = Array.from(cbs).filter(cb => cb.checked).map(cb => cb.value);
             }
 
@@ -2456,7 +2461,7 @@
 
                 this.advancedFilters = { features:[], hasVideo:false };
 
-                const checkboxes = document.querySelectorAll('#aiFeature,#apiFeature,#paymentsFeature,#riskFeature,#forecastingFeature,#hasVideoFilter');
+                const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"],#hasVideoFilter');
                 checkboxes.forEach(cb => cb.checked = false);
 
                 this.filterAndDisplayTools();
