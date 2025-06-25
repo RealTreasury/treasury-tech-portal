@@ -39,33 +39,6 @@
             position: relative;
             max-width: 400px;
             width: 100%;
-            padding-bottom: 40px;
-        }
-
-        .search-suggestions {
-            display: none;
-            flex-wrap: wrap;
-            gap: 6px;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            margin-top: 8px;
-        }
-
-        .search-suggestion {
-            background: #f3f4f6;
-            color: #6b7280;
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-size: 0.65rem;
-            font-weight: 500;
-            border: 1px solid #e5e7eb;
-            cursor: pointer;
-        }
-
-        .search-suggestion:hover {
-            background: #e5e7eb;
         }
 
         .search-input {
@@ -777,26 +750,30 @@
         }
 
         .website-link--modal {
-            background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
-            color: #ffffff;
-            text-shadow: 0 1px 2px rgba(40, 19, 69, 0.2);
-            padding: 8px 16px;
-            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #281345; /* Darker text for readability */
+            text-shadow: none; /* Remove text shadow */
+            padding: 10px 18px;
+            font-size: 0.9rem;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px -5px rgba(114, 22, 244, 0.5);
+            box-shadow: 0 4px 15px -5px rgba(0, 0, 0, 0.1);
         }
 
         .website-link--modal:hover {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-2px);
-            color: white;
-            text-decoration: none;
-            box-shadow: 0 8px 25px -8px rgba(114, 22, 244, 0.6);
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.2);
+            color: #281345;
         }
         
         /* ===============================================================
@@ -814,6 +791,10 @@
             .header-middle {
                 flex-direction: column;
                 gap: 15px;
+            }
+            
+            .header-middle .search-container {
+                width: 100%;
             }
 
             .stats-bar {
@@ -926,7 +907,6 @@
                         <span class="search-icon">🔍</span>
                         <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
                         <button class="search-clear" id="searchClear" style="display: none;">×</button>
-                        <div class="search-suggestions" id="searchSuggestions"></div>
                     </div>
 
                     <div class="stats-bar">
@@ -937,10 +917,6 @@
                         <div class="stat-card">
                             <div class="stat-number">3</div>
                             <div class="stat-label">Categories</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="mostSearched">-</div>
-                            <div class="stat-label">Most searched</div>
                         </div>
                     </div>
                 </div>
@@ -1395,8 +1371,6 @@
                 this.setupModals();
                 this.updateCounts();
                 this.populateCategoryTags();
-                this.populateSearchTags();
-                this.updateMostSearched();
                 this.filterAndDisplayTools();
 
                 setTimeout(() => {
@@ -1488,51 +1462,24 @@
             setupSearch() {
                 const searchInput = document.getElementById('searchInput');
                 const searchClear = document.getElementById('searchClear');
-                const searchSuggestions = document.getElementById('searchSuggestions');
 
                 if (searchInput) {
                     searchInput.addEventListener('input', (e) => {
                         this.searchTerm = e.target.value.toLowerCase();
                         if (searchClear) searchClear.style.display = this.searchTerm ? 'block' : 'none';
-                        if (searchSuggestions) searchSuggestions.style.display = this.searchTerm ? 'none' : 'flex';
                         this.filterAndDisplayTools();
-                    });
-
-                    searchInput.addEventListener('focus', () => {
-                        if (!this.searchTerm && searchSuggestions) {
-                            searchSuggestions.style.display = 'flex';
-                        }
-                    });
-
-                    searchInput.addEventListener('blur', () => {
-                        setTimeout(() => {
-                            if (searchSuggestions) searchSuggestions.style.display = 'none';
-                        }, 100);
                     });
                 }
 
                 if (searchClear) {
                     searchClear.addEventListener('click', () => {
-                        if (searchInput) searchInput.value = '';
+                        if (searchInput) {
+                            searchInput.value = '';
+                            searchInput.focus(); // Keep focus on the input after clearing
+                        }
                         this.searchTerm = '';
                         searchClear.style.display = 'none';
-                        if (searchSuggestions) searchSuggestions.style.display = 'flex';
                         this.filterAndDisplayTools();
-                    });
-                }
-
-                if (searchSuggestions) {
-                    searchSuggestions.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('search-suggestion')) {
-                            const tag = e.target.textContent;
-                            if (searchInput) searchInput.value = tag;
-                            this.searchTerm = tag.toLowerCase();
-                            this.incrementTagStat(tag);
-                            this.updateMostSearched();
-                            if (searchClear) searchClear.style.display = 'block';
-                            searchSuggestions.style.display = 'none';
-                            this.filterAndDisplayTools();
-                        }
                     });
                 }
             }
@@ -1842,19 +1789,6 @@
                 });
             }
 
-            populateSearchTags() {
-                const container = document.getElementById('searchSuggestions');
-                if (!container) return;
-                const tagsSet = new Set();
-                Object.values(this.CATEGORY_TAGS).forEach(tagArr => {
-                    (tagArr || []).forEach(tag => tagsSet.add(tag));
-                });
-                const allTags = Array.from(tagsSet).sort((a, b) => a.localeCompare(b));
-                const popular = this.getSortedTagStats().map(([tag]) => tag).filter(t => tagsSet.has(t));
-                const combined = Array.from(new Set([...popular, ...allTags])).slice(0, 8);
-                container.innerHTML = combined.map(tag => `<span class="search-suggestion">${tag}</span>`).join('');
-            }
-
             updateVisibleCounts() {
                 const categories = ['CASH', 'LITE', 'TRMS'];
                 let visibleTotal = 0;
@@ -1870,36 +1804,6 @@
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
                     totalTools.textContent = this.searchTerm ? visibleTotal : this.TREASURY_TOOLS.length;
-                }
-            }
-
-            incrementTagStat(tag) {
-                try {
-                    const stats = JSON.parse(localStorage.getItem('tagStats') || '{}');
-                    stats[tag] = (stats[tag] || 0) + 1;
-                    localStorage.setItem('tagStats', JSON.stringify(stats));
-                } catch (e) {
-                    console.error("Could not access localStorage:", e);
-                }
-            }
-
-            getSortedTagStats() {
-                try {
-                    const stats = JSON.parse(localStorage.getItem('tagStats') || '{}');
-                    return Object.entries(stats).sort((a, b) => b[1] - a[1]);
-                } catch (e) {
-                    console.error("Could not access localStorage:", e);
-                    return [];
-                }
-            }
-
-
-            updateMostSearched() {
-                const sorted = this.getSortedTagStats();
-                const topTags = sorted.slice(0, 3).map(([tag]) => tag);
-                const most = document.getElementById('mostSearched');
-                if (most) {
-                    most.textContent = topTags.length ? topTags.join(', ') : '-';
                 }
             }
 
