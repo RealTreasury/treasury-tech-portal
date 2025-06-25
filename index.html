@@ -975,7 +975,7 @@
             z-index: 1001;
             transform: translateX(-240px);
             opacity: 1;
-            pointer-events: none;
+            pointer-events: auto;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                         opacity 0.3s ease;
@@ -1358,7 +1358,7 @@
             z-index: 1001;
             transform: translateX(280px);
             opacity: 1;
-            pointer-events: none;
+            pointer-events: auto;
             transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
             overflow-y: auto;
         }
@@ -2737,6 +2737,12 @@
                 if (externalMenuToggle) externalMenuToggle.addEventListener('click', () => this.toggleSideMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinSideMenu());
+                if (sideMenu) sideMenu.addEventListener('click', (e) => {
+                    if (!this.sideMenuOpen) {
+                        e.stopPropagation();
+                        this.openSideMenu();
+                    }
+                });
 
                 this.setupAdvancedFilters();
                 this.setupViewOptions();
@@ -2894,6 +2900,13 @@
                 if (externalToggle) externalToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
                 if (pinBtn) pinBtn.addEventListener('click', () => this.togglePinShortlistMenu());
+                const shortlistMenu = document.getElementById('shortlistMenu');
+                if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
+                    if (!this.shortlistMenuOpen) {
+                        e.stopPropagation();
+                        this.openShortlistMenu();
+                    }
+                });
                 if (clearBtn) clearBtn.addEventListener('click', () => this.clearShortlist());
                 if (exportBtn) exportBtn.addEventListener('click', () => this.exportShortlist());
 
