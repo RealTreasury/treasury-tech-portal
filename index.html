@@ -21,10 +21,20 @@
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        html {
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: auto;
+            min-height: 100%;
         }
 
         html, body {
-            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
         body.side-menu-open,
@@ -43,6 +53,7 @@
             transition:
                 margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
         }
 
         /* Search Box */
@@ -264,7 +275,7 @@
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 40px 20px 60px 20px;
         }
 
         /* No Results Message */
@@ -1864,31 +1875,90 @@
 
         function postHeight() {
             if (window.parent !== window) {
-                const h = document.documentElement.scrollHeight;
-                window.parent.postMessage({ type: 'treasury-height', height: h }, EMBED_ORIGIN);
+                const h = Math.max(
+                    document.documentElement.scrollHeight,
+                    document.documentElement.offsetHeight,
+                    document.body.scrollHeight,
+                    document.body.offsetHeight,
+                    window.innerHeight
+                );
+                window.parent.postMessage({ 
+                    type: "treasury-height",
+                    height: h + 100
+                }, "*");
+                try {
+                    window.parent.postMessage({ 
+                        type: "treasury-height",
+                        height: h + 100
+                    }, EMBED_ORIGIN);
+                } catch(e) {
+                    /* Ignore if origin mismatch */
+                }
             }
         }
 
-        function debounce(fn, delay) {
-            let timer;
-            return function() {
-                clearTimeout(timer);
-                timer = setTimeout(fn, delay);
-            };
+function debounce(fn, delay) {
+    let timer;
+    return function() {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+    };
+}
+
+const debouncedPostHeight = debounce(postHeight, 100);
+
+// Post height more frequently and reliably
+window.addEventListener('load', () => {
+    setTimeout(postHeight, 100);
+    setTimeout(postHeight, 500);
+    setTimeout(postHeight, 1000);
+});
+window.addEventListener('resize', debouncedPostHeight);
+
+new ResizeObserver(() => {
+    debouncedPostHeight();
+}).observe(document.body);
+
+new MutationObserver(() => {
+    debouncedPostHeight();
+}).observe(document.body, { 
+    childList: true, 
+    subtree: true, 
+    attributes: true,
+    attributeFilter: ['style', 'class']
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    treasuryStack = new TreasuryStack();
+    
+    // Ensure iframe height is set after content loads
+    setTimeout(() => {
+        if (typeof postHeight === 'function') {
+            postHeight();
         }
-
-        const debouncedPostHeight = debounce(postHeight, 100);
-
-        window.addEventListener('load', debouncedPostHeight);
-        window.addEventListener('resize', debouncedPostHeight);
-
-        new ResizeObserver(debouncedPostHeight).observe(document.body);
-        new MutationObserver(debouncedPostHeight).observe(document.body, { childList: true, subtree: true });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            treasuryStack = new TreasuryStack();
-        });
-
+    }, 1500);
+    
+    // Handle window resize to properly enable/disable mobile features
+    window.addEventListener('resize', () => {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            // Close any open menus on mobile
+            if (treasuryStack.sideMenuOpen) treasuryStack.closeSideMenu();
+            if (treasuryStack.shortlistMenuOpen) treasuryStack.closeShortlistMenu();
+        } else {
+            // Re-enable sidebar functionality on desktop
+            treasuryStack.renderShortlist();
+        }
+        
+        // Update height after resize
+        setTimeout(() => {
+            if (typeof postHeight === 'function') {
+                postHeight();
+            }
+        }, 200);
+    });
+});
         class TreasuryStack {
             constructor() {
                 this.TREASURY_TOOLS = [
