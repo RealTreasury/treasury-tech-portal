@@ -1424,6 +1424,11 @@
             align-items:center;
         }
 
+        #toolPicker {
+            padding:8px;
+            margin-top:8px;
+        }
+
         .shortlist-empty-message {
             color: #4b5563;
             font-size: 1rem;
@@ -1696,7 +1701,7 @@
             <div class="shortlist-section">
                 <div class="menu-section-content">
                     <div id="shortlistContainer" class="shortlist-container empty">
-                        <p id="shortlistEmptyMessage" class="shortlist-empty-message">Drag vendor cards here to build your shortlist.</p>
+                        <p id="shortlistEmptyMessage" class="shortlist-empty-message">Drag vendor cards here or click to add.</p>
                     </div>
                     <div class="tips-section">
                         <h3>Tips for Building a Tech Vendor Shortlist</h3>
@@ -2931,6 +2936,7 @@
             }
 
             openSideMenu() {
+                this.closeShortlistMenu();
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
@@ -3068,6 +3074,12 @@
                         touchDraggedCard = null;
                         this.renderShortlist();
                     });
+
+                    container.addEventListener('click', e => {
+                        if (e.target === container && !container.querySelector('#toolPicker')) {
+                            this.openToolPicker();
+                        }
+                    });
                 }
 
                 document.addEventListener('keydown', (e) => {
@@ -3083,6 +3095,7 @@
             }
 
             openShortlistMenu(trigger) {
+                this.closeSideMenu();
                 const menu = document.getElementById('shortlistMenu');
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const toggle = document.getElementById('shortlistMenuToggle');
@@ -3197,6 +3210,29 @@
             clearShortlist() {
                 this.shortlist = [];
                 this.renderShortlist();
+            }
+
+            openToolPicker() {
+                const container = document.getElementById('shortlistContainer');
+                if (!container) return;
+                const existing = document.getElementById('toolPicker');
+                if (existing) existing.remove();
+                const select = document.createElement('select');
+                select.id = 'toolPicker';
+                select.innerHTML = '<option value="" disabled selected>Select a tool</option>' +
+                    this.TREASURY_TOOLS.filter(t => !this.shortlist.some(i => i.tool.name === t.name))
+                        .map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+                select.addEventListener('change', () => {
+                    const name = select.value;
+                    const tool = this.TREASURY_TOOLS.find(t => t.name === name);
+                    if (tool && !this.shortlist.some(i => i.tool.name === name)) {
+                        this.shortlist.push({ tool, notes: '' });
+                        this.renderShortlist();
+                    }
+                    select.remove();
+                });
+                container.appendChild(select);
+                select.focus();
             }
 
             updateFeatureFilters() {
