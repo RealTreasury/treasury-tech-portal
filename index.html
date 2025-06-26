@@ -1474,9 +1474,11 @@
         .shortlist-card-title-wrapper { display:flex; align-items:center; gap:4px; }
         .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
         .shortlist-card-link {
-            font-size:0.8rem;
+            font-size:1.2rem;
             color:#7216f4;
             text-decoration:none;
+            margin-left:4px;
+            font-weight:600;
         }
         .shortlist-card-link:hover { text-decoration:underline; }
 
@@ -3076,7 +3078,7 @@
                             <div class="shortlist-card-header">
                                 <div class="shortlist-card-title-wrapper">
                                     <span class="shortlist-card-title">${item.tool.name}</span>
-                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer">↗</a>` : ''}
+                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer" title="Visit website">↗</a>` : ''}
                                 </div>
                                 <div class="shortlist-card-buttons">
                                     <button class="move-up" data-name="${item.tool.name}" aria-label="Move up">▲</button>
