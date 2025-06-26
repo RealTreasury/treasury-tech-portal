@@ -3401,19 +3401,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     search.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        this.openSideMenu();
-                        
-                        // Add delay to ensure menu animation completes
-                        setTimeout(() => {
-                            const input = document.getElementById('searchInput');
-                            if (input) {
-                                input.focus();
-                                // For iOS Safari - trigger click as well
-                                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                                    input.click();
+
+                        if (this.sideMenuOpen) {
+                            this.closeSideMenu();
+                        } else {
+                            this.openSideMenu();
+
+                            // Add delay to ensure menu animation completes
+                            setTimeout(() => {
+                                const input = document.getElementById('searchInput');
+                                if (input) {
+                                    input.focus();
+                                    // For iOS Safari - trigger click as well
+                                    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                                        input.click();
+                                    }
                                 }
-                            }
-                        }, 350); // Match the menu transition duration
+                            }, 350); // Match the menu transition duration
+                        }
                     });
                 }
 
