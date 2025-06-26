@@ -929,13 +929,8 @@
                 display: none;
             }
 
-            .side-menu,
-            .shortlist-menu,
-            .side-menu-overlay,
-            .shortlist-menu-overlay,
             .external-menu-toggle,
-            .external-shortlist-toggle,
-            .menu-toggle {
+            .external-shortlist-toggle {
                 display: none !important;
             }
 
@@ -1572,6 +1567,30 @@
             color: #7e7e7e;
             font-size: 0.95rem;
         }
+
+        /* Bottom navigation for mobile */
+        @media (max-width: 768px) {
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+                background: #ffffff;
+                border-top: 1px solid #e5e7eb;
+                z-index: 1002;
+            }
+
+            .bottom-nav button {
+                flex: 1;
+                padding: 10px 0;
+                background: none;
+                border: none;
+                font-size: 0.9rem;
+                color: #281345;
+            }
+        }
     </style>
 </head>
 
@@ -1857,6 +1876,11 @@
 
     </div>
 
+    <div class="bottom-nav" id="bottomNav">
+        <button id="bottomSearch">Search</button>
+        <button id="bottomShortlist">Shortlist</button>
+        <button id="bottomVendors">Vendors</button>
+    </div>
 
     <script>
         const EMBED_ORIGIN = 'https://realtreasury.com';
@@ -2216,6 +2240,7 @@
                 this.setupModals();
                 this.setupSideMenu();
                 this.setupShortlistMenu();
+                this.setupBottomNav();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
@@ -2717,7 +2742,7 @@
                     }
                 });
 
-                if (!this.isMobile()) {
+                {
                     card.addEventListener('dragstart', (e) => {
                         e.dataTransfer.setData('text/plain', tool.name);
                         this.openShortlistMenu('dragstart');
@@ -2831,7 +2856,6 @@
             }
 
             setupSideMenu() {
-                if (this.isMobile()) return;
 
                 const menuToggle = document.getElementById('sideMenuToggle');
                 const externalMenuToggle = document.getElementById('externalMenuToggle');
@@ -2932,13 +2956,11 @@
             }
 
             toggleSideMenu() {
-                if (this.isMobile()) return;
                 if (this.sideMenuOpen) this.closeSideMenu();
                 else this.openSideMenu();
             }
 
             openSideMenu() {
-                if (this.isMobile()) return;
                 this.closeShortlistMenu();
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
@@ -2970,7 +2992,6 @@
             }
 
             setupShortlistMenu() {
-                if (this.isMobile()) return;
 
                 const menuToggle = document.getElementById('shortlistMenuToggle');
                 const overlay = document.getElementById('shortlistMenuOverlay');
@@ -3094,13 +3115,11 @@
             }
 
             toggleShortlistMenu() {
-                if (this.isMobile()) return;
                 if (this.shortlistMenuOpen) this.closeShortlistMenu();
                 else this.openShortlistMenu();
             }
 
             openShortlistMenu(trigger) {
-                if (this.isMobile()) return;
                 this.closeSideMenu();
                 const menu = document.getElementById('shortlistMenu');
                 const overlay = document.getElementById('shortlistMenuOverlay');
@@ -3245,6 +3264,19 @@
                 });
                 container.appendChild(select);
                 select.focus();
+            }
+
+            setupBottomNav() {
+                const search = document.getElementById('bottomSearch');
+                const shortlist = document.getElementById('bottomShortlist');
+                const vendors = document.getElementById('bottomVendors');
+
+                if (search) search.addEventListener('click', () => this.toggleSideMenu());
+                if (shortlist) shortlist.addEventListener('click', () => this.toggleShortlistMenu());
+                if (vendors) vendors.addEventListener('click', () => {
+                    this.closeSideMenu();
+                    this.closeShortlistMenu();
+                });
             }
 
             updateFeatureFilters() {
