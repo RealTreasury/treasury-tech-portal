@@ -3396,8 +3396,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const shortlist = document.getElementById('bottomShortlist');
                 const vendors = document.getElementById('bottomVendors');
 
- codex/optimize-shortlist-button-click-area
-                if (search) search.addEventListener('click', () => this.toggleSideMenu());
+                if (search) search.addEventListener('click', () => this.openSideMenu());
 
                 if (shortlist) {
                     let startX, startY;
@@ -3415,11 +3414,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     shortlist.addEventListener('click', () => this.toggleShortlistMenu());
                 }
-
-
-                if (search) search.addEventListener('click', () => this.openSideMenu());
-                if (shortlist) shortlist.addEventListener('click', () => this.toggleShortlistMenu());
-            
                 if (vendors) vendors.addEventListener('click', () => {
                     this.closeSideMenu();
                     this.closeShortlistMenu();
