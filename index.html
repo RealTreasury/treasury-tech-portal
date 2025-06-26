@@ -1367,7 +1367,8 @@
         .shortlist-menu-overlay.show {
             opacity:1;
             visibility:visible;
-            pointer-events:auto;
+            /* Allow dragging tools while the shortlist is open */
+            pointer-events:none;
         }
 
         .shortlist-menu-header {
