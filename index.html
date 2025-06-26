@@ -1782,8 +1782,8 @@
         </div>
 
         <!-- Tool Details Modal -->
-        <div class="modal" id="toolModal">
-            <div class="modal-content">
+        <div class="modal" id="toolModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-content" tabindex="-1">
                 <div class="modal-header">
                     <h3 class="modal-title" id="modalTitle"></h3>
                     <div class="modal-header-actions">
@@ -1804,8 +1804,8 @@
         </div>
 
         <!-- Category Details Modal -->
-        <div class="modal" id="categoryModal">
-            <div class="modal-content">
+        <div class="modal" id="categoryModal" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle">
+            <div class="modal-content" tabindex="-1">
                 <div class="modal-header">
                     <h3 class="modal-title" id="categoryModalTitle"></h3>
                      <div class="modal-header-actions">
@@ -2161,6 +2161,7 @@
                 this.shortlist = [];
                 this.shortlistMenuOpen = false;
                 this.touchDragTool = null;
+                this.previousFocusedElement = null;
 
                 this.init();
             }
@@ -2372,8 +2373,17 @@
             
             openModal(modal) {
                  if (modal) {
+                    this.previousFocusedElement = document.activeElement;
                     modal.classList.add('show');
                     document.body.classList.add('modal-open');
+
+                    const focusable = modal.querySelector('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+                    if (focusable) {
+                        focusable.focus();
+                    } else {
+                        const content = modal.querySelector('.modal-content');
+                        if (content) content.focus();
+                    }
                 }
             }
 
@@ -2497,6 +2507,11 @@
                     const iframe = modal.querySelector('iframe');
                     if (iframe && iframe.contentWindow) {
                         iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
+                    }
+
+                    if (this.previousFocusedElement) {
+                        this.previousFocusedElement.focus();
+                        this.previousFocusedElement = null;
                     }
                 }
             }
