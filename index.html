@@ -2699,7 +2699,7 @@
 
                 card.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', tool.name);
-                    this.openShortlistMenu();
+                    this.openShortlistMenu('dragstart');
                 });
 
                 card.addEventListener('touchstart', () => {
@@ -2960,7 +2960,14 @@
 
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (externalToggle) externalToggle.addEventListener('click', () => this.toggleShortlistMenu());
-                if (overlay) overlay.addEventListener('click', () => this.closeShortlistMenu());
+                if (overlay) {
+                    overlay.addEventListener('click', () => this.closeShortlistMenu());
+                    overlay.addEventListener('dragover', e => e.preventDefault());
+                    overlay.addEventListener('drop', e => e.preventDefault());
+                    document.addEventListener('dragend', () => {
+                        overlay.style.pointerEvents = '';
+                    });
+                }
                 const shortlistMenu = document.getElementById('shortlistMenu');
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
                     if (!this.shortlistMenuOpen && e.target === shortlistMenu) {
@@ -3064,7 +3071,7 @@
                 else this.openShortlistMenu();
             }
 
-            openShortlistMenu() {
+            openShortlistMenu(trigger) {
                 const menu = document.getElementById('shortlistMenu');
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const toggle = document.getElementById('shortlistMenuToggle');
@@ -3073,6 +3080,9 @@
                 menu?.classList.add('open');
                 document.body.classList.add('shortlist-menu-open');
                 overlay?.classList.add('show');
+                if (trigger === 'dragstart' && overlay) {
+                    overlay.style.pointerEvents = 'none';
+                }
                 toggle?.classList.add('active');
                 externalToggle?.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -3088,6 +3098,7 @@
                 menu?.classList.remove('open');
                 document.body.classList.remove('shortlist-menu-open');
                 overlay?.classList.remove('show');
+                if (overlay) overlay.style.pointerEvents = '';
                 toggle?.classList.remove('active');
                 externalToggle?.classList.remove('active');
                 document.body.style.overflow = '';
