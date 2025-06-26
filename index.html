@@ -1534,36 +1534,6 @@
             font-size: 0.95rem;
         }
 
-        #projectSummaryModal input,
-        #projectSummaryModal textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
-
-        #projectSummaryModal button {
-            background: #7216f4;
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
-
-        #projectSummaryModal button:hover {
-            background: #6112c2;
-        }
-
-        #projectSummaryModal pre {
-            background: #f3f4f6;
-            padding: 10px;
-            border-radius: 8px;
-            white-space: pre-wrap;
-        }
 
 
 
@@ -1689,7 +1659,6 @@
                         <div class="action-buttons">
                             <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
                             <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
-                            <button class="action-btn secondary" id="projectSummaryBtn">Project Summary</button>
                         </div>
                     </div>
                 </div>
@@ -1852,30 +1821,6 @@
             </div>
         </div>
 
-        <!-- Project Summary Modal -->
-        <div class="modal" id="projectSummaryModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Project Summary Generator</h3>
-                    <div class="modal-header-actions">
-                        <button class="modal-close" id="projectSummaryModalClose">×</button>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <form id="projectForm">
-                        <input type="text" id="psCompany" placeholder="Company Name" required>
-                        <input type="text" id="psObjective" placeholder="Project Objective" required>
-                        <input type="date" id="psDeadline" required>
-                        <textarea id="psNotes" placeholder="Key Requirements or Notes"></textarea>
-                        <button type="button" id="generateSummary">Generate Summary</button>
-                    </form>
-                    <div id="summaryContainer" style="display:none;">
-                        <h4>Project Summary</h4>
-                        <pre id="summaryOutput"></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
 
@@ -2413,23 +2358,10 @@
                     });
                 }
 
-                const psModal = document.getElementById('projectSummaryModal');
-                const psModalClose = document.getElementById('projectSummaryModalClose');
-
-                if (psModalClose) {
-                    psModalClose.addEventListener('click', () => this.closeModal('projectSummaryModal'));
-                }
-                if (psModal) {
-                    psModal.addEventListener('click', (e) => {
-                        if (e.target.closest('.modal-content') === null) this.closeModal('projectSummaryModal');
-                    });
-                }
-
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         this.closeModal('toolModal');
                         this.closeModal('categoryModal');
-                        this.closeModal('projectSummaryModal');
                     }
                 });
             }
@@ -2931,10 +2863,6 @@
                 const resetBtn = document.getElementById('resetToDefaults');
                 if (resetBtn) resetBtn.addEventListener('click', () => this.resetToDefaults());
 
-                const psBtn = document.getElementById('projectSummaryBtn');
-                if (psBtn) psBtn.addEventListener('click', () => {
-                    this.closeSideMenu();
-                    this.openModal(document.getElementById('projectSummaryModal'));
                 });
             }
 
@@ -3391,23 +3319,6 @@
             lastTouchEnd = now;
         }, {
             passive: false
-        });
-    </script>
-    <script>
-        document.getElementById('generateSummary')?.addEventListener('click', function() {
-            const company = document.getElementById('psCompany').value.trim();
-            const objective = document.getElementById('psObjective').value.trim();
-            const deadline = document.getElementById('psDeadline').value;
-            const notes = document.getElementById('psNotes').value.trim();
-
-            const parts = [];
-            if (company) parts.push(`Company: ${company}`);
-            if (objective) parts.push(`Objective: ${objective}`);
-            if (deadline) parts.push(`Deadline: ${deadline}`);
-            if (notes) parts.push(`Notes: ${notes}`);
-
-            document.getElementById('summaryOutput').textContent = parts.join('\n');
-            document.getElementById('summaryContainer').style.display = 'block';
         });
     </script>
 </body>
