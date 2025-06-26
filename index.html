@@ -1473,7 +1473,14 @@
             resize:vertical;
         }
 
+        .shortlist-card-title-wrapper { display:flex; align-items:center; gap:4px; }
         .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
+        .shortlist-card-link {
+            font-size:0.8rem;
+            color:#7216f4;
+            text-decoration:none;
+        }
+        .shortlist-card-link:hover { text-decoration:underline; }
 
         .remove-shortlist {
             background:none;
@@ -3154,7 +3161,10 @@
                         div.dataset.name = item.tool.name;
                         div.innerHTML = `
                             <div class="shortlist-card-header">
-                                <span class="shortlist-card-title">${item.tool.name}</span>
+                                <div class="shortlist-card-title-wrapper">
+                                    <span class="shortlist-card-title">${item.tool.name}</span>
+                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer">↗</a>` : ''}
+                                </div>
                                 <div class="shortlist-card-buttons">
                                     <button class="move-up" data-name="${item.tool.name}" aria-label="Move up">▲</button>
                                     <button class="move-down" data-name="${item.tool.name}" aria-label="Move down">▼</button>
