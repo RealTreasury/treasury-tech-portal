@@ -1933,7 +1933,6 @@
     <div class="bottom-nav" id="bottomNav">
         <button id="bottomSearch"><span class="icon">🔍</span> Search</button>
         <button id="bottomShortlist"><span class="icon">📋</span> Shortlist</button>
-        <button id="bottomVendors"><span class="icon">💼</span> Vendors</button>
     </div>
 
     <script>
@@ -3396,7 +3395,6 @@ document.addEventListener('DOMContentLoaded', () => {
             setupBottomNav() {
                 const search = document.getElementById('bottomSearch');
                 const shortlist = document.getElementById('bottomShortlist');
-                const vendors = document.getElementById('bottomVendors');
 
                 if (search) {
                     search.addEventListener('click', () => {
@@ -3422,10 +3420,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     shortlist.addEventListener('click', () => this.toggleShortlistMenu());
                 }
-                if (vendors) vendors.addEventListener('click', () => {
-                    this.closeSideMenu();
-                    this.closeShortlistMenu();
-                });
             }
 
             setupSwipeGestures() {
