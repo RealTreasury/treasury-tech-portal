@@ -3396,10 +3396,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const shortlist = document.getElementById('bottomShortlist');
 
                 if (search) {
-                    search.addEventListener('click', () => {
+                    search.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         this.openSideMenu();
-                        const input = document.getElementById('searchInput');
-                        if (input) input.focus();
+                        
+                        // Add delay to ensure menu animation completes
+                        setTimeout(() => {
+                            const input = document.getElementById('searchInput');
+                            if (input) {
+                                input.focus();
+                                // For iOS Safari - trigger click as well
+                                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                                    input.click();
+                                }
+                            }
+                        }, 350); // Match the menu transition duration
                     });
                 }
 
