@@ -929,6 +929,21 @@
                 display: none;
             }
 
+            .side-menu,
+            .shortlist-menu,
+            .side-menu-overlay,
+            .shortlist-menu-overlay,
+            .external-menu-toggle,
+            .external-shortlist-toggle,
+            .menu-toggle {
+                display: none !important;
+            }
+
+            .container {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
         }
 
         /* Side Menu Toggle Button */
@@ -2179,6 +2194,21 @@
                 this.init();
             }
 
+            isMobile() {
+                return window.matchMedia('(max-width: 768px)').matches;
+            }
+
+            handleResponsive() {
+                const mobile = this.isMobile();
+                document.querySelectorAll('.tool-card').forEach(card => {
+                    card.draggable = !mobile;
+                });
+                if (mobile) {
+                    this.closeSideMenu();
+                    this.closeShortlistMenu();
+                }
+            }
+
             init() {
                 this.assignTags();
                 this.setupInteractions();
@@ -2190,6 +2220,9 @@
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
                 this.applyViewStyles();
+
+                this.handleResponsive();
+                window.addEventListener('resize', () => this.handleResponsive());
 
                 setTimeout(() => {
                     const loading = document.getElementById('loadingScreen');
@@ -2641,7 +2674,7 @@
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
-                card.draggable = true;
+                card.draggable = !this.isMobile();
                 card.dataset.name = tool.name;
 
                 const iconMap = {
@@ -2684,42 +2717,44 @@
                     }
                 });
 
-                card.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', tool.name);
-                    this.openShortlistMenu('dragstart');
-                });
+                if (!this.isMobile()) {
+                    card.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', tool.name);
+                        this.openShortlistMenu('dragstart');
+                    });
 
-                card.addEventListener('touchstart', () => {
-                    this.touchDragTool = tool;
-                    this.openShortlistMenu();
-                });
-                card.addEventListener('touchmove', (e) => {
-                    const container = document.getElementById('shortlistContainer');
-                    if (!container) return;
-                    const touch = e.touches[0];
-                    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-                    if (el && container.contains(el)) {
-                        container.classList.add('drag-over');
-                    } else {
-                        container.classList.remove('drag-over');
-                    }
-                    e.preventDefault();
-                }, { passive: false });
-                card.addEventListener('touchend', (e) => {
-                    const container = document.getElementById('shortlistContainer');
-                    if (container) {
-                        container.classList.remove('drag-over');
-                    }
-                    if (this.touchDragTool && container) {
-                        const touch = e.changedTouches[0];
+                    card.addEventListener('touchstart', () => {
+                        this.touchDragTool = tool;
+                        this.openShortlistMenu();
+                    });
+                    card.addEventListener('touchmove', (e) => {
+                        const container = document.getElementById('shortlistContainer');
+                        if (!container) return;
+                        const touch = e.touches[0];
                         const el = document.elementFromPoint(touch.clientX, touch.clientY);
-                        if (el && container.contains(el) && !this.shortlist.some(i => i.tool.name === this.touchDragTool.name)) {
-                            this.shortlist.push({ tool: this.touchDragTool, notes: '' });
-                            this.renderShortlist();
+                        if (el && container.contains(el)) {
+                            container.classList.add('drag-over');
+                        } else {
+                            container.classList.remove('drag-over');
                         }
-                    }
-                    this.touchDragTool = null;
-                });
+                        e.preventDefault();
+                    }, { passive: false });
+                    card.addEventListener('touchend', (e) => {
+                        const container = document.getElementById('shortlistContainer');
+                        if (container) {
+                            container.classList.remove('drag-over');
+                        }
+                        if (this.touchDragTool && container) {
+                            const touch = e.changedTouches[0];
+                            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (el && container.contains(el) && !this.shortlist.some(i => i.tool.name === this.touchDragTool.name)) {
+                                this.shortlist.push({ tool: this.touchDragTool, notes: '' });
+                                this.renderShortlist();
+                            }
+                        }
+                        this.touchDragTool = null;
+                    });
+                }
 
                 return card;
             }
@@ -2796,6 +2831,8 @@
             }
 
             setupSideMenu() {
+                if (this.isMobile()) return;
+
                 const menuToggle = document.getElementById('sideMenuToggle');
                 const externalMenuToggle = document.getElementById('externalMenuToggle');
                 const sideMenu = document.getElementById('sideMenu');
@@ -2895,11 +2932,13 @@
             }
 
             toggleSideMenu() {
+                if (this.isMobile()) return;
                 if (this.sideMenuOpen) this.closeSideMenu();
                 else this.openSideMenu();
             }
 
             openSideMenu() {
+                if (this.isMobile()) return;
                 this.closeShortlistMenu();
                 const sideMenu = document.getElementById('sideMenu');
                 const overlay = document.getElementById('sideMenuOverlay');
@@ -2931,6 +2970,8 @@
             }
 
             setupShortlistMenu() {
+                if (this.isMobile()) return;
+
                 const menuToggle = document.getElementById('shortlistMenuToggle');
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const externalToggle = document.getElementById('externalShortlistToggle');
@@ -3053,11 +3094,13 @@
             }
 
             toggleShortlistMenu() {
+                if (this.isMobile()) return;
                 if (this.shortlistMenuOpen) this.closeShortlistMenu();
                 else this.openShortlistMenu();
             }
 
             openShortlistMenu(trigger) {
+                if (this.isMobile()) return;
                 this.closeSideMenu();
                 const menu = document.getElementById('shortlistMenu');
                 const overlay = document.getElementById('shortlistMenuOverlay');
