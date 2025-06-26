@@ -2884,7 +2884,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                {
+                if (!this.isMobile()) {
                     card.addEventListener('dragstart', (e) => {
                         e.dataTransfer.setData('text/plain', tool.name);
                         this.openShortlistMenu('dragstart');
