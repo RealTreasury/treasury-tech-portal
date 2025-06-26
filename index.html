@@ -1043,7 +1043,7 @@
         .side-menu-overlay.show {
             opacity: 1;
             visibility: visible;
-            pointer-events: auto;
+            pointer-events: none;
         }
 
         .side-menu-header {
@@ -2297,6 +2297,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.shortlistMenuOpen = false;
                 this.touchDragTool = null;
                 this.previousFocusedElement = null;
+                this.handleOutsideSideMenuClick = (e) => {
+                    const sideMenu = document.getElementById('sideMenu');
+                    const toggle = document.getElementById('sideMenuToggle');
+                    const externalToggle = document.getElementById('externalMenuToggle');
+                    if (sideMenu && !sideMenu.contains(e.target) &&
+                        !toggle?.contains(e.target) &&
+                        !externalToggle?.contains(e.target)) {
+                        this.closeSideMenu();
+                    }
+                };
 
                 this.init();
             }
@@ -3056,6 +3066,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggle?.classList.add('active');
                 externalToggle?.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                document.addEventListener('click', this.handleOutsideSideMenuClick);
                 this.sideMenuOpen = true;
             }
 
@@ -3071,6 +3082,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 externalToggle?.classList.remove('active');
                 document.body.classList.remove('side-menu-open');
                 document.body.style.overflow = '';
+                document.removeEventListener('click', this.handleOutsideSideMenuClick);
                 this.sideMenuOpen = false;
             }
 
