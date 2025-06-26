@@ -895,10 +895,9 @@
             .side-menu {
                 width: 260px;
                 transform: translateX(-220px);
-            }
-        }
-
-        @media (max-width: 480px) {
+            
+}
+@media (max-width: 480px) {
             .title-section h1 {
                 font-size: 1.5rem;
             }
@@ -924,7 +923,6 @@
                 width: 100%;
                 transform: translateX(-100%);
             }
-<<<<<<< codex/fix-mobile-side-menu-layout
             body.side-menu-pinned .container {
                 margin-left: 0;
             }
@@ -932,8 +930,7 @@
             .shortlist-menu-pin {
                 display: none;
             }
-=======
->>>>>>> main
+        }
         }
 
         /* Side Menu Toggle Button */
@@ -1003,11 +1000,11 @@
             box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
             opacity: 1;
             pointer-events: auto;
-        }        }        }
+        }
 
         body.side-menu-open #sideMenuToggle {
             display: flex;
-        }        }
+        }
 
         .side-menu-overlay {
             position: fixed;
@@ -1266,7 +1263,9 @@
             content: '\2715';
         }
 
-        body.side-menu-open .external-menu-toggle,        }
+        body.side-menu-open .external-menu-toggle {
+            display: none;
+        }
 
         .external-shortlist-toggle {
             position: fixed;
