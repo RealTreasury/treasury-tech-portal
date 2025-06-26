@@ -2693,7 +2693,7 @@
                         container.classList.remove('drag-over');
                     }
                     e.preventDefault();
-                });
+                }, { passive: false });
                 card.addEventListener('touchend', (e) => {
                     const container = document.getElementById('shortlistContainer');
                     if (container) {
@@ -3015,7 +3015,7 @@
                             container.insertBefore(touchDraggedCard, next ? target.nextSibling : target);
                         }
                         e.preventDefault();
-                    });
+                    }, { passive: false });
                     container.addEventListener('touchend', () => {
                         if (!touchDraggedCard) return;
                         removeHighlight();
