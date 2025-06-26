@@ -2333,6 +2333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (sideMenu && !sideMenu.contains(e.target) &&
                         !toggle?.contains(e.target) &&
                         !externalToggle?.contains(e.target)) {
+                        e.stopPropagation();
                         this.closeSideMenu();
                     }
                 };
@@ -3107,7 +3108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggle?.classList.add('active');
                 externalToggle?.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                document.addEventListener('click', this.handleOutsideSideMenuClick);
+                document.addEventListener('click', this.handleOutsideSideMenuClick, true);
                 this.sideMenuOpen = true;
             }
 
@@ -3123,7 +3124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 externalToggle?.classList.remove('active');
                 document.body.classList.remove('side-menu-open');
                 document.body.style.overflow = '';
-                document.removeEventListener('click', this.handleOutsideSideMenuClick);
+                document.removeEventListener('click', this.handleOutsideSideMenuClick, true);
                 this.sideMenuOpen = false;
             }
 
