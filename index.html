@@ -1597,6 +1597,20 @@
                 z-index: 1002;
             }
 
+            /* Fully hide sidebars until opened */
+            .side-menu,
+            .shortlist-menu {
+                width: 85%;
+            }
+
+            .side-menu {
+                transform: translateX(-100%);
+            }
+
+            .shortlist-menu {
+                transform: translateX(100%);
+            }
+
             .bottom-nav button {
                 flex: 1;
                 padding: 10px 0;
