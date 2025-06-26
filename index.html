@@ -1474,13 +1474,24 @@
         .shortlist-card-title-wrapper { display:flex; align-items:center; gap:4px; }
         .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
         .shortlist-card-link {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            width:24px;
+            height:24px;
             font-size:1.2rem;
-            color:#7216f4;
+            background:#7216f4;
+            color:#fff;
             text-decoration:none;
             margin-left:4px;
+            border-radius:4px;
             font-weight:600;
+            line-height:1;
         }
-        .shortlist-card-link:hover { text-decoration:underline; }
+        .shortlist-card-link:hover {
+            background:#8f47f6;
+            text-decoration:none;
+        }
 
         .remove-shortlist {
             background:none;
