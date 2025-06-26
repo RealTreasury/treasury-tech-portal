@@ -1457,8 +1457,22 @@
         }
 
         #toolPicker {
-            padding:8px;
+            padding:8px 12px;
             margin-top:8px;
+            width:100%;
+            border-radius:8px;
+            background:rgba(255,255,255,0.25);
+            border:1px solid rgba(255,255,255,0.3);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            box-shadow:0 4px 8px rgba(0,0,0,0.05);
+            color:#281345;
+            font-size:0.9rem;
+        }
+        #toolPicker:focus {
+            outline:none;
+            border-color:#7216f4;
+            box-shadow:0 0 0 3px rgba(114,22,244,0.1);
         }
 
         .shortlist-empty-message {
