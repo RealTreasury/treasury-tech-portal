@@ -2375,6 +2375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.setupSideMenu();
                 this.setupShortlistMenu();
                 this.setupBottomNav();
+                this.setupSwipeGestures();
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
@@ -3397,11 +3398,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 const shortlist = document.getElementById('bottomShortlist');
                 const vendors = document.getElementById('bottomVendors');
 
+<<<<<<< codex/optimize-shortlist-button-click-area
+                if (search) search.addEventListener('click', () => this.toggleSideMenu());
+
+                if (shortlist) {
+                    let startX, startY;
+                    shortlist.addEventListener('touchstart', e => {
+                        startX = e.touches[0].clientX;
+                        startY = e.touches[0].clientY;
+                    });
+                    shortlist.addEventListener('touchend', e => {
+                        const dx = Math.abs(e.changedTouches[0].clientX - startX);
+                        const dy = Math.abs(e.changedTouches[0].clientY - startY);
+                        if (dx < 10 && dy < 10) {
+                            e.preventDefault();
+                            this.toggleShortlistMenu();
+                        }
+                    });
+                    shortlist.addEventListener('click', () => this.toggleShortlistMenu());
+                }
+
+=======
                 if (search) search.addEventListener('click', () => this.openSideMenu());
                 if (shortlist) shortlist.addEventListener('click', () => this.toggleShortlistMenu());
+>>>>>>> main
                 if (vendors) vendors.addEventListener('click', () => {
                     this.closeSideMenu();
                     this.closeShortlistMenu();
+                });
+            }
+
+            setupSwipeGestures() {
+                let startX = null;
+                let startY = null;
+                document.addEventListener('touchstart', e => {
+                    if (e.touches.length !== 1) return;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+                document.addEventListener('touchend', e => {
+                    if (startX === null) return;
+                    const dx = e.changedTouches[0].clientX - startX;
+                    const dy = Math.abs(e.changedTouches[0].clientY - startY);
+                    const absDx = Math.abs(dx);
+                    if (absDx > 50 && absDx > dy) {
+                        if (dx > 0) {
+                            if (this.shortlistMenuOpen) this.closeShortlistMenu();
+                            else if (!this.sideMenuOpen && startX < 50) this.openSideMenu();
+                        } else {
+                            if (this.sideMenuOpen) this.closeSideMenu();
+                            else if (!this.shortlistMenuOpen && startX > window.innerWidth - 50) this.openShortlistMenu();
+                        }
+                    }
+                    startX = startY = null;
                 });
             }
 
