@@ -915,11 +915,11 @@
             }
             .side-menu {
                 width: 85%;
-                transform: translateX(-85%);
+                transform: translateX(-100%);
             }
             .shortlist-menu {
                 width: 85%;
-                transform: translateX(85%);
+                transform: translateX(100%);
             }
             body.side-menu-pinned .container {
                 margin-left: 0;
@@ -1232,6 +1232,17 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             z-index: 1002;
         }
+        @media (max-width: 768px) {
+            .external-menu-toggle {
+                top: 50%;
+                left: 0;
+                transform: translateY(-50%);
+                width: 40px;
+                height: 90px;
+                border-radius: 0 8px 8px 0;
+            }
+        }
+
 
         .external-menu-toggle:hover {
             background: rgba(255,255,255,0.25);
