@@ -1601,6 +1601,15 @@
                 font-size: 0.9rem;
                 color: #281345;
             }
+
+            .bottom-nav button .icon {
+                display: inline-block;
+                margin-right: 4px;
+                vertical-align: middle;
+                width: auto;
+                height: auto;
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
@@ -1888,9 +1897,9 @@
     </div>
 
     <div class="bottom-nav" id="bottomNav">
-        <button id="bottomSearch">Search</button>
-        <button id="bottomShortlist">Shortlist</button>
-        <button id="bottomVendors">Vendors</button>
+        <button id="bottomSearch"><span class="icon">🔍</span> Search</button>
+        <button id="bottomShortlist"><span class="icon">📋</span> Shortlist</button>
+        <button id="bottomVendors"><span class="icon">💼</span> Vendors</button>
     </div>
 
     <script>
