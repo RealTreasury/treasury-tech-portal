@@ -1365,7 +1365,7 @@
             opacity:1;
             visibility:visible;
             /* Allow dragging tools while the shortlist is open */
-            pointer-events:none;
+            pointer-events:auto;
         }
 
         .shortlist-menu-header {
@@ -3039,8 +3039,12 @@
                 menu?.classList.add('open');
                 document.body.classList.add('shortlist-menu-open');
                 overlay?.classList.add('show');
-                if (trigger === 'dragstart' && overlay) {
-                    overlay.style.pointerEvents = 'none';
+                if (overlay) {
+                    if (trigger === 'dragstart') {
+                        overlay.style.pointerEvents = 'none';
+                    } else {
+                        overlay.style.pointerEvents = 'auto';
+                    }
                 }
                 toggle?.classList.add('active');
                 externalToggle?.classList.add('active');
