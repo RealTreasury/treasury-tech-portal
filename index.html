@@ -22,14 +22,12 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         html {
-            overflow-y: auto;
-            overflow-x: hidden;
-            height: auto;
+            overflow: hidden;
+            height: 100%;
             min-height: 100%;
         }
 
@@ -53,7 +51,7 @@
             transition:
                 margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
                 margin-right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            min-height: 100vh;
+            height: auto;
         }
 
         /* Search Box */
