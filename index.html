@@ -2999,6 +2999,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (externalMenuToggle) externalMenuToggle.addEventListener('click', () => this.toggleSideMenu());
                 if (overlay) overlay.addEventListener('click', () => this.closeSideMenu());
                 if (sideMenu) sideMenu.addEventListener('click', (e) => {
+                    if (this.isMobile()) return;
                     if (!this.sideMenuOpen && e.target === sideMenu) {
                         e.stopPropagation();
                         this.openSideMenu();
@@ -3143,6 +3144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const shortlistMenu = document.getElementById('shortlistMenu');
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
+                    if (this.isMobile()) return;
                     if (!this.shortlistMenuOpen && e.target === shortlistMenu) {
                         e.stopPropagation();
                         this.openShortlistMenu();
