@@ -1605,8 +1605,11 @@
                 width: 100%;
                 display: flex;
                 justify-content: space-around;
-                background: #ffffff;
-                border-top: 1px solid #e5e7eb;
+                background: rgba(255,255,255,0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(255,255,255,0.3);
+                box-shadow: 0 -4px 8px rgba(0,0,0,0.1);
                 z-index: 1002;
             }
 
@@ -3395,6 +3398,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const shortlist = document.getElementById('bottomShortlist');
                 const vendors = document.getElementById('bottomVendors');
 
+<<<<<<< codex/optimize-shortlist-button-click-area
                 if (search) search.addEventListener('click', () => this.toggleSideMenu());
 
                 if (shortlist) {
@@ -3414,6 +3418,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     shortlist.addEventListener('click', () => this.toggleShortlistMenu());
                 }
 
+=======
+                if (search) search.addEventListener('click', () => this.openSideMenu());
+                if (shortlist) shortlist.addEventListener('click', () => this.toggleShortlistMenu());
+>>>>>>> main
                 if (vendors) vendors.addEventListener('click', () => {
                     this.closeSideMenu();
                     this.closeShortlistMenu();
