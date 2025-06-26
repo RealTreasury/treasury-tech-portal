@@ -1850,7 +1850,6 @@
         new MutationObserver(debouncedPostHeight).observe(document.body, { childList: true, subtree: true });
 
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Initializing Treasury Stack...');
             treasuryStack = new TreasuryStack();
         });
 
@@ -2149,7 +2148,6 @@
                 this.advancedFilters = { features: [], hasVideo: false };
                 this.currentSort = 'name';
                 this.currentView = 'grid';
-                this.gridSize = 'auto';
                 this.groupByCategory = true;
                 this.sideMenuOpen = false;
                 this.shortlist = [];
@@ -3181,40 +3179,13 @@
                 const grids = document.querySelectorAll('.tools-grid');
                 grids.forEach(grid => {
                     grid.classList.remove('list-view');
-                    grid.classList.remove('grid-1','grid-2','grid-3','grid-4');
                     if (this.currentView === 'list') {
                         grid.classList.add('list-view');
                         grid.style.gridTemplateColumns = '1fr';
                     } else {
-                        this.applyGridSize();
-                    }
-                });
-            }
-
-            applyGridSize() {
-                const grids = document.querySelectorAll('.tools-grid');
-                grids.forEach(grid => {
-                    grid.classList.remove('grid-1','grid-2','grid-3','grid-4');
-                    if (this.gridSize === 'auto') {
                         grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
-                    } else {
-                        grid.classList.add(`grid-${this.gridSize}`);
                     }
                 });
-            }
-
-            exportCurrentResults() {
-                const results = this.filteredTools.map(t => ({
-                    name: t.name,
-                    category: t.category,
-                    description: t.desc,
-                    features: (t.features || []).join(', '),
-                    target: t.target || '',
-                    hasVideo: !!t.videoUrl,
-                    website: t.websiteUrl || ''
-                }));
-                const csv = this.convertToCSV(results);
-                this.downloadCSV(csv, 'treasury-tools-export.csv');
             }
 
             exportShortlist() {
@@ -3287,8 +3258,6 @@
                 document.querySelectorAll('.view-option').forEach(opt => opt.classList.remove('active'));
                 document.querySelector('.view-option[data-view="grid"]')?.classList.add('active');
                 this.currentView = 'grid';
-
-                this.gridSize = 'auto';
 
                 const groupByFilter = document.getElementById('groupByFilter');
                 if (groupByFilter) groupByFilter.value = 'category';
