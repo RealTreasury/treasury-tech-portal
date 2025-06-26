@@ -1399,8 +1399,7 @@
         .shortlist-menu-overlay.show {
             opacity:1;
             visibility:visible;
-            /* Allow dragging tools while the shortlist is open */
-            pointer-events:auto;
+            pointer-events:none;
         }
 
         .shortlist-menu-header {
@@ -2308,6 +2307,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
 
+                this.handleOutsideShortlistMenuClick = (e) => {
+                    const menu = document.getElementById('shortlistMenu');
+                    const toggle = document.getElementById('shortlistMenuToggle');
+                    const externalToggle = document.getElementById('externalShortlistToggle');
+                    if (menu && !menu.contains(e.target) &&
+                        !toggle?.contains(e.target) &&
+                        !externalToggle?.contains(e.target)) {
+                        this.closeShortlistMenu();
+                    }
+                };
+
                 this.init();
             }
 
@@ -3098,12 +3108,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (menuToggle) menuToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (externalToggle) externalToggle.addEventListener('click', () => this.toggleShortlistMenu());
                 if (overlay) {
-                    overlay.addEventListener('click', () => this.closeShortlistMenu());
                     overlay.addEventListener('dragover', e => e.preventDefault());
                     overlay.addEventListener('drop', e => e.preventDefault());
-                    document.addEventListener('dragend', () => {
-                        overlay.style.pointerEvents = '';
-                    });
                 }
                 const shortlistMenu = document.getElementById('shortlistMenu');
                 if (shortlistMenu) shortlistMenu.addEventListener('click', (e) => {
@@ -3224,17 +3230,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 menu?.classList.add('open');
                 document.body.classList.add('shortlist-menu-open');
                 overlay?.classList.add('show');
-                if (overlay) {
-                    if (trigger === 'dragstart') {
-                        overlay.style.pointerEvents = 'none';
-                    } else {
-                        overlay.style.pointerEvents = 'auto';
-                    }
-                }
-                toggle?.classList.add('active');
-                externalToggle?.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                this.shortlistMenuOpen = true;
+                document.addEventListener('click', this.handleOutsideShortlistMenuClick);
+               toggle?.classList.add('active');
+               externalToggle?.classList.add('active');
+               document.body.style.overflow = 'hidden';
+               this.shortlistMenuOpen = true;
             }
 
             closeShortlistMenu() {
@@ -3246,11 +3246,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 menu?.classList.remove('open');
                 document.body.classList.remove('shortlist-menu-open');
                 overlay?.classList.remove('show');
-                if (overlay) overlay.style.pointerEvents = '';
-                toggle?.classList.remove('active');
-                externalToggle?.classList.remove('active');
-                document.body.style.overflow = '';
-                this.shortlistMenuOpen = false;
+                document.removeEventListener('click', this.handleOutsideShortlistMenuClick);
+               toggle?.classList.remove('active');
+               externalToggle?.classList.remove('active');
+               document.body.style.overflow = '';
+               this.shortlistMenuOpen = false;
             }
 
             renderShortlist() {
