@@ -1766,6 +1766,7 @@
                         <div class="action-buttons">
                             <button class="action-btn secondary" id="clearAllFilters">Clear Filters</button>
                             <button class="action-btn secondary" id="resetToDefaults">Reset Defaults</button>
+                            <button class="action-btn primary" id="applyFilters">Apply &amp; Close</button>
                         </div>
                     </div>
                 </div>
@@ -2479,6 +2480,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (searchClear) searchClear.style.display = this.searchTerm ? 'block' : 'none';
                         this.filterAndDisplayTools();
                     });
+
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.closeSideMenu();
+                        }
+                    });
                 }
 
                 if (searchClear) {
@@ -3088,6 +3096,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const resetBtn = document.getElementById('resetToDefaults');
                 if (resetBtn) resetBtn.addEventListener('click', () => this.resetToDefaults());
+
+                const applyBtn = document.getElementById('applyFilters');
+                if (applyBtn) applyBtn.addEventListener('click', () => {
+                    this.filterAndDisplayTools();
+                    this.closeSideMenu();
+                });
             }
 
             toggleSideMenu() {
