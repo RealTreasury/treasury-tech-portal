@@ -521,6 +521,12 @@
             margin-bottom: 10px;
         }
 
+        .tool-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         .tool-info {
             display: flex;
             flex-direction: column;
@@ -2895,12 +2901,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     ${tool.name}
-                                    ${tool.logoUrl ? `<img class="tool-logo" src="${tool.logoUrl}" alt="${tool.name} logo">` : ""}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
-                            <div class="tool-icon">${iconMap[tool.category]}</div>
+                            <div class="tool-meta">
+                                ${tool.logoUrl ? `<img class="tool-logo" src="${tool.logoUrl}" alt="${tool.name} logo">` : ""}
+                                <div class="tool-icon">${iconMap[tool.category]}</div>
+                            </div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>
                     </div>
