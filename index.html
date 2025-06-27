@@ -549,11 +549,19 @@
             letter-spacing: 0.5px;
         }
         .tool-logo {
-            width: 64px;
-            height: 64px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
             background-color: transparent;
             flex-shrink: 0;
+        }
+
+        .modal-tool-logo {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 20px;
         }
 
         .video-indicator {
@@ -1915,6 +1923,7 @@
                     </div>
                 </div>
                 <div class="modal-body">
+                    <img id="modalToolLogo" class="modal-tool-logo" alt="">
                     <!-- The Overview is now static in the HTML structure -->
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
@@ -2650,6 +2659,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalDescription = document.getElementById('modalDescription');
                 const modalWebsiteLink = document.getElementById('modalWebsiteLink');
                 const modalBody = modal?.querySelector('.modal-body');
+                const modalLogo = document.getElementById('modalToolLogo');
 
                 if (!modal || !modalBody) return;
 
@@ -2663,6 +2673,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         modalWebsiteLink.style.display = 'inline-flex';
                     } else {
                         modalWebsiteLink.style.display = 'none';
+                    }
+                }
+
+                if (modalLogo) {
+                    if (tool.logoUrl) {
+                        modalLogo.src = tool.logoUrl;
+                        modalLogo.alt = `${tool.name} logo`;
+                        modalLogo.style.display = 'block';
+                    } else {
+                        modalLogo.style.display = 'none';
                     }
                 }
 
