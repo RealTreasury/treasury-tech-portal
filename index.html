@@ -2709,12 +2709,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         const videoId = new URL(tool.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
-                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1';
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
 
                     videoSection.innerHTML = `
                         <h4>🎥 Demo Video</h4>
                         <div class="video-container">
-                            <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
                         </div>
                     `;
                     // Insert the new video section at the top of the modal body
@@ -2762,12 +2762,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
                         embedUrl = `https://www.youtube.com/embed/${videoId}`;
                     }
-                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1';
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
 
                     videoSection.innerHTML = `
                         <h4>🎥 Category Overview Video</h4>
                         <div class="video-container">
-                             <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                             <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
                         </div>
                     `;
 
