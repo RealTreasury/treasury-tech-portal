@@ -525,7 +525,6 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            margin-left: 8px;
         }
 
         .tool-name {
@@ -544,8 +543,8 @@
             letter-spacing: 0.5px;
         }
         .tool-logo {
-            width: 48px;
-            height: 48px;
+            width: 64px;
+            height: 64px;
             object-fit: contain;
             background-color: transparent;
             flex-shrink: 0;
@@ -2893,10 +2892,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.innerHTML = `
                     <div class="tool-card-content">
                         <div class="tool-header">
-                            ${tool.logoUrl ? `<img class="tool-logo" src="${tool.logoUrl}" alt="${tool.name} logo">` : ""}
                             <div class="tool-info">
                                 <div class="tool-name">
                                     ${tool.name}
+                                    ${tool.logoUrl ? `<img class="tool-logo" src="${tool.logoUrl}" alt="${tool.name} logo">` : ""}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
