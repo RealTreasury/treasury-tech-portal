@@ -542,7 +542,7 @@
             line-height: 1.2;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 16px; /* increased spacing between title, logo and actions */
             position: relative;
             z-index: 1;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -557,14 +557,14 @@
         }
 
         .tool-logo-inline {
-            width: 60px;
-            height: 60px;
+            width: 80px; /* make vendor card logos larger */
+            height: 80px;
             object-fit: contain;
         }
 
         .modal-tool-logo {
-            width: 150px;
-            height: 150px;
+            width: 100px; /* smaller logo in popup */
+            height: 100px;
             object-fit: contain;
             display: block;
             margin: 0;
@@ -738,7 +738,7 @@
         .modal-header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 24px; /* more spacing around popup logo */
             flex-shrink: 0;
         }
         
@@ -2759,12 +2759,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
 
-                if (modalLogo) {
-                    modalLogo.insertAdjacentElement('afterend', videoSection);
-                } else {
-                  
-                    modalBody.insertBefore(videoSection, modalBody.firstChild);
-                }
+                // Always place the video or demo section at the end of the modal
+                // body so informational text appears below the other details
+                modalBody.appendChild(videoSection);
 
                 // 4. Show the modal
                 this.openModal(modal);
@@ -2821,7 +2818,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         `;
                     }
 
-                    modalBody.insertBefore(videoSection, modalBody.firstChild);
+                    // Place demo information after existing content
+                    modalBody.appendChild(videoSection);
                 }
 
                 this.openModal(modal);
