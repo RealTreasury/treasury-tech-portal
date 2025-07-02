@@ -542,7 +542,7 @@
             line-height: 1.2;
             display: flex;
             align-items: center;
-            gap: 32px; /* more space between title and logo */
+            gap: 16px; /* spacing between title, video icon and logo */
             position: relative;
             z-index: 1;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -3006,9 +3006,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     <span class="tool-name-title">${tool.name}</span>
+                                    ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                     ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                                     ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit<br>Website</a>` : ''}
-                                    ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
