@@ -518,7 +518,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: nowrap;
+            gap: 12px;
             margin-bottom: 6px;
         }
 
@@ -733,10 +733,8 @@
             padding: 16px 24px;
             border-bottom: 1px solid #e5e7eb;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
-            gap: 32px; /* extra space between title and logo */
+            gap: 16px;
         }
         
         .modal-title {
@@ -751,8 +749,12 @@
         .modal-header-actions {
             display: flex;
             align-items: center;
-            gap: 24px; /* more spacing around popup logo */
-            flex-shrink: 0;
+            gap: 12px;
+            flex-grow: 1;
+        }
+
+        .modal-header-actions .modal-close {
+            margin-left: auto;
         }
         
         /* Modal Body: Scrollable */
@@ -1974,9 +1976,7 @@
                     <h3 class="modal-title" id="modalTitle"></h3>
                     <div class="modal-header-actions">
                         <img id="modalToolLogo" class="modal-tool-logo" alt="">
-                        <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: none;">
-                            Visit<br>Website
-                        </a>
+                        <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: none;">Website</a>
                         <button class="modal-close" id="modalClose">×</button>
                     </div>
                 </div>
@@ -3013,7 +3013,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.innerHTML = `
                     <div class="tool-card-content">
                         <div class="tool-header">
-                            ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                             <div class="tool-info">
                                 <div class="tool-name">
 
@@ -3022,7 +3021,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                     </span>
                                     ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
-                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit<br>Website</a>` : ''}
+                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
