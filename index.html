@@ -556,6 +556,12 @@
             flex-shrink: 0;
         }
 
+        .tool-logo-inline {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
         .modal-tool-logo {
             width: 100px;
             height: 100px;
@@ -856,6 +862,26 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px -8px rgba(114, 22, 244, 0.6);
             color: #ffffff;
+        }
+
+        .tool-website-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            font-size: 1.1rem;
+            background: #7216f4;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .tool-website-link:hover {
+            background: #8f47f6;
+            text-decoration: none;
         }
 
         /* Mobile adjustments */
@@ -1567,6 +1593,12 @@
         .shortlist-card-link:hover {
             background:#8f47f6;
             text-decoration:none;
+        }
+
+        .shortlist-logo {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
         }
 
         .remove-shortlist {
@@ -2932,12 +2964,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     ${tool.name}
+                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
+                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer" title="Visit website">↗</a>` : ''}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
                             <div class="tool-meta">
-                                ${tool.logoUrl ? `<img class="tool-logo" src="${tool.logoUrl}" alt="${tool.name} logo">` : ""}
                                 <div class="tool-icon">${iconMap[tool.category]}</div>
                             </div>
                         </div>
@@ -3398,6 +3431,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         div.innerHTML = `
                             <div class="shortlist-card-header">
                                 <div class="shortlist-card-title-wrapper">
+                                    ${item.tool.logoUrl ? `<img class="shortlist-logo" src="${item.tool.logoUrl}" alt="${item.tool.name} logo">` : ''}
                                     <span class="shortlist-card-title">${item.tool.name}</span>
                                     ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer" title="Visit website">↗</a>` : ''}
                                 </div>
