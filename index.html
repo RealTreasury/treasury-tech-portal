@@ -516,7 +516,7 @@
 
         .tool-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* align icon with title */
             justify-content: space-between;
             gap: 12px;
             margin-bottom: 6px;
@@ -524,9 +524,9 @@
 
         .tool-meta {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             flex-wrap: nowrap;
-            gap: 16px;
+            gap: 12px;
         }
 
         .tool-info {
@@ -540,7 +540,7 @@
             font-size: 1.2rem;
             font-weight: 700;
             color: #281345;
-            margin-bottom: 1px;
+            margin-bottom: 0;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             line-height: 1.2;
             display: flex;
@@ -572,7 +572,6 @@
             width: 90px; /* larger but still fits */
             height: 90px;
             object-fit: contain;
-            margin-right: 8px;
         }
 
         .modal-tool-logo {
@@ -898,7 +897,7 @@
             font-size: 0.75rem;
             padding: 4px 8px;
             line-height: 1.1;
-            margin-right: 16px; /* more space before the category icon */
+            margin-right: 8px;
         }
 
         .tool-website-link:hover {
@@ -3020,12 +3019,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="tool-name-title">${tool.name}</span>
                                         ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                     </span>
-                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
-                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
                             <div class="tool-meta">
+                                ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
+                                ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
                                 <div class="tool-icon">${iconMap[tool.category]}</div>
                             </div>
                         </div>
