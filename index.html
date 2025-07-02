@@ -542,11 +542,15 @@
             line-height: 1.2;
             display: flex;
             align-items: center;
-            gap: 16px; /* increased spacing between title, logo and actions */
+            gap: 32px; /* more space between title and logo */
             position: relative;
             z-index: 1;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
             letter-spacing: 0.5px;
+        }
+
+        .tool-name-title {
+            margin-right: auto;
         }
         .tool-logo {
             width: 100px;
@@ -723,7 +727,7 @@
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
-            gap: 16px;
+            gap: 32px; /* extra space between title and logo */
         }
         
         .modal-title {
@@ -859,9 +863,8 @@
             border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block;
+            text-align: center;
             box-shadow: 0 4px 15px -5px rgba(114, 22, 244, 0.5);
             border: none;
         }
@@ -874,9 +877,8 @@
         }
 
         .tool-website-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-block;
+            text-align: center;
             background: linear-gradient(135deg, #7216f4, #8f47f6);
             color: #ffffff;
             text-decoration: none;
@@ -884,7 +886,7 @@
             font-weight: 600;
             font-size: 0.75rem;
             padding: 4px 8px;
-            line-height: 1;
+            line-height: 1.1;
         }
 
         .tool-website-link:hover {
@@ -1584,9 +1586,8 @@
         .shortlist-card-title-wrapper { display:flex; align-items:center; gap:4px; }
         .shortlist-card-title { font-size:0.9rem; font-weight:600; color:#281345; }
         .shortlist-card-link {
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
+            display:inline-block;
+            text-align:center;
             background: linear-gradient(135deg, #7216f4, #8f47f6);
             color:#ffffff;
             text-decoration:none;
@@ -1595,7 +1596,7 @@
             font-weight:600;
             font-size:0.75rem;
             padding: 4px 8px;
-            line-height:1;
+            line-height:1.1;
         }
         .shortlist-card-link:hover {
             background: linear-gradient(135deg, #8f47f6, #7216f4);
@@ -1964,7 +1965,7 @@
                     <div class="modal-header-actions">
                         <img id="modalToolLogo" class="modal-tool-logo" alt="">
                         <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: none;">
-                            Visit Website →
+                            Visit<br>Website
                         </a>
                         <button class="modal-close" id="modalClose">×</button>
                     </div>
@@ -3004,9 +3005,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="tool-header">
                             <div class="tool-info">
                                 <div class="tool-name">
-                                    ${tool.name}
+                                    <span class="tool-name-title">${tool.name}</span>
                                     ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
-                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit Website</a>` : ''}
+                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit<br>Website</a>` : ''}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
@@ -3482,7 +3483,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="shortlist-card-title-wrapper">
                                     ${item.tool.logoUrl ? `<img class="shortlist-logo" src="${item.tool.logoUrl}" alt="${item.tool.name} logo">` : ''}
                                     <span class="shortlist-card-title">${item.tool.name}</span>
-                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit Website</a>` : ''}
+                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit<br>Website</a>` : ''}
                                 </div>
                                 <div class="shortlist-card-buttons">
                                     <button class="move-up" data-name="${item.tool.name}" aria-label="Move up">▲</button>
