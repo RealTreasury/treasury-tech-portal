@@ -1672,6 +1672,12 @@
                 height: auto;
                 font-size: 1.2rem;
             }
+
+            .bottom-nav button.active {
+                background: linear-gradient(135deg, #7216f4 0%, #8f47f6 100%);
+                color: #fff;
+                box-shadow: 0 2px 10px rgba(114, 22, 244, 0.3);
+            }
         }
     </style>
 </head>
@@ -3189,12 +3195,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
                 const externalToggle = document.getElementById('externalMenuToggle');
+                const bottomToggle = document.getElementById('bottomSearch');
 
                 sideMenu?.classList.add('open');
                 document.body.classList.add('side-menu-open');
                 overlay?.classList.add('show');
                 toggle?.classList.add('active');
                 externalToggle?.classList.add('active');
+                bottomToggle?.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 document.addEventListener('click', this.handleOutsideSideMenuClick, true);
                 this.sideMenuOpen = true;
@@ -3205,11 +3213,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const overlay = document.getElementById('sideMenuOverlay');
                 const toggle = document.getElementById('sideMenuToggle');
                 const externalToggle = document.getElementById('externalMenuToggle');
+                const bottomToggle = document.getElementById('bottomSearch');
 
                 sideMenu?.classList.remove('open');
                 overlay?.classList.remove('show');
                 toggle?.classList.remove('active');
                 externalToggle?.classList.remove('active');
+                bottomToggle?.classList.remove('active');
                 document.body.classList.remove('side-menu-open');
                 document.body.style.overflow = '';
                 document.removeEventListener('click', this.handleOutsideSideMenuClick, true);
@@ -3347,6 +3357,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const toggle = document.getElementById('shortlistMenuToggle');
                 const externalToggle = document.getElementById('externalShortlistToggle');
+                const bottomToggle = document.getElementById('bottomShortlist');
 
                 menu?.classList.add('open');
                 document.body.classList.add('shortlist-menu-open');
@@ -3354,6 +3365,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.addEventListener('click', this.handleOutsideShortlistMenuClick);
                toggle?.classList.add('active');
                externalToggle?.classList.add('active');
+               bottomToggle?.classList.add('active');
                document.body.style.overflow = 'hidden';
                this.shortlistMenuOpen = true;
             }
@@ -3363,6 +3375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const overlay = document.getElementById('shortlistMenuOverlay');
                 const toggle = document.getElementById('shortlistMenuToggle');
                 const externalToggle = document.getElementById('externalShortlistToggle');
+                const bottomToggle = document.getElementById('bottomShortlist');
 
                 menu?.classList.remove('open');
                 document.body.classList.remove('shortlist-menu-open');
@@ -3370,6 +3383,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.removeEventListener('click', this.handleOutsideShortlistMenuClick);
                toggle?.classList.remove('active');
                externalToggle?.classList.remove('active');
+               bottomToggle?.classList.remove('active');
                document.body.style.overflow = '';
                this.shortlistMenuOpen = false;
             }
