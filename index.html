@@ -1347,6 +1347,16 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             z-index: 1002;
         }
+        @media (max-width: 768px) {
+            .external-shortlist-toggle {
+                top: 50%;
+                right: 0;
+                transform: translateY(-50%);
+                width: 40px;
+                height: 90px;
+                border-radius: 8px 0 0 8px;
+            }
+        }
 
         .external-shortlist-toggle:hover {
             background: rgba(255,255,255,0.25);
