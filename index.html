@@ -565,6 +565,7 @@
             width: 90px; /* larger but still fits */
             height: 90px;
             object-fit: contain;
+            margin-right: 8px;
         }
 
         .modal-tool-logo {
@@ -3005,11 +3006,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.innerHTML = `
                     <div class="tool-card-content">
                         <div class="tool-header">
+                            ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                             <div class="tool-info">
                                 <div class="tool-name">
                                     <span class="tool-name-title">${tool.name}</span>
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
-                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                                     ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit<br>Website</a>` : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
