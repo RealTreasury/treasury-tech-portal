@@ -868,19 +868,18 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            font-size: 1.2rem;
-            background: #7216f4;
-            color: #fff;
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: #ffffff;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-weight: 600;
+            font-size: 0.75rem;
+            padding: 4px 8px;
             line-height: 1;
         }
 
         .tool-website-link:hover {
-            background: #8f47f6;
+            background: linear-gradient(135deg, #8f47f6, #7216f4);
             text-decoration: none;
         }
 
@@ -1579,19 +1578,18 @@
             display:inline-flex;
             align-items:center;
             justify-content:center;
-            width:24px;
-            height:24px;
-            font-size:1.2rem;
-            background:#7216f4;
-            color:#fff;
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color:#ffffff;
             text-decoration:none;
             margin-left:4px;
-            border-radius:4px;
+            border-radius:6px;
             font-weight:600;
+            font-size:0.75rem;
+            padding: 4px 8px;
             line-height:1;
         }
         .shortlist-card-link:hover {
-            background:#8f47f6;
+            background: linear-gradient(135deg, #8f47f6, #7216f4);
             text-decoration:none;
         }
 
@@ -2976,14 +2974,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     ${tool.name}
-                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
-                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer" title="Visit website">↗</a>` : ''}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
+                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit Website</a>` : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
                             <div class="tool-meta">
                                 <div class="tool-icon">${iconMap[tool.category]}</div>
+                                ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                             </div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>
@@ -3453,7 +3451,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="shortlist-card-title-wrapper">
                                     ${item.tool.logoUrl ? `<img class="shortlist-logo" src="${item.tool.logoUrl}" alt="${item.tool.name} logo">` : ''}
                                     <span class="shortlist-card-title">${item.tool.name}</span>
-                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer" title="Visit website">↗</a>` : ''}
+                                    ${item.tool.websiteUrl ? `<a class="shortlist-card-link" href="${item.tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit Website</a>` : ''}
                                 </div>
                                 <div class="shortlist-card-buttons">
                                     <button class="move-up" data-name="${item.tool.name}" aria-label="Move up">▲</button>
