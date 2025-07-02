@@ -2712,13 +2712,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
 
                     videoSection.innerHTML = `
-                        <h4>🎥 Demo Video</h4>
+                        <h4>🎥 Product Differentiator</h4>
                         <div class="video-container">
                             <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
                         </div>
                     `;
-                    // Insert the new video section at the top of the modal body
-                    modalBody.insertBefore(videoSection, modalBody.firstChild);
+                    // Insert the video section right after the logo so the logo remains on top
+                    if (modalLogo) {
+                        modalLogo.insertAdjacentElement('afterend', videoSection);
+                    } else {
+                        modalBody.insertBefore(videoSection, modalBody.firstChild);
+                    }
                 }
 
                 // 4. Show the modal
