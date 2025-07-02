@@ -557,17 +557,17 @@
         }
 
         .tool-logo-inline {
-            width: 24px;
-            height: 24px;
+            width: 36px;
+            height: 36px;
             object-fit: contain;
         }
 
         .modal-tool-logo {
-            width: 100px;
-            height: 100px;
+            width: 150px;
+            height: 150px;
             object-fit: contain;
             display: block;
-            margin: 0 auto 20px;
+            margin: 0;
         }
 
         .video-indicator {
@@ -844,8 +844,8 @@
             background: linear-gradient(135deg, #7216f4, #8f47f6);
             color: #ffffff;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            padding: 10px 18px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            font-size: 0.8rem;
             text-decoration: none;
             border-radius: 10px;
             font-weight: 600;
@@ -1596,8 +1596,8 @@
         }
 
         .shortlist-logo {
-            width: 20px;
-            height: 20px;
+            width: 36px;
+            height: 36px;
             object-fit: contain;
         }
 
@@ -1955,6 +1955,7 @@
                 <div class="modal-header">
                     <h3 class="modal-title" id="modalTitle"></h3>
                     <div class="modal-header-actions">
+                        <img id="modalToolLogo" class="modal-tool-logo" alt="">
                         <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: none;">
                             Visit Website →
                         </a>
@@ -1962,7 +1963,6 @@
                     </div>
                 </div>
                 <div class="modal-body">
-                    <img id="modalToolLogo" class="modal-tool-logo" alt="">
                     <!-- The Overview is now static in the HTML structure -->
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
@@ -2755,12 +2755,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
                         </div>
                     `;
-                    // Insert the video section right after the logo so the logo remains on top
-                    if (modalLogo) {
-                        modalLogo.insertAdjacentElement('afterend', videoSection);
-                    } else {
-                        modalBody.insertBefore(videoSection, modalBody.firstChild);
-                    }
+                    modalBody.insertBefore(videoSection, modalBody.firstChild);
                 }
 
                 // 4. Show the modal
