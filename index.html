@@ -2975,14 +2975,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     ${tool.name}
-                                    ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
+                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                                     ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Visit Website</a>` : ''}
+                                    ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
                             <div class="tool-meta">
                                 <div class="tool-icon">${iconMap[tool.category]}</div>
-                                ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                             </div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>
