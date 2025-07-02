@@ -799,6 +799,15 @@
             border: none;
         }
 
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         .feature-section {
             margin-bottom: 24px;
         }
@@ -2736,22 +2745,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const videoSection = document.createElement('div');
                 videoSection.className = 'feature-section video-demo-section';
                 if (tool.videoUrl) {
-                    let embedUrl = tool.videoUrl;
-                    if (tool.videoUrl.includes('youtu.be/')) {
-                        const videoId = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
-                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                    } else if (tool.videoUrl.includes('youtube.com/watch')) {
-                        const videoId = new URL(tool.videoUrl).searchParams.get('v');
-                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    if (tool.videoUrl.includes('youtu.be/') || tool.videoUrl.includes('youtube.com/watch')) {
+                        let embedUrl = tool.videoUrl;
+                        if (tool.videoUrl.includes('youtu.be/')) {
+                            const videoId = tool.videoUrl.split('youtu.be/')[1].split('?')[0];
+                            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        } else {
+                            const videoId = new URL(tool.videoUrl).searchParams.get('v');
+                            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        }
+                        embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
+                        videoSection.innerHTML = `
+                            <h4>🎥 Product Differentiator</h4>
+                            <div class="video-container">
+                                <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
+                            </div>
+                        `;
+                    } else {
+                        videoSection.innerHTML = `
+                            <h4>🎥 Product Differentiator</h4>
+                            <div class="video-container">
+                                <video src="${tool.videoUrl}" controls playsinline></video>
+                            </div>
+                        `;
                     }
-                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
-
-                    videoSection.innerHTML = `
-                        <h4>🎥 Product Differentiator</h4>
-                        <div class="video-container">
-                            <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
-                        </div>
-                    `;
                 } else {
                     videoSection.innerHTML = `
                         <h4>🎥 Demo Coming Soon</h4>
@@ -2795,22 +2812,30 @@ document.addEventListener('DOMContentLoaded', () => {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-demo-section';
                     if (categoryInfo.videoUrl) {
-                        let embedUrl = categoryInfo.videoUrl;
-                        if (categoryInfo.videoUrl.includes('youtu.be/')) {
-                            const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
-                            embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                        } else if (categoryInfo.videoUrl.includes('youtube.com/watch')) {
-                            const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
-                            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        if (categoryInfo.videoUrl.includes('youtu.be/') || categoryInfo.videoUrl.includes('youtube.com/watch')) {
+                            let embedUrl = categoryInfo.videoUrl;
+                            if (categoryInfo.videoUrl.includes('youtu.be/')) {
+                                const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
+                                embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                            } else {
+                                const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
+                                embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                            }
+                            embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
+                            videoSection.innerHTML = `
+                                <h4>🎥 Category Overview Video</h4>
+                                <div class="video-container">
+                                     <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
+                                </div>
+                            `;
+                        } else {
+                            videoSection.innerHTML = `
+                                <h4>🎥 Category Overview Video</h4>
+                                <div class="video-container">
+                                     <video src="${categoryInfo.videoUrl}" controls playsinline></video>
+                                </div>
+                            `;
                         }
-                        embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
-
-                        videoSection.innerHTML = `
-                            <h4>🎥 Category Overview Video</h4>
-                            <div class="video-container">
-                                 <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
-                            </div>
-                        `;
                     } else {
                         videoSection.innerHTML = `
                             <h4>🎥 Demo Coming</h4>
@@ -2831,10 +2856,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.body.classList.remove('modal-open');
                     
                     // Stop video from playing in the background
-                    const iframe = modal.querySelector('iframe');
-                    if (iframe && iframe.contentWindow) {
-                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
-                    }
+                    modal.querySelectorAll('iframe').forEach(iframe => {
+                        if (iframe.src.includes('youtube.com') && iframe.contentWindow) {
+                            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
+                        }
+                    });
+
+                    modal.querySelectorAll('video').forEach(video => {
+                        video.pause();
+                    });
 
                     if (this.previousFocusedElement) {
                         this.previousFocusedElement.focus();
