@@ -3508,20 +3508,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (shortlist) {
-                    let startX, startY;
-                    shortlist.addEventListener('touchstart', e => {
-                        startX = e.touches[0].clientX;
-                        startY = e.touches[0].clientY;
+                    shortlist.addEventListener('click', e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.toggleShortlistMenu();
                     });
                     shortlist.addEventListener('touchend', e => {
-                        const dx = Math.abs(e.changedTouches[0].clientX - startX);
-                        const dy = Math.abs(e.changedTouches[0].clientY - startY);
-                        if (dx < 10 && dy < 10) {
-                            e.preventDefault();
-                            this.toggleShortlistMenu();
-                        }
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.toggleShortlistMenu();
                     });
-                    shortlist.addEventListener('click', () => this.toggleShortlistMenu());
                 }
             }
 
