@@ -569,10 +569,18 @@
         }
 
         .tool-logo-inline {
-            width: 90px; /* larger but still fits */
+            width: 90px; /* keep full size on desktop */
             height: 90px;
             object-fit: contain;
-            margin-left: -8px; /* nudge logo left for better alignment */
+            margin-left: -8px; /* nudge left */
+            margin-top: -4px; /* lift logo to line up with title */
+        }
+
+        @media (max-width: 768px) {
+            .tool-logo-inline {
+                width: 60px; /* slightly smaller on mobile */
+                height: 60px;
+            }
         }
 
         .modal-tool-logo {
