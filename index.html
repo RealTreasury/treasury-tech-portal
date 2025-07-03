@@ -545,7 +545,7 @@
             line-height: 1.2;
             display: flex;
             align-items: center;
-            gap: 12px; /* medium space between name and logo */
+            gap: 8px; /* small space between elements */
             position: relative;
             z-index: 1;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -553,8 +553,9 @@
         }
 
         .tool-name-title {
-            margin-right: 24px; /* add large space after vendor name */
+            margin-right: 0; /* keep video icon flush to name */
         }
+
         .tool-logo {
             width: 100px;
             height: 100px;
@@ -593,6 +594,7 @@
             border-radius: 4px;
             border: 1px solid rgba(99, 102, 241, 0.2);
             transition: all 0.3s ease;
+            margin-right: 16px; /* space before logo */
         }
 
         .tool-card:hover .video-indicator {
@@ -1988,6 +1990,10 @@
                         <h4>🎯 Overview</h4>
                         <p id="modalDescription"></p>
                     </div>
+                    <div class="feature-section">
+                        <h4>🏷️ Tags</h4>
+                        <div id="modalTags" class="tool-tags"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2735,6 +2741,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalDescription = document.getElementById('modalDescription');
                 const modalWebsiteLink = document.getElementById('modalWebsiteLink');
                 const modalBody = modal?.querySelector('.modal-body');
+                const modalTags = document.getElementById('modalTags');
                 const modalLogo = document.getElementById('modalToolLogo');
 
                 this.currentToolId = tool.name.replace(/\s+/g, '-').toLowerCase();
@@ -2762,6 +2769,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         modalLogo.style.display = 'none';
                     }
+                }
+
+                if (modalTags) {
+                    const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
+                    const sorted = [...tags].sort((a, b) => a.localeCompare(b));
+                    modalTags.innerHTML = sorted.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
                 }
 
                 // 2. Remove any video section from a previous click
