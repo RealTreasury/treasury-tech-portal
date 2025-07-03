@@ -642,8 +642,15 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        .tool-card .tool-name .tool-icon {
+        .tool-actions {
             margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-card .tool-name .tool-icon {
+            margin-left: 0;
         }
 
         .tool-description {
@@ -3169,8 +3176,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <span class="tool-name-title">${tool.name}</span>
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                     ${tool.logoUrl ? `<img class="tool-logo-inline${tool.videoUrl ? '' : ' no-video'}" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
-                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
-                                    <div class="tool-icon">${iconMap[tool.category]}</div>
+                                    <div class="tool-actions">
+                                        ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
+                                        <div class="tool-icon">${iconMap[tool.category]}</div>
+                                    </div>
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
