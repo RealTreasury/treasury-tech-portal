@@ -517,17 +517,10 @@
         .tool-header {
             display: flex;
             align-items: flex-start; /* align icon with title */
-            justify-content: space-between;
             gap: 12px;
             margin-bottom: 6px;
         }
 
-        .tool-meta {
-            display: flex;
-            align-items: flex-start; /* align with vendor name */
-            flex-wrap: nowrap;
-            gap: 12px;
-        }
 
         .tool-info {
             display: flex;
@@ -545,6 +538,7 @@
             line-height: 1.2;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
             gap: 8px; /* small space between elements */
             position: relative;
             z-index: 1;
@@ -907,7 +901,6 @@
             font-size: 0.75rem;
             padding: 4px 8px;
             line-height: 1.1;
-            margin-right: 8px;
         }
 
         .tool-website-link:hover {
@@ -3155,12 +3148,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <span class="tool-name-title">${tool.name}</span>
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
                                     ${tool.logoUrl ? `<img class="tool-logo-inline${tool.videoUrl ? '' : ' no-video'}" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
+                                    ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
+                                    <div class="tool-icon">${iconMap[tool.category]}</div>
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
-                            </div>
-                            <div class="tool-meta">
-                                ${tool.websiteUrl ? `<a class="tool-website-link" href="${tool.websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a>` : ''}
-                                <div class="tool-icon">${iconMap[tool.category]}</div>
                             </div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>
