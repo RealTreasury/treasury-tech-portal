@@ -553,7 +553,7 @@
         }
 
         .tool-name-title {
-            /* removed margin-right to keep icon flush with text */
+            margin-right: 24px; /* add large space after vendor name */
         }
         .tool-logo {
             width: 100px;
@@ -3070,8 +3070,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     <span class="tool-name-title">${tool.name}</span>
-                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
+                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
