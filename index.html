@@ -2442,6 +2442,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.shortlistMenuOpen = false;
                 this.touchDragTool = null;
                 this.previousFocusedElement = null;
+                this.videoTimes = {};
+                this.currentToolId = null;
                 this.handleOutsideSideMenuClick = (e) => {
                     const sideMenu = document.getElementById('sideMenu');
                     const toggle = document.getElementById('sideMenuToggle');
@@ -2697,6 +2699,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.closeModal('categoryModal');
                     }
                 });
+
+                window.addEventListener('message', (e) => {
+                    if (e.origin.includes('youtube.com') && typeof e.data === 'string') {
+                        try {
+                            const data = JSON.parse(e.data);
+                            if (data.event === 'infoDelivery' && typeof data.info === 'number' && data.id) {
+                                const key = data.id.replace(/^yt-/, '');
+                                this.videoTimes[key] = data.info;
+                            }
+                        } catch (_) {}
+                    }
+                });
             }
             
             openModal(modal) {
@@ -2722,6 +2736,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalWebsiteLink = document.getElementById('modalWebsiteLink');
                 const modalBody = modal?.querySelector('.modal-body');
                 const modalLogo = document.getElementById('modalToolLogo');
+
+                this.currentToolId = tool.name.replace(/\s+/g, '-').toLowerCase();
 
                 if (!modal || !modalBody) return;
 
@@ -2749,15 +2765,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // 2. Remove any video section from a previous click
-                const existingVideoSection = modalBody.querySelector('.video-demo-section');
-                if (existingVideoSection) {
+                let existingVideoSection = modalBody.querySelector('.video-demo-section');
+                if (existingVideoSection && existingVideoSection.dataset.toolId !== this.currentToolId) {
                     existingVideoSection.remove();
+                    existingVideoSection = null;
                 }
 
                 // 3. Add a new video section if the current tool has one
-                const videoSection = document.createElement('div');
+                const videoSection = existingVideoSection || document.createElement('div');
                 videoSection.className = 'feature-section video-demo-section';
+                videoSection.dataset.toolId = this.currentToolId;
                 if (tool.videoUrl) {
+                    const resume = this.videoTimes[this.currentToolId] || 0;
                     if (tool.videoUrl.includes('youtu.be/') || tool.videoUrl.includes('youtube.com/watch')) {
                         let embedUrl = tool.videoUrl;
                         if (tool.videoUrl.includes('youtu.be/')) {
@@ -2768,12 +2787,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             embedUrl = `https://www.youtube.com/embed/${videoId}`;
                         }
                         embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
+                        if (resume) embedUrl += `&start=${Math.floor(resume)}&autoplay=1`;
                         videoSection.innerHTML = `
                             <h4>🎥 Product Differentiator</h4>
                             <div class="video-container">
-                                <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
+                                <iframe id="yt-${this.currentToolId}" src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
                             </div>
                         `;
+                        const iframe = videoSection.querySelector('iframe');
+                        if (iframe && resume) {
+                            iframe.addEventListener('load', () => {
+                                iframe.contentWindow.postMessage(JSON.stringify({event:'command', func:'seekTo', args:[resume, true], id: `yt-${this.currentToolId}`}), 'https://www.youtube.com');
+                                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', 'https://www.youtube.com');
+                            }, { once: true });
+                        }
                     } else {
                         videoSection.innerHTML = `
                             <h4>🎥 Product Differentiator</h4>
@@ -2781,6 +2808,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <video src="${tool.videoUrl}" controls playsinline></video>
                             </div>
                         `;
+                        const vid = videoSection.querySelector('video');
+                        if (vid && resume) {
+                            vid.addEventListener('loadedmetadata', () => {
+                                vid.currentTime = resume;
+                                vid.play();
+                            }, { once: true });
+                        }
                     }
                 } else {
                     videoSection.innerHTML = `
@@ -2867,21 +2901,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modal && modal.classList.contains('show')) {
                     modal.classList.remove('show');
                     document.body.classList.remove('modal-open');
-                    
-                    // Stop video from playing in the background
-                    modal.querySelectorAll('iframe').forEach(iframe => {
-                        if (iframe.src.includes('youtube.com') && iframe.contentWindow) {
-                            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
-                        }
-                    });
 
-                    modal.querySelectorAll('video').forEach(video => {
-                        video.pause();
-                    });
+                    if (modalId === 'toolModal' && this.currentToolId) {
+                        const key = this.currentToolId;
+
+                        modal.querySelectorAll('iframe').forEach(iframe => {
+                            if (iframe.src.includes('youtube.com') && iframe.contentWindow) {
+                                iframe.contentWindow.postMessage(JSON.stringify({event:'command', func:'getCurrentTime', id: `yt-${key}`}), 'https://www.youtube.com');
+                                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
+                            }
+                        });
+
+                        modal.querySelectorAll('video').forEach(video => {
+                            this.videoTimes[key] = video.currentTime;
+                            video.pause();
+                        });
+                    } else {
+                        modal.querySelectorAll('iframe').forEach(iframe => {
+                            if (iframe.src.includes('youtube.com') && iframe.contentWindow) {
+                                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', 'https://www.youtube.com');
+                            }
+                        });
+
+                        modal.querySelectorAll('video').forEach(video => {
+                            video.pause();
+                        });
+                    }
 
                     if (this.previousFocusedElement) {
                         this.previousFocusedElement.focus();
                         this.previousFocusedElement = null;
+                    }
+                    if (modalId === 'toolModal') {
+                        this.currentToolId = null;
                     }
                 }
             }
