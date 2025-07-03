@@ -2459,6 +2459,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.videoTimes = {};
                 this.currentToolId = null;
                 this.spaceHandler = null;
+                this.seekFocusHandler = null;
                 this.handleOutsideSideMenuClick = (e) => {
                     const sideMenu = document.getElementById('sideMenu');
                     const toggle = document.getElementById('sideMenuToggle');
@@ -2905,6 +2906,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     content.addEventListener('keydown', handler);
                     this.spaceHandler = { el: content, fn: handler };
+
+                    const vid = modal.querySelector('video');
+                    if (vid) {
+                        const seekHandler = () => content.focus();
+                        vid.addEventListener('seeked', seekHandler);
+                        this.seekFocusHandler = { el: vid, fn: seekHandler };
+                    }
                 }
             }
 
@@ -3015,6 +3023,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             const { el, fn } = this.spaceHandler;
                             el.removeEventListener('keydown', fn);
                             this.spaceHandler = null;
+                        }
+                        if (this.seekFocusHandler) {
+                            const { el, fn } = this.seekFocusHandler;
+                            el.removeEventListener('seeked', fn);
+                            this.seekFocusHandler = null;
                         }
                         this.currentToolId = null;
                     }
