@@ -2444,6 +2444,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.previousFocusedElement = null;
                 this.videoTimes = {};
                 this.currentToolId = null;
+                this.spaceHandler = null;
                 this.handleOutsideSideMenuClick = (e) => {
                     const sideMenu = document.getElementById('sideMenu');
                     const toggle = document.getElementById('sideMenuToggle');
@@ -2714,18 +2715,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             openModal(modal) {
-                 if (modal) {
+                if (modal) {
                     this.previousFocusedElement = document.activeElement;
                     modal.classList.add('show');
                     document.body.classList.add('modal-open');
 
-                    const focusable = modal.querySelector('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
-                    if (focusable) {
-                        focusable.focus();
-                    } else {
-                        const content = modal.querySelector('.modal-content');
-                        if (content) content.focus();
-                    }
+                    // Always focus the modal container so space/enter
+                    // do not trigger the close button by default
+                    const content = modal.querySelector('.modal-content');
+                    if (content) content.focus();
                 }
             }
 
@@ -2828,6 +2826,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 4. Show the modal
                 this.openModal(modal);
+
+                // Allow space bar to control video playback without
+                // accidentally activating the close button
+                const content = modal.querySelector('.modal-content');
+                if (content) {
+                    const handler = (e) => {
+                        if (e.code === 'Space' || e.key === ' ') {
+                            const vid = modal.querySelector('video');
+                            const iframe = modal.querySelector('iframe');
+                            if (vid) {
+                                e.preventDefault();
+                                vid.paused ? vid.play() : vid.pause();
+                            } else if (iframe && iframe.contentWindow) {
+                                e.preventDefault();
+                                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', 'https://www.youtube.com');
+                            }
+                        }
+                    };
+                    content.addEventListener('keydown', handler);
+                    this.spaceHandler = { el: content, fn: handler };
+                }
             }
 
             showCategoryModal(categoryInfo, categoryKey) {
@@ -2933,6 +2952,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         this.previousFocusedElement = null;
                     }
                     if (modalId === 'toolModal') {
+                        if (this.spaceHandler) {
+                            const { el, fn } = this.spaceHandler;
+                            el.removeEventListener('keydown', fn);
+                            this.spaceHandler = null;
+                        }
                         this.currentToolId = null;
                     }
                 }
