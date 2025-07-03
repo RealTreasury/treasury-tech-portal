@@ -2684,7 +2684,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (toolModal) {
                     toolModal.addEventListener('click', (e) => {
-                        if (e.target.closest('.modal-content') === null) this.closeModal('toolModal');
+                        if (e.target.closest('.modal-content') === null) {
+                            this.closeModal('toolModal');
+                            return;
+                        }
+                        if (e.target.classList.contains('show-more-tags-btn')) {
+                            e.stopPropagation();
+                            const toolName = e.target.dataset.toolName;
+                            const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
+                            if (tool) {
+                                const tagsContainer = e.target.parentElement;
+                                const sortedTags = [...(tool.tags || this.CATEGORY_TAGS[tool.category] || [])].sort((a, b) => a.localeCompare(b));
+                                tagsContainer.innerHTML = sortedTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                                tagsContainer.innerHTML += `<button class="show-less-tags-btn" data-tool-name="${tool.name}">Show less</button>`;
+                            }
+                        } else if (e.target.classList.contains('show-less-tags-btn')) {
+                            e.stopPropagation();
+                            const toolName = e.target.dataset.toolName;
+                            const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
+                            if (tool) {
+                                const tagsContainer = e.target.parentElement;
+                                const sortedTags = [...(tool.tags || this.CATEGORY_TAGS[tool.category] || [])].sort((a, b) => a.localeCompare(b));
+                                const displayTags = sortedTags.slice(0, 5);
+                                const hasMore = sortedTags.length > 5;
+                                tagsContainer.innerHTML = displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                                if (hasMore) {
+                                    tagsContainer.innerHTML += `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>`;
+                                }
+                            }
+                        }
                     });
                 }
 
@@ -2772,7 +2800,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modalTags) {
                     const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
                     const sorted = [...tags].sort((a, b) => a.localeCompare(b));
-                    modalTags.innerHTML = sorted.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                    const displayTags = sorted.slice(0, 5);
+                    const hasMoreTags = sorted.length > 5;
+                    modalTags.innerHTML = displayTags.map(tag => `<span class="tool-tag">${tag}</span>`).join('');
+                    if (hasMoreTags) {
+                        modalTags.innerHTML += `<button class="show-more-tags-btn" data-tool-name="${tool.name}">... more</button>`;
+                    }
                 }
 
                 // 2. Remove any video section from a previous click
