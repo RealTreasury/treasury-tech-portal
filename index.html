@@ -621,19 +621,22 @@
             color: white;
         }
 
-        .tool-trms .tool-icon {
+        .tool-trms .tool-icon,
+        .tool-trms.tool-icon {
             background: linear-gradient(135deg, rgba(114, 22, 244, 0.8), rgba(143, 71, 246, 0.8));
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
 
-        .tool-cash .tool-icon {
+        .tool-cash .tool-icon,
+        .tool-cash.tool-icon {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(5, 150, 105, 0.8));
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
 
-        .tool-lite .tool-icon {
+        .tool-lite .tool-icon,
+        .tool-lite.tool-icon {
             background: linear-gradient(135deg, rgba(59,130,246,0.8), rgba(29,78,216,0.8));
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
@@ -1976,9 +1979,10 @@
             <div class="modal-content" tabindex="-1">
                 <div class="modal-header">
                     <h3 class="modal-title" id="modalTitle"></h3>
+                    <img id="modalToolLogo" class="modal-tool-logo" alt="">
                     <div class="modal-header-actions">
-                        <img id="modalToolLogo" class="modal-tool-logo" alt="">
                         <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: none;">Website</a>
+                        <div id="modalCategoryIcon" class="tool-icon"></div>
                         <button class="modal-close" id="modalClose">×</button>
                     </div>
                 </div>
@@ -2771,6 +2775,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalBody = modal?.querySelector('.modal-body');
                 const modalTags = document.getElementById('modalTags');
                 const modalLogo = document.getElementById('modalToolLogo');
+                const modalCategoryIcon = document.getElementById('modalCategoryIcon');
 
                 this.currentToolId = tool.name.replace(/\s+/g, '-').toLowerCase();
 
@@ -2797,6 +2802,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         modalLogo.style.display = 'none';
                     }
+                }
+
+                if (modalCategoryIcon) {
+                    const iconMap = {
+                        'TRMS': '🏢',
+                        'CASH': '💰',
+                        'LITE': '⚡'
+                    };
+                    modalCategoryIcon.textContent = iconMap[tool.category] || '';
+                    modalCategoryIcon.classList.remove('tool-trms', 'tool-cash', 'tool-lite');
+                    modalCategoryIcon.classList.add(`tool-${tool.category.toLowerCase()}`);
                 }
 
                 if (modalTags) {
