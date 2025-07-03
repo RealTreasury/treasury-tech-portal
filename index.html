@@ -571,6 +571,10 @@
             margin-top: -4px; /* lift logo to line up with title */
         }
 
+        .tool-logo-inline.no-video {
+            margin-left: 16px; /* add space when video indicator absent */
+        }
+
         @media (max-width: 768px) {
             .tool-logo-inline {
                 width: 60px; /* slightly smaller on mobile */
@@ -3141,7 +3145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="tool-name">
                                     <span class="tool-name-title">${tool.name}</span>
                                     ${tool.videoUrl ? '<span class="video-indicator">🎥</span>' : ''}
-                                    ${tool.logoUrl ? `<img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
+                                    ${tool.logoUrl ? `<img class="tool-logo-inline${tool.videoUrl ? '' : ' no-video'}" src="${tool.logoUrl}" alt="${tool.name} logo">` : ''}
                                 </div>
                                 <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
                             </div>
