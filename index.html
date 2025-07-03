@@ -2870,9 +2870,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                 }
 
-                // Always place the video or demo section at the end of the modal
-                // body so informational text appears below the other details
-                modalBody.appendChild(videoSection);
+                // Insert the video/demo section before the tag list so it
+                // appears directly beneath the overview
+                const tagSection = modalTags?.closest('.feature-section');
+                if (tagSection) {
+                    modalBody.insertBefore(videoSection, tagSection);
+                } else {
+                    modalBody.appendChild(videoSection);
+                }
 
                 // 4. Show the modal
                 this.openModal(modal);
