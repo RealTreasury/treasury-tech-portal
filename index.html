@@ -642,6 +642,10 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
+        .tool-card .tool-name .tool-icon {
+            margin-left: auto;
+        }
+
         .tool-description {
             color: #7e7e7e;
             font-size: 0.85rem;
@@ -1983,7 +1987,6 @@
                     <div class="modal-header-actions">
                         <a id="modalWebsiteLink" href="#" target="_blank" rel="noopener noreferrer" class="website-link--modal" style="display: none;">Website</a>
                         <button class="modal-close" id="modalClose">×</button>
-                        <div id="modalCategoryIcon" class="tool-icon"></div>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -2775,7 +2778,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modalBody = modal?.querySelector('.modal-body');
                 const modalTags = document.getElementById('modalTags');
                 const modalLogo = document.getElementById('modalToolLogo');
-                const modalCategoryIcon = document.getElementById('modalCategoryIcon');
 
                 this.currentToolId = tool.name.replace(/\s+/g, '-').toLowerCase();
 
@@ -2804,16 +2806,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                if (modalCategoryIcon) {
-                    const iconMap = {
-                        'TRMS': '🏢',
-                        'CASH': '💰',
-                        'LITE': '⚡'
-                    };
-                    modalCategoryIcon.textContent = iconMap[tool.category] || '';
-                    modalCategoryIcon.classList.remove('tool-trms', 'tool-cash', 'tool-lite');
-                    modalCategoryIcon.classList.add(`tool-${tool.category.toLowerCase()}`);
-                }
 
                 if (modalTags) {
                     const tags = tool.tags || this.CATEGORY_TAGS[tool.category] || [];
