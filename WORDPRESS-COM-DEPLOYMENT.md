@@ -7,7 +7,8 @@
 4. Grant WordPress.com access and confirm the connection.
 
 ## Configuration Details
-- WordPress.com stores secrets and environment variables in the site's configuration screen. Define variables like `API_URL`, `API_TOKEN`, or other keys required by the plugin.
+- WordPress.com stores secrets and environment variables in the site's configuration screen.
+  Define variables like `API_URL`, `API_TOKEN`, or other keys required by the plugin.
 - Adjust plugin options in `treasury-tech-portal.php` or through the WordPress admin interface.
 - Enable `WP_DEBUG` or `SCRIPT_DEBUG` for development and disable them in production.
 
