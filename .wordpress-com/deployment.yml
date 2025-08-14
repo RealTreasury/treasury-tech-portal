@@ -1,0 +1,34 @@
+# WordPress.com deployment configuration
+version: '1.0'
+
+deployment:
+  type: 'plugin'
+  target: 'wp-content/plugins/treasury-tech-portal'
+  
+build:
+  steps:
+    - name: 'Validate PHP syntax'
+      command: 'find . -name "*.php" -exec php -l {} \;'
+    - name: 'Check required files'
+      command: 'test -f treasury-tech-portal.php && test -f readme.txt'
+
+exclude:
+  - '.git*'
+  - '.wordpress-com'
+  - 'node_modules'
+  - '*.md'
+  - 'scripts'
+  - 'deployment'
+  - '.DS_Store'
+  - 'Thumbs.db'
+
+environment:
+  php_version: '8.1'
+  wordpress_version: '6.4'
+
+hooks:
+  pre_deploy:
+    - 'echo "Starting Treasury Tech Portal deployment..."'
+  post_deploy:
+    - 'wp plugin activate treasury-tech-portal --allow-root || true'
+    - 'echo "Treasury Tech Portal deployed successfully!"'
