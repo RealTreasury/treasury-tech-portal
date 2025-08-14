@@ -1,0 +1,50 @@
+name: Deploy WordPress Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+        
+    - name: Validate plugin structure
+      run: |
+        php -l treasury-tech-portal.php
+        if [ ! -f readme.txt ]; then echo "Missing readme.txt"; exit 1; fi
+        
+    - name: Create plugin zip
+      run: |
+        mkdir -p dist
+        zip -r dist/treasury-tech-portal.zip . -x "*.git*" "*.github*" "dist/*" "*.md" "node_modules/*"
+        
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/treasury-tech-portal.zip
+        asset_name: treasury-tech-portal.zip
+        asset_content_type: application/zip

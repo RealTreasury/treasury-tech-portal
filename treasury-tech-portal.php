@@ -28,4 +28,17 @@ define('TTP_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 require_once plugin_dir_path(__FILE__) . 'includes/class-treasury-portal.php';
 
+// Initialize updater if not in WordPress.org directory
+if (!function_exists('get_plugin_updates') || !array_key_exists(TTP_PLUGIN_BASENAME, get_plugin_updates())) {
+    require_once plugin_dir_path(__FILE__) . 'includes/class-ttp-updater.php';
+
+    // Initialize the updater
+    new TTP_Updater(
+        __FILE__,
+        'realtreasury', // Replace with your GitHub username
+        'treasury-tech-portal',       // Replace with your repository name
+        get_option('ttp_github_token', '') // Optional: GitHub token for private repos
+    );
+}
+
 Treasury_Tech_Portal::instance();

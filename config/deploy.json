@@ -1,0 +1,21 @@
+{
+  "repository": {
+    "owner": "realtreasury",
+    "name": "treasury-tech-portal",
+    "branch": "main"
+  },
+  "plugin": {
+    "name": "Treasury Tech Portal",
+    "slug": "treasury-tech-portal",
+    "version": "1.0.0",
+    "min_wp_version": "5.0",
+    "min_php_version": "7.4",
+    "tested_up_to": "6.4"
+  },
+  "deployment": {
+    "auto_deploy": true,
+    "deploy_on_tag": true,
+    "create_release": true,
+    "include_assets": true
+  }
+}
