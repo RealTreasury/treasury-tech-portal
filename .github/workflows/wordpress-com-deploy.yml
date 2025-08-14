@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
       - name: Build
         run: bash scripts/build.sh
       - name: Test
@@ -28,6 +32,8 @@ jobs:
             "WORDPRESS-COM-DEPLOYMENT.md"
             "readme.txt"
             "treasury-tech-portal.php"
+            ".wordpress-com/config.json"
+            ".wordpress-com/deployment.yml"
           )
           missing=0
           for file in "${required_files[@]}"; do
