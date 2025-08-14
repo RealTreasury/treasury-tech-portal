@@ -845,10 +845,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     video.src = src;
                     video.controls = true;
                     video.autoplay = true;
-                    video.muted = true;
+                    video.muted = false;
                     video.playsInline = true;
                     video.preload = 'metadata';
-                    video.setAttribute('muted', '');
                     video.setAttribute('playsinline', '');
 
                     video.onerror = showFallback;
