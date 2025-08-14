@@ -1,13 +1,14 @@
 <?php
+namespace TreasuryTechPortal;
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
     exit;
 }
 
 class TTP_Data {
-    const OPTION_KEY = 'ttp_tools';
-    const CACHE_KEY  = 'ttp_tools_cache';
-    const CACHE_TTL  = HOUR_IN_SECONDS;
+    const OPTION_KEY  = 'ttp_tools';
+    const CACHE_GROUP = 'treasury_tech_portal';
 
     /**
      * Retrieve all tools with caching.
@@ -15,17 +16,18 @@ class TTP_Data {
      * @return array
      */
     public static function get_all_tools() {
-        $tools = get_transient(self::CACHE_KEY);
-        if ($tools !== false) {
-            return $tools;
+        $cache_key = 'all_tools';
+        $tools = wp_cache_get($cache_key, self::CACHE_GROUP);
+
+        if (false === $tools) {
+            $tools = get_option(self::OPTION_KEY);
+            if (empty($tools)) {
+                $tools = self::load_default_tools();
+            }
+
+            wp_cache_set($cache_key, $tools, self::CACHE_GROUP, HOUR_IN_SECONDS);
         }
 
-        $tools = get_option(self::OPTION_KEY);
-        if (empty($tools)) {
-            $tools = self::load_default_tools();
-        }
-
-        set_transient(self::CACHE_KEY, $tools, self::CACHE_TTL);
         return $tools;
     }
 
@@ -36,13 +38,8 @@ class TTP_Data {
      */
     public static function save_tools($tools) {
         update_option(self::OPTION_KEY, $tools);
-        delete_transient(self::CACHE_KEY);
-        // Clear all caches
-        wp_cache_flush();
-        if (function_exists('wp_cache_clear_cache')) {
-            wp_cache_clear_cache();
-        }
-        delete_transient('ttp_tools_cache');
+        wp_cache_delete('all_tools', self::CACHE_GROUP);
+        wp_cache_flush_group(self::CACHE_GROUP);
     }
 
     /**

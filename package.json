@@ -1,0 +1,17 @@
+{
+  "name": "treasury-tech-portal",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "postcss assets/css/treasury-portal.css -o assets/css/treasury-portal.min.css --map",
+    "build:js": "uglifyjs assets/js/treasury-portal.js -o assets/js/treasury-portal.min.js --source-map",
+    "watch": "npm run watch:css & npm run watch:js",
+    "watch:css": "postcss assets/css/treasury-portal.css -o assets/css/treasury-portal.min.css --map --watch",
+    "watch:js": "uglifyjs assets/js/treasury-portal.js -o assets/js/treasury-portal.min.js --source-map --watch"
+  },
+  "devDependencies": {
+    "postcss-cli": "^10.0.0",
+    "cssnano": "^6.0.0",
+    "uglify-js": "^3.17.0"
+  }
+}

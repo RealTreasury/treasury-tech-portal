@@ -19,6 +19,7 @@ debug.log
 
 # Node modules (if any)
 node_modules/
+vendor/
 
 # Environment files
 .env

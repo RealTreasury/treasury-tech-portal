@@ -7,41 +7,58 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  code-quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-      - name: Build
-        run: bash scripts/build.sh
-      - name: Test
-        run: bash scripts/test.sh
+          extensions: mbstring, intl
+          coverage: xdebug
+          tools: composer
+          
+      - name: Install dependencies
+        run: composer install --dev --no-interaction
+        
+      - name: Run PHP CodeSniffer
+        run: composer run cs
+        
+      - name: Run PHPStan
+        run: composer run analyze
+        
+      - name: Run PHPUnit tests
+        run: composer run test
 
-  validate-structure:
+  build-and-validate:
+    needs: code-quality
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Verify required WordPress.com configuration files
-        run: |
-          required_files=(
-            "WORDPRESS-COM-DEPLOYMENT.md"
-            "readme.txt"
-            "treasury-tech-portal.php"
-            ".wordpress-com/config.json"
-            ".wordpress-com/deployment.yml"
-          )
-          missing=0
-          for file in "${required_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "Missing required file: $file" >&2
-              missing=1
-            fi
-          done
-          if [ "$missing" -ne 0 ]; then
-            exit 1
-          fi
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install npm dependencies
+        run: npm ci
+        
+      - name: Build assets
+        run: npm run build
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          
+      - name: Build
+        run: bash scripts/build.sh
+        
+      - name: Test
+        run: bash scripts/test.sh

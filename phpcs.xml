@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<ruleset name="Treasury Tech Portal">
+    <description>Coding standards for Treasury Tech Portal plugin</description>
+    
+    <file>.</file>
+    
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+    
+    <rule ref="WordPress">
+        <exclude name="WordPress.Files.FileName"/>
+        <exclude name="WordPress.NamingConventions.ValidVariableName"/>
+    </rule>
+    
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array" value="treasury-tech-portal"/>
+        </properties>
+    </rule>
+</ruleset>

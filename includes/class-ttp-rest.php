@@ -1,4 +1,6 @@
 <?php
+namespace TreasuryTechPortal;
+
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
     exit;
@@ -18,6 +20,16 @@ class TTP_Rest {
     }
 
     public static function get_tools($request) {
+        $client_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        $transient_key = 'ttp_rate_limit_' . md5($client_ip);
+        $requests = get_transient($transient_key) ?: 0;
+
+        if ($requests > 100) {
+            return new \WP_Error('rate_limit_exceeded', 'Rate limit exceeded', ['status' => 429]);
+        }
+
+        set_transient($transient_key, $requests + 1, HOUR_IN_SECONDS);
+
         $args = [
             'category'  => sanitize_text_field($request->get_param('category')),
             'search'    => sanitize_text_field($request->get_param('search')),

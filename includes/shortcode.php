@@ -1,6 +1,12 @@
 <?php
+namespace TreasuryTechPortal;
+
 // Exit if accessed directly
 if (!defined("ABSPATH")) exit;
+
+use function \get_option;
+use function \wp_http_validate_url;
+use function \esc_url;
 
 $video_url = defined('TTP_INTRO_VIDEO_URL')
     ? TTP_INTRO_VIDEO_URL

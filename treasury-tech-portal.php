@@ -1,38 +1,63 @@
 <?php
 /**
  * Plugin Name: Treasury Tech Portal
- * Plugin URI: https://realtreasury.com
- * Description: Embed the Treasury Tech Portal tool using the [treasury_portal] shortcode. A comprehensive platform for discovering and comparing treasury technology solutions.
- * Version: 1.0.0
- * Requires at least: 5.0
- * Requires PHP: 7.4
- * Author: Real Treasury
- * Author URI: https://realtreasury.com
- * Text Domain: treasury-tech-portal
- * Domain Path: /languages
- * License: GPL v2 or later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Namespace: TreasuryTechPortal
+ * Version: 1.0.1
  */
 
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
+namespace TreasuryTechPortal;
+
+if (!defined('ABSPATH')) {
     exit;
 }
 
-// Plugin version.
-define( 'TTP_VERSION', '1.0.0' );
+// Include autoloader
+require_once __DIR__ . '/includes/autoloader.php';
+Autoloader::register();
 
-define( 'TTP_FILE', __FILE__ );
-define( 'TTP_BASENAME', plugin_basename( TTP_FILE ) );
-define( 'TTP_URL', plugin_dir_url( TTP_FILE ) );
-define( 'TTP_DIR', plugin_dir_path( TTP_FILE ) );
+// Plugin initialization
+final class Plugin {
+    private static $instance = null;
 
-define( 'TTP_IS_WPCOM', defined( 'IS_WPCOM' ) && IS_WPCOM );
+    public static function instance() {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
-require_once TTP_DIR . 'includes/class-treasury-portal.php';
+    private function __construct() {
+        $this->define_constants();
+        $this->init_hooks();
+    }
 
-if ( ! TTP_IS_WPCOM && function_exists( 'register_activation_hook' ) ) {
-    register_activation_hook( TTP_FILE, [ 'Treasury_Tech_Portal', 'instance' ] );
+    private function define_constants() {
+        define('TTP_VERSION', '1.0.1');
+        define('TTP_FILE', __FILE__);
+        define('TTP_DIR', plugin_dir_path(TTP_FILE));
+        define('TTP_URL', plugin_dir_url(TTP_FILE));
+        define('TTP_BASENAME', plugin_basename(TTP_FILE));
+    }
+
+    private function init_hooks() {
+        add_action('plugins_loaded', [$this, 'init']);
+        register_activation_hook(TTP_FILE, [$this, 'activate']);
+        register_deactivation_hook(TTP_FILE, [$this, 'deactivate']);
+    }
+
+    public function init() {
+        Treasury_Tech_Portal::instance();
+    }
+
+    public function activate() {
+        // Activation logic
+        flush_rewrite_rules();
+    }
+
+    public function deactivate() {
+        // Cleanup logic
+        flush_rewrite_rules();
+    }
 }
 
-Treasury_Tech_Portal::instance();
+Plugin::instance();
