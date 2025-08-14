@@ -1,0 +1,11 @@
+# Optional deployment configuration for managed WordPress hosting
+name: Treasury Tech Portal
+type: plugin
+source: /
+destination: /wp-content/plugins/treasury-tech-portal/
+exclude:
+  - .git*
+  - .DS_Store
+  - *.log
+  - README.md
+  - deploy.yml
