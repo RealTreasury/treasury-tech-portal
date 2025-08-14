@@ -1,0 +1,33 @@
+name: WordPress.com Deployment Validation
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Build plugin
+        run: scripts/build.sh
+      - name: Run tests
+        run: scripts/test.sh
+
+  validate-structure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Ensure WordPress.com config files exist
+        run: |
+          test -f WORDPRESS-COM-DEPLOYMENT.md
+          test -f .wordpress-com/config.json
+          test -f .wordpress-com/deployment.yml
