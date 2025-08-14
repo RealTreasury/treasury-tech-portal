@@ -26,9 +26,9 @@ class Treasury_Tech_Portal {
     }
 
     public function enqueue_assets() {
-        $plugin_url = TTP_PLUGIN_URL;
+        $plugin_url = TTP_URL;
 
-        $css_file = TTP_PLUGIN_DIR . 'assets/css/treasury-portal.css';
+        $css_file = TTP_DIR . 'assets/css/treasury-portal.css';
         $css_ver  = file_exists($css_file) ? filemtime($css_file) : '1.0';
         wp_enqueue_style(
             'treasury-tech-portal-css',
@@ -38,7 +38,7 @@ class Treasury_Tech_Portal {
         );
 
         $js_filename = 'treasury-portal.js';
-        $js_file = TTP_PLUGIN_DIR . 'assets/js/' . $js_filename;
+        $js_file = TTP_DIR . 'assets/js/' . $js_filename;
         $js_ver  = file_exists($js_file) ? filemtime($js_file) : '1.0';
         wp_enqueue_script(
             'treasury-tech-portal-js',
