@@ -1,0 +1,20 @@
+{
+  "name": "Treasury Tech Portal",
+  "description": "A comprehensive platform for discovering and comparing treasury technology solutions",
+  "version": "1.0.0",
+  "type": "plugin",
+  "php_version": "8.1",
+  "wordpress_version": "6.4",
+  "auto_activate": true,
+  "deployment": {
+    "strategy": "direct",
+    "branch": "main",
+    "auto_deploy": true,
+    "build_command": "scripts/build.sh",
+    "test_command": "scripts/test.sh"
+  },
+  "monitoring": {
+    "health_check": "/wp-admin/admin.php?page=treasury-tools",
+    "timeout": 30
+  }
+}
