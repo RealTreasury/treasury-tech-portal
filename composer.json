@@ -9,13 +9,14 @@
         "phpunit/phpunit": "^9.0",
         "squizlabs/php_codesniffer": "^3.7",
         "wp-coding-standards/wpcs": "^3.0",
-        "phpstan/phpstan": "^1.0"
+        "phpstan/phpstan": "^1.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
     },
     "scripts": {
         "test": "phpunit",
-        "cs": "phpcs --standard=WordPress .",
-        "cbf": "phpcbf --standard=WordPress .",
-        "analyze": "phpstan analyse"
+        "cs": "phpcs",
+        "cbf": "phpcbf",
+        "analyze": "phpstan analyse includes"
     },
     "autoload": {
         "psr-4": {

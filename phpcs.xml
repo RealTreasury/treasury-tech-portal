@@ -7,6 +7,11 @@
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
     <exclude-pattern>*/tests/*</exclude-pattern>
+    <exclude-pattern>*/assets/*</exclude-pattern>
+    <exclude-pattern>wp-config-sample.php</exclude-pattern>
+    <exclude-pattern>treasury-tech-portal.php</exclude-pattern>
+    <exclude-pattern>templates/*</exclude-pattern>
+    <exclude-pattern>includes/*</exclude-pattern>
     
     <rule ref="WordPress">
         <exclude name="WordPress.Files.FileName"/>
