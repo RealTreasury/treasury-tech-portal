@@ -203,15 +203,12 @@
             justify-content: center;
             max-width: 280px; /* Increased from current size */
             width: 100%;
-            overflow: hidden;
-            border-radius: 8px;
         }
 
         .treasury-portal .intro-video-target video {
             width: 100%;
             height: auto;
             max-width: 280px;
-            border-radius: inherit;
         }
 
         /* Adjust main portal header to accommodate larger video */
@@ -274,7 +271,6 @@
             max-width: 350px;
             width: 100%;
             height: auto;
-            border-radius: 8px;
         }
 
         /* Stats Cards */
@@ -2359,46 +2355,29 @@
     }
 }
 
-/* Add shadow and visual enhancements to all video containers */
-.treasury-portal .intro-video-target,
-.treasury-portal .category-video-target {
+/* Target only the video element itself, not the container */
+.treasury-portal .intro-video-target video,
+.treasury-portal .category-video-target video {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     border-radius: 12px;
-    overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    position: relative;
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-/* Enhance shadow and scale slightly on hover */
-.treasury-portal .intro-video-target:hover,
-.treasury-portal .category-video-target:hover {
+/* Enhance shadow and scale slightly on hover - target the video directly */
+.treasury-portal .intro-video-target:hover video,
+.treasury-portal .category-video-target:hover video {
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
     transform: translateY(-2px);
 }
 
-/* Ensure videos fill container properly */
-.treasury-portal .intro-video-target video,
-.treasury-portal .category-video-target video {
-    width: 100%;
-    height: auto;
-    border-radius: inherit;
-    display: block;
-}
-
-/* Add subtle inner glow effect */
-.treasury-portal .intro-video-target::before,
-.treasury-portal .category-video-target::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 1;
+/* Remove any container modifications */
+.treasury-portal :where(.intro-video-target, .category-video-target) {
+    max-width: inherit;
+    width: inherit;
 }
 
 /* Hide video controls by default for all intro videos */
