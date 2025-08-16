@@ -436,7 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             "Investments",
                             "SWIFT Connectivity"
                         ],
-                        videoUrl: ""
+                        videoUrl: "https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.mp4",
+                        videoPoster: "https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.png"
                     }
                 };
 
@@ -1127,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         contentHtml = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>`;
                     } else {
                         const posterAttr = categoryInfo.videoPoster ? ` poster="${categoryInfo.videoPoster}"` : '';
-                        contentHtml = `<video controls preload="metadata"${posterAttr}>
+                        contentHtml = `<video controls preload="metadata"${posterAttr} playsinline>
                                         <source src="${categoryInfo.videoUrl}" type="video/mp4">
                                         Your browser does not support the video tag.
                                       </video>`;

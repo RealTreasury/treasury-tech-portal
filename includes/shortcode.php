@@ -243,6 +243,7 @@ if ($video_url && !wp_http_validate_url($video_url)) {
                         <span class="count-number" id="count-TRMS">11</span>
                         <span class="count-label">Solutions</span>
                     </div>
+                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.png"></div>
                 </div>
                 <div class="tools-grid" id="tools-TRMS">
                     <!-- Tools will be populated by JavaScript -->
