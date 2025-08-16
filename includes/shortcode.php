@@ -15,9 +15,6 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
 }
 ?>
 <div class="treasury-portal">
-    <!-- Rotated side text labels -->
-    <div class="side-text-label side-text-menu" id="sideTextMenu">MENU</div>
-    <div class="side-text-label side-text-shortlist" id="sideTextShortlist">SHORTLIST</div>
     <div class="container">
         <button class="external-menu-toggle" id="externalMenuToggle">Menu</button>
         <button class="external-shortlist-toggle" id="externalShortlistToggle" aria-label="Open shortlist menu" title="Shortlist">Shortlist</button>
