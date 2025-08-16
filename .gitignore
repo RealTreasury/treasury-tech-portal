@@ -23,3 +23,15 @@ node_modules/
 # Environment files
 .env
 .env.local
+
+# Development artifacts
+*.min.css
+*.min.js
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Codex/AI tool artifacts
+.codex-*
+.ai-*
+*.ai-backup
