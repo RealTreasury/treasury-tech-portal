@@ -195,18 +195,67 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+        /* Increase Portal intro video size */
         .treasury-portal .intro-video-target {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            max-width: 280px; /* Increased from current size */
+            width: 100%;
         }
 
         .treasury-portal .intro-video-target video {
-            max-width: 200px;
             width: 100%;
             height: auto;
-            border-radius: 8px;
+            max-width: 280px;
+            border-radius: inherit;
+        }
+
+        /* Adjust main portal header to accommodate larger video */
+        .treasury-portal .portal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 2rem;
+            min-height: 180px; /* Ensure adequate height */
+        }
+
+        .treasury-portal .portal-header .header-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Container for video and stats on the right */
+        .treasury-portal .portal-header .header-right {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem; /* Space between video and stats */
+            flex-shrink: 0;
+        }
+
+        /* Ensure stats cards maintain proper spacing */
+        .treasury-portal .portal-header .stats-container {
+            margin-left: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .treasury-portal .portal-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .treasury-portal .portal-header .header-right {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .treasury-portal .intro-video-target {
+                max-width: 100%;
+            }
         }
 
         /* Category preview video container */
