@@ -209,6 +209,7 @@
             border-radius: 8px;
         }
 
+        /* Category preview video container */
         .treasury-portal .category-video-target {
             flex: 1;
             display: flex;
