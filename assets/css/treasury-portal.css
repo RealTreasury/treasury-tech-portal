@@ -195,20 +195,30 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        /* Increase Portal intro video size */
+        /* Allow portal intro video to extend beyond header margins */
         .treasury-portal .intro-video-target {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            max-width: 280px; /* Increased from current size */
-            width: 100%;
+            margin-left: -2rem;
+            margin-right: -2rem;
+            max-width: calc(100% + 4rem);
+            width: calc(100% + 4rem);
         }
 
         .treasury-portal .intro-video-target video {
             width: 100%;
             height: auto;
-            max-width: 280px;
+            border-radius: 12px;
+        }
+
+        /* Ensure other header content stays within normal margins */
+        .treasury-portal .header-content .title-section,
+        .treasury-portal .header-content .stats-bar,
+        .treasury-portal .header-content .filter-tabs {
+            margin-left: 0;
+            margin-right: 0;
         }
 
         /* Adjust main portal header to accommodate larger video */
@@ -253,7 +263,10 @@
             }
 
             .treasury-portal .intro-video-target {
-                max-width: 100%;
+                margin-left: -1rem;
+                margin-right: -1rem;
+                max-width: calc(100% + 2rem);
+                width: calc(100% + 2rem);
             }
         }
 
