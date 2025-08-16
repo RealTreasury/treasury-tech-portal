@@ -391,7 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             "Cash Visibility",
                             "Transaction Search, Sort, Tag, Group"
                         ],
-                        videoUrl: ""
+                        videoUrl: "https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.mp4",
+                        videoPoster: "https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.png"
                     },
                     LITE: {
                         name: "Treasury Management System Lite (TMS-Lite)",
@@ -859,6 +860,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     showFallback();
                 }
 
+                document.querySelectorAll('.category-video-target').forEach((el) => {
+                    const categorySrc = el.getAttribute('data-video-src');
+                    const poster = el.getAttribute('data-poster');
+                    if (categorySrc) {
+                        const vid = document.createElement('video');
+                        vid.src = categorySrc;
+                        vid.controls = true;
+                        vid.autoplay = false;
+                        vid.playsInline = true;
+                        vid.preload = 'metadata';
+                        if (poster) vid.poster = poster;
+                        vid.setAttribute('playsinline', '');
+                        el.innerHTML = '';
+                        el.appendChild(vid);
+                    }
+                });
+
                 // Setup swipe-to-close for tool modal
                 this.setupSwipeToClose('toolModal', 'toolModal', () => this.closeModal('toolModal'));
 
@@ -1095,21 +1113,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (categoryInfo.videoUrl && modalBody) {
                     const videoSection = document.createElement('div');
                     videoSection.className = 'feature-section video-demo-section';
-
-                    let embedUrl = categoryInfo.videoUrl;
-                    if (categoryInfo.videoUrl.includes('youtu.be/')) {
-                        const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
-                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                    } else if (categoryInfo.videoUrl.includes('youtube.com/watch')) {
-                        const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
-                        embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                    let contentHtml = '';
+                    if (categoryInfo.videoUrl.includes('youtu.be/') || categoryInfo.videoUrl.includes('youtube.com/watch')) {
+                        let embedUrl = categoryInfo.videoUrl;
+                        if (categoryInfo.videoUrl.includes('youtu.be/')) {
+                            const videoId = categoryInfo.videoUrl.split('youtu.be/')[1].split('?')[0];
+                            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        } else if (categoryInfo.videoUrl.includes('youtube.com/watch')) {
+                            const videoId = new URL(categoryInfo.videoUrl).searchParams.get('v');
+                            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                        }
+                        embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
+                        contentHtml = `<iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>`;
+                    } else {
+                        const posterAttr = categoryInfo.videoPoster ? ` poster="${categoryInfo.videoPoster}"` : '';
+                        contentHtml = `<video controls preload="metadata"${posterAttr}>
+                                        <source src="${categoryInfo.videoUrl}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                      </video>`;
                     }
-                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1&playsinline=1';
 
                     videoSection.innerHTML = `
                         <h4>🎥 Category Overview Video</h4>
                         <div class="video-container">
-                             <iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" playsinline></iframe>
+                             ${contentHtml}
                         </div>
                     `;
 
