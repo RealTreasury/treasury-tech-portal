@@ -195,16 +195,16 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        /* Allow portal intro video to extend beyond header margins */
+        /* Reduce portal intro video extension to prevent overlap */
         .treasury-portal .intro-video-target {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: -2rem;
-            margin-right: -2rem;
-            max-width: calc(100% + 4rem);
-            width: calc(100% + 4rem);
+            margin-left: -1rem; /* Reduced from -2rem */
+            margin-right: -1rem; /* Reduced from -2rem */
+            max-width: calc(100% + 2rem); /* Reduced from 4rem */
+            width: calc(100% + 2rem);
         }
 
         .treasury-portal .intro-video-target video {
@@ -249,7 +249,7 @@
             flex-shrink: 0;
         }
 
-        /* Responsive adjustments */
+        /* Responsive adjustment */
         @media (max-width: 768px) {
             .treasury-portal .portal-header {
                 flex-direction: column;
@@ -263,10 +263,10 @@
             }
 
             .treasury-portal .intro-video-target {
-                margin-left: -1rem;
-                margin-right: -1rem;
-                max-width: calc(100% + 2rem);
-                width: calc(100% + 2rem);
+                margin-left: -0.5rem;
+                margin-right: -0.5rem;
+                max-width: calc(100% + 1rem);
+                width: calc(100% + 1rem);
             }
         }
 
