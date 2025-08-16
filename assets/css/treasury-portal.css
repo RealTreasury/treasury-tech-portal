@@ -211,10 +211,11 @@
 
         /* Category preview video container */
         .treasury-portal .category-video-target {
-            flex: 1;
+            flex: 0 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-left: 20px;
         }
 
         .treasury-portal .category-video-target video {
@@ -359,7 +360,7 @@
         .treasury-portal .category-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid #f3f4f6;
@@ -486,6 +487,7 @@
             padding: 15px;
             text-align: center;
             min-width: 100px;
+            margin-left: auto;
         }
 
         .treasury-portal .count-number {
@@ -1166,6 +1168,11 @@
                 flex-direction: column;
                 align-items: stretch;
                 gap: 15px;
+            }
+
+            .treasury-portal .category-video-target,
+            .treasury-portal .category-count {
+                margin-left: 0;
             }
 
             .treasury-portal .category-count {

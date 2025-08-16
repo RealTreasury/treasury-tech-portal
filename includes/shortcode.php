@@ -192,11 +192,11 @@ if ($video_url && !wp_http_validate_url($video_url)) {
                         </p>
                         <div class="category-tags" id="category-tags-CASH"></div>
                     </div>
+                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.png"></div>
                     <div class="category-count">
                         <span class="count-number" id="count-CASH">10</span>
                         <span class="count-label">Solutions</span>
                     </div>
-                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.png"></div>
                 </div>
                 <div class="tools-grid" id="tools-CASH">
                     <!-- Tools will be populated by JavaScript -->
@@ -216,11 +216,11 @@ if ($video_url && !wp_http_validate_url($video_url)) {
                         </p>
                         <div class="category-tags" id="category-tags-LITE"></div>
                     </div>
+                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.png"></div>
                     <div class="category-count">
                         <span class="count-number" id="count-LITE">6</span>
                         <span class="count-label">Solutions</span>
                     </div>
-                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.png"></div>
                 </div>
                 <div class="tools-grid" id="tools-LITE">
                     <!-- Tools will be populated by JavaScript -->
@@ -240,11 +240,11 @@ if ($video_url && !wp_http_validate_url($video_url)) {
                         </p>
                         <div class="category-tags" id="category-tags-TRMS"></div>
                     </div>
+                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.png"></div>
                     <div class="category-count">
                         <span class="count-number" id="count-TRMS">11</span>
                         <span class="count-label">Solutions</span>
                     </div>
-                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.png"></div>
                 </div>
                 <div class="tools-grid" id="tools-TRMS">
                     <!-- Tools will be populated by JavaScript -->
