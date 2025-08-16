@@ -407,7 +407,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             "Market Data",
                             "Treasury Payments (API, SFTP)"
                         ],
-                        videoUrl: ""
+                        videoUrl: "https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.mp4",
+                        videoPoster: "https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.png"
                     },
                     TRMS: {
                         name: "Treasury & Risk Management Systems (TRMS)",

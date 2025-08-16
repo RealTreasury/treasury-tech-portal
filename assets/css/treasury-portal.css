@@ -203,8 +203,8 @@
         }
 
         .treasury-portal .intro-video-target video {
-            width: 200px;
-            max-width: 100%;
+            max-width: 200px;
+            width: 100%;
             height: auto;
             border-radius: 8px;
         }
@@ -217,8 +217,8 @@
         }
 
         .treasury-portal .category-video-target video {
-            width: 200px;
-            max-width: 100%;
+            max-width: 200px;
+            width: 100%;
             height: auto;
             border-radius: 8px;
         }
