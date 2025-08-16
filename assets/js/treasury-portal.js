@@ -837,7 +837,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const container = document.querySelector('.treasury-portal');
                 const target = container?.querySelector('.intro-video-target') || container;
-                const src = container?.getAttribute('data-video-src') || '';
+                const src = target?.getAttribute('data-video-src') || '';
+                const poster = target?.getAttribute('data-poster') || '';
 
                 const showFallback = () => {
                     target.innerHTML = '<div class="intro-video-fallback">Intro video unavailable</div>';
@@ -847,17 +848,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     const video = document.createElement('video');
                     video.src = src;
                     video.controls = true;
-                    video.autoplay = true;
+                    video.autoplay = false;
                     video.muted = false;
                     video.playsInline = true;
                     video.preload = 'metadata';
                     video.setAttribute('playsinline', '');
+                    if (poster) video.poster = poster;
 
                     video.onerror = showFallback;
 
                     target.innerHTML = '';
                     target.appendChild(video);
-                    video.play().catch(() => {});
                 } else {
                     showFallback();
                 }

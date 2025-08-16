@@ -5,12 +5,16 @@ if (!defined("ABSPATH")) exit;
 $video_url = defined('TTP_INTRO_VIDEO_URL')
     ? TTP_INTRO_VIDEO_URL
     : get_option('ttp_intro_video_url', '');
+$poster_url = 'https://realtreasury.com/wp-content/uploads/2025/08/Portal-Intro.png';
 
 if ($video_url && !wp_http_validate_url($video_url)) {
     $video_url = '';
 }
+if ($poster_url && !wp_http_validate_url($poster_url)) {
+    $poster_url = '';
+}
 ?>
-<div class="treasury-portal" data-video-src="<?php echo esc_url($video_url); ?>">
+<div class="treasury-portal">
     <div class="container">
         <button class="external-menu-toggle" id="externalMenuToggle">Menu</button>
         <button class="external-shortlist-toggle" id="externalShortlistToggle" aria-label="Open shortlist menu" title="Shortlist">Shortlist</button>
@@ -31,7 +35,7 @@ if ($video_url && !wp_http_validate_url($video_url)) {
                     </div>
                 </div>
 
-                <div class="intro-video-target"></div>
+                <div class="intro-video-target" data-video-src="<?php echo esc_url($video_url); ?>" data-poster="<?php echo esc_url($poster_url); ?>"></div>
 
                 <div class="stats-bar">
                     <div class="stat-card">
