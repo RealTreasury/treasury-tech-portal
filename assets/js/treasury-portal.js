@@ -527,6 +527,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.closeSideMenu();
                     this.closeShortlistMenu();
 
+                    // Hide side text labels on mobile
+                    const menuText = document.getElementById('sideTextMenu');
+                    const shortlistText = document.getElementById('sideTextShortlist');
+                    if (menuText) menuText.style.display = 'none';
+                    if (shortlistText) shortlistText.style.display = 'none';
+
                     const externalMenuToggle = document.getElementById('externalMenuToggle');
                     const externalShortlistToggle = document.getElementById('externalShortlistToggle');
                     if (externalMenuToggle) externalMenuToggle.style.display = 'none';
@@ -535,6 +541,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     const bottomNav = document.getElementById('bottomNav');
                     if (bottomNav) bottomNav.style.display = 'flex';
                 } else {
+                    // Show side text labels on desktop
+                    const menuText = document.getElementById('sideTextMenu');
+                    const shortlistText = document.getElementById('sideTextShortlist');
+                    if (menuText) menuText.style.display = 'block';
+                    if (shortlistText) shortlistText.style.display = 'block';
+
                     const externalMenuToggle = document.getElementById('externalMenuToggle');
                     const externalShortlistToggle = document.getElementById('externalShortlistToggle');
                     if (externalMenuToggle) externalMenuToggle.style.display = 'flex';
@@ -555,6 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.setupSideMenu();
                 this.setupShortlistMenu();
                 this.setupBottomNav();
+                this.setupSideTextLabels(); // Add this line
                 this.updateCounts();
                 this.populateCategoryTags();
                 this.filterAndDisplayTools();
@@ -1522,6 +1535,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const featureCheckboxes = document.querySelectorAll('#tagFilters input[type="checkbox"]');
                 featureCheckboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
+
                         this.updateFeatureFilters();
                         this.filterAndDisplayTools();
                         this.updateFilterCount();
@@ -2075,6 +2089,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+
+            setupSideTextLabels() {
+                if (this.isMobile()) return; // Skip on mobile
+                
+                const menuText = document.getElementById('sideTextMenu');
+                const shortlistText = document.getElementById('sideTextShortlist');
+                
+                // Show labels on desktop
+                if (menuText) menuText.style.display = 'block';
+                if (shortlistText) shortlistText.style.display = 'block';
+            }
 
             updateFeatureFilters() {
                 const cbs = document.querySelectorAll('#tagFilters input[type="checkbox"]');

@@ -2420,3 +2420,51 @@
 .category-video-target:hover video::-moz-media-controls {
     opacity: 1;
 }
+/* Rotated side text labels */
+.treasury-portal .side-text-label {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(114, 22, 244, 0.7);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    z-index: 998;
+    user-select: none;
+    transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.treasury-portal .side-text-menu {
+    left: 8px;
+}
+
+.treasury-portal .side-text-shortlist {
+    right: 8px;
+}
+
+/* Fade effect when menus are open */
+.treasury-portal.side-menu-open .side-text-menu,
+.treasury-portal.shortlist-menu-open .side-text-shortlist {
+    opacity: 0.3;
+}
+
+/* Hide on mobile where we have bottom navigation */
+@media (max-width: 768px) {
+    .treasury-portal .side-text-label {
+        display: none;
+    }
+}
+
+/* Adjust positioning when external toggles are visible */
+@media (min-width: 769px) {
+    .treasury-portal .side-text-menu {
+        left: 12px;
+    }
+    
+    .treasury-portal .side-text-shortlist {
+        right: 12px;
+    }
+}
