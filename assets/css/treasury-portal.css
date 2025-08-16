@@ -2262,3 +2262,44 @@
         padding-bottom: 80px !important;
     }
 }
+
+/* Hide video controls by default for all intro videos */
+.intro-video-target video,
+.category-video-target video {
+    /* Hide default browser controls */
+}
+
+.intro-video-target video::-webkit-media-controls,
+.category-video-target video::-webkit-media-controls {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.intro-video-target video::-webkit-media-controls-panel,
+.category-video-target video::-webkit-media-controls-panel {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Show controls on hover */
+.intro-video-target:hover video::-webkit-media-controls,
+.category-video-target:hover video::-webkit-media-controls {
+    opacity: 1;
+}
+
+.intro-video-target:hover video::-webkit-media-controls-panel,
+.category-video-target:hover video::-webkit-media-controls-panel {
+    opacity: 1;
+}
+
+/* Firefox support */
+.intro-video-target video::-moz-media-controls,
+.category-video-target video::-moz-media-controls {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.intro-video-target:hover video::-moz-media-controls,
+.category-video-target:hover video::-moz-media-controls {
+    opacity: 1;
+}
