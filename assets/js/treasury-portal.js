@@ -847,13 +847,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (src) {
                     const video = document.createElement('video');
                     video.src = src;
-                    video.controls = true;
                     video.autoplay = false;
                     video.muted = false;
                     video.playsInline = true;
                     video.preload = 'metadata';
                     video.setAttribute('playsinline', '');
                     if (poster) video.poster = poster;
+
+                    video.addEventListener('click', () => {
+                        if (video.paused) {
+                            video.play();
+                        } else {
+                            video.pause();
+                        }
+                    });
 
                     video.onerror = showFallback;
 
@@ -869,12 +876,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (categorySrc) {
                         const vid = document.createElement('video');
                         vid.src = categorySrc;
-                        vid.controls = true;
                         vid.autoplay = false;
                         vid.playsInline = true;
                         vid.preload = 'metadata';
                         if (poster) vid.poster = poster;
                         vid.setAttribute('playsinline', '');
+                        vid.addEventListener('click', () => {
+                            if (vid.paused) {
+                                vid.play();
+                            } else {
+                                vid.pause();
+                            }
+                        });
                         el.innerHTML = '';
                         el.appendChild(vid);
                     }

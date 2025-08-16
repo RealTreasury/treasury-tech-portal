@@ -2393,43 +2393,17 @@
     width: inherit;
 }
 
-/* Hide video controls by default for all intro videos */
+/* Hide video controls for all intro videos */
 .intro-video-target video,
 .category-video-target video {
-    /* Hide default browser controls */
+    /* Controls removed via JS; keep fallback hidden */
 }
 
 .intro-video-target video::-webkit-media-controls,
-.category-video-target video::-webkit-media-controls {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
+.category-video-target video::-webkit-media-controls,
 .intro-video-target video::-webkit-media-controls-panel,
-.category-video-target video::-webkit-media-controls-panel {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-/* Show controls on hover */
-.intro-video-target:hover video::-webkit-media-controls,
-.category-video-target:hover video::-webkit-media-controls {
-    opacity: 1;
-}
-
-.intro-video-target:hover video::-webkit-media-controls-panel,
-.category-video-target:hover video::-webkit-media-controls-panel {
-    opacity: 1;
-}
-
-/* Firefox support */
+.category-video-target video::-webkit-media-controls-panel,
 .intro-video-target video::-moz-media-controls,
 .category-video-target video::-moz-media-controls {
     opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.intro-video-target:hover video::-moz-media-controls,
-.category-video-target:hover video::-moz-media-controls {
-    opacity: 1;
 }
