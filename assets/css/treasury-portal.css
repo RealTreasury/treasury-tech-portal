@@ -203,6 +203,8 @@
             justify-content: center;
             max-width: 280px; /* Increased from current size */
             width: 100%;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         .treasury-portal .intro-video-target video {
