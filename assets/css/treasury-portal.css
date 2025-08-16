@@ -2359,6 +2359,48 @@
     }
 }
 
+/* Add shadow and visual enhancements to all video containers */
+.treasury-portal .intro-video-target,
+.treasury-portal .category-video-target {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+/* Enhance shadow and scale slightly on hover */
+.treasury-portal .intro-video-target:hover,
+.treasury-portal .category-video-target:hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    transform: translateY(-2px);
+}
+
+/* Ensure videos fill container properly */
+.treasury-portal .intro-video-target video,
+.treasury-portal .category-video-target video {
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+    display: block;
+}
+
+/* Add subtle inner glow effect */
+.treasury-portal .intro-video-target::before,
+.treasury-portal .category-video-target::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
 /* Hide video controls by default for all intro videos */
 .intro-video-target video,
 .category-video-target video {
