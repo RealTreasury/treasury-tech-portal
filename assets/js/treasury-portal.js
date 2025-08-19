@@ -840,56 +840,65 @@ document.addEventListener('DOMContentLoaded', () => {
                 const src = target?.getAttribute('data-video-src') || '';
                 const poster = target?.getAttribute('data-poster') || '';
 
+                const createVideo = (source, posterUrl) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'video-wrapper';
+                    const vid = document.createElement('video');
+                    vid.src = source;
+                    vid.autoplay = false;
+                    vid.muted = false;
+                    vid.playsInline = true;
+                    vid.preload = 'metadata';
+                    vid.setAttribute('playsinline', '');
+                    if (posterUrl) vid.poster = posterUrl;
+
+                    const btn = document.createElement('button');
+                    btn.className = 'video-play-button';
+                    btn.setAttribute('aria-label', 'Play video');
+                    btn.innerHTML = '\u25B6';
+
+                    const togglePlay = () => {
+                        if (vid.paused) {
+                            vid.play();
+                        } else {
+                            vid.pause();
+                        }
+                    };
+
+                    vid.addEventListener('click', togglePlay);
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        togglePlay();
+                    });
+                    vid.addEventListener('play', () => wrapper.classList.add('playing'));
+                    vid.addEventListener('pause', () => wrapper.classList.remove('playing'));
+                    vid.addEventListener('ended', () => wrapper.classList.remove('playing'));
+
+                    wrapper.appendChild(vid);
+                    wrapper.appendChild(btn);
+                    return wrapper;
+                };
+
                 const showFallback = () => {
                     target.innerHTML = '<div class="intro-video-fallback">Intro video unavailable</div>';
                 };
 
                 if (src) {
-                    const video = document.createElement('video');
-                    video.src = src;
-                    video.autoplay = false;
-                    video.muted = false;
-                    video.playsInline = true;
-                    video.preload = 'metadata';
-                    video.setAttribute('playsinline', '');
-                    if (poster) video.poster = poster;
-
-                    video.addEventListener('click', () => {
-                        if (video.paused) {
-                            video.play();
-                        } else {
-                            video.pause();
-                        }
-                    });
-
-                    video.onerror = showFallback;
-
+                    const wrapper = createVideo(src, poster);
+                    wrapper.querySelector('video').onerror = showFallback;
                     target.innerHTML = '';
-                    target.appendChild(video);
+                    target.appendChild(wrapper);
                 } else {
                     showFallback();
                 }
 
                 document.querySelectorAll('.category-video-target').forEach((el) => {
                     const categorySrc = el.getAttribute('data-video-src');
-                    const poster = el.getAttribute('data-poster');
+                    const catPoster = el.getAttribute('data-poster');
                     if (categorySrc) {
-                        const vid = document.createElement('video');
-                        vid.src = categorySrc;
-                        vid.autoplay = false;
-                        vid.playsInline = true;
-                        vid.preload = 'metadata';
-                        if (poster) vid.poster = poster;
-                        vid.setAttribute('playsinline', '');
-                        vid.addEventListener('click', () => {
-                            if (vid.paused) {
-                                vid.play();
-                            } else {
-                                vid.pause();
-                            }
-                        });
+                        const wrapper = createVideo(categorySrc, catPoster);
                         el.innerHTML = '';
-                        el.appendChild(vid);
+                        el.appendChild(wrapper);
                     }
                 });
 
