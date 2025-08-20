@@ -1,5 +1,39 @@
 <?php if (!defined('ABSPATH')) exit; ?>
-<div class="wrap">
+<div class="wrap treasury-portal-admin">
+    <style>
+        .treasury-portal-admin__table-wrapper {
+            overflow-x: auto;
+        }
+
+        .treasury-portal-admin__table {
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .treasury-portal-admin__table thead {
+                display: none;
+            }
+
+            .treasury-portal-admin__table tr {
+                display: block;
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+
+            .treasury-portal-admin__table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px;
+            }
+
+            .treasury-portal-admin__table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                margin-right: 10px;
+            }
+        }
+    </style>
     <h1>Treasury Tools</h1>
     <?php $current_sort = isset($_GET['sort']) ? sanitize_text_field($_GET['sort']) : ''; ?>
     <form method="get" style="margin-bottom:10px;">
@@ -18,27 +52,29 @@
         <div class="updated notice"><p>Tool deleted.</p></div>
     <?php endif; ?>
 
-    <table class="widefat">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($tools as $i => $tool): ?>
+    <div class="treasury-portal-admin__table-wrapper">
+        <table class="widefat treasury-portal-admin__table">
+            <thead>
                 <tr>
-                    <td><?php echo esc_html($tool['name']); ?></td>
-                    <td><?php echo esc_html($tool['category']); ?></td>
-                    <td>
-                        <a href="#" class="edit-tool" data-index="<?php echo $i; ?>">Edit</a> |
-                        <a href="<?php echo wp_nonce_url(admin_url('admin-post.php?action=ttp_delete_tool&index=' . $i), 'ttp_delete_tool'); ?>" onclick="return confirm('Delete this tool?');">Delete</a>
-                    </td>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Actions</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($tools as $i => $tool): ?>
+                    <tr>
+                        <td data-label="Name"><?php echo esc_html($tool['name']); ?></td>
+                        <td data-label="Category"><?php echo esc_html($tool['category']); ?></td>
+                        <td data-label="Actions">
+                            <a href="#" class="edit-tool" data-index="<?php echo $i; ?>">Edit</a> |
+                            <a href="<?php echo wp_nonce_url(admin_url('admin-post.php?action=ttp_delete_tool&index=' . $i), 'ttp_delete_tool'); ?>" onclick="return confirm('Delete this tool?');">Delete</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
     <h2 id="add-new-tool">Add / Edit Tool</h2>
     <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
