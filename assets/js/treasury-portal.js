@@ -220,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         "desc": "Modular treasury platform with customizable features and scalable architecture that grows with your business needs and treasury complexity.",
                         "features": ["Modular design", "Customizable features", "Scalable architecture", "Growth-focused", "Flexible pricing", "Configurable workflows"],
                         "target": "Growing companies requiring scalable and customizable treasury solutions",
+                        "videoUrl": "https://realtreasury.com/wp-content/uploads/2025/08/Treasury-Cube-08-2025.mp4",
                         "websiteUrl": "https://treasurycube.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral",
                         "logoUrl": "https://realtreasury.com/wp-content/uploads/2025/06/Treasury-Cube.png"
                     },
