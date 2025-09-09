@@ -195,16 +195,16 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        /* Reduce portal intro video extension to prevent overlap */
+        /* Reduce portal intro video size within header */
         .treasury-portal .intro-video-target {
-            flex: 1;
+            flex: 0 1 400px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: -1rem; /* Reduced from -2rem */
-            margin-right: -1rem; /* Reduced from -2rem */
-            max-width: calc(100% + 2rem); /* Reduced from 4rem */
-            width: calc(100% + 2rem);
+            margin-left: 0;
+            margin-right: 0;
+            max-width: 400px;
+            width: 100%;
         }
 
         .treasury-portal .intro-video-target video {
@@ -263,10 +263,11 @@
             }
 
             .treasury-portal .intro-video-target {
-                margin-left: -0.5rem;
-                margin-right: -0.5rem;
-                max-width: calc(100% + 1rem);
-                width: calc(100% + 1rem);
+                margin-left: 0;
+                margin-right: 0;
+                max-width: 100%;
+                width: 100%;
+                flex: 0 0 auto;
             }
         }
 
