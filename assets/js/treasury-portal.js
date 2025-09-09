@@ -112,16 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const params = new URLSearchParams(window.location.search);
-    const toolName = params.get('tool');
-    if (toolName && document.cookie.includes('portal_access_token=')) {
-        const toolObj = treasuryTechPortal.TREASURY_TOOLS.find(t =>
-            t.name.toLowerCase() === decodeURIComponent(toolName).toLowerCase());
-        if (toolObj) {
-            setTimeout(() => treasuryTechPortal.showToolModal(toolObj), 500);
-        }
-    }
-
 });
         class TreasuryTechPortal {
             constructor() {
@@ -272,10 +262,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.applyViewStyles();
                     this.handleResponsive();
                     window.addEventListener('resize', () => this.handleResponsive());
+                    this.handleToolParam();
                 } catch (error) {
                     console.error('Error fetching tools:', error);
                 } finally {
                     if (loading) loading.style.display = 'none';
+                }
+            }
+
+            handleToolParam() {
+                const params = new URLSearchParams(window.location.search);
+                const toolName = params.get('tool');
+                if (toolName && document.cookie.includes('portal_access_token=')) {
+                    const toolObj = this.TREASURY_TOOLS.find(t =>
+                        t.name.toLowerCase() === decodeURIComponent(toolName).toLowerCase());
+                    if (toolObj) {
+                        setTimeout(() => this.showToolModal(toolObj), 500);
+                    }
                 }
             }
 
