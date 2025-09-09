@@ -8,6 +8,8 @@ class TTP_Data {
     const OPTION_KEY = 'ttp_tools';
     const CACHE_KEY  = 'ttp_tools_cache';
     const CACHE_TTL  = HOUR_IN_SECONDS;
+    const VENDOR_OPTION_KEY = 'ttp_vendors';
+    const VENDOR_CACHE_KEY  = 'ttp_vendors_cache';
 
     /**
      * Retrieve all tools with caching.
@@ -45,7 +47,53 @@ class TTP_Data {
         delete_transient('ttp_tools_cache');
     }
 
+    
     /**
+     * Retrieve all vendors with caching.
+     *
+     * @return array
+     */
+    public static function get_all_vendors() {
+        $vendors = get_transient(self::VENDOR_CACHE_KEY);
+        if ($vendors !== false) {
+            return $vendors;
+        }
+
+        $vendors = get_option(self::VENDOR_OPTION_KEY, []);
+        set_transient(self::VENDOR_CACHE_KEY, $vendors, self::CACHE_TTL);
+        return $vendors;
+    }
+
+    /**
+     * Save the given vendors and clear cache.
+     *
+     * @param array $vendors
+     */
+    public static function save_vendors($vendors) {
+        update_option(self::VENDOR_OPTION_KEY, $vendors);
+        delete_transient(self::VENDOR_CACHE_KEY);
+        // Clear all caches
+        wp_cache_flush();
+        if (function_exists('wp_cache_clear_cache')) {
+            wp_cache_clear_cache();
+        }
+        delete_transient('ttp_vendors_cache');
+    }
+
+    /**
+     * Refresh vendor cache from Airbase.
+     */
+    public static function refresh_vendor_cache() {
+        $data = TTP_Airbase::get_vendors();
+        if (is_wp_error($data)) {
+            return;
+        }
+
+        $vendors = isset($data['vendors']) ? $data['vendors'] : $data;
+        self::save_vendors($vendors);
+    }
+
+/**
      * Load default tools from bundled JSON file.
      *
      * @return array
