@@ -78,6 +78,20 @@ fetch('/wp-json/ttp/v1/tools?search=AI')
 fetch('/wp-json/ttp/v1/tools?has_video=1&per_page=10&page=1')
 ```
 
+
+### Get Vendors
+```
+GET /wp-json/ttp/v1/vendors
+```
+
+#### Response Format
+Array of vendor objects retrieved from Airbase.
+
+#### Example Request
+```
+fetch('/wp-json/ttp/v1/vendors')
+```
+
 ## JavaScript API (Frontend)
 
 ### Main Class: TreasuryTechPortal

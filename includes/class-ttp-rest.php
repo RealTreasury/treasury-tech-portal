@@ -15,6 +15,17 @@ class TTP_Rest {
             'callback' => [__CLASS__, 'get_tools'],
             'permission_callback' => '__return_true'
         ]);
+
+        register_rest_route('ttp/v1', '/vendors', [
+            'methods'  => 'GET',
+            'callback' => [__CLASS__, 'get_vendors'],
+            'permission_callback' => '__return_true'
+        ]);
+    }
+
+    public static function get_vendors($request) {
+        $vendors = TTP_Data::get_all_vendors();
+        return rest_ensure_response($vendors);
     }
 
     public static function get_tools($request) {

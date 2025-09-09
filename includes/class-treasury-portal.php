@@ -23,6 +23,11 @@ class Treasury_Tech_Portal {
         add_action('init', ['TTP_Rest', 'init']);
         add_action('init', ['TTP_Admin', 'init']);
 
+        add_action('ttp_refresh_vendor_cache', ['TTP_Data', 'refresh_vendor_cache']);
+        if (!wp_next_scheduled('ttp_refresh_vendor_cache')) {
+            wp_schedule_event(time(), 'twicedaily', 'ttp_refresh_vendor_cache');
+        }
+
         add_filter('rt_portal_get_vendors', array($this, 'provide_vendors_to_bcb'));
         add_filter('rt_portal_get_sectors', array($this, 'provide_sectors_to_bcb'));
         add_filter('rt_portal_get_vendor_notes', array($this, 'provide_vendor_notes_to_bcb'));
