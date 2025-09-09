@@ -18,6 +18,7 @@ class Treasury_Tech_Portal {
         require_once dirname(__FILE__) . '/class-ttp-data.php';
         require_once dirname(__FILE__) . '/class-ttp-rest.php';
         require_once dirname(__FILE__) . '/class-ttp-admin.php';
+        require_once dirname(__FILE__) . '/class-ttp-airbase.php';
 
         add_action('init', ['TTP_Rest', 'init']);
         add_action('init', ['TTP_Admin', 'init']);

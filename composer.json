@@ -1,0 +1,9 @@
+{
+    "name": "treasury-tech-portal/treasury-tech-portal",
+    "type": "wordpress-plugin",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "brain/monkey": "^2.6"
+    }
+}
