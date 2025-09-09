@@ -20,6 +20,9 @@ debug.log
 # Node modules (if any)
 node_modules/
 
+# Composer dependencies
+vendor/
+
 # Environment files
 .env
 .env.local
@@ -30,6 +33,7 @@ node_modules/
 .pytest_cache/
 __pycache__/
 *.pyc
+.phpunit.result.cache
 
 # Codex/AI tool artifacts
 .codex-*
