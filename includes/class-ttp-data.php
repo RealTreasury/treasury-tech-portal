@@ -65,19 +65,19 @@ class TTP_Data {
     }
 
     /**
-     * Save the given vendors and clear cache.
+     * Save the given vendors and clear plugin cache when data changes.
      *
      * @param array $vendors
      */
     public static function save_vendors($vendors) {
+        $current = get_option(self::VENDOR_OPTION_KEY, []);
+
+        if (wp_json_encode($vendors) === wp_json_encode($current)) {
+            return;
+        }
+
         update_option(self::VENDOR_OPTION_KEY, $vendors);
         delete_transient(self::VENDOR_CACHE_KEY);
-        // Clear all caches
-        wp_cache_flush();
-        if (function_exists('wp_cache_clear_cache')) {
-            wp_cache_clear_cache();
-        }
-        delete_transient('ttp_vendors_cache');
     }
 
     /**
