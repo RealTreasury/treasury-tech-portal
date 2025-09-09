@@ -21,6 +21,50 @@ class TTP_Admin {
             'dashicons-hammer',
             56
         );
+
+        add_submenu_page(
+            'treasury-tools',
+            'Airbase Settings',
+            'Airbase Settings',
+            'manage_options',
+            'treasury-airbase-settings',
+            [__CLASS__, 'render_airbase_settings']
+        );
+    }
+
+    public static function render_airbase_settings() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            check_admin_referer('ttp_airbase_settings');
+            update_option('ttp_airbase_api_key', sanitize_text_field($_POST['ttp_airbase_api_key'] ?? ''));
+            update_option('ttp_airbase_base_url', esc_url_raw($_POST['ttp_airbase_base_url'] ?? ''));
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'treasury-tech-portal') . '</p></div>';
+        }
+
+        $api_key = get_option('ttp_airbase_api_key', '');
+        $base_url = get_option('ttp_airbase_base_url', '');
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e('Airbase Settings', 'treasury-tech-portal'); ?></h1>
+            <form method="post">
+                <?php wp_nonce_field('ttp_airbase_settings'); ?>
+                <table class="form-table" role="presentation">
+                    <tr>
+                        <th scope="row"><label for="ttp_airbase_api_key"><?php esc_html_e('API Key', 'treasury-tech-portal'); ?></label></th>
+                        <td><input name="ttp_airbase_api_key" type="text" id="ttp_airbase_api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="ttp_airbase_base_url"><?php esc_html_e('Base URL', 'treasury-tech-portal'); ?></label></th>
+                        <td><input name="ttp_airbase_base_url" type="text" id="ttp_airbase_base_url" value="<?php echo esc_attr($base_url); ?>" class="regular-text" /></td>
+                    </tr>
+                </table>
+                <?php submit_button(); ?>
+            </form>
+        </div>
+        <?php
     }
 
     public static function render_page() {
