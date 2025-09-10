@@ -88,16 +88,34 @@ class TTP_Data {
         if (is_wp_error($data)) {
             return;
         }
+        $vendors = self::normalize_vendor_response($data);
+        self::save_vendors($vendors);
+    }
 
-        if (isset($data['records'])) {
-            $vendors = $data['records'];
-        } elseif (isset($data['products'])) {
-            $vendors = $data['products'];
-        } else {
-            $vendors = $data;
+    /**
+     * Normalize Airbase responses into a vendor array.
+     *
+     * @param mixed $data Raw API response.
+     * @return array
+     */
+    private static function normalize_vendor_response($data) {
+        if (!is_array($data)) {
+            return [];
         }
 
-        self::save_vendors($vendors);
+        $known_keys = ['products', 'records', 'vendors'];
+
+        foreach ($known_keys as $key) {
+            if (isset($data[$key]) && is_array($data[$key])) {
+                return $data[$key];
+            }
+        }
+
+        if (isset($data['data']) && is_array($data['data'])) {
+            return self::normalize_vendor_response($data['data']);
+        }
+
+        return $data;
     }
 
 /**
