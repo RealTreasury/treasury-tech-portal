@@ -88,8 +88,16 @@ class TTP_Data {
         if (is_wp_error($data)) {
             return;
         }
-
         $vendors = isset($data['vendors']) ? $data['vendors'] : $data;
+
+        foreach ($vendors as &$vendor) {
+            if (isset($vendor['logo_url']) && !isset($vendor['logoUrl'])) {
+                $vendor['logoUrl'] = $vendor['logo_url'];
+                unset($vendor['logo_url']);
+            }
+        }
+        unset($vendor);
+
         self::save_vendors($vendors);
     }
 
