@@ -5,9 +5,14 @@ if (!defined('ABSPATH')) {
 }
 
 class TTP_Airbase {
-    const OPTION_TOKEN    = 'ttp_airbase_token';
-    const OPTION_BASE_URL = 'ttp_airbase_base_url';
-    const API_PATH        = '/v2/products';
+    const OPTION_TOKEN     = 'ttp_airbase_token';
+    const OPTION_BASE_URL  = 'ttp_airbase_base_url';
+    const OPTION_BASE_ID   = 'ttp_airbase_base_id';
+    const OPTION_API_PATH  = 'ttp_airbase_api_path';
+
+    const DEFAULT_BASE_URL = 'https://api.airtable.com/v0';
+    const DEFAULT_BASE_ID  = 'appJdxdz3310aJ3Fd';
+    const DEFAULT_API_PATH = 'tblOJ6yL9Jw5ZTdRc';
 
     /**
      * Retrieve vendors from Airbase API.
@@ -20,11 +25,22 @@ class TTP_Airbase {
             return new WP_Error('missing_token', __('Airbase API token not configured.', 'treasury-tech-portal'));
         }
 
-        $base_url = get_option( self::OPTION_BASE_URL, 'https://api.airbase.io' );
-        if ( empty( $base_url ) ) {
-            $base_url = 'https://api.airbase.io';
+        $base_url = get_option(self::OPTION_BASE_URL, self::DEFAULT_BASE_URL);
+        if (empty($base_url)) {
+            $base_url = self::DEFAULT_BASE_URL;
         }
-        $url      = rtrim( $base_url, '/' ) . self::API_PATH;
+
+        $base_id = get_option(self::OPTION_BASE_ID, self::DEFAULT_BASE_ID);
+        if (empty($base_id)) {
+            $base_id = self::DEFAULT_BASE_ID;
+        }
+
+        $api_path = get_option(self::OPTION_API_PATH, self::DEFAULT_API_PATH);
+        if (empty($api_path)) {
+            $api_path = self::DEFAULT_API_PATH;
+        }
+
+        $url = rtrim($base_url, '/') . '/' . trim($base_id, '/') . '/' . ltrim($api_path, '/');
 
         $args = [
             'headers' => [

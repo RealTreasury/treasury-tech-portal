@@ -7,6 +7,11 @@ The following is a condensed reference for developers working with the API.
 - **Base ID**: `appJdxdz3310aJ3Fd`
 - **Products Table ID**: `tblOJ6yL9Jw5ZTdRc`
 
+### Plugin Configuration Options
+- `ttp_airbase_base_url` – Base API URL. Default: `https://api.airtable.com/v0`
+- `ttp_airbase_base_id` – Airtable base identifier. Default: `appJdxdz3310aJ3Fd`
+- `ttp_airbase_api_path` – Table/endpoint path. Default: `tblOJ6yL9Jw5ZTdRc`
+
 ## Authentication
 All requests require a bearer token:
 
@@ -44,6 +49,8 @@ Retrieve records from the Products table. Only non-empty fields are returned.
 curl "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products?maxRecords=3&view=Grid%20view" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
+
+Responses include a top-level `records` array containing matching rows.
 
 Common query parameters:
 - `fields[]`: restrict returned fields
