@@ -57,7 +57,7 @@ new MutationObserver(() => {
     attributeFilter: ['style', 'class']
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     treasuryTechPortal = new TreasuryTechPortal();
     
     // Ensure iframe height is set after content loads
@@ -115,10 +115,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const toolName = params.get('tool');
     if (toolName && document.cookie.includes('portal_access_token=')) {
-        const toolObj = treasuryTechPortal.TREASURY_TOOLS.find(t =>
-            t.name.toLowerCase() === decodeURIComponent(toolName).toLowerCase());
-        if (toolObj) {
-            setTimeout(() => treasuryTechPortal.showToolModal(toolObj), 500);
+        try {
+            await treasuryTechPortal.toolsLoaded;
+            const toolObj = treasuryTechPortal.TREASURY_TOOLS.find(t =>
+                t.name.toLowerCase() === decodeURIComponent(toolName).toLowerCase());
+            if (toolObj) {
+                setTimeout(() => treasuryTechPortal.showToolModal(toolObj), 500);
+            }
+        } catch (err) {
+            console.error('Failed to load tools for deep link:', err);
         }
     }
 
@@ -126,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         class TreasuryTechPortal {
             constructor() {
                 this.TREASURY_TOOLS = [];
-                this.fetchTools();
+                this.toolsLoaded = this.fetchTools();
 
                 // Category information with videos
                 this.CATEGORY_INFO = {
