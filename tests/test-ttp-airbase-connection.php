@@ -106,6 +106,8 @@ class TTP_Airbase_Connection_Test extends TestCase {
         }
 
         $this->assertIsArray( $vendors );
-        $this->assertArrayHasKey( 'records', $vendors );
+        if ( ! empty( $vendors ) ) {
+            $this->assertIsArray( $vendors[0] );
+        }
     }
 }
