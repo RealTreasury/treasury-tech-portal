@@ -308,7 +308,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     const response = await fetch(TTP_DATA.rest_url);
                     const data = await response.json();
-                    this.TREASURY_TOOLS = data;
+                    this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
+                        const categoryField = vendor.parent_category || vendor.category || '';
+                        const category = Array.isArray(categoryField) ? categoryField[0] : categoryField;
+                        return {
+                            name: vendor.name || '',
+                            desc: vendor.status || '',
+                            category: (category || '').toUpperCase(),
+                            videoUrl: vendor.video_url || '',
+                            websiteUrl: vendor.website || '',
+                            logoUrl: vendor.logo_url || '',
+                            features: vendor.capabilities || [],
+                            target: ''
+                        };
+                    });
                     this.assignTags();
                     this.updateCounts();
                     this.populateCategoryTags();

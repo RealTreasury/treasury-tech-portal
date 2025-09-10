@@ -64,7 +64,7 @@ class Treasury_Tech_Portal {
             'treasury-tech-portal-js',
             'TTP_DATA',
             [
-                'rest_url'  => esc_url_raw(rest_url('ttp/v1/tools')),
+                'rest_url'  => esc_url_raw(rest_url('ttp/v1/vendors')),
                 'plugin_url' => esc_url_raw($plugin_url)
             ]
         );
