@@ -80,7 +80,12 @@ class TTP_Admin {
                     </tr>
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>"><?php esc_html_e('Base URL', 'treasury-tech-portal'); ?></label></th>
-                        <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" value="<?php echo esc_attr($base_url); ?>" class="regular-text" /></td>
+                        <td>
+                            <input name="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" value="<?php echo esc_attr($base_url); ?>" class="regular-text" placeholder="<?php echo esc_attr(TTP_Airbase::DEFAULT_BASE_URL); ?>" />
+                            <?php if (empty($base_url) || !wp_http_validate_url($base_url)) : ?>
+                                <p class="description" style="color:#b32d2e;"><?php esc_html_e('Please enter a valid base URL, e.g., https://api.airtable.com/v0.', 'treasury-tech-portal'); ?></p>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_ID); ?>"><?php esc_html_e('Base ID', 'treasury-tech-portal'); ?></label></th>

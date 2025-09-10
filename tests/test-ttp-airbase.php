@@ -8,6 +8,10 @@ require_once __DIR__ . '/../includes/class-ttp-airbase.php';
 class TTP_Airbase_Test extends TestCase {
     protected function setUp(): void {
         \Brain\Monkey\setUp();
+        when('wp_parse_url')->alias('parse_url');
+        when('wp_http_validate_url')->alias(function ($url) {
+            return filter_var($url, FILTER_VALIDATE_URL);
+        });
     }
 
     protected function tearDown(): void {
@@ -81,5 +85,44 @@ class TTP_Airbase_Test extends TestCase {
 
         $result = TTP_Airbase::get_vendors();
         $this->assertInstanceOf(WP_Error::class, $result);
+    }
+
+    public function test_appends_v0_when_base_url_has_no_path() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return 'https://api.airtable.com';
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $expected_url = 'https://api.airtable.com/v0/base123/tblXYZ';
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
+            $this->assertSame($expected_url, $url);
+            return [
+                'response' => ['code' => 200],
+                'body'     => json_encode(['records' => []]),
+            ];
+        });
+
+        $data = TTP_Airbase::get_vendors();
+        $this->assertIsArray($data);
     }
 }

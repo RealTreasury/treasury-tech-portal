@@ -63,6 +63,18 @@ if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
     }
 }
 
+if ( ! function_exists( 'wp_parse_url' ) ) {
+    function wp_parse_url( $url ) {
+        return parse_url( $url );
+    }
+}
+
+if ( ! function_exists( 'wp_http_validate_url' ) ) {
+    function wp_http_validate_url( $url ) {
+        return filter_var( $url, FILTER_VALIDATE_URL );
+    }
+}
+
 class TTP_Airbase_Connection_Test extends TestCase {
     public function test_connects_to_airbase_api() {
         $token = getenv( 'AIRBASE_API_TOKEN' );
