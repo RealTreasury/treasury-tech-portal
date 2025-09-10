@@ -8,7 +8,7 @@ A WordPress plugin that provides an interactive platform for discovering and com
 ## Quick Reference for Code Changes
 
 ### Most Common Modification Points
-1. **Tool Data Structure**: `data/tools.json` - Adding/modifying tool properties
+1. **Vendor Data Source**: `TTP_Data::get_all_vendors()` - Adjust vendor properties
 2. **UI Components**: `assets/js/treasury-portal.js` - `TreasuryTechPortal` class methods
 3. **Styling**: `assets/css/treasury-portal.css` - `.treasury-portal` namespaced styles
 4. **Backend Logic**: `includes/class-ttp-data.php` - Data management and caching
@@ -36,7 +36,7 @@ A WordPress plugin that provides an interactive platform for discovering and com
 - **State Management**: All stored in class properties (no external state management)
 
 ### Data Structure & Modification Patterns
-**Tool Object Schema** (modify in `data/tools.json`):
+**Vendor Object Schema** (retrieved via API):
 ```json
 {
   "name": "string (required)",
@@ -71,7 +71,6 @@ A WordPress plugin that provides an interactive platform for discovering and com
 │   ├── css/treasury-portal.css       # Main stylesheet
 │   ├── js/treasury-portal.js         # Main JavaScript
 │   └── js/treasury-portal.min.js     # Minified version
-├── data/tools.json                   # Default tool data
 ├── templates/admin-page.php          # Admin interface
 ├── .wordpress-com/                   # WordPress.com deployment
 └── scripts/                          # Build/test scripts
@@ -81,7 +80,7 @@ A WordPress plugin that provides an interactive platform for discovering and com
 
 ### Adding New Features to Tool Cards
 1. **Backend**: Modify `TTP_Admin::save_tool()` to handle new field
-2. **Data**: Add to tool objects in `data/tools.json`
+2. **Data**: Update vendor properties via API or admin interface
 3. **Frontend**: Update `createToolCard()` method to display new feature
 4. **Admin**: Add form field to `templates/admin-page.php`
 

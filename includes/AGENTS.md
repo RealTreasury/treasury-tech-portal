@@ -258,7 +258,7 @@ if (!wp_http_validate_url($url)) {
 public static function export_tools() {
     $tools = TTP_Data::get_all_tools();
     header('Content-Type: application/json');
-    header('Content-Disposition: attachment; filename="tools.json"');
+    header('Content-Disposition: attachment; filename="vendors.json"');
     echo wp_json_encode($tools);
     exit;
 }

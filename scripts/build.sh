@@ -34,7 +34,6 @@ required_files=(
     "WORDPRESS-COM-DEPLOYMENT.md"
     ".wordpress-com/config.json"
     ".wordpress-com/deployment.yml"
-    "data/tools.json"
 )
 
 for file in "${required_files[@]}"; do

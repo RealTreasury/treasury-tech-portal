@@ -286,7 +286,7 @@ foreach ($tools as $tool) {
 **Solutions**:
 1. **Data Migration Needed**: Run data migration for new properties
 2. **Validation Missing**: Add validation in `TTP_Admin::save_tool()`
-3. **Corrupted Data**: Restore from backup or `data/tools.json`
+3. **Corrupted Data**: Refresh vendor cache via `TTP_Data::refresh_vendor_cache()` or restore from backup
 
 ### Search Results Incorrect
 **Symptoms**: Search returns wrong tools, missing expected results
@@ -336,9 +336,8 @@ delete_option('ttp_tools');
 delete_transient('ttp_tools_cache');
 wp_cache_flush();
 
-// 4. Restore default data
-$default_tools = json_decode(file_get_contents(TTP_DIR . 'data/tools.json'), true);
-TTP_Data::save_tools($default_tools);
+// 4. Refresh vendor data from API
+TTP_Data::refresh_vendor_cache();
 ```
 
 ### Rollback Deployment

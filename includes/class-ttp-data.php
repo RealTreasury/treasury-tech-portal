@@ -22,10 +22,7 @@ class TTP_Data {
             return $tools;
         }
 
-        $tools = get_option(self::OPTION_KEY);
-        if (empty($tools)) {
-            $tools = self::load_default_tools();
-        }
+        $tools = self::get_all_vendors();
 
         set_transient(self::CACHE_KEY, $tools, self::CACHE_TTL);
         return $tools;
@@ -140,21 +137,6 @@ class TTP_Data {
         }
 
         return $data;
-    }
-
-/**
-     * Load default tools from bundled JSON file.
-     *
-     * @return array
-     */
-    private static function load_default_tools() {
-        $file = dirname(__DIR__) . '/data/tools.json';
-        if (!file_exists($file)) {
-            return [];
-        }
-        $json = file_get_contents($file);
-        $data = json_decode($json, true);
-        return is_array($data) ? $data : [];
     }
 
     /**
