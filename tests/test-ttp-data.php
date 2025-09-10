@@ -22,11 +22,13 @@ class TTP_Data_Test extends TestCase {
         $record = [
             'id' => 'rec1',
             'fields' => [
-                'Product Name'   => 'Sample Product',
-                'Linked Vendor'  => 'Acme Corp',
-                'Product Website'=> 'https://example.com',
-                'Status'         => 'Active',
-                'Hosted Type'    => ['Cloud'],
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Product Video'   => 'example.com/video',
+                'Logo URL'        => 'example.com/logo.png',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
             ],
         ];
 
@@ -43,20 +45,21 @@ class TTP_Data_Test extends TestCase {
 
         $expected = [
             [
-                'name'        => 'Sample Product',
-                'vendor'      => 'Acme Corp',
-                'website'     => 'https://example.com',
-                'status'      => 'Active',
-                'hosted_type' => ['Cloud'],
-                'domain'      => [],
-                'regions'     => [],
-                'sub_categories' => [],
+                'name'            => 'Sample Product',
+                'vendor'          => 'Acme Corp',
+                'website'         => 'https://example.com',
+                'video_url'       => 'https://example.com/video',
+                'status'          => 'Active',
+                'hosted_type'     => ['Cloud'],
+                'domain'          => [],
+                'regions'         => [],
+                'sub_categories'  => [],
                 'parent_category' => '',
-                'capabilities' => [],
-                'logo_url'    => '',
-                'hq_location' => '',
-                'founded_year'=> '',
-                'founders'    => '',
+                'capabilities'    => [],
+                'logo_url'        => 'https://example.com/logo.png',
+                'hq_location'     => '',
+                'founded_year'    => '',
+                'founders'        => '',
             ],
         ];
 

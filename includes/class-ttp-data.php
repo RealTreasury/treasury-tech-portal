@@ -96,20 +96,21 @@ class TTP_Data {
             $fields = isset($record['fields']) && is_array($record['fields']) ? $record['fields'] : $record;
 
             $vendors[] = array(
-                'name'          => $fields['Product Name'] ?? '',
-                'vendor'        => $fields['Linked Vendor'] ?? '',
-                'website'       => $fields['Product Website'] ?? '',
-                'status'        => $fields['Status'] ?? '',
-                'hosted_type'   => $fields['Hosted Type'] ?? array(),
-                'domain'        => $fields['Domain'] ?? array(),
-                'regions'       => $fields['Regions'] ?? array(),
-                'sub_categories'=> $fields['Sub Categories'] ?? array(),
+                'name'            => $fields['Product Name'] ?? '',
+                'vendor'          => $fields['Linked Vendor'] ?? '',
+                'website'         => self::normalize_url($fields['Product Website'] ?? ''),
+                'video_url'       => self::normalize_url($fields['Product Video'] ?? ''),
+                'status'          => $fields['Status'] ?? '',
+                'hosted_type'     => $fields['Hosted Type'] ?? array(),
+                'domain'          => $fields['Domain'] ?? array(),
+                'regions'         => $fields['Regions'] ?? array(),
+                'sub_categories'  => $fields['Sub Categories'] ?? array(),
                 'parent_category' => $fields['Parent Category'] ?? '',
-                'capabilities'  => $fields['Capabilities'] ?? array(),
-                'logo_url'      => $fields['Logo URL'] ?? '',
-                'hq_location'   => $fields['HQ Location'] ?? '',
-                'founded_year'  => $fields['Founded Year'] ?? '',
-                'founders'      => $fields['Founders'] ?? '',
+                'capabilities'    => $fields['Capabilities'] ?? array(),
+                'logo_url'        => self::normalize_url($fields['Logo URL'] ?? ''),
+                'hq_location'     => $fields['HQ Location'] ?? '',
+                'founded_year'    => $fields['Founded Year'] ?? '',
+                'founders'        => $fields['Founders'] ?? '',
             );
         }
 
@@ -140,6 +141,36 @@ class TTP_Data {
         }
 
         return $data;
+    }
+
+    /**
+     * Normalize and sanitize a URL value.
+     *
+     * Ensures a scheme is present and validates via WordPress utilities when
+     * available. Returns an empty string for invalid URLs.
+     *
+     * @param string $url Raw URL value.
+     * @return string Normalized URL or empty string if invalid.
+     */
+    private static function normalize_url($url) {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return '';
+        }
+
+        if (strpos($url, '://') === false) {
+            $url = 'https://' . ltrim($url, '/');
+        }
+
+        if (function_exists('esc_url_raw')) {
+            $url = esc_url_raw($url);
+        }
+
+        if (function_exists('wp_http_validate_url') && !wp_http_validate_url($url)) {
+            return '';
+        }
+
+        return $url;
     }
 
 /**
