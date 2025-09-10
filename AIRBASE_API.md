@@ -37,6 +37,8 @@ normalizes them into a single vendor array. The following formats are supported:
 - `[ ... ]` (top-level array of vendors)
 
 Any of these structures will be cached as a plain array of vendors.
+During normalization the plugin stores each record's `Product Name`
+(`fld2hocSMtPQYWfPa`) as the vendor `name` value.
 
 ## Products Table Fields
 | Field | Type | Notes |

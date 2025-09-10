@@ -22,6 +22,8 @@ Add the portal to any page or post using the shortcode:
 
 To pull vendor data from Airbase, configure the API token, base URL, base ID,
 and API path under **Treasury Tools → Airbase Settings** in the WordPress admin.
+The plugin requests all records from the **Products** table and stores each
+record's `Product Name` as the vendor name used throughout the portal.
 
 == Installation ==
 

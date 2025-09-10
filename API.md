@@ -87,6 +87,14 @@ GET /wp-json/ttp/v1/vendors
 #### Response Format
 Array of vendor objects retrieved from Airbase.
 
+Each vendor object contains:
+```json
+{
+  "id": "Airtable record ID",
+  "name": "Product Name field"
+}
+```
+
 See [AIRBASE_API.md](AIRBASE_API.md) for detailed vendor API documentation.
 The integration relies on four WordPress options to configure API access:
 `ttp_airbase_token`, `ttp_airbase_base_url`, `ttp_airbase_base_id`, and `ttp_airbase_api_path`.

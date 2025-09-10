@@ -10,6 +10,7 @@ class TTP_Data {
     const CACHE_TTL  = HOUR_IN_SECONDS;
     const VENDOR_OPTION_KEY = 'ttp_vendors';
     const VENDOR_CACHE_KEY  = 'ttp_vendors_cache';
+    const FIELD_PRODUCT_NAME = 'fld2hocSMtPQYWfPa';
 
     /**
      * Retrieve all tools with caching.
@@ -107,7 +108,7 @@ class TTP_Data {
 
         foreach ($known_keys as $key) {
             if (isset($data[$key]) && is_array($data[$key])) {
-                return $data[$key];
+                return self::map_vendor_records($data[$key]);
             }
         }
 
@@ -115,7 +116,43 @@ class TTP_Data {
             return self::normalize_vendor_response($data['data']);
         }
 
-        return $data;
+        return self::map_vendor_records($data);
+    }
+
+    /**
+     * Map Airtable record structures to a vendor array.
+     *
+     * @param array $records
+     * @return array
+     */
+    private static function map_vendor_records($records) {
+        if (!is_array($records)) {
+            return [];
+        }
+
+        $vendors = [];
+        foreach ($records as $record) {
+            if (!is_array($record)) {
+                continue;
+            }
+
+            $id   = $record['id'] ?? '';
+            $name = '';
+
+            if (isset($record['fields']) && is_array($record['fields'])) {
+                $fields = $record['fields'];
+                $name   = $fields[self::FIELD_PRODUCT_NAME] ?? ($fields['Product Name'] ?? '');
+            } else {
+                $name = $record['name'] ?? '';
+            }
+
+            $vendors[] = [
+                'id'   => $id,
+                'name' => $name,
+            ];
+        }
+
+        return $vendors;
     }
 
 /**

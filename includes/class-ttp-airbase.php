@@ -40,8 +40,6 @@ class TTP_Airbase {
             $api_path = self::DEFAULT_API_PATH;
         }
 
-        $url = rtrim($base_url, '/') . '/' . trim($base_id, '/') . '/' . ltrim($api_path, '/');
-
         $args = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
@@ -50,22 +48,37 @@ class TTP_Airbase {
             'timeout' => 20,
         ];
 
-        $response = wp_remote_get($url, $args);
-        if (is_wp_error($response)) {
-            return $response;
-        }
+        $records = [];
+        $offset  = null;
+        do {
+            $url = rtrim($base_url, '/') . '/' . trim($base_id, '/') . '/' . ltrim($api_path, '/');
+            if (!empty($offset)) {
+                $url .= '?offset=' . rawurlencode($offset);
+            }
 
-        $code = wp_remote_retrieve_response_code($response);
-        if (200 !== $code) {
-            return new WP_Error('api_error', sprintf('Airbase API returned status %d', $code));
-        }
+            $response = wp_remote_get($url, $args);
+            if (is_wp_error($response)) {
+                return $response;
+            }
 
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            return new WP_Error('invalid_json', __('Unable to parse Airbase API response.', 'treasury-tech-portal'));
-        }
+            $code = wp_remote_retrieve_response_code($response);
+            if (200 !== $code) {
+                return new WP_Error('api_error', sprintf('Airbase API returned status %d', $code));
+            }
 
-        return $data;
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return new WP_Error('invalid_json', __('Unable to parse Airbase API response.', 'treasury-tech-portal'));
+            }
+
+            if (isset($data['records']) && is_array($data['records'])) {
+                $records = array_merge($records, $data['records']);
+            }
+
+            $offset = isset($data['offset']) ? $data['offset'] : null;
+        } while (!empty($offset));
+
+        return ['records' => $records];
     }
 }

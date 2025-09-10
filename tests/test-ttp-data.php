@@ -20,7 +20,7 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_handles_records_response() {
         \Patchwork\replace('TTP_Airbase::get_vendors', function () {
-            return ['records' => [ ['id' => 1, 'name' => 'Vendor R'] ]];
+            return ['records' => [ ['id' => 1, 'fields' => [ TTP_Data::FIELD_PRODUCT_NAME => 'Vendor R' ] ] ]];
         });
 
         $captured = null;
