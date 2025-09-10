@@ -17,7 +17,7 @@ class TTP_Airbase_Test extends TestCase {
     public function test_request_includes_authorization_header() {
         expect('get_option')
             ->once()
-            ->with('ttp_airbase_token')
+            ->with(TTP_Airbase::OPTION_TOKEN)
             ->andReturn('abc123');
 
         when('is_wp_error')->alias(function ($thing) {
@@ -49,7 +49,7 @@ class TTP_Airbase_Test extends TestCase {
     public function test_returns_wp_error_on_request_failure() {
         expect('get_option')
             ->once()
-            ->with('ttp_airbase_token')
+            ->with(TTP_Airbase::OPTION_TOKEN)
             ->andReturn('abc123');
 
         expect('wp_remote_get')
@@ -67,7 +67,7 @@ class TTP_Airbase_Test extends TestCase {
     public function test_returns_wp_error_when_token_missing() {
         expect('get_option')
             ->once()
-            ->with('ttp_airbase_token')
+            ->with(TTP_Airbase::OPTION_TOKEN)
             ->andReturn('');
 
         $result = TTP_Airbase::get_vendors();
