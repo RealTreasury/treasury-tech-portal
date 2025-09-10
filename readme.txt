@@ -20,8 +20,33 @@ Add the portal to any page or post using the shortcode:
 
 [treasury_portal]
 
-To pull vendor data from Airbase, configure the API token, base URL, base ID,
-and API path under **Treasury Tools → Airbase Settings** in the WordPress admin.
+=== Airbase Vendor Sync ===
+
+1. In the WordPress admin go to **Treasury Tools → Airbase Settings** and set:
+   - **API Token** (`ttp_airbase_token`)
+   - **Base ID**
+   - **Products Table ID**
+2. Save the settings.
+3. To fetch vendors immediately visit **Treasury Tools → Vendors** and click **Refresh Vendors**;
+   otherwise a scheduled event updates the cache twice daily.
+4. Airbase fields map to the following keys in the stored vendor list:
+   - `Product Name` → `name`
+   - `Linked Vendor` → `vendor`
+   - `Product Website` → `website`
+   - `Status` → `status`
+   - `Hosted Type` → `hosted_type`
+   - `Domain` → `domain`
+   - `Regions` → `regions`
+   - `Sub Categories` → `sub_categories`
+   - `Parent Category` → `parent_category`
+   - `Capabilities` → `capabilities`
+   - `Logo URL` → `logo_url`
+   - `HQ Location` → `hq_location`
+   - `Founded Year` → `founded_year`
+   - `Founders` → `founders`
+   The refresh stores a normalized array accessible via `TTP_Data::get_all_vendors()`.
+
+See [AIRBASE_API.md](AIRBASE_API.md) for detailed API reference.
 
 == Installation ==
 
