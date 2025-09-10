@@ -30,7 +30,7 @@ class TTP_Airbase_Test extends TestCase {
         });
 
         $self         = $this;
-        $expected_url = 'https://api.airbase.com' . TTP_Airbase::API_PATH;
+        $expected_url = 'https://api.airbase.io' . TTP_Airbase::API_PATH;
         expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self, $expected_url) {
             $self->assertSame($expected_url, $url);
             $self->assertArrayHasKey('headers', $args);
