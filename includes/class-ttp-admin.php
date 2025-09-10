@@ -52,6 +52,8 @@ class TTP_Admin {
             check_admin_referer('ttp_airbase_settings');
             update_option(TTP_Airbase::OPTION_TOKEN, sanitize_text_field($_POST[TTP_Airbase::OPTION_TOKEN] ?? ''));
             update_option(TTP_Airbase::OPTION_BASE_URL, esc_url_raw($_POST[TTP_Airbase::OPTION_BASE_URL] ?? ''));
+            update_option(TTP_Airbase::OPTION_BASE_ID, sanitize_text_field($_POST[TTP_Airbase::OPTION_BASE_ID] ?? ''));
+            update_option(TTP_Airbase::OPTION_API_PATH, sanitize_text_field($_POST[TTP_Airbase::OPTION_API_PATH] ?? ''));
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'treasury-tech-portal') . '</p></div>';
         }
 
@@ -63,7 +65,9 @@ class TTP_Admin {
         }
 
         $api_token = get_option(TTP_Airbase::OPTION_TOKEN, '');
-        $base_url = get_option(TTP_Airbase::OPTION_BASE_URL, '');
+        $base_url  = get_option(TTP_Airbase::OPTION_BASE_URL, '');
+        $base_id   = get_option(TTP_Airbase::OPTION_BASE_ID, '');
+        $api_path  = get_option(TTP_Airbase::OPTION_API_PATH, '');
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Airbase Settings', 'treasury-tech-portal'); ?></h1>
@@ -77,6 +81,14 @@ class TTP_Admin {
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>"><?php esc_html_e('Base URL', 'treasury-tech-portal'); ?></label></th>
                         <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" value="<?php echo esc_attr($base_url); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_ID); ?>"><?php esc_html_e('Base ID', 'treasury-tech-portal'); ?></label></th>
+                        <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_ID); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_ID); ?>" value="<?php echo esc_attr($base_id); ?>" class="regular-text" /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_API_PATH); ?>"><?php esc_html_e('API Path', 'treasury-tech-portal'); ?></label></th>
+                        <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_API_PATH); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_API_PATH); ?>" value="<?php echo esc_attr($api_path); ?>" class="regular-text" /></td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>

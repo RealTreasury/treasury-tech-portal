@@ -8,9 +8,12 @@ The following is a condensed reference for developers working with the API.
 - **Products Table ID**: `tblOJ6yL9Jw5ZTdRc`
 
 ### Plugin Configuration Options
+- `ttp_airbase_token` – API token used for authentication.
 - `ttp_airbase_base_url` – Base API URL. Default: `https://api.airtable.com/v0`
 - `ttp_airbase_base_id` – Airtable base identifier. Default: `appJdxdz3310aJ3Fd`
 - `ttp_airbase_api_path` – Table/endpoint path. Default: `tblOJ6yL9Jw5ZTdRc`
+
+These options are configurable from the **Airbase Settings** page in the WordPress admin.
 
 ## Authentication
 All requests require a bearer token:
