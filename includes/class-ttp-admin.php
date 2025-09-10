@@ -10,6 +10,7 @@ class TTP_Admin {
         add_action('admin_post_ttp_save_tool', [__CLASS__, 'save_tool']);
         add_action('admin_post_ttp_delete_tool', [__CLASS__, 'delete_tool']);
         add_action('admin_post_ttp_refresh_vendors', [__CLASS__, 'refresh_vendors']);
+        add_action('admin_post_ttp_test_airbase', [__CLASS__, 'test_airbase_connection']);
     }
 
     public static function register_menu() {
@@ -54,6 +55,13 @@ class TTP_Admin {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'treasury-tech-portal') . '</p></div>';
         }
 
+        if (isset($_GET['test_success'])) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Airbase connection successful.', 'treasury-tech-portal') . '</p></div>';
+        } elseif (isset($_GET['test_error'])) {
+            $message = sanitize_text_field(wp_unslash($_GET['test_error']));
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(sprintf(__('Airbase connection failed: %s', 'treasury-tech-portal'), $message)) . '</p></div>';
+        }
+
         $api_token = get_option(TTP_Airbase::OPTION_TOKEN, '');
         $base_url = get_option('ttp_airbase_base_url', '');
         ?>
@@ -72,6 +80,11 @@ class TTP_Admin {
                     </tr>
                 </table>
                 <?php submit_button(); ?>
+            </form>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <?php wp_nonce_field('ttp_test_airbase'); ?>
+                <input type="hidden" name="action" value="ttp_test_airbase" />
+                <?php submit_button(__('Test Connection', 'treasury-tech-portal'), 'secondary'); ?>
             </form>
         </div>
         <?php
@@ -194,6 +207,22 @@ class TTP_Admin {
         check_admin_referer('ttp_refresh_vendors');
         TTP_Data::refresh_vendor_cache();
         wp_redirect(admin_url('admin.php?page=treasury-vendors&refreshed=1'));
+        exit;
+    }
+
+    public static function test_airbase_connection() {
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
+        }
+        check_admin_referer('ttp_test_airbase');
+        $result = TTP_Airbase::get_vendors();
+        $url    = admin_url('admin.php?page=treasury-airbase-settings');
+        if (is_wp_error($result)) {
+            $url = add_query_arg('test_error', rawurlencode($result->get_error_message()), $url);
+        } else {
+            $url = add_query_arg('test_success', 1, $url);
+        }
+        wp_redirect($url);
         exit;
     }
 }
