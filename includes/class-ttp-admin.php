@@ -51,7 +51,7 @@ class TTP_Admin {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             check_admin_referer('ttp_airbase_settings');
             update_option(TTP_Airbase::OPTION_TOKEN, sanitize_text_field($_POST[TTP_Airbase::OPTION_TOKEN] ?? ''));
-            update_option('ttp_airbase_base_url', esc_url_raw($_POST['ttp_airbase_base_url'] ?? ''));
+            update_option(TTP_Airbase::OPTION_BASE_URL, esc_url_raw($_POST[TTP_Airbase::OPTION_BASE_URL] ?? ''));
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Settings saved.', 'treasury-tech-portal') . '</p></div>';
         }
 
@@ -63,7 +63,7 @@ class TTP_Admin {
         }
 
         $api_token = get_option(TTP_Airbase::OPTION_TOKEN, '');
-        $base_url = get_option('ttp_airbase_base_url', '');
+        $base_url = get_option(TTP_Airbase::OPTION_BASE_URL, '');
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Airbase Settings', 'treasury-tech-portal'); ?></h1>
@@ -75,8 +75,8 @@ class TTP_Admin {
                         <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" value="<?php echo esc_attr($api_token); ?>" class="regular-text" /></td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="ttp_airbase_base_url"><?php esc_html_e('Base URL', 'treasury-tech-portal'); ?></label></th>
-                        <td><input name="ttp_airbase_base_url" type="text" id="ttp_airbase_base_url" value="<?php echo esc_attr($base_url); ?>" class="regular-text" /></td>
+                        <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>"><?php esc_html_e('Base URL', 'treasury-tech-portal'); ?></label></th>
+                        <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>" value="<?php echo esc_attr($base_url); ?>" class="regular-text" /></td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
