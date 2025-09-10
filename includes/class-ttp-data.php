@@ -89,7 +89,14 @@ class TTP_Data {
             return;
         }
 
-        $vendors = isset($data['products']) ? $data['products'] : $data;
+        if (isset($data['records'])) {
+            $vendors = $data['records'];
+        } elseif (isset($data['products'])) {
+            $vendors = $data['products'];
+        } else {
+            $vendors = $data;
+        }
+
         self::save_vendors($vendors);
     }
 
