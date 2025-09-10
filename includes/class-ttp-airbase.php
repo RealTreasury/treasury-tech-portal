@@ -30,6 +30,15 @@ class TTP_Airbase {
             $base_url = self::DEFAULT_BASE_URL;
         }
 
+        $parts = wp_parse_url($base_url);
+        if (!is_array($parts) || empty($parts['scheme']) || empty($parts['host'])) {
+            return new WP_Error('invalid_base_url', __('Invalid Airbase base URL.', 'treasury-tech-portal'));
+        }
+
+        if (empty($parts['path']) || '/' === $parts['path']) {
+            $base_url = rtrim($base_url, '/') . '/v0';
+        }
+
         $base_id = get_option(self::OPTION_BASE_ID, self::DEFAULT_BASE_ID);
         if (empty($base_id)) {
             $base_id = self::DEFAULT_BASE_ID;
@@ -41,6 +50,10 @@ class TTP_Airbase {
         }
 
         $url = rtrim($base_url, '/') . '/' . trim($base_id, '/') . '/' . ltrim($api_path, '/');
+
+        if (!wp_http_validate_url($url)) {
+            return new WP_Error('invalid_api_url', __('Invalid Airbase API URL.', 'treasury-tech-portal'));
+        }
 
         $args = [
             'headers' => [
