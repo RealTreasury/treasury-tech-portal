@@ -18,9 +18,20 @@ class TTP_Data_Test extends TestCase {
         \Brain\Monkey\tearDown();
     }
 
-    public function test_refresh_vendor_cache_handles_records_response() {
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () {
-            return ['records' => [ ['id' => 1, 'name' => 'Vendor R'] ]];
+    public function test_refresh_vendor_cache_maps_fields() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'   => 'Sample Product',
+                'Linked Vendor'  => 'Acme Corp',
+                'Product Website'=> 'https://example.com',
+                'Status'         => 'Active',
+                'Hosted Type'    => ['Cloud'],
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function () use ($record) {
+            return ['records' => [ $record ]];
         });
 
         $captured = null;
@@ -29,34 +40,26 @@ class TTP_Data_Test extends TestCase {
         });
 
         TTP_Data::refresh_vendor_cache();
-        $this->assertSame([ ['id' => 1, 'name' => 'Vendor R'] ], $captured);
-    }
 
-    public function test_refresh_vendor_cache_handles_products_response() {
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () {
-            return ['products' => [ ['id' => 2, 'name' => 'Vendor P'] ]];
-        });
+        $expected = [
+            [
+                'name'        => 'Sample Product',
+                'vendor'      => 'Acme Corp',
+                'website'     => 'https://example.com',
+                'status'      => 'Active',
+                'hosted_type' => ['Cloud'],
+                'domain'      => [],
+                'regions'     => [],
+                'sub_categories' => [],
+                'parent_category' => '',
+                'capabilities' => [],
+                'logo_url'    => '',
+                'hq_location' => '',
+                'founded_year'=> '',
+                'founders'    => '',
+            ],
+        ];
 
-        $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
-        });
-
-        TTP_Data::refresh_vendor_cache();
-        $this->assertSame([ ['id' => 2, 'name' => 'Vendor P'] ], $captured);
-    }
-
-    public function test_refresh_vendor_cache_handles_vendors_response() {
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () {
-            return ['vendors' => [ ['id' => 3, 'name' => 'Vendor V'] ]];
-        });
-
-        $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
-        });
-
-        TTP_Data::refresh_vendor_cache();
-        $this->assertSame([ ['id' => 3, 'name' => 'Vendor V'] ], $captured);
+        $this->assertSame($expected, $captured);
     }
 }
