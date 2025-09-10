@@ -20,8 +20,11 @@ class TTP_Airbase {
             return new WP_Error('missing_token', __('Airbase API token not configured.', 'treasury-tech-portal'));
         }
 
-        $base_url = get_option(self::OPTION_BASE_URL, 'https://api.airbase.com');
-        $url      = rtrim($base_url, '/') . self::API_PATH;
+        $base_url = get_option( self::OPTION_BASE_URL, 'https://api.airbase.com' );
+        if ( empty( $base_url ) ) {
+            $base_url = 'https://api.airbase.com';
+        }
+        $url      = rtrim( $base_url, '/' ) . self::API_PATH;
 
         $args = [
             'headers' => [
