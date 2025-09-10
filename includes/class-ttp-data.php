@@ -88,7 +88,31 @@ class TTP_Data {
         if (is_wp_error($data)) {
             return;
         }
-        $vendors = self::normalize_vendor_response($data);
+
+        $records = self::normalize_vendor_response($data);
+
+        $vendors = array();
+        foreach ($records as $record) {
+            $fields = isset($record['fields']) && is_array($record['fields']) ? $record['fields'] : $record;
+
+            $vendors[] = array(
+                'name'          => $fields['Product Name'] ?? '',
+                'vendor'        => $fields['Linked Vendor'] ?? '',
+                'website'       => $fields['Product Website'] ?? '',
+                'status'        => $fields['Status'] ?? '',
+                'hosted_type'   => $fields['Hosted Type'] ?? array(),
+                'domain'        => $fields['Domain'] ?? array(),
+                'regions'       => $fields['Regions'] ?? array(),
+                'sub_categories'=> $fields['Sub Categories'] ?? array(),
+                'parent_category' => $fields['Parent Category'] ?? '',
+                'capabilities'  => $fields['Capabilities'] ?? array(),
+                'logo_url'      => $fields['Logo URL'] ?? '',
+                'hq_location'   => $fields['HQ Location'] ?? '',
+                'founded_year'  => $fields['Founded Year'] ?? '',
+                'founders'      => $fields['Founders'] ?? '',
+            );
+        }
+
         self::save_vendors($vendors);
     }
 
