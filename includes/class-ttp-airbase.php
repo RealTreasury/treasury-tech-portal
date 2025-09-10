@@ -5,8 +5,9 @@ if (!defined('ABSPATH')) {
 }
 
 class TTP_Airbase {
-    const OPTION_TOKEN = 'ttp_airbase_token';
-    const API_URL      = 'https://api.airbase.com/v2/vendors';
+    const OPTION_TOKEN    = 'ttp_airbase_token';
+    const OPTION_BASE_URL = 'ttp_airbase_base_url';
+    const API_PATH        = '/v2/products';
 
     /**
      * Retrieve vendors from Airbase API.
@@ -19,6 +20,9 @@ class TTP_Airbase {
             return new WP_Error('missing_token', __('Airbase API token not configured.', 'treasury-tech-portal'));
         }
 
+        $base_url = get_option(self::OPTION_BASE_URL, 'https://api.airbase.com');
+        $url      = rtrim($base_url, '/') . self::API_PATH;
+
         $args = [
             'headers' => [
                 'Authorization' => 'Bearer ' . $token,
@@ -27,7 +31,7 @@ class TTP_Airbase {
             'timeout' => 20,
         ];
 
-        $response = wp_remote_get(self::API_URL, $args);
+        $response = wp_remote_get($url, $args);
         if (is_wp_error($response)) {
             return $response;
         }
