@@ -20,6 +20,9 @@ Add the portal to any page or post using the shortcode:
 
 [treasury_portal]
 
+To pull vendor data from Airbase, configure the API token, base URL, base ID,
+and API path under **Treasury Tools → Airbase Settings** in the WordPress admin.
+
 == Installation ==
 
 This plugin is automatically deployed from GitHub to your WordPress site through your hosting provider's integration.
