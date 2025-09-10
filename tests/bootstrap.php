@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/antecedent/patchwork/Patchwork.php';
 
 if (!class_exists('WP_Error')) {
     class WP_Error {
