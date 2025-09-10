@@ -15,10 +15,9 @@ class TTP_Airbase_Test extends TestCase {
     }
 
     public function test_request_includes_authorization_header() {
-        expect('get_option')
-            ->once()
-            ->with(TTP_Airbase::OPTION_TOKEN)
-            ->andReturn('abc123');
+        when('get_option')->alias(function ($option, $default = false) {
+            return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
+        });
 
         when('is_wp_error')->alias(function ($thing) {
             return $thing instanceof WP_Error;
@@ -30,27 +29,27 @@ class TTP_Airbase_Test extends TestCase {
             return $response['body'];
         });
 
-        $self = $this;
-        expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self) {
-            $self->assertSame(TTP_Airbase::API_URL, $url);
+        $self         = $this;
+        $expected_url = 'https://api.airbase.com' . TTP_Airbase::API_PATH;
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self, $expected_url) {
+            $self->assertSame($expected_url, $url);
             $self->assertArrayHasKey('headers', $args);
             $self->assertSame('Bearer abc123', $args['headers']['Authorization']);
             return [
                 'response' => ['code' => 200],
-                'body'     => json_encode(['vendors' => []]),
+                'body'     => json_encode(['products' => []]),
             ];
         });
 
         $data = TTP_Airbase::get_vendors();
         $this->assertIsArray($data);
-        $this->assertArrayHasKey('vendors', $data);
+        $this->assertArrayHasKey('products', $data);
     }
 
     public function test_returns_wp_error_on_request_failure() {
-        expect('get_option')
-            ->once()
-            ->with(TTP_Airbase::OPTION_TOKEN)
-            ->andReturn('abc123');
+        when('get_option')->alias(function ($option, $default = false) {
+            return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
+        });
 
         expect('wp_remote_get')
             ->once()
@@ -65,10 +64,9 @@ class TTP_Airbase_Test extends TestCase {
     }
 
     public function test_returns_wp_error_when_token_missing() {
-        expect('get_option')
-            ->once()
-            ->with(TTP_Airbase::OPTION_TOKEN)
-            ->andReturn('');
+        when('get_option')->alias(function ($option, $default = false) {
+            return TTP_Airbase::OPTION_TOKEN === $option ? '' : $default;
+        });
 
         $result = TTP_Airbase::get_vendors();
         $this->assertInstanceOf(WP_Error::class, $result);
