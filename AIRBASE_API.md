@@ -24,6 +24,17 @@ curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
 - Maximum of **5 requests per second** per base.
 - Exceeding the limit returns HTTP `429`. Wait 30 seconds before retrying.
 
+## Vendor Response Formats
+`TTP_Data::refresh_vendor_cache()` accepts multiple response shapes and
+normalizes them into a single vendor array. The following formats are supported:
+
+- `{ "records": [...] }`
+- `{ "products": [...] }`
+- `{ "vendors": [...] }`
+- `[ ... ]` (top-level array of vendors)
+
+Any of these structures will be cached as a plain array of vendors.
+
 ## Products Table Fields
 | Field | Type | Notes |
 |-------|------|-------|
