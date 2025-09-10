@@ -77,6 +77,16 @@ class TTP_Airbase_Connection_Test extends TestCase {
             update_option( TTP_Airbase::OPTION_BASE_URL, $base_url );
         }
 
+        $base_id = getenv( 'AIRBASE_BASE_ID' );
+        if ( ! empty( $base_id ) ) {
+            update_option( TTP_Airbase::OPTION_BASE_ID, $base_id );
+        }
+
+        $api_path = getenv( 'AIRBASE_API_PATH' );
+        if ( ! empty( $api_path ) ) {
+            update_option( TTP_Airbase::OPTION_API_PATH, $api_path );
+        }
+
         $vendors = TTP_Airbase::get_vendors();
 
         if ( is_wp_error( $vendors ) ) {
@@ -84,6 +94,6 @@ class TTP_Airbase_Connection_Test extends TestCase {
         }
 
         $this->assertIsArray( $vendors );
-        $this->assertArrayHasKey( 'products', $vendors );
+        $this->assertArrayHasKey( 'records', $vendors );
     }
 }

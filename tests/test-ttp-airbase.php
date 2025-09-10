@@ -16,7 +16,18 @@ class TTP_Airbase_Test extends TestCase {
 
     public function test_request_includes_authorization_header() {
         when('get_option')->alias(function ($option, $default = false) {
-            return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
         });
 
         when('is_wp_error')->alias(function ($thing) {
@@ -30,20 +41,20 @@ class TTP_Airbase_Test extends TestCase {
         });
 
         $self         = $this;
-        $expected_url = 'https://api.airbase.io' . TTP_Airbase::API_PATH;
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self, $expected_url) {
             $self->assertSame($expected_url, $url);
             $self->assertArrayHasKey('headers', $args);
             $self->assertSame('Bearer abc123', $args['headers']['Authorization']);
             return [
                 'response' => ['code' => 200],
-                'body'     => json_encode(['products' => []]),
+                'body'     => json_encode(['records' => []]),
             ];
         });
 
         $data = TTP_Airbase::get_vendors();
         $this->assertIsArray($data);
-        $this->assertArrayHasKey('products', $data);
+        $this->assertArrayHasKey('records', $data);
     }
 
     public function test_returns_wp_error_on_request_failure() {
