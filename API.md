@@ -87,6 +87,8 @@ GET /wp-json/ttp/v1/vendors
 #### Response Format
 Array of vendor objects retrieved from Airbase.
 
+See [AIRBASE_API.md](AIRBASE_API.md) for detailed vendor API documentation.
+
 #### Example Request
 ```
 fetch('/wp-json/ttp/v1/vendors')
