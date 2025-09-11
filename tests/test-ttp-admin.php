@@ -80,11 +80,11 @@ class TTP_Admin_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array() ) use ( $record ) {
             return array( 'records' => array( $record ) );
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name', $use_field_ids = false ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name' ) {
             $maps = array(
                 'Regions'        => array( 'recreg1' => 'North America' ),
                 'Vendors'        => array( 'recven1' => 'Acme Corp' ),
@@ -142,11 +142,11 @@ class TTP_Admin_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array() ) use ( $record ) {
             return array( 'records' => array( $record ) );
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name', $use_field_ids = false ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name' ) {
             if ( 'Regions' === $table ) {
                 return new WP_Error( 'err', 'fail' );
             }
