@@ -56,6 +56,24 @@ Any of these structures will be cached as a plain array of vendors.
 | `Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
 | `Logo URL` (`fldfZPuRMjQKCv3U6`) | text URL |
 
+## Linked Record Field Names
+
+The plugin resolves linked record identifiers for several vendor fields. The
+following field names are accepted (including their common synonyms):
+
+- **Domain** – `domain`, `domains`, `domain_id`, `domain_ids`
+- **Regions** – `regions`, `region`, `region_id`, `region_ids`, `regions_id`
+- **Sub Categories** – `sub_categories`, `sub_category`, `sub_category_id`,
+  `sub_category_ids`
+- **Capabilities** – `capabilities`, `capability`, `capability_id`,
+  `capability_ids`
+- **Hosted Type** – `hosted_type`, `hosted_types`, `hosted_type_id`,
+  `hosted_type_ids`
+- **Parent Category** – `parent_category`, `parent_categories`,
+  `parent_category_id`, `parent_category_ids`
+
+These variations are normalised before attempting to resolve linked records.
+
 ## Listing Products
 Retrieve records from the Products table. Only non-empty fields are returned.
 

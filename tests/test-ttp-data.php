@@ -911,4 +911,29 @@ class TTP_Data_Test extends TestCase {
             'newline'         => array( "A\nB" ),
         );
     }
+
+    public function vendors_need_resolution_region_provider() {
+        return array(
+            'region'     => array( 'region' ),
+            'region_ids' => array( 'region_ids' ),
+            'regions_id' => array( 'regions_id' ),
+        );
+    }
+
+    /**
+     * @dataProvider vendors_need_resolution_region_provider
+     */
+    public function test_vendors_need_resolution_detects_region_aliases( $key ) {
+        $vendors = array(
+            array(
+                $key => array( 'recABC' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
 }
