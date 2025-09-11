@@ -62,9 +62,11 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        $requested_fields = null;
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record, &$requested_fields) {
-            $requested_fields = $fields;
+        $requested_fields    = null;
+        $return_fields_by_id = null;
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields = false) use ($record, &$requested_fields, &$return_fields_by_id) {
+            $requested_fields    = $fields;
+            $return_fields_by_id = $return_fields;
             return ['records' => [ $record ]];
         });
 
@@ -101,6 +103,7 @@ class TTP_Data_Test extends TestCase {
         TTP_Data::refresh_vendor_cache();
 
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
+        $this->assertTrue($return_fields_by_id);
         $this->assertSame(
             ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Sub Categories', 'Capabilities'],
             $tables
