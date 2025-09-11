@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modal z-index conflicts with navigation
 - Touch gesture handling on mobile devices
 
+## [1.0.2] - 2025-09-11
+
+### Changed
+- Regenerated minified assets and updated documentation.
+- Bumped version to 1.0.2.
+
 ## [1.0.1] - 2025-09-10
 
 ### Changed
