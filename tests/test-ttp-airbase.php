@@ -372,7 +372,7 @@ class TTP_Airbase_Test extends TestCase {
 
     public function test_get_table_schema_returns_cached_value() {
         when('get_transient')->alias(function ($key) {
-            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'fields' => [ 'Name' => 'fldName' ], 'primary' => [ 'id' => 'fldName', 'name' => 'Name' ] ] ] : false;
+            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'fields' => [ 'Name' => [ 'id' => 'fldName', 'type' => 'text' ] ], 'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => 'text' ] ] ] : false;
         });
 
         expect('wp_remote_get')->never();
@@ -435,8 +435,11 @@ class TTP_Airbase_Test extends TestCase {
             $self->assertSame(DAY_IN_SECONDS, $ttl);
             $self->assertSame(
                 [
-                    'fields'  => [ 'Name' => 'fldName', 'Status' => 'fldStatus' ],
-                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    'fields'  => [
+                        'Name'   => [ 'id' => 'fldName', 'type' => '' ],
+                        'Status' => [ 'id' => 'fldStatus', 'type' => '' ],
+                    ],
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => '' ],
                 ],
                 $value['tblXYZ']
             );
@@ -694,8 +697,8 @@ class TTP_Airbase_Test extends TestCase {
         when('get_transient')->alias(function ( $key ) {
             return 'ttp_airbase_schema' === $key ? [
                 'Vendors' => [
-                    'fields'  => [ 'Renamed' => 'fld123' ],
-                    'primary' => [ 'id' => 'fld123', 'name' => 'Renamed' ],
+                    'fields'  => [ 'Renamed' => [ 'id' => 'fld123', 'type' => 'text' ] ],
+                    'primary' => [ 'id' => 'fld123', 'name' => 'Renamed', 'type' => 'text' ],
                 ],
             ] : false;
         });
@@ -763,8 +766,8 @@ class TTP_Airbase_Test extends TestCase {
             $self->assertSame(DAY_IN_SECONDS, $ttl);
             $self->assertSame(
                 [
-                    'fields'  => [ 'Name' => 'fldName' ],
-                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    'fields'  => [ 'Name' => [ 'id' => 'fldName', 'type' => '' ] ],
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => '' ],
                 ],
                 $value['tblXYZ']
             );

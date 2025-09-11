@@ -234,7 +234,11 @@ class TTP_Airbase {
 
         $cached = get_transient( 'ttp_airbase_schema' );
         if ( is_array( $cached ) && isset( $cached[ $table_id ]['fields'] ) ) {
-            return $cached[ $table_id ]['fields'];
+            $simple = array();
+            foreach ( $cached[ $table_id ]['fields'] as $name => $info ) {
+                $simple[ $name ] = is_array( $info ) ? $info['id'] : $info;
+            }
+            return $simple;
         }
 
         $token = get_option( self::OPTION_TOKEN );
@@ -300,13 +304,18 @@ class TTP_Airbase {
             $map          = array();
             $primary_id   = isset( $table['primaryFieldId'] ) ? $table['primaryFieldId'] : '';
             $primary_name = '';
+            $primary_type = '';
 
             if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
                 foreach ( $table['fields'] as $field ) {
                     if ( isset( $field['name'], $field['id'] ) ) {
-                        $map[ $field['name'] ] = $field['id'];
+                        $map[ $field['name'] ] = array(
+                            'id'   => $field['id'],
+                            'type' => isset( $field['type'] ) ? $field['type'] : '',
+                        );
                         if ( $field['id'] === $primary_id ) {
                             $primary_name = $field['name'];
+                            $primary_type = isset( $field['type'] ) ? $field['type'] : '';
                         }
                     }
                 }
@@ -317,6 +326,7 @@ class TTP_Airbase {
                 'primary' => array(
                     'id'   => $primary_id,
                     'name' => $primary_name,
+                    'type' => $primary_type,
                 ),
             );
 
@@ -331,7 +341,11 @@ class TTP_Airbase {
         set_transient( 'ttp_airbase_schema', $schemas, DAY_IN_SECONDS );
 
         if ( isset( $schemas[ $table_id ]['fields'] ) ) {
-            return $schemas[ $table_id ]['fields'];
+            $simple = array();
+            foreach ( $schemas[ $table_id ]['fields'] as $name => $info ) {
+                $simple[ $name ] = is_array( $info ) ? $info['id'] : $info;
+            }
+            return $simple;
         }
 
         return new WP_Error( 'table_not_found', __( 'Specified Airbase table not found in schema.', 'treasury-tech-portal' ) );
@@ -374,6 +388,32 @@ class TTP_Airbase {
         }
 
         return new WP_Error( 'primary_field_not_found', __( 'Primary field not found for table.', 'treasury-tech-portal' ) );
+    }
+
+    /**
+     * Get the type for a specific field from the cached schema.
+     *
+     * @param string $table_id  Table name or ID.
+     * @param string $field_name Field name.
+     * @return string Empty string if type unknown.
+     */
+    public static function get_field_type( $table_id, $field_name ) {
+        $schema = get_transient( 'ttp_airbase_schema' );
+        if ( is_array( $schema ) && isset( $schema[ $table_id ]['fields'][ $field_name ]['type'] ) ) {
+            return $schema[ $table_id ]['fields'][ $field_name ]['type'];
+        }
+
+        $result = self::get_table_schema( $table_id );
+        if ( is_wp_error( $result ) ) {
+            return '';
+        }
+
+        $schema = get_transient( 'ttp_airbase_schema' );
+        if ( is_array( $schema ) && isset( $schema[ $table_id ]['fields'][ $field_name ]['type'] ) ) {
+            return $schema[ $table_id ]['fields'][ $field_name ]['type'];
+        }
+
+        return '';
     }
 
     /**

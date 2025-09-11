@@ -36,6 +36,13 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () use (&$schema) {
             return $schema;
         });
+
+        \Patchwork\replace( 'TTP_Airbase::get_field_type', function () {
+            return '';
+        } );
+
+        when( 'get_transient' )->justReturn( false );
+        when( 'set_transient' )->justReturn( true );
     }
 
     protected function tearDown(): void {
@@ -470,14 +477,14 @@ class TTP_Data_Test extends TestCase {
 
         $expected = [
             [
-                'regions'         => [ 'North America' ],
-                'vendor'          => 'Acme Corp',
-                'hosted_type'     => [ 'Cloud' ],
-                'domain'          => [ 'Banking' ],
-                'sub_categories'  => [ 'Payments' ],
-                'capabilities'    => [ 'API' ],
-                'categories'      => [ 'Finance' ],
-                'category'        => 'Finance',
+                'regions'         => [ '105' ],
+                'vendor'          => '101',
+                'hosted_type'     => [ '102' ],
+                'domain'          => [ '106' ],
+                'sub_categories'  => [ '104' ],
+                'capabilities'    => [ '107' ],
+                'categories'      => [ '108' ],
+                'category'        => '108',
             ],
         ];
 
@@ -1185,6 +1192,43 @@ class TTP_Data_Test extends TestCase {
                 array( 'Gamma', 'rec456' ),
             ),
         );
+    }
+
+    /**
+     * @dataProvider parse_record_ids_numeric_provider
+     */
+    public function test_parse_record_ids_handles_numeric_values( $input, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_numeric_provider() {
+        return array(
+            'numeric_scalar' => array( 123, array( 123 ) ),
+            'numeric_string' => array( '123', array( 123 ) ),
+            'select_array'   => array( array( 'id' => 'sel1', 'name' => 'Option' ), array( 'Option' ) ),
+        );
+    }
+
+    public function test_resolve_linked_field_preserves_numeric_primary_values() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $linked = array(
+            'Numbers' => array( 'table' => 'Numbers', 'primary_field' => 'Value' ),
+        );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary ) {
+            return array( 10, 20 );
+        } );
+
+        \Patchwork\replace( 'TTP_Airbase::get_field_type', function ( $table, $field ) {
+            return 'number';
+        } );
+
+        $result = $method->invoke( null, 'Numbers', array( 'rec1', 'rec2' ), $linked );
+        $this->assertSame( array( 10, 20 ), $result );
     }
 
     /**

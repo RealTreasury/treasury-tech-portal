@@ -421,28 +421,40 @@ class TTP_Data {
             return array_map( 'trim', $parsed );
         }
 
-        $results = array();
+        if ( is_array( $value ) && ( isset( $value['name'] ) || isset( $value['id'] ) || isset( $value['value'] ) ) ) {
+            if ( isset( $value['name'] ) ) {
+                $val = $value['name'];
+            } elseif ( isset( $value['id'] ) ) {
+                $val = $value['id'];
+            } else {
+                $val = $value['value'];
+            }
+            $results = array( is_numeric( $val ) && ! is_string( $val ) ? $val + 0 : trim( (string) $val ) );
 
+            $nested = array_diff_key( $value, array_flip( array( 'name', 'id', 'value' ) ) );
+            if ( ! empty( $nested ) ) {
+                $results = array_merge( $results, self::parse_record_ids( $nested ) );
+            }
+
+            return array_filter( $results, function ( $v ) {
+                return $v !== '' && $v !== null;
+            } );
+        }
+
+        $results = array();
         foreach ( (array) $value as $item ) {
             if ( is_array( $item ) ) {
-                if ( isset( $item['name'] ) ) {
-                    $results[] = trim( $item['name'] );
-                } elseif ( isset( $item['id'] ) ) {
-                    $results[] = trim( $item['id'] );
-                }
-
-                $nested = array_diff_key( $item, array_flip( array( 'name', 'id' ) ) );
-                if ( ! empty( $nested ) ) {
-                    $results = array_merge( $results, self::parse_record_ids( $nested ) );
-                }
+                $results = array_merge( $results, self::parse_record_ids( $item ) );
             } elseif ( is_string( $item ) ) {
                 $results = array_merge( $results, self::parse_record_ids( $item ) );
             } else {
-                $results[] = trim( (string) $item );
+                $results[] = is_numeric( $item ) ? $item + 0 : $item;
             }
         }
 
-        return array_filter( $results );
+        return array_filter( $results, function ( $v ) {
+            return $v !== '' && $v !== null;
+        } );
     }
 
     /**
@@ -538,20 +550,26 @@ class TTP_Data {
         $placeholders = array();
         $ids          = array();
 
+        $table       = $linked_tables[ $field ]['table'] ?? '';
+        $primary     = $linked_tables[ $field ]['primary_field'] ?? '';
+        $field_type  = $table && $primary ? TTP_Airbase::get_field_type( $table, $primary ) : '';
+        $is_numeric  = in_array( strtolower( $field_type ), array( 'number', 'numeric', 'int', 'integer', 'float', 'currency', 'percent' ), true );
+
         foreach ( $values as $idx => $item ) {
-            $item = (string) $item;
-            if ( self::contains_record_ids( array( $item ) ) ) {
+            if ( is_string( $item ) && self::contains_record_ids( array( $item ) ) ) {
                 $clean               = preg_replace( '/[^A-Za-z0-9]/', '', $item );
                 $placeholders[ $idx ] = $clean;
                 $ids[]               = $clean;
             } else {
-                $values[ $idx ] = sanitize_text_field( $item );
+                if ( $is_numeric && is_numeric( $item ) ) {
+                    $values[ $idx ] = $item + 0;
+                } else {
+                    $values[ $idx ] = sanitize_text_field( (string) $item );
+                }
             }
         }
 
-        if ( ! empty( $ids ) && isset( $linked_tables[ $field ] ) ) {
-            $table   = $linked_tables[ $field ]['table'];
-            $primary = $linked_tables[ $field ]['primary_field'];
+        if ( ! empty( $ids ) && $table && $primary ) {
             $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
@@ -563,7 +581,14 @@ class TTP_Data {
                     unset( $values[ $idx ] );
                 }
             } else {
-                $resolved = array_map( 'sanitize_text_field', (array) $resolved );
+                if ( $is_numeric ) {
+                    $resolved = array_map( function ( $v ) {
+                        return is_numeric( $v ) ? $v + 0 : $v;
+                    }, (array) $resolved );
+                } else {
+                    $resolved = array_map( 'sanitize_text_field', (array) $resolved );
+                }
+
                 if ( count( $resolved ) < count( $ids ) ) {
                     $missing = array_slice( $ids, count( $resolved ) );
                     self::log_unresolved_field( $field, $missing );
@@ -576,7 +601,9 @@ class TTP_Data {
             }
         }
 
-        return array_values( array_filter( $values ) );
+        return array_values( array_filter( $values, function ( $v ) {
+            return $v !== '' && $v !== null;
+        } ) );
     }
 
 /**
