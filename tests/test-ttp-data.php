@@ -481,6 +481,110 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
+     * @dataProvider linked_fields_provider
+     */
+    public function test_refresh_vendor_cache_resolves_id_arrays_for_field( $field, $table, $output_key, $mapping ) {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Parent Category' => 'Cash',
+                'Sub Categories'  => ['Payments'],
+                'Regions'         => ['North America'],
+                'Domain'          => ['Banking'],
+                'Capabilities'    => ['API'],
+            ],
+        ];
+
+        $record['fields'][ $field ] = array_keys( $mapping );
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        $tables_called = [];
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) use ( $table, $mapping, &$tables_called ) {
+            $tables_called[] = $table_id;
+            if ( $table_id !== $table ) {
+                return array();
+            }
+            $out = array();
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $mapping[ $id ] ) ) {
+                    $out[] = $mapping[ $id ];
+                }
+            }
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( [ $table ], $tables_called );
+        $expected = array_values( $mapping );
+        if ( 'vendor' === $output_key || 'parent_category' === $output_key ) {
+            $this->assertSame( reset( $expected ), $captured[0][ $output_key ] );
+        } else {
+            $this->assertSame( $expected, $captured[0][ $output_key ] );
+        }
+    }
+
+    public function linked_fields_provider() {
+        return [
+            'regions' => [
+                'Regions',
+                'Regions',
+                'regions',
+                [ 'recreg1' => 'North America' ],
+            ],
+            'vendor' => [
+                'Linked Vendor',
+                'Vendors',
+                'vendor',
+                [ 'recven1' => 'Acme Corp' ],
+            ],
+            'hosted_type' => [
+                'Hosted Type',
+                'Hosted Type',
+                'hosted_type',
+                [ 'rechost1' => 'Cloud' ],
+            ],
+            'domain' => [
+                'Domain',
+                'Domain',
+                'domain',
+                [ 'recdom1' => 'Banking' ],
+            ],
+            'sub_categories' => [
+                'Sub Categories',
+                'Sub Categories',
+                'sub_categories',
+                [ 'recsc1' => 'Payments' ],
+            ],
+            'capabilities' => [
+                'Capabilities',
+                'Capabilities',
+                'capabilities',
+                [ 'reccap1' => 'API' ],
+            ],
+            'parent_category' => [
+                'Parent Category',
+                'Category',
+                'parent_category',
+                [ 'reccat1' => 'Cash' ],
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider comma_separated_fields_provider
      */
     public function test_refresh_vendor_cache_resolves_comma_separated_ids_for_field( $field, $table, $output_key, $mapping ) {
