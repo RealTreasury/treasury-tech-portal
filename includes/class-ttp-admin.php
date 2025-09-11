@@ -205,6 +205,7 @@ class TTP_Admin {
             'Hosted Type',
             'Domain',
             'Regions',
+            'Category',
             'Sub Categories',
             'Parent Category',
             'Capabilities',

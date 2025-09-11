@@ -117,6 +117,7 @@ class TTP_Data {
             'capability'        => 'capabilities',
             'hosted_types'      => 'hosted_type',
             'domains'           => 'domain',
+            'category'         => 'categories',
             'parent_categories' => 'parent_category',
             'linked_vendor'     => 'vendor',
         );
@@ -133,7 +134,7 @@ class TTP_Data {
                 $normalized[ $normalized_key ] = $value;
             }
 
-            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category', 'vendor' );
+            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category', 'vendor', 'categories' );
             foreach ( $fields as $field ) {
                 if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
                     return true;
@@ -157,6 +158,7 @@ class TTP_Data {
             'Hosted Type',
             'Domain',
             'Regions',
+            'Category',
             'Sub Categories',
             'Parent Category',
             'Capabilities',
@@ -252,6 +254,7 @@ class TTP_Data {
             'Linked Vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
             'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
             'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'Category'      => array( 'table' => 'Category',      'primary_field' => 'Name' ),
             'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
             'Parent Category' => array( 'table' => 'Category',      'primary_field' => 'Name' ),
             'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
@@ -374,6 +377,29 @@ class TTP_Data {
                 $domain = array_map( 'sanitize_text_field', $domain_field );
             }
 
+            $category_field = self::parse_record_ids( $fields['Category'] ?? array() );
+            $categories     = array();
+            if ( self::contains_record_ids( $category_field ) ) {
+                $original_category_ids = $category_field;
+                $resolved               = TTP_Airbase::resolve_linked_records( $linked_tables['Category']['table'], $category_field, $linked_tables['Category']['primary_field'] );
+                if ( is_wp_error( $resolved ) ) {
+                    if ( function_exists( 'error_log' ) ) {
+                        error_log( 'TTP_Data: Failed resolving Category: ' . $resolved->get_error_message() );
+                    }
+                    self::log_unresolved_field( 'Category', $original_category_ids );
+                    $categories = array();
+                } else {
+                    if ( count( (array) $resolved ) < count( (array) $original_category_ids ) ) {
+                        $missing = array_slice( (array) $original_category_ids, count( (array) $resolved ) );
+                        self::log_unresolved_field( 'Category', $missing );
+                    }
+                    $categories     = array_map( 'sanitize_text_field', (array) $resolved );
+                    $category_field = $categories;
+                }
+            } else {
+                $categories = array_map( 'sanitize_text_field', $category_field );
+            }
+
             $sub_field      = self::parse_record_ids( $fields['Sub Categories'] ?? array() );
             $sub_categories = array();
             if ( self::contains_record_ids( $sub_field ) ) {
@@ -443,7 +469,7 @@ class TTP_Data {
                 $parent_category = $parent_field ? reset( $parent_field ) : '';
             }
 
-            $category_names = array_filter( array_merge( $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
+            $category_names = array_filter( array_merge( $categories, $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
@@ -455,6 +481,7 @@ class TTP_Data {
                 'hosted_type'     => $hosted_type,
                 'domain'          => $domain,
                 'regions'         => $regions,
+                'categories'      => $categories,
                 'sub_categories'  => $sub_categories,
                 'parent_category' => $parent_category,
                 'category_names'  => $category_names,
