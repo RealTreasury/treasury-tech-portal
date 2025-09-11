@@ -416,8 +416,8 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertSame([], $captured[0]['regions']);
         $this->assertSame('', $captured[0]['vendor']);
-        $this->assertSame(['recreg1'], $logged['Regions']);
-        $this->assertSame(['recven1'], $logged['Linked Vendor']);
+        $this->assertSame(['recreg1'], $logged['regions']);
+        $this->assertSame(['recven1'], $logged['vendor']);
     }
 
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
@@ -682,6 +682,64 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertSame( array( 'recreg1' ), $ids_used['Regions'] );
         $this->assertSame( array( 'NORAM', 'APAC' ), $captured[0]['regions'] );
+    }
+
+    public function test_refresh_vendor_cache_handles_mixed_case_field_names() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => [
+                'Product Name'   => 'Sample Product',
+                'Linked Vendor'  => ['recven1'],
+                'Product Website'=> 'example.com',
+                'Product Video'  => 'example.com/video',
+                'Logo URL'       => 'example.com/logo.png',
+                'Status'         => 'Active',
+                'Hosted Type'    => ['rechost1'],
+                'ReGions'        => ['recreg1'],
+                'DoMaIn IDs'     => ['recdom1'],
+                'Category'       => ['reccat1'],
+                'Sub cAtegories' => ['recsc1'],
+                'Capabilities'   => ['reccap1'],
+                'HQ Location'    => '',
+                'Founded Year'   => '',
+                'Founders'       => '',
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) {
+            $maps = [
+                'Regions'        => [ 'recreg1' => 'Europe' ],
+                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
+                'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Sub Categories' => [ 'recsc1' => 'Payments' ],
+                'Capabilities'   => [ 'reccap1' => 'API' ],
+            ];
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( 'Acme Corp', $captured[0]['vendor'] );
+        $this->assertSame( [ 'Europe' ], $captured[0]['regions'] );
+        $this->assertSame( [ 'Banking' ], $captured[0]['domain'] );
+        $this->assertSame( [ 'Payments' ], $captured[0]['sub_categories'] );
     }
 
     public function test_refresh_vendor_cache_resolves_comma_separated_record_ids() {
@@ -1364,7 +1422,7 @@ class TTP_Data_Test extends TestCase {
         $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
         $method->setAccessible( true );
 
-        $record = array( 'Regions' => array( 'recreg1' ) );
+        $record = array( 'regions' => array( 'recreg1' ) );
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
@@ -1373,7 +1431,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
     }
 
@@ -1381,7 +1439,7 @@ class TTP_Data_Test extends TestCase {
         $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
         $method->setAccessible( true );
 
-        $record = array( 'Regions' => array( 'Europe' ) );
+        $record = array( 'regions' => array( 'Europe' ) );
         $called = false;
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
@@ -1391,7 +1449,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'regions', 'Regions', 'Name' );
         $this->assertSame( array( 'Europe' ), $result );
         $this->assertFalse( $called );
     }
@@ -1425,6 +1483,21 @@ class TTP_Data_Test extends TestCase {
                 $key => array( 'resABC123' ),
             ),
         );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_handles_mixed_case_keys() {
+        $vendors = array(
+            array(
+                'ReGiOn IdS' => array( 'recABC123' ),
+                'DOMAIN'     => array( 'resXYZ789' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
