@@ -910,6 +910,119 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame(['First'], $second);
     }
 
+    public function test_rt_airtable_map_ids_to_names_fetches_only_needed_records() {
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+        when('get_transient')->alias(function ($key) {
+            if ('ttp_airbase_schema' === $key) {
+                return [
+                    'Categories' => [
+                        'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    ],
+                ];
+            }
+            return false;
+        });
+        when('set_transient')->alias(function () {
+            return true;
+        });
+
+        $records = [
+            [ 'fields' => [ 'category' => [ 'rec0000000001', 'rec0000000002' ] ] ],
+            [ 'fields' => [ 'category' => [ 'rec0000000003' ] ] ],
+        ];
+        $field_to_linked = [ 'category' => 'Categories' ];
+
+        $self = $this;
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self) {
+            $self->assertStringContainsString('returnFieldsByFieldId=true', $url);
+            $self->assertStringContainsString('fields[]=fldName', $url);
+            $self->assertStringContainsString('rec0000000001', $url);
+            $self->assertStringContainsString('rec0000000002', $url);
+            $self->assertStringContainsString('rec0000000003', $url);
+
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => json_encode([
+                    'records' => [
+                        [ 'id' => 'rec0000000001', 'fields' => [ 'fldName' => 'Cat 1' ] ],
+                        [ 'id' => 'rec0000000002', 'fields' => [ 'fldName' => 'Cat 2' ] ],
+                        [ 'id' => 'rec0000000003', 'fields' => [ 'fldName' => 'Cat 3' ] ],
+                    ],
+                ]),
+            ];
+        });
+
+        $mapped = rt_airtable_map_ids_to_names( $records, $field_to_linked, 'base123', 'tok' );
+        $this->assertSame( [ 'Cat 1', 'Cat 2' ], $mapped[0]['fields']['category'] );
+        $this->assertSame( [ 'Cat 3' ], $mapped[1]['fields']['category'] );
+    }
+
+    public function test_rt_airtable_map_ids_to_names_batches_over_100_ids() {
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+        when('get_transient')->alias(function ($key) {
+            if ('ttp_airbase_schema' === $key) {
+                return [
+                    'Categories' => [
+                        'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    ],
+                ];
+            }
+            return false;
+        });
+        when('set_transient')->alias(function () {
+            return true;
+        });
+
+        $ids = array();
+        for ( $i = 1; $i <= 105; $i++ ) {
+            $ids[] = sprintf( 'rec%010d', $i );
+        }
+        $records         = [ [ 'fields' => [ 'category' => $ids ] ] ];
+        $field_to_linked = [ 'category' => 'Categories' ];
+
+        $self = $this;
+        $call = 0;
+        expect('wp_remote_get')->twice()->andReturnUsing(function ($url, $args) use ($self, &$call) {
+            $call++;
+            $self->assertStringContainsString('returnFieldsByFieldId=true', $url);
+            if ( 1 === $call ) {
+                $self->assertStringContainsString( sprintf( 'rec%010d', 1 ), $url );
+                $self->assertStringContainsString( sprintf( 'rec%010d', 100 ), $url );
+                $self->assertStringNotContainsString( sprintf( 'rec%010d', 101 ), $url );
+                $records = array();
+                for ( $i = 1; $i <= 100; $i++ ) {
+                    $records[] = array( 'id' => sprintf( 'rec%010d', $i ), 'fields' => array( 'fldName' => 'Cat' . $i ) );
+                }
+            } else {
+                $self->assertStringContainsString( sprintf( 'rec%010d', 101 ), $url );
+                $records = array();
+                for ( $i = 101; $i <= 105; $i++ ) {
+                    $records[] = array( 'id' => sprintf( 'rec%010d', $i ), 'fields' => array( 'fldName' => 'Cat' . $i ) );
+                }
+            }
+
+            return array(
+                'response' => array( 'code' => 200 ),
+                'body'     => json_encode( array( 'records' => $records ) ),
+            );
+        });
+
+        $mapped = rt_airtable_map_ids_to_names( $records, $field_to_linked, 'base123', 'tok' );
+        $this->assertCount( 105, $mapped[0]['fields']['category'] );
+        $this->assertSame( 'Cat1', $mapped[0]['fields']['category'][0] );
+        $this->assertSame( 'Cat105', end( $mapped[0]['fields']['category'] ) );
+    }
+
     public function test_get_table_schema_fetches_and_caches_when_missing() {
         when('get_transient')->alias(function ($key) {
             return false;

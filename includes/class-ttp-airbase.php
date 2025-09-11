@@ -646,33 +646,83 @@ class TTP_Airbase {
  */
 function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $base_id, $token ) {
     foreach ( $field_to_linked as $field_name => $linked_table ) {
-        $map_key = 'rt_airtable_map_' . $base_id . '_' . $linked_table . '_v1';
+        $map_key = 'rt_airtable_map_' . $base_id . '_' . $linked_table . '_v2';
         $map     = get_transient( $map_key );
-        if ( false === $map ) {
-            $map    = array();
-            $link   = add_query_arg(
-                array(
-                    'pageSize'               => 100,
-                    'cellFormat'             => 'string',
-                    'returnFieldsByFieldId'  => false,
-                    'userLocale'             => 'en-US',
-                    'timeZone'               => 'UTC',
-                ),
-                'https://api.airtable.com/v0/' . $base_id . '/' . $linked_table
-            );
-            $resp   = wp_remote_get(
-                $link,
-                array(
-                    'headers' => array( 'Authorization' => 'Bearer ' . $token ),
-                    'timeout' => 15,
-                )
-            );
-            if ( ! is_wp_error( $resp ) ) {
-                $data = json_decode( wp_remote_retrieve_body( $resp ), true );
-                foreach ( ( $data['records'] ?? array() ) as $r ) {
-                    $primary          = $r['fields'][ array_key_first( $r['fields'] ) ] ?? $r['id'];
-                    $map[ $r['id'] ] = is_string( $primary ) ? $primary : ( is_array( $primary ) ? reset( $primary ) : $r['id'] );
+        if ( ! is_array( $map ) ) {
+            $map = array();
+        }
+
+        $needed_ids = array();
+        foreach ( $records as $rec ) {
+            if ( ! isset( $rec['fields'][ $field_name ] ) ) {
+                continue;
+            }
+            $val = $rec['fields'][ $field_name ];
+            if ( is_array( $val ) ) {
+                foreach ( $val as $id ) {
+                    if ( is_string( $id ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $id ) ) {
+                        $needed_ids[] = $id;
+                    }
                 }
+            } elseif ( is_string( $val ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $val ) ) {
+                $needed_ids[] = $val;
+            }
+        }
+
+        $needed_ids = array_values( array_unique( $needed_ids ) );
+        $missing    = array_diff( $needed_ids, array_keys( $map ) );
+
+        if ( ! empty( $missing ) ) {
+            $primary = TTP_Airbase::get_primary_field( $linked_table );
+            if ( ! is_wp_error( $primary ) && ! empty( $primary['id'] ) ) {
+                $query_field = sanitize_text_field( $primary['id'] );
+
+                $chunks = array_chunk( $missing, 100 );
+                foreach ( $chunks as $chunk ) {
+                    $filter_parts = array();
+                    foreach ( $chunk as $id ) {
+                        $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
+                    }
+                    $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
+
+                    $url  = 'https://api.airtable.com/v0/' . $base_id . '/' . $linked_table;
+                    $url .= '?pageSize=100&cellFormat=string&returnFieldsByFieldId=true';
+                    $url .= '&fields[]=' . rawurlencode( $query_field );
+                    $url .= '&filterByFormula=' . rawurlencode( $filter );
+                    $url .= '&userLocale=en-US&timeZone=UTC';
+
+                    $resp = wp_remote_get(
+                        $url,
+                        array(
+                            'headers' => array( 'Authorization' => 'Bearer ' . $token ),
+                            'timeout' => 15,
+                        )
+                    );
+                    if ( ! is_wp_error( $resp ) ) {
+                        $data = json_decode( wp_remote_retrieve_body( $resp ), true );
+                        foreach ( ( $data['records'] ?? array() ) as $r ) {
+                            $value = $r['fields'][ $query_field ] ?? null;
+                            if ( is_array( $value ) ) {
+                                if ( isset( $value['name'] ) ) {
+                                    $value = sanitize_text_field( $value['name'] );
+                                } elseif ( isset( $value['text'] ) ) {
+                                    $value = sanitize_text_field( $value['text'] );
+                                } elseif ( isset( $value['id'] ) ) {
+                                    $value = sanitize_text_field( $value['id'] );
+                                } else {
+                                    $value = null;
+                                }
+                            } elseif ( null !== $value ) {
+                                $value = sanitize_text_field( $value );
+                            }
+
+                            if ( $r['id'] ) {
+                                $map[ $r['id'] ] = $value;
+                            }
+                        }
+                    }
+                }
+
                 set_transient( $map_key, $map, DAY_IN_SECONDS );
             }
         }
@@ -700,5 +750,6 @@ function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $
         }
         unset( $rec );
     }
+
     return $records;
 }
