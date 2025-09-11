@@ -423,6 +423,71 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Product Website'], $stored['ids']);
     }
 
+    public function test_refresh_vendor_cache_falls_back_when_schema_mismatched() {
+        $schema = $this->schema_map;
+        unset( $schema['Regions'] );
+        \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () use ( $schema ) {
+            return $schema;
+        } );
+
+        $record = [
+            'id'     => 'rec1',
+            'fields' => [
+                $this->schema_map['Product Name']    => 'Sample Product',
+                $this->schema_map['Linked Vendor']   => array(),
+                $this->schema_map['Product Website'] => 'example.com',
+                $this->schema_map['Product Video']   => '',
+                $this->schema_map['Logo URL']        => '',
+                $this->schema_map['Status']          => 'Active',
+                $this->schema_map['Hosted Type']     => array(),
+                $this->schema_map['Domain']          => array(),
+                'Regions'                             => array( 'recreg1' ),
+                $this->schema_map['Category']        => array(),
+                $this->schema_map['Sub Categories']  => array(),
+                $this->schema_map['Capabilities']    => array(),
+                $this->schema_map['HQ Location']     => array(),
+                $this->schema_map['Founded Year']    => '',
+                $this->schema_map['Founders']        => '',
+            ],
+        ];
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return array( 'records' => array( $record ) );
+        } );
+
+        $calls = array();
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function( $table_id, $ids, $primary_field = 'Name' ) use ( &$calls ) {
+            $calls[] = $table_id;
+            return array();
+        } );
+
+        $stored = array();
+        when( 'get_option' )->alias( function( $name, $default = array() ) use ( &$stored ) {
+            if ( 'ttp_unresolved_fields' === $name ) {
+                return $stored;
+            }
+            return $default;
+        } );
+        when( 'update_option' )->alias( function( $name, $value ) use ( &$stored ) {
+            if ( 'ttp_unresolved_fields' === $name ) {
+                $stored = $value;
+            }
+            return true;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( array( 'recreg1' ), $captured[0]['regions'] );
+        $this->assertEmpty( $calls );
+        $this->assertNotEmpty( $stored );
+        $this->assertStringContainsString( 'Regions', $stored[0]['message'] );
+    }
+
     public function test_refresh_vendor_cache_resolves_string_record_ids() {
         $record = [
             'id'     => 'rec1',

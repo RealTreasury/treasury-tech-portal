@@ -266,6 +266,17 @@ class TTP_Data {
             'HQ Location'    => array( 'table' => 'HQ Location',    'primary_field' => 'Name' ),
         );
 
+        foreach ( $linked_tables as $field => $info ) {
+            if ( ! isset( $schema_map[ $field ] ) || $schema_map[ $field ] === $field ) {
+                if ( function_exists( 'error_log' ) ) {
+                    $schema_id = isset( $schema_map[ $field ] ) ? $schema_map[ $field ] : 'unknown';
+                    error_log( sprintf( 'TTP_Data: Missing schema for %s (requested ID: %s)', $field, $schema_id ) );
+                }
+                self::log_unresolved_field( $field, array( $schema_map[ $field ] ?? $field ) );
+                unset( $linked_tables[ $field ] );
+            }
+        }
+
         $vendors = array();
         foreach ( $records as $record ) {
             $fields = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
@@ -538,29 +549,35 @@ class TTP_Data {
             }
         }
 
-        if ( ! empty( $ids ) && isset( $linked_tables[ $field ] ) ) {
-            $table   = $linked_tables[ $field ]['table'];
-            $primary = $linked_tables[ $field ]['primary_field'];
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
-            if ( is_wp_error( $resolved ) ) {
-                if ( function_exists( 'error_log' ) ) {
-                    $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
-                    error_log( sprintf( 'TTP_Data: Failed resolving %s for record IDs %s: %s', $field, $ids_str, $resolved->get_error_message() ) );
-                }
-                self::log_unresolved_field( $field, $ids );
-                foreach ( $placeholders as $idx => $id ) {
-                    unset( $values[ $idx ] );
+        if ( ! empty( $ids ) ) {
+            if ( isset( $linked_tables[ $field ] ) ) {
+                $table    = $linked_tables[ $field ]['table'];
+                $primary  = $linked_tables[ $field ]['primary_field'];
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
+                if ( is_wp_error( $resolved ) ) {
+                    if ( function_exists( 'error_log' ) ) {
+                        $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
+                        error_log( sprintf( 'TTP_Data: Failed resolving %s for record IDs %s: %s', $field, $ids_str, $resolved->get_error_message() ) );
+                    }
+                    self::log_unresolved_field( $field, $ids );
+                    foreach ( $placeholders as $idx => $id ) {
+                        unset( $values[ $idx ] );
+                    }
+                } else {
+                    $resolved = array_map( 'sanitize_text_field', (array) $resolved );
+                    if ( count( $resolved ) < count( $ids ) ) {
+                        $missing = array_slice( $ids, count( $resolved ) );
+                        self::log_unresolved_field( $field, $missing );
+                    }
+                    $i = 0;
+                    foreach ( $placeholders as $idx => $id ) {
+                        $values[ $idx ] = $resolved[ $i ] ?? '';
+                        $i++;
+                    }
                 }
             } else {
-                $resolved = array_map( 'sanitize_text_field', (array) $resolved );
-                if ( count( $resolved ) < count( $ids ) ) {
-                    $missing = array_slice( $ids, count( $resolved ) );
-                    self::log_unresolved_field( $field, $missing );
-                }
-                $i = 0;
                 foreach ( $placeholders as $idx => $id ) {
-                    $values[ $idx ] = $resolved[ $i ] ?? '';
-                    $i++;
+                    $values[ $idx ] = $id;
                 }
             }
         }
