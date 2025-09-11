@@ -752,7 +752,7 @@ class TTP_Data {
             $max_attempts = 3;
 
             do {
-                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, '', true );
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field, true );
                 $attempt++;
                 if ( ! is_wp_error( $resolved ) ) {
                     break;

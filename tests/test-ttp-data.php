@@ -223,7 +223,9 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
+        $captured_primary = array();
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$captured_primary) {
+            $captured_primary[ $table_id ] = $primary_field;
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
@@ -258,6 +260,8 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['Cash'], $vendor['categories']);
         $this->assertSame(['Payments'], $vendor['sub_categories']);
         $this->assertSame(['API'], $vendor['capabilities']);
+        $this->assertSame( 'Name', $captured_primary['Regions'] );
+        $this->assertSame( 'Domain', $captured_primary['Domain'] );
     }
 
     public function test_refresh_vendor_cache_skips_missing_schema_fields() {
@@ -1618,15 +1622,21 @@ class TTP_Data_Test extends TestCase {
 
         $record = array( 'Regions' => array( 'recreg1' ) );
 
+        $captured_field    = null;
+        $captured_use_ids  = null;
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) {
+            function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$captured_field, &$captured_use_ids ) {
+                $captured_field   = $primary_field;
+                $captured_use_ids = $use_field_ids;
                 return array( 'North America' );
             }
         );
 
         $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
+        $this->assertSame( 'Name', $captured_field );
+        $this->assertTrue( $captured_use_ids );
     }
 
     public function test_resolve_linked_field_skips_when_no_ids() {
@@ -1654,11 +1664,13 @@ class TTP_Data_Test extends TestCase {
 
         $record = array( 'Regions' => array( 'recreg1' ) );
         $calls  = 0;
+        $primary_calls = array();
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) use ( &$calls ) {
+            function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$calls, &$primary_calls ) {
                 $calls++;
+                $primary_calls[] = $primary_field;
                 if ( 1 === $calls ) {
                     return new WP_Error( 'network', 'Network error' );
                 }
@@ -1669,6 +1681,7 @@ class TTP_Data_Test extends TestCase {
         $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
         $this->assertSame( 2, $calls );
+        $this->assertSame( array( 'Name', 'Name' ), $primary_calls );
     }
 
     public function test_resolve_linked_field_purges_ids_after_retries() {
@@ -1677,11 +1690,13 @@ class TTP_Data_Test extends TestCase {
 
         $record = array( 'Regions' => array( 'recreg1' ) );
         $calls  = 0;
+        $primary_calls = array();
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) use ( &$calls ) {
+            function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$calls, &$primary_calls ) {
                 $calls++;
+                $primary_calls[] = $primary_field;
                 return new WP_Error( 'network', 'Network error' );
             }
         );
@@ -1689,6 +1704,7 @@ class TTP_Data_Test extends TestCase {
         $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
         $this->assertSame( array(), $result );
         $this->assertSame( 3, $calls );
+        $this->assertSame( array( 'Name', 'Name', 'Name' ), $primary_calls );
     }
 
     public function vendors_need_resolution_region_provider() {
