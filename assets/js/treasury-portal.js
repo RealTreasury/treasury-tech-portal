@@ -316,9 +316,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const loading = document.getElementById('loadingScreen');
                 const container = document.querySelector('.treasury-portal .container');
                 const bottomNav = document.getElementById('bottomNav');
+                let loadingTimer;
+
                 if (loading) {
                     loading.classList.remove('fade-out');
-                    loading.style.display = 'block';
+                    loading.style.display = 'none';
+                    loadingTimer = setTimeout(() => {
+                        loading.style.display = 'block';
+                    }, 200);
                 }
 
                 try {
@@ -372,10 +377,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (container) container.style.display = 'block';
                     if (bottomNav) bottomNav.style.display = 'flex';
                     if (loading) {
-                        loading.classList.add('fade-out');
-                        loading.addEventListener('transitionend', () => {
-                            loading.style.display = 'none';
-                        }, { once: true });
+                        clearTimeout(loadingTimer);
+                        if (loading.style.display !== 'none') {
+                            loading.classList.add('fade-out');
+                            loading.addEventListener('transitionend', () => {
+                                loading.style.display = 'none';
+                            }, { once: true });
+                        }
                     }
                 }
             }
