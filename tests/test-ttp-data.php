@@ -1606,6 +1606,8 @@ class TTP_Data_Test extends TestCase {
             'res_prefix'       => array( array( 'res1234567890abcd' ), true ),
             'rcs_prefix'       => array( array( 'rcs1234567890abcd' ), true ),
             'rcx_prefix'       => array( array( 'rcx1234567890abcd' ), true ),
+            'sel_prefix'       => array( array( 'sel1234567890abcd' ), true ),
+            'opt_prefix'       => array( array( 'opt1234567890abcd' ), true ),
             'numeric_only'     => array( array( '123456' ), true ),
             'r_prefixed_words' => array( array( 'Reporting', 'Risk Management' ), false ),
             'non_match'        => array( array( 'abc123' ), false ),
@@ -1627,6 +1629,26 @@ class TTP_Data_Test extends TestCase {
 
         $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
+    }
+
+    public function test_resolve_linked_field_resolves_option_ids() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record   = array( 'Regions' => array( 'sel1111111111', 'opt2222222222' ) );
+        $captured = array();
+
+        \Patchwork\replace(
+            'TTP_Airbase::resolve_linked_records',
+            function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$captured ) {
+                $captured = $ids;
+                return array( 'North', 'South' );
+            }
+        );
+
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $this->assertSame( array( 'North', 'South' ), $result );
+        $this->assertSame( array( 'sel1111111111', 'opt2222222222' ), $captured );
     }
 
     public function test_resolve_linked_field_skips_when_no_ids() {
