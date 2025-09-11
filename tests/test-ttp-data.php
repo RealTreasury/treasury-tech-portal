@@ -509,6 +509,43 @@ class TTP_Data_Test extends TestCase {
         ];
     }
 
+    public function test_get_all_vendors_refreshes_when_record_ids_present() {
+        $vendors_with_ids = array(
+            array(
+                'domain' => array( 'rec123' ),
+                'regions' => array( 'EMEA' ),
+            ),
+        );
+        $vendors_clean = array(
+            array(
+                'domain' => array( 'Banking' ),
+                'regions' => array( 'EMEA' ),
+            ),
+        );
+
+        when( 'get_transient' )->justReturn( false );
+        when( 'set_transient' )->returnArg();
+
+        $option_calls = 0;
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
+            $option_calls++;
+            if ( 1 === $option_calls ) {
+                return $vendors_with_ids;
+            }
+            return $vendors_clean;
+        } );
+
+        $refreshed = false;
+        \Patchwork\replace( 'TTP_Data::refresh_vendor_cache', function () use ( &$refreshed ) {
+            $refreshed = true;
+        } );
+
+        $result = TTP_Data::get_all_vendors();
+
+        $this->assertTrue( $refreshed );
+        $this->assertSame( $vendors_clean, $result );
+    }
+
     public function test_get_tools_filters_new_arguments() {
         $tools = [
             [

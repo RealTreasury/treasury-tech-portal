@@ -49,15 +49,20 @@ class TTP_Data {
      * Retrieve all vendors with caching.
      *
      * @return array
-     */
+    */
     public static function get_all_vendors() {
-        $vendors = get_transient(self::VENDOR_CACHE_KEY);
-        if ($vendors !== false) {
+        $vendors = get_transient( self::VENDOR_CACHE_KEY );
+        if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
             return $vendors;
         }
 
-        $vendors = get_option(self::VENDOR_OPTION_KEY, []);
-        set_transient(self::VENDOR_CACHE_KEY, $vendors, self::CACHE_TTL);
+        $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        if ( self::vendors_need_resolution( $vendors ) ) {
+            self::refresh_vendor_cache();
+            $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        }
+
+        set_transient( self::VENDOR_CACHE_KEY, $vendors, self::CACHE_TTL );
         return $vendors;
     }
 
@@ -75,6 +80,24 @@ class TTP_Data {
 
         update_option(self::VENDOR_OPTION_KEY, $vendors);
         delete_transient(self::VENDOR_CACHE_KEY);
+    }
+
+    /**
+     * Determine if vendor data contains unresolved record IDs.
+     *
+     * @param array $vendors Vendor records to inspect.
+     * @return bool
+     */
+    private static function vendors_need_resolution( $vendors ) {
+        foreach ( (array) $vendors as $vendor ) {
+            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type' );
+            foreach ( $fields as $field ) {
+                if ( ! empty( $vendor[ $field ] ) && self::contains_record_ids( (array) $vendor[ $field ] ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
