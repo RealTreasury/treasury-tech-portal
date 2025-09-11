@@ -194,7 +194,37 @@ class TTP_Data {
             $domain_field = $fields['Domain'] ?? array();
             $domain       = array();
             if ( is_array( $domain_field ) && ! empty( $domain_field ) ) {
-                if ( self::contains_record_ids( $domain_field ) ) {
+                $first = reset( $domain_field );
+                if ( is_array( $first ) ) {
+                    $ids = array();
+                    foreach ( $domain_field as $item ) {
+                        if ( is_array( $item ) ) {
+                            if ( isset( $item['name'] ) ) {
+                                $domain[] = sanitize_text_field( $item['name'] );
+                            } elseif ( isset( $item['Name'] ) ) {
+                                $domain[] = sanitize_text_field( $item['Name'] );
+                            } elseif ( isset( $item['id'] ) ) {
+                                $ids[] = $item['id'];
+                            }
+                        } elseif ( is_string( $item ) ) {
+                            if ( strpos( $item, 'rec' ) === 0 ) {
+                                $ids[] = $item;
+                            } else {
+                                $domain[] = sanitize_text_field( $item );
+                            }
+                        }
+                    }
+                    if ( ! empty( $ids ) ) {
+                        $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Domain'], $ids );
+                        if ( is_wp_error( $resolved ) ) {
+                            if ( function_exists( 'error_log' ) ) {
+                                error_log( 'TTP_Data: Failed resolving Domain: ' . $resolved->get_error_message() );
+                            }
+                        } else {
+                            $domain = array_merge( $domain, array_map( 'sanitize_text_field', (array) $resolved ) );
+                        }
+                    }
+                } elseif ( self::contains_record_ids( $domain_field ) ) {
                     $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Domain'], $domain_field );
                     if ( is_wp_error( $resolved ) ) {
                         if ( function_exists( 'error_log' ) ) {
