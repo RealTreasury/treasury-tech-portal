@@ -198,6 +198,7 @@ class TTP_Data {
                     $missing_ids[] = $field_map[ $field ];
                 }
             }
+
             if ( function_exists( 'error_log' ) ) {
                 $message = 'TTP_Data: Missing expected fields: ' . implode( ', ', $missing );
                 if ( ! empty( $missing_ids ) ) {
@@ -205,16 +206,27 @@ class TTP_Data {
                 }
                 error_log( $message );
             }
+
             if ( function_exists( 'sanitize_text_field' ) ) {
                 $missing     = array_map( 'sanitize_text_field', $missing );
                 $missing_ids = array_map( 'sanitize_text_field', $missing_ids );
             }
+
             if ( function_exists( 'update_option' ) ) {
                 update_option( 'ttp_missing_fields', array(
                     'fields' => $missing,
                     'ids'    => $missing_ids,
                 ) );
             }
+
+            return new WP_Error(
+                'ttp_missing_fields',
+                'Missing expected vendor fields.',
+                array(
+                    'fields' => $missing,
+                    'ids'    => $missing_ids,
+                )
+            );
         }
 
         $linked_tables = array(
