@@ -281,9 +281,13 @@ class TTP_Airbase {
             return new WP_Error( 'missing_api_path', __( 'Airbase API path not configured.', 'treasury-tech-portal' ) );
         }
 
+        // Normalize table ID by stripping any query parameters.
+        $table_id  = sanitize_text_field( $table_id );
+        $lookup_id = false !== strpos( $table_id, '?' ) ? strstr( $table_id, '?', true ) : $table_id;
+
         $cached = get_transient( 'ttp_airbase_schema' );
-        if ( is_array( $cached ) && isset( $cached[ $table_id ]['fields'] ) ) {
-            return $cached[ $table_id ]['fields'];
+        if ( is_array( $cached ) && isset( $cached[ $lookup_id ]['fields'] ) ) {
+            return $cached[ $lookup_id ]['fields'];
         }
 
         $token = get_option( self::OPTION_TOKEN );
@@ -387,8 +391,8 @@ class TTP_Airbase {
 
         set_transient( 'ttp_airbase_schema', $schemas, DAY_IN_SECONDS );
 
-        if ( isset( $schemas[ $table_id ]['fields'] ) ) {
-            return $schemas[ $table_id ]['fields'];
+        if ( isset( $schemas[ $lookup_id ]['fields'] ) ) {
+            return $schemas[ $lookup_id ]['fields'];
         }
 
         return new WP_Error( 'table_not_found', __( 'Specified Airbase table not found in schema.', 'treasury-tech-portal' ) );
@@ -409,25 +413,28 @@ class TTP_Airbase {
     public static function get_primary_field( $table_id ) {
         static $cache = array();
 
-        if ( isset( $cache[ $table_id ] ) ) {
-            return $cache[ $table_id ];
+        $table_id  = sanitize_text_field( $table_id );
+        $lookup_id = false !== strpos( $table_id, '?' ) ? strstr( $table_id, '?', true ) : $table_id;
+
+        if ( isset( $cache[ $lookup_id ] ) ) {
+            return $cache[ $lookup_id ];
         }
 
         $schema = get_transient( 'ttp_airbase_schema' );
-        if ( is_array( $schema ) && isset( $schema[ $table_id ]['primary'] ) ) {
-            $cache[ $table_id ] = $schema[ $table_id ]['primary'];
-            return $cache[ $table_id ];
+        if ( is_array( $schema ) && isset( $schema[ $lookup_id ]['primary'] ) ) {
+            $cache[ $lookup_id ] = $schema[ $lookup_id ]['primary'];
+            return $cache[ $lookup_id ];
         }
 
-        $result = self::get_table_schema( $table_id );
+        $result = self::get_table_schema( $lookup_id );
         if ( is_wp_error( $result ) ) {
             return $result;
         }
 
         $schema = get_transient( 'ttp_airbase_schema' );
-        if ( is_array( $schema ) && isset( $schema[ $table_id ]['primary'] ) ) {
-            $cache[ $table_id ] = $schema[ $table_id ]['primary'];
-            return $cache[ $table_id ];
+        if ( is_array( $schema ) && isset( $schema[ $lookup_id ]['primary'] ) ) {
+            $cache[ $lookup_id ] = $schema[ $lookup_id ]['primary'];
+            return $cache[ $lookup_id ];
         }
 
         return new WP_Error( 'primary_field_not_found', __( 'Primary field not found for table.', 'treasury-tech-portal' ) );
