@@ -130,6 +130,15 @@ class TTP_Data {
                 $regions = array_map( 'sanitize_text_field', $regions_field );
             }
 
+            $parent_category = $fields['Parent Category'] ?? '';
+            $sub_categories  = $fields['Sub Categories'] ?? array();
+            $category_names  = array_filter(
+                array_map(
+                    'sanitize_text_field',
+                    array_merge( (array) $parent_category, (array) $sub_categories )
+                )
+            );
+
             $vendors[] = array(
                 'id'              => sanitize_text_field($record['id'] ?? ''),
                 'name'            => $fields['Product Name'] ?? '',
@@ -140,8 +149,9 @@ class TTP_Data {
                 'hosted_type'     => $fields['Hosted Type'] ?? array(),
                 'domain'          => $fields['Domain'] ?? array(),
                 'regions'         => $regions,
-                'sub_categories'  => $fields['Sub Categories'] ?? array(),
-                'parent_category' => $fields['Parent Category'] ?? '',
+                'sub_categories'  => $sub_categories,
+                'parent_category' => $parent_category,
+                'category_names'  => $category_names,
                 'capabilities'    => $fields['Capabilities'] ?? array(),
                 'logo_url'        => self::normalize_url($fields['Logo URL'] ?? ''),
                 'hq_location'     => $fields['HQ Location'] ?? '',

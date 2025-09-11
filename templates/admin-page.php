@@ -14,20 +14,13 @@
             <thead>
                 <tr>
                     <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Parent Category', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Subcategories', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($vendors as $vendor) : ?>
                     <?php
-                    $parent = $vendor['parent_category'] ?? '';
-                    if (is_array($parent)) {
-                        $parent = implode(', ', array_map('sanitize_text_field', $parent));
-                    } else {
-                        $parent = sanitize_text_field($parent);
-                    }
-                    $sub_cats = implode(', ', array_map('sanitize_text_field', (array) ($vendor['sub_categories'] ?? array())));
+                    $cats = implode(', ', array_map('sanitize_text_field', (array) ($vendor['category_names'] ?? array())));
                     ?>
                     <tr>
                         <td>
@@ -38,8 +31,7 @@
                             }
                             ?>
                         </td>
-                        <td><?php echo esc_html($parent); ?></td>
-                        <td><?php echo esc_html($sub_cats); ?></td>
+                        <td><?php echo esc_html($cats); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
