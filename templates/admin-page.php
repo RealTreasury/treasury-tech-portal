@@ -2,6 +2,7 @@
 <div class="wrap treasury-portal-admin">
     <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
     <p><?php esc_html_e('Use the button below to manually refresh the vendor cache after changing Airbase settings or when vendor data appears outdated.', 'treasury-tech-portal'); ?></p>
+    <p><?php esc_html_e('Linked field IDs such as regions or categories are automatically converted to names for easier reading.', 'treasury-tech-portal'); ?></p>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <?php wp_nonce_field('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce'); ?>
         <input type="hidden" name="action" value="ttp_refresh_vendors" />
