@@ -223,6 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.allRegions = [];
                 this.allCategories = [];
                 this.allSubcategories = [];
+                this.subcategoriesByCategory = {};
                 this.advancedFilters = { features: [], hasVideo: false, regions: [], categories: [], subcategories: [] };
                 this.currentSort = 'name';
                 this.currentView = 'grid';
@@ -347,6 +348,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const allRegions = new Set();
                     const allCategories = new Set();
                     const allSubcategories = new Set();
+                    const subcategoriesByCategory = {};
                     const addValue = (set, val) => {
                         const trimmed = typeof val === 'string' ? val.trim() : '';
                         if (trimmed && !/^\d+$/.test(trimmed)) {
@@ -375,7 +377,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
                         const regions = Array.isArray(vendor.regions) ? vendor.regions.map(r => r.trim()) : [];
                         addValue(allCategories, rawCategory);
-                        subCategories.forEach(sc => addValue(allSubcategories, sc));
+                        if (!subcategoriesByCategory[category]) {
+                            subcategoriesByCategory[category] = new Set();
+                        }
+                        subCategories.forEach(sc => {
+                            addValue(allSubcategories, sc);
+                            addValue(subcategoriesByCategory[category], sc);
+                        });
                         regions.forEach(r => addValue(allRegions, r));
                         return {
                             name: vendor.name || '',
@@ -394,6 +402,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     this.allRegions = Array.from(allRegions).sort((a, b) => a.localeCompare(b));
                     this.allCategories = Array.from(allCategories).sort((a, b) => a.localeCompare(b));
                     this.allSubcategories = Array.from(allSubcategories).sort((a, b) => a.localeCompare(b));
+                    this.subcategoriesByCategory = {};
+                    Object.keys(subcategoriesByCategory).forEach(cat => {
+                        this.subcategoriesByCategory[cat] = Array.from(subcategoriesByCategory[cat]).sort((a, b) => a.localeCompare(b));
+                    });
                     this.assignTags();
                     this.updateCounts();
                     this.populateCategoryTags();
@@ -401,6 +413,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     this.populateCategoryFilters();
                     this.populateSubcategoryFilters();
                     this.renderHeaderFilters();
+                    this.renderSubcategoryTabs(this.currentFilter === 'ALL' ? null : this.currentFilter);
                     this.filterAndDisplayTools();
                     this.applyViewStyles();
                 } catch (err) {
@@ -520,14 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             setupInteractions() {
-                document.querySelectorAll('.filter-tab').forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        document.querySelector('.filter-tab.active')?.classList.remove('active');
-                        e.target.classList.add('active');
-                        this.currentFilter = e.target.dataset.category;
-                        this.filterAndDisplayTools();
-                    });
-                });
+                // Subcategory tabs are rendered dynamically via renderSubcategoryTabs()
 
                 document.querySelectorAll('.category-header').forEach(header => {
                     header.addEventListener('click', (e) => {
@@ -1366,6 +1372,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 checkboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
                         this.advancedFilters.categories = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+                        this.currentFilter = this.advancedFilters.categories.length === 1 ? this.normalizeCategory(this.advancedFilters.categories[0]) : 'ALL';
+                        this.renderSubcategoryTabs(this.currentFilter === 'ALL' ? null : this.currentFilter);
                         this.filterAndDisplayTools();
                         this.updateFilterCount();
                     });
@@ -1384,6 +1392,41 @@ document.addEventListener('DOMContentLoaded', async () => {
                 checkboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
                         this.advancedFilters.subcategories = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                });
+            }
+
+            renderSubcategoryTabs(category) {
+                const container = document.querySelector('.filter-tabs');
+                if (!container) return;
+                container.innerHTML = '';
+                this.advancedFilters.subcategories = [];
+                if (!category || !this.subcategoriesByCategory[category]) {
+                    return;
+                }
+                const subs = this.subcategoriesByCategory[category];
+                if (!subs.length) {
+                    return;
+                }
+                const createBtn = (label, value = '') => {
+                    const btn = document.createElement('button');
+                    btn.className = 'filter-tab';
+                    btn.textContent = label;
+                    btn.dataset.subcategory = value;
+                    return btn;
+                };
+                const allBtn = createBtn('All');
+                allBtn.classList.add('active');
+                container.appendChild(allBtn);
+                subs.forEach(sub => container.appendChild(createBtn(sub, sub)));
+                container.querySelectorAll('.filter-tab').forEach(tab => {
+                    tab.addEventListener('click', e => {
+                        container.querySelector('.filter-tab.active')?.classList.remove('active');
+                        e.target.classList.add('active');
+                        const val = e.target.dataset.subcategory;
+                        this.advancedFilters.subcategories = val ? [val] : [];
                         this.filterAndDisplayTools();
                         this.updateFilterCount();
                     });
@@ -1410,6 +1453,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 categorySelect.addEventListener('change', e => {
                     const val = e.target.value;
                     this.advancedFilters.categories = val ? [val] : [];
+                    this.currentFilter = this.advancedFilters.categories.length === 1 ? this.normalizeCategory(this.advancedFilters.categories[0]) : 'ALL';
+                    this.renderSubcategoryTabs(this.currentFilter === 'ALL' ? null : this.currentFilter);
                     this.filterAndDisplayTools();
                     this.updateFilterCount();
                 });
@@ -2152,8 +2197,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (tagSearchClear) tagSearchClear.style.display = 'none';
                 this.filterTagCheckboxes('');
                 document.querySelector('.filter-tab.active')?.classList.remove('active');
-                document.querySelector('.filter-tab[data-category="ALL"]')?.classList.add('active');
                 this.currentFilter = 'ALL';
+                this.renderSubcategoryTabs(null);
 
                 this.advancedFilters = { features:[], hasVideo:false, regions:[], categories:[], subcategories:[] };
 

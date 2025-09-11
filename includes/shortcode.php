@@ -47,12 +47,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                     </div>
                 </div>
 
-                <div class="filter-tabs">
-                    <button class="filter-tab active" data-category="ALL">All</button>
-                    <button class="filter-tab" data-category="CASH">Cash Tools</button>
-                    <button class="filter-tab" data-category="LITE">TMS-Lite</button>
-                    <button class="filter-tab" data-category="TRMS">TRMS</button>
-                </div>
+                <div class="filter-tabs"></div>
                 <div id="headerFilters" class="header-filters"></div>
         </div>
     </div>
