@@ -728,6 +728,41 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( $expected[0]['category'], $captured[0]['category'] );
     }
 
+    public function test_refresh_vendor_cache_fallback_maps_remaining_ids() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Regions'         => ['recreg1'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        $calls = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$calls ) {
+            $calls[] = $use_field_ids;
+            if ( $use_field_ids ) {
+                return array( 'Europe' );
+            }
+            return array( 'recreg1' );
+        } );
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( array( false, true ), $calls );
+        $this->assertSame( array( 'Europe' ), $captured[0]['regions'] );
+    }
+
     public function test_refresh_vendor_cache_resolves_mixed_region_values() {
         $record = [
             'id'     => 'rec1',
