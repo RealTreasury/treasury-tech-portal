@@ -1124,18 +1124,19 @@ class TTP_Data_Test extends TestCase {
     /**
      * @dataProvider parse_record_ids_string_provider
      */
-    public function test_parse_record_ids_handles_string_formats( $input ) {
+    public function test_parse_record_ids_handles_string_formats( $input, $expected ) {
         $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
         $method->setAccessible( true );
-        $this->assertSame( array( 'A', 'B' ), $method->invoke( null, $input ) );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
     }
 
     public function parse_record_ids_string_provider() {
         return array(
-            'json_string'     => array( '["A","B"]' ),
-            'comma_separated' => array( 'A, B' ),
-            'semicolon'       => array( 'A;B' ),
-            'newline'         => array( "A\nB" ),
+            'json_string'      => array( '["A","B"]', array( 'A', 'B' ) ),
+            'comma_separated'  => array( 'A, B', array( 'A', 'B' ) ),
+            'semicolon'        => array( 'A;B', array( 'A', 'B' ) ),
+            'mixed_delimiters' => array( 'A;B,C', array( 'A', 'B', 'C' ) ),
+            'newline'          => array( "A\nB", array( 'A', 'B' ) ),
         );
     }
 
@@ -1152,7 +1153,39 @@ class TTP_Data_Test extends TestCase {
         return array(
             'comma_inside_name'     => array( '"Foo, Inc",Bar', array( 'Foo, Inc', 'Bar' ) ),
             'semicolon_inside_name' => array( '"Foo; Inc";Bar', array( 'Foo; Inc', 'Bar' ) ),
+            'mixed_delimiters'      => array( '"Foo, Inc";Bar,Baz', array( 'Foo, Inc', 'Bar', 'Baz' ) ),
         );
+    }
+
+    public function test_get_all_vendors_migrates_semicolon_delimited_fields() {
+        $stored_option = array(
+            array(
+                'regions' => array( 'A;B', 'C' ),
+            ),
+        );
+
+        when( 'get_transient' )->justReturn( false );
+        when( 'set_transient' )->returnArg();
+        when( 'delete_transient' )->returnArg();
+
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                return $stored_option;
+            }
+            return $default;
+        } );
+
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored_option ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                $stored_option = $value;
+            }
+            return true;
+        } );
+
+        $vendors = TTP_Data::get_all_vendors();
+
+        $this->assertSame( array( 'A', 'B', 'C' ), $vendors[0]['regions'] );
+        $this->assertSame( $vendors, $stored_option );
     }
 
     /**

@@ -66,14 +66,21 @@ class TTP_Data {
 
     public static function get_all_vendors() {
         $vendors = get_transient( self::get_vendor_cache_key() );
-        if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
+        if (
+            $vendors !== false
+            && ! self::vendors_need_resolution( $vendors )
+            && ! self::cache_needs_semicolon_migration( $vendors )
+        ) {
             return $vendors;
         }
 
         $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        $vendors = self::migrate_semicolon_cache( $vendors );
+
         if ( self::vendors_need_resolution( $vendors ) ) {
             self::refresh_vendor_cache();
             $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+            $vendors = self::migrate_semicolon_cache( $vendors );
         }
 
         set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
@@ -122,6 +129,88 @@ class TTP_Data {
         if ( class_exists( 'WP_CLI' ) ) {
             \WP_CLI::success( 'Vendor cache refreshed.' );
         }
+    }
+
+    /**
+     * Check if vendor cache includes semicolon-delimited values that need migration.
+     *
+     * @param array $vendors Vendor records to inspect.
+     * @return bool
+     */
+    private static function cache_needs_semicolon_migration( $vendors ) {
+        foreach ( (array) $vendors as $vendor ) {
+            foreach ( (array) $vendor as $value ) {
+                if ( is_string( $value ) && strpos( $value, ';' ) !== false ) {
+                    $parsed = self::parse_record_ids( $value );
+                    if ( count( $parsed ) > 1 ) {
+                        return true;
+                    }
+                } elseif ( is_array( $value ) ) {
+                    foreach ( $value as $item ) {
+                        if ( is_string( $item ) && strpos( $item, ';' ) !== false ) {
+                            $parsed = self::parse_record_ids( $item );
+                            if ( count( $parsed ) > 1 ) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Normalize semicolon-delimited values within vendor cache.
+     *
+     * @param array $vendors Vendor records.
+     * @return array Updated vendor records.
+     */
+    private static function migrate_semicolon_cache( $vendors ) {
+        $changed = false;
+
+        foreach ( $vendors as &$vendor ) {
+            foreach ( $vendor as $key => $value ) {
+                if ( is_string( $value ) && strpos( $value, ';' ) !== false ) {
+                    $parsed = self::parse_record_ids( $value );
+                    if ( count( $parsed ) > 1 ) {
+                        $vendor[ $key ] = $parsed;
+                        $changed        = true;
+                    }
+                } elseif ( is_array( $value ) ) {
+                    $flattened = array();
+                    $modified  = false;
+                    foreach ( $value as $item ) {
+                        if ( is_string( $item ) && strpos( $item, ';' ) !== false ) {
+                            $parsed = self::parse_record_ids( $item );
+                            if ( count( $parsed ) > 1 ) {
+                                $flattened = array_merge( $flattened, $parsed );
+                                $modified  = true;
+                                continue;
+                            }
+                        }
+                        $flattened[] = $item;
+                    }
+
+                    if ( $modified ) {
+                        $vendor[ $key ] = $flattened;
+                        $changed        = true;
+                    }
+                }
+            }
+        }
+        unset( $vendor );
+
+        if ( $changed ) {
+            if ( function_exists( 'update_option' ) ) {
+                update_option( self::VENDOR_OPTION_KEY, $vendors );
+            }
+            if ( function_exists( 'delete_transient' ) ) {
+                delete_transient( self::get_vendor_cache_key() );
+            }
+        }
+
+        return $vendors;
     }
 
     /**
@@ -400,12 +489,31 @@ class TTP_Data {
                         continue;
                     }
 
-                    $fields = str_getcsv( $line );
-                    if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
-                        $fields = str_getcsv( $line, ';' );
+                    $normalized = '';
+                    $in_quotes  = false;
+                    $length     = strlen( $line );
+
+                    for ( $i = 0; $i < $length; $i++ ) {
+                        $char = $line[ $i ];
+                        if ( '"' === $char ) {
+                            $normalized .= $char;
+                            if ( $in_quotes && $i + 1 < $length && '"' === $line[ $i + 1 ] ) {
+                                $normalized .= '"';
+                                $i++;
+                                continue;
+                            }
+                            $in_quotes = ! $in_quotes;
+                            continue;
+                        }
+                        if ( ! $in_quotes && ';' === $char ) {
+                            $normalized .= ',';
+                        } else {
+                            $normalized .= $char;
+                        }
                     }
 
-                    $parsed = array_merge( $parsed, $fields );
+                    $fields  = str_getcsv( $normalized );
+                    $parsed  = array_merge( $parsed, $fields );
                 }
 
                 $value = $parsed;
