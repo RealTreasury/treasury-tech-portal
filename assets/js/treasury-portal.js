@@ -2055,7 +2055,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         this.toggleShortlistMenu();
                     };
 
-                    shortlist.addEventListener('touchstart', (e) => e.preventDefault());
                     shortlist.addEventListener('click', handleShortlist);
                     shortlist.addEventListener('touchend', (e) => {
                         e.preventDefault();
