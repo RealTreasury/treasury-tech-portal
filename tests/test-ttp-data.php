@@ -1033,7 +1033,7 @@ class TTP_Data_Test extends TestCase {
     /**
      * @dataProvider contains_record_ids_provider
      */
-    public function test_contains_record_ids_detects_rcx_prefixes( $values, $expected ) {
+    public function test_contains_record_ids_respects_known_prefixes( $values, $expected ) {
         $method = new \ReflectionMethod( TTP_Data::class, 'contains_record_ids' );
         $method->setAccessible( true );
         $this->assertSame( $expected, $method->invoke( null, $values ) );
@@ -1041,10 +1041,12 @@ class TTP_Data_Test extends TestCase {
 
     public function contains_record_ids_provider() {
         return array(
-            'rec_prefix' => array( array( 'recabc123' ), true ),
-            'res_prefix' => array( array( 'resxyz789' ), true ),
-            'rcs_prefix' => array( array( 'rcsxyz789' ), true ),
-            'non_match'  => array( array( 'abc123' ), false ),
+            'rec_prefix'       => array( array( 'rec1234567890abcd' ), true ),
+            'res_prefix'       => array( array( 'res1234567890abcd' ), true ),
+            'rcs_prefix'       => array( array( 'rcs1234567890abcd' ), true ),
+            'rcx_prefix'       => array( array( 'rcx1234567890abcd' ), true ),
+            'r_prefixed_words' => array( array( 'Reporting', 'Risk Management' ), false ),
+            'non_match'        => array( array( 'abc123' ), false ),
         );
     }
 
@@ -1062,7 +1064,7 @@ class TTP_Data_Test extends TestCase {
     public function test_vendors_need_resolution_detects_region_aliases( $key ) {
         $vendors = array(
             array(
-                $key => array( 'recABC' ),
+                $key => array( 'recABC123' ),
             ),
         );
 
@@ -1074,7 +1076,7 @@ class TTP_Data_Test extends TestCase {
 
         $vendors = array(
             array(
-                $key => array( 'resABC' ),
+                $key => array( 'resABC123' ),
             ),
         );
 
