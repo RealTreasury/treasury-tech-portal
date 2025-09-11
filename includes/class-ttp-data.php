@@ -377,7 +377,7 @@ class TTP_Data {
             if ( json_last_error() === JSON_ERROR_NONE ) {
                 $value = $maybe_json;
             } else {
-                $value = explode( ',', $value );
+                $value = preg_split( '/[\\n;,]+/', $value );
             }
         }
 
