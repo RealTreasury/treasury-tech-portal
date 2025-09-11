@@ -15,6 +15,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
 }
 $categories         = TTP_Data::get_categories();
 $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
+$domains            = TTP_Data::get_domains();
+$enabled_domains    = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( $domains ) );
 $category_icons     = TTP_Data::get_category_icons();
 
 $category_meta = array(
@@ -41,7 +43,7 @@ $category_meta = array(
     ),
 );
 ?>
-<div class="treasury-portal">
+<div class="treasury-portal" data-enabled-domains="<?php echo esc_attr( wp_json_encode( $enabled_domains ) ); ?>">
     <!-- Loading Screen -->
     <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
         <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>

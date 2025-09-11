@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 
 class TTP_Admin {
     const OPTION_ENABLED_CATEGORIES = 'ttp_enabled_categories';
+    const OPTION_ENABLED_DOMAINS    = 'ttp_enabled_domains';
 
     public static function init() {
         add_action('admin_menu', [__CLASS__, 'register_menu']);
@@ -15,6 +16,7 @@ class TTP_Admin {
         add_action('admin_post_ttp_download_unresolved', [__CLASS__, 'download_unresolved_report']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
         add_action('admin_post_ttp_save_categories', [__CLASS__, 'save_categories']);
+        add_action('admin_post_ttp_save_domains', [__CLASS__, 'save_domains']);
     }
 
     public static function register_menu() {
@@ -189,6 +191,8 @@ class TTP_Admin {
         $vendors            = TTP_Data::get_all_vendors();
         $categories         = TTP_Data::get_categories();
         $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
+        $domains            = TTP_Data::get_domains();
+        $enabled_domains    = (array) get_option( self::OPTION_ENABLED_DOMAINS, array_keys( $domains ) );
         include dirname( __DIR__ ) . '/templates/admin-page.php';
     }
 
@@ -228,6 +232,17 @@ class TTP_Admin {
         $cats = array_map( 'sanitize_text_field', (array) ( $_POST['enabled_categories'] ?? array() ) );
         update_option( self::OPTION_ENABLED_CATEGORIES, $cats );
         wp_redirect( add_query_arg( 'cats_updated', 1, admin_url( 'admin.php?page=treasury-tools' ) ) );
+        exit;
+    }
+
+    public static function save_domains() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( 'Unauthorized' );
+        }
+        check_admin_referer( 'ttp_save_domains', 'ttp_save_domains_nonce' );
+        $domains = array_map( 'sanitize_text_field', (array) ( $_POST['enabled_domains'] ?? array() ) );
+        update_option( self::OPTION_ENABLED_DOMAINS, $domains );
+        wp_redirect( add_query_arg( 'domains_updated', 1, admin_url( 'admin.php?page=treasury-tools' ) ) );
         exit;
     }
 

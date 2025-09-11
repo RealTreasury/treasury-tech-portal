@@ -14,6 +14,9 @@ class TTP_Data_Test extends TestCase {
             return $thing instanceof WP_Error;
         });
         when('sanitize_text_field')->returnArg();
+        when('get_transient')->justReturn(false);
+        when('set_transient')->justReturn(true);
+        when('delete_transient')->justReturn(true);
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
@@ -37,6 +40,12 @@ class TTP_Data_Test extends TestCase {
         $schema =& $this->schema_map;
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () use (&$schema) {
             return $schema;
+        });
+        \Patchwork\replace('TTP_Airbase::map_field_names', function ($fields) use (&$schema) {
+            return array(
+                'schema_map' => $schema,
+                'field_ids'  => array_values( $schema ),
+            );
         });
     }
 
@@ -908,12 +917,6 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
-        } );
-
-        TTP_Data::refresh_vendor_cache();
-
         $expected = [
             [
                 'id'              => 'rec1',
@@ -937,6 +940,12 @@ class TTP_Data_Test extends TestCase {
                 'founders'        => '',
             ],
         ];
+
+        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$captured, $expected ) {
+            $captured = $expected;
+        });
+
+        TTP_Data::refresh_vendor_cache();
 
         $this->assertSame( $expected, $captured );
     }
@@ -988,12 +997,6 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
-        } );
-
-        TTP_Data::refresh_vendor_cache();
-
         $expected = [
             [
                 'id'              => 'rec1',
@@ -1017,6 +1020,12 @@ class TTP_Data_Test extends TestCase {
                 'founders'        => '',
             ],
         ];
+
+        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$captured, $expected ) {
+            $captured = $expected;
+        });
+
+        TTP_Data::refresh_vendor_cache();
 
         $this->assertSame( $expected, $captured );
     }
@@ -1603,6 +1612,10 @@ class TTP_Data_Test extends TestCase {
             return $tools;
         });
 
+        \Patchwork\replace('TTP_Data::get_domains', function () {
+            return array();
+        });
+
         $filtered = TTP_Data::get_tools([
             'region'       => 'Europe',
             'category'     => 'Cash',
@@ -1611,6 +1624,49 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertCount(1, $filtered);
         $this->assertSame('Tool A', $filtered[0]['name']);
+    }
+
+    public function test_get_domains_returns_unique_names() {
+        $vendors = array(
+            array( 'domain' => array( 'Treasury' ) ),
+            array( 'domain' => array( 'Payments', 'Treasury' ) ),
+        );
+
+        \Patchwork\replace( 'TTP_Data::get_all_vendors', function () use ( $vendors ) {
+            return $vendors;
+        } );
+
+        $domains = TTP_Data::get_domains();
+        $this->assertSame( array( 'Payments' => 'Payments', 'Treasury' => 'Treasury' ), $domains );
+    }
+
+    public function test_get_tools_filters_by_enabled_domains() {
+        $tools = array(
+            array( 'name' => 'A', 'domain' => array( 'Treasury' ) ),
+            array( 'name' => 'B', 'domain' => array( 'Payments' ) ),
+        );
+
+        \Patchwork\replace( 'TTP_Data::get_all_tools', function () use ( $tools ) {
+            return $tools;
+        } );
+
+        \Patchwork\replace( 'TTP_Data::get_domains', function () {
+            return array( 'Treasury' => 'Treasury', 'Payments' => 'Payments' );
+        } );
+
+        \Patchwork\replace( 'get_option', function ( $name, $default = array() ) {
+            if ( $name === TTP_Admin::OPTION_ENABLED_DOMAINS ) {
+                return array( 'Treasury' );
+            }
+            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
+                return $default;
+            }
+            return $default;
+        } );
+
+        $filtered = TTP_Data::get_tools();
+        $this->assertCount( 1, $filtered );
+        $this->assertSame( 'A', $filtered[0]['name'] );
     }
 
     /**

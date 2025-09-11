@@ -70,16 +70,29 @@ class TTP_Rest {
 
         $tools = TTP_Data::get_tools($args);
 
-        return rest_ensure_response($tools);
+        $response = array(
+            'tools'          => $tools,
+            'enabled_domains' => (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( TTP_Data::get_domains() ) ),
+        );
+
+        return rest_ensure_response( $response );
     }
 
     public static function get_vendors($request) {
         $vendors = TTP_Data::get_all_vendors();
-        $enabled = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
-        $vendors = array_filter( (array) $vendors, function ( $vendor ) use ( $enabled ) {
+        $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
+        $enabled_domains    = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( TTP_Data::get_domains() ) );
+        $vendors = array_filter( (array) $vendors, function ( $vendor ) use ( $enabled_categories, $enabled_domains ) {
             $vendor = (array) $vendor;
             $cat    = $vendor['category'] ?? ( $vendor['categories'][0] ?? '' );
-            return in_array( $cat, $enabled, true );
+            $domains = (array) ( $vendor['domain'] ?? array() );
+            if ( ! in_array( $cat, $enabled_categories, true ) ) {
+                return false;
+            }
+            if ( ! empty( $domains ) && empty( array_intersect( $domains, $enabled_domains ) ) ) {
+                return false;
+            }
+            return true;
         } );
         $needs_refresh = false;
 
@@ -122,7 +135,12 @@ class TTP_Rest {
             TTP_Data::refresh_vendor_cache();
         }
 
-        return rest_ensure_response( $vendors );
+        return rest_ensure_response(
+            array(
+                'vendors'         => $vendors,
+                'enabled_domains' => $enabled_domains,
+            )
+        );
     }
 
     public static function refresh_data( $request ) {

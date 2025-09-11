@@ -217,6 +217,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 };
                 this.availableCategories = Array.isArray(window.TTP_DATA && TTP_DATA.available_categories) && TTP_DATA.available_categories.length ? TTP_DATA.available_categories : [];
                 this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : this.availableCategories;
+                this.availableDomains = Array.isArray(window.TTP_DATA && TTP_DATA.available_domains) && TTP_DATA.available_domains.length ? TTP_DATA.available_domains : [];
+                this.enabledDomains = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_domains) && TTP_DATA.enabled_domains.length ? TTP_DATA.enabled_domains : this.availableDomains;
                 this.categoryLabels = (window.TTP_DATA && TTP_DATA.category_labels) || {};
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
@@ -351,6 +353,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     subcategories.forEach(s => url.searchParams.append('sub_category', s));
                     const response = await fetch(url.toString());
                     const data = await response.json();
+                    let vendors = Array.isArray(data.vendors) ? data.vendors : (Array.isArray(data) ? data : []);
+                    if (Array.isArray(data.enabled_domains)) {
+                        this.enabledDomains = data.enabled_domains;
+                    }
+                    const enabledDomains = Array.isArray(this.enabledDomains) ? this.enabledDomains : [];
+                    vendors = vendors.filter(vendor => {
+                        const vdomains = Array.isArray(vendor.domain) ? vendor.domain : [];
+                        return vdomains.length === 0 || vdomains.some(d => enabledDomains.includes(d));
+                    });
                     const allRegions = new Set();
                     const allCategories = new Set();
                     const allSubcategories = new Set();
@@ -361,7 +372,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             set.add(trimmed);
                         }
                     };
-                    this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
+                    this.TREASURY_TOOLS = vendors.map(vendor => {
                         if (!Array.isArray(vendor.regions) || vendor.regions.length === 0) {
                             console.warn('Vendor missing regions:', vendor);
                         }
