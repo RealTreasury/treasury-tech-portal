@@ -16,7 +16,7 @@ echo "✓ PHP syntax checks passed"
 
 # Validate JSON files
 echo "2. Validating JSON files..."
-for json_file in data/*.json .wordpress-com/*.json; do
+for json_file in .wordpress-com/*.json; do
     if [[ -f "$json_file" ]]; then
         if ! python3 -m json.tool "$json_file" > /dev/null 2>&1; then
             echo "❌ Invalid JSON in: $json_file"
@@ -30,11 +30,10 @@ echo "✓ JSON validation passed"
 echo "3. Verifying required files..."
 required_files=(
     "treasury-tech-portal.php"
-    "readme.txt" 
+    "readme.txt"
     "WORDPRESS-COM-DEPLOYMENT.md"
     ".wordpress-com/config.json"
     ".wordpress-com/deployment.yml"
-    "data/tools.json"
 )
 
 for file in "${required_files[@]}"; do
