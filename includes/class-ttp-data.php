@@ -569,7 +569,7 @@ class TTP_Data {
      * @param array  $record        Source record.
      * @param string $field         Field label for logging and lookup.
      * @param string $table         Airtable table name.
-     * @param string $primary_field Primary field name in linked table.
+     * @param string $primary_field Primary field name in linked table (unused).
      * @return array Sanitized values with IDs replaced by names.
      */
     private static function resolve_linked_field( $record, $field, $table, $primary_field ) {
@@ -599,7 +599,7 @@ class TTP_Data {
             $max_attempts = 3;
 
             do {
-                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, '', true );
                 $attempt++;
                 if ( ! is_wp_error( $resolved ) ) {
                     break;

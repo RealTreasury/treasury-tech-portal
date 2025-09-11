@@ -574,6 +574,50 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame(['First', 'Second'], $values);
     }
 
+    public function test_resolve_linked_records_accepts_field_ids() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $self = $this;
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self) {
+            $self->assertStringContainsString('returnFieldsByFieldId=true', $url);
+            $self->assertStringContainsString('fields%5B%5D=fldName', $url);
+
+            $body = json_encode([
+                'records' => [
+                    [ 'id' => 'rec1', 'fields' => [ 'fldName' => 'First' ] ],
+                ],
+            ]);
+
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => $body,
+            ];
+        });
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'fldName', true);
+        $this->assertSame(['First'], $values);
+    }
+
     public function test_resolve_linked_records_batches_requests_when_ids_exceed_limit() {
         when('get_option')->alias(function ($option, $default = false) {
             switch ($option) {
