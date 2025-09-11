@@ -10,6 +10,7 @@ class TTP_Data {
     const CACHE_TTL  = HOUR_IN_SECONDS;
     const VENDOR_OPTION_KEY = 'ttp_vendors';
     const VENDOR_CACHE_KEY  = 'ttp_vendors_cache';
+    const VENDOR_CACHE_VERSION = 1;
 
     /**
      * Indicates when the vendor cache is actively being refreshed.
@@ -59,8 +60,12 @@ class TTP_Data {
      *
      * @return array
     */
+    private static function get_vendor_cache_key() {
+        return self::VENDOR_CACHE_KEY . '_v' . self::VENDOR_CACHE_VERSION;
+    }
+
     public static function get_all_vendors() {
-        $vendors = get_transient( self::VENDOR_CACHE_KEY );
+        $vendors = get_transient( self::get_vendor_cache_key() );
         if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
             return $vendors;
         }
@@ -71,7 +76,7 @@ class TTP_Data {
             $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
         }
 
-        set_transient( self::VENDOR_CACHE_KEY, $vendors, self::CACHE_TTL );
+        set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
         return $vendors;
     }
 
@@ -88,7 +93,7 @@ class TTP_Data {
         }
 
         update_option(self::VENDOR_OPTION_KEY, $vendors);
-        delete_transient(self::VENDOR_CACHE_KEY);
+        delete_transient( self::get_vendor_cache_key() );
 
         // Immediately refresh the vendor cache so stored data is normalised
         // before any subsequent access. Use a guard to avoid recursive calls
@@ -101,6 +106,21 @@ class TTP_Data {
             do_action( 'ttp_refresh_vendor_cache' );
 
             self::$refreshing_vendors = false;
+        }
+    }
+
+    public static function register_cli_commands() {
+        if ( ! class_exists( 'WP_CLI' ) ) {
+            return;
+        }
+
+        \WP_CLI::add_command( 'ttp refresh-cache', array( __CLASS__, 'cli_refresh_cache' ) );
+    }
+
+    public static function cli_refresh_cache() {
+        self::refresh_vendor_cache();
+        if ( class_exists( 'WP_CLI' ) ) {
+            \WP_CLI::success( 'Vendor cache refreshed.' );
         }
     }
 

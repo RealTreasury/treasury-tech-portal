@@ -23,6 +23,10 @@ class Treasury_Tech_Portal {
         add_action('init', ['TTP_Rest', 'init']);
         add_action('init', ['TTP_Admin', 'init']);
 
+        if ( defined( 'WP_CLI' ) && WP_CLI ) {
+            add_action( 'cli_init', array( 'TTP_Data', 'register_cli_commands' ) );
+        }
+
         add_action('ttp_refresh_vendor_cache', ['TTP_Data', 'refresh_vendor_cache']);
         if (!wp_next_scheduled('ttp_refresh_vendor_cache')) {
             wp_schedule_event(time(), 'twicedaily', 'ttp_refresh_vendor_cache');
