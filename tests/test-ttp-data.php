@@ -239,6 +239,48 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['Banking'], $captured[0]['domain']);
     }
 
+    public function test_refresh_vendor_cache_resolves_hq_location() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Category'        => 'Cash',
+                'Sub Categories'  => ['Payments'],
+                'Regions'         => ['North America'],
+                'Domain'          => ['Banking'],
+                'HQ Location'     => ['recloc1'],
+                'Capabilities'    => ['API'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $tables = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$tables) {
+            $tables[] = $table_id;
+            if ('HQ Location' === $table_id) {
+                return ['London'];
+            }
+            return [];
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame(['HQ Location'], $tables);
+        $this->assertSame('London', $captured[0]['hq_location']);
+    }
+
     public function test_refresh_vendor_cache_stores_empty_on_error() {
         $record = [
             'id'     => 'rec1',
