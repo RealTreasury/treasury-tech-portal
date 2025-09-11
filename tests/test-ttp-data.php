@@ -32,7 +32,9 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () use ($record) {
+        $requested_fields = null;
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record, &$requested_fields) {
+            $requested_fields = $fields;
             return ['records' => [ $record ]];
         });
 
@@ -42,6 +44,8 @@ class TTP_Data_Test extends TestCase {
         });
 
         TTP_Data::refresh_vendor_cache();
+
+        $this->assertContains('fldznljEJpn4lv79r', $requested_fields);
 
         $expected = [
             [
@@ -64,5 +68,30 @@ class TTP_Data_Test extends TestCase {
         ];
 
         $this->assertSame($expected, $captured);
+    }
+
+    public function test_refresh_vendor_cache_logs_missing_fields() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name' => 'Sample Product',
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        \Patchwork\replace('TTP_Data::save_vendors', function () {
+        });
+
+        $logged = '';
+        \Patchwork\replace('error_log', function ($message) use (&$logged) {
+            $logged = $message;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertStringContainsString('Product Website', $logged);
     }
 }

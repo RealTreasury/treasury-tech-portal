@@ -84,12 +84,42 @@ class TTP_Data {
      * Refresh vendor cache from Airbase.
      */
     public static function refresh_vendor_cache() {
-        $data = TTP_Airbase::get_vendors();
+        $field_map = array(
+            'Product Name'    => 'fld2hocSMtPQYWfPa',
+            'Linked Vendor'   => 'fldsrlwpO9AfkmjcH',
+            'Product Website' => 'fldznljEJpn4lv79r',
+            'Product Video'   => 'fld9Kd3xN2hPQYF7W', // placeholder ID
+            'Logo URL'        => 'fldfZPuRMjQKCv3U6',
+            'Status'          => 'fldFsaznNFvfh3x7k',
+            'Hosted Type'     => 'fldGyZDaIUFFidaXA',
+            'Domain'          => 'fldU53MVlWgkPbPDw',
+            'Regions'         => 'fldE8buvdk7TDG1ex',
+            'Sub Categories'  => 'fldl2g5bYDq9TibuF',
+            'Parent Category' => 'fldXqnpKe8ioYOYhP',
+            'Capabilities'    => 'fldvvv8jnCKoJSI7x',
+            'HQ Location'     => 'fldTIplvUIwNH7C4X',
+            'Founded Year'    => 'fldwsUY6nSqxBk62J',
+            'Founders'        => 'fldoTMkJIl1i8oo0r',
+        );
+
+        $data = TTP_Airbase::get_vendors(array_values($field_map));
         if (is_wp_error($data)) {
             return;
         }
 
         $records = self::normalize_vendor_response($data);
+
+        $present_keys = array();
+        foreach ($records as $record) {
+            if (isset($record['fields']) && is_array($record['fields'])) {
+                $present_keys = array_unique(array_merge($present_keys, array_keys($record['fields'])));
+            }
+        }
+
+        $missing = array_diff(array_keys($field_map), $present_keys);
+        if (!empty($missing) && function_exists('error_log')) {
+            error_log('TTP_Data: Missing expected fields: ' . implode(', ', $missing));
+        }
 
         $vendors = array();
         foreach ($records as $record) {
