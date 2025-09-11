@@ -4,32 +4,32 @@
 
 ### Before Making Changes
 1. **Test current functionality**: Use `[treasury_portal]` shortcode on a test page
-2. **Run validation**: Execute `scripts/test.sh` to ensure PHP syntax is valid
+2. **Run validation**: Execute `../scripts/test.sh` to ensure PHP syntax is valid
 3. **Check WordPress.com constraints**: Review deployment limitations below
 
 ### Making Code Changes
 
 #### For UI/Frontend Changes (`assets/` directory)
-1. **CSS Changes**: Modify `assets/css/treasury-portal.css`
+1. **CSS Changes**: Modify `../assets/css/treasury-portal.css`
    - Always use `.treasury-portal` namespace
    - Test mobile responsive behavior at 768px breakpoint
    - Use CSS custom properties for consistent theming
 
-2. **JavaScript Changes**: Modify `assets/js/treasury-portal.js`
+2. **JavaScript Changes**: Modify `../assets/js/treasury-portal.js`
    - All state managed in `TreasuryTechPortal` class properties
    - Use vanilla JavaScript only (no external dependencies)
    - Test mobile touch interactions and swipe gestures
 
 #### For Backend/Data Changes (`includes/` directory)
-1. **Data Structure**: Modify `includes/class-ttp-data.php`
+1. **Data Structure**: Modify `../includes/class-ttp-data.php`
    - Update `get_tools()` method for new filtering
    - Clear cache with `delete_transient('ttp_tools_cache')`
 
-2. **Admin Interface**: Modify `includes/class-ttp-admin.php`
-   - Add form fields to `templates/admin-page.php`
+2. **Admin Interface**: Modify `../includes/class-ttp-admin.php`
+   - Add form fields to `../templates/admin-page.php`
    - Update `save_tool()` method with proper sanitization
 
-3. **API Changes**: Modify `includes/class-ttp-rest.php`
+3. **API Changes**: Modify `../includes/class-ttp-rest.php`
    - Add new endpoints for frontend data access
    - Maintain backward compatibility
 
@@ -45,7 +45,7 @@
 - [ ] Touch gestures on mobile devices
 
 #### Backend Testing Checklist
-- [ ] Run `scripts/test.sh` for PHP validation
+- [ ] Run `../scripts/test.sh` for PHP validation
 - [ ] Test admin interface tool creation/editing
 - [ ] Verify REST API endpoints return expected data
 - [ ] Check caching behavior and invalidation
@@ -174,7 +174,7 @@ style(css): improve mobile responsive design
 ```
 
 #### Before Committing
-1. Run `scripts/test.sh` 
+1. Run `../scripts/test.sh`
 2. Test core functionality with shortcode
 3. Verify no console errors in browser
 4. Check mobile responsive behavior
@@ -183,7 +183,7 @@ style(css): improve mobile responsive design
 
 #### Automatic Deployment
 - Changes to `main` branch trigger WordPress.com deployment
-- Build process runs `scripts/build.sh` validation
+- Build process runs `../scripts/build.sh` validation
 - Failed builds prevent deployment
 
 #### Manual Testing After Deployment

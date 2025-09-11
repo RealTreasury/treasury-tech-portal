@@ -6,7 +6,7 @@
 
 #### 1. Add Property to Tool Object
 ```javascript
-// In assets/js/treasury-portal.js - Update TREASURY_TOOLS array
+// In ../assets/js/treasury-portal.js - Update TREASURY_TOOLS array
 {
   "name": "Example Tool",
   "category": "CASH",
@@ -18,7 +18,7 @@
 
 #### 2. Update Admin Form
 ```php
-// In templates/admin-page.php - Add form field
+// In ../templates/admin-page.php - Add form field
 <tr>
     <th><label for="tool-new-property">New Property</label></th>
     <td><input name="newProperty" id="tool-new-property" type="text" class="regular-text"></td>
@@ -27,7 +27,7 @@
 
 #### 3. Update Save Logic
 ```php
-// In includes/class-ttp-admin.php - TTP_Admin::save_tool()
+// In ../includes/class-ttp-admin.php - TTP_Admin::save_tool()
 $tool = [
     'name'        => sanitize_text_field($_POST['name'] ?? ''),
     'category'    => sanitize_text_field($_POST['category'] ?? ''),
@@ -38,7 +38,7 @@ $tool = [
 
 #### 4. Display in Frontend
 ```javascript
-// In assets/js/treasury-portal.js - createToolCard() method
+// In ../assets/js/treasury-portal.js - createToolCard() method
 card.innerHTML = `
     <div class="tool-card-content">
         <div class="tool-header">
@@ -51,7 +51,7 @@ card.innerHTML = `
 
 #### 5. Add CSS Styling
 ```css
-/* In assets/css/treasury-portal.css */
+/* In ../assets/css/treasury-portal.css */
 .treasury-portal .new-property {
     font-size: 0.8rem;
     color: #6b7280;
@@ -63,7 +63,7 @@ card.innerHTML = `
 
 #### 1. Add Filter State
 ```javascript
-// In assets/js/treasury-portal.js - constructor()
+// In ../assets/js/treasury-portal.js - constructor()
 this.advancedFilters = {
     features: [],
     hasVideo: false,
@@ -73,7 +73,7 @@ this.advancedFilters = {
 
 #### 2. Add Filter UI
 ```html
-<!-- In includes/shortcode.php - side menu filters section -->
+<!-- In ../includes/shortcode.php - side menu filters section -->
 <div class="filter-group">
     <div class="checkbox-item">
         <input type="checkbox" id="newFilter">
@@ -84,7 +84,7 @@ this.advancedFilters = {
 
 #### 3. Add Event Handler
 ```javascript
-// In assets/js/treasury-portal.js - setupAdvancedFilters()
+// In ../assets/js/treasury-portal.js - setupAdvancedFilters()
 const newFilter = document.getElementById('newFilter');
 if (newFilter) {
     newFilter.addEventListener('change', (e) => {
@@ -97,7 +97,7 @@ if (newFilter) {
 
 #### 4. Update Filter Logic
 ```javascript
-// In assets/js/treasury-portal.js - filterAndDisplayTools()
+// In ../assets/js/treasury-portal.js - filterAndDisplayTools()
 if (this.advancedFilters.newFilter) {
     tools = tools.filter(tool => tool.hasNewFeature === true);
 }
@@ -107,7 +107,7 @@ if (this.advancedFilters.newFilter) {
 
 #### 1. Update Category Data
 ```javascript
-// In assets/js/treasury-portal.js - CATEGORY_INFO object
+// In ../assets/js/treasury-portal.js - CATEGORY_INFO object
 this.CATEGORY_INFO = {
     // ... existing categories
     NEWCAT: {
@@ -122,7 +122,7 @@ this.CATEGORY_INFO = {
 
 #### 2. Update Category Tags
 ```javascript
-// In assets/js/treasury-portal.js - CATEGORY_TAGS object
+// In ../assets/js/treasury-portal.js - CATEGORY_TAGS object
 const newCatTags = ["Tag 1", "Tag 2", "Tag 3"];
 this.CATEGORY_TAGS = {
     // ... existing categories
@@ -132,7 +132,7 @@ this.CATEGORY_TAGS = {
 
 #### 3. Add Category Section HTML
 ```html
-<!-- In includes/shortcode.php - add new category section -->
+<!-- In ../includes/shortcode.php - add new category section -->
 <div class="category-section category-newcat" data-category="NEWCAT">
     <div class="category-header" data-category="NEWCAT">
         <div class="category-info">
@@ -154,7 +154,7 @@ this.CATEGORY_TAGS = {
 
 #### 4. Add Filter Tab
 ```html
-<!-- In includes/shortcode.php - filter tabs -->
+<!-- In ../includes/shortcode.php - filter tabs -->
 <div class="filter-tabs">
     <!-- existing tabs -->
     <button class="filter-tab" data-category="NEWCAT">New Category</button>
@@ -163,7 +163,7 @@ this.CATEGORY_TAGS = {
 
 #### 5. Add CSS Styling
 ```css
-/* In assets/css/treasury-portal.css */
+/* In ../assets/css/treasury-portal.css */
 .treasury-portal .category-newcat .category-badge {
     background: rgba(255, 165, 0, 0.1);
     color: #ff8c00;
@@ -179,7 +179,7 @@ this.CATEGORY_TAGS = {
 
 #### 1. Detect Custom Content
 ```javascript
-// In assets/js/treasury-portal.js - showToolModal()
+// In ../assets/js/treasury-portal.js - showToolModal()
 if (tool.customFeature) {
     const customSection = document.createElement('div');
     customSection.className = 'feature-section custom-feature-section';
@@ -202,7 +202,7 @@ if (tool.customFeature) {
 
 #### 2. Custom Action Handler
 ```javascript
-// In assets/js/treasury-portal.js - add new method
+// In ../assets/js/treasury-portal.js - add new method
 handleCustomAction(toolName) {
     const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
     if (tool) {
@@ -221,7 +221,7 @@ handleCustomAction(toolName) {
 
 #### 1. Enhanced Search Logic
 ```javascript
-// In assets/js/treasury-portal.js - replace filterAndDisplayTools() search section
+// In ../assets/js/treasury-portal.js - replace filterAndDisplayTools() search section
 if (this.searchTerm) {
     const searchTerms = this.searchTerm.toLowerCase().split(' ');
     tools = this.TREASURY_TOOLS.filter(tool => {
@@ -243,7 +243,7 @@ if (this.searchTerm) {
 
 #### 2. Search Suggestions
 ```javascript
-// In assets/js/treasury-portal.js - add new method
+// In ../assets/js/treasury-portal.js - add new method
 showSearchSuggestions(inputValue) {
     const suggestions = [];
     const lowercaseInput = inputValue.toLowerCase();
@@ -271,7 +271,7 @@ showSearchSuggestions(inputValue) {
 
 #### 1. Enhanced CSV Export
 ```javascript
-// In assets/js/treasury-portal.js - enhance exportShortlist()
+// In ../assets/js/treasury-portal.js - enhance exportShortlist()
 exportShortlist() {
     const data = this.shortlist.map(item => ({
         name: item.tool.name,
@@ -291,7 +291,7 @@ exportShortlist() {
 
 #### 2. JSON Export Option
 ```javascript
-// In assets/js/treasury-portal.js - add new method
+// In ../assets/js/treasury-portal.js - add new method
 exportShortlistJSON() {
     const data = {
         exportDate: new Date().toISOString(),
@@ -316,7 +316,7 @@ exportShortlistJSON() {
 
 #### 1. Custom Breakpoint Detection
 ```javascript
-// In assets/js/treasury-portal.js - enhance responsive detection
+// In ../assets/js/treasury-portal.js - enhance responsive detection
 getViewportSize() {
     const width = window.innerWidth;
     if (width <= 480) return 'mobile-small';
@@ -348,7 +348,7 @@ handleResponsiveEnhanced() {
 
 #### 2. Responsive CSS Patterns
 ```css
-/* In assets/css/treasury-portal.css */
+/* In ../assets/css/treasury-portal.css */
 
 /* Mobile Small (≤480px) */
 @media (max-width: 480px) {
@@ -387,7 +387,7 @@ handleResponsiveEnhanced() {
 
 #### 1. User Interaction Tracking
 ```javascript
-// In assets/js/treasury-portal.js - add tracking methods
+// In ../assets/js/treasury-portal.js - add tracking methods
 trackEvent(category, action, label = '', value = 0) {
     // Google Analytics 4 example
     if (typeof gtag !== 'undefined') {
@@ -425,7 +425,7 @@ filterAndDisplayTools() {
 
 #### 2. Performance Monitoring
 ```javascript
-// In assets/js/treasury-portal.js - add performance tracking
+// In ../assets/js/treasury-portal.js - add performance tracking
 monitorPerformance() {
     // Track page load time
     window.addEventListener('load', () => {
@@ -452,7 +452,7 @@ monitorPerformance() {
 
 #### 1. Theme System
 ```javascript
-// In assets/js/treasury-portal.js - add theme management
+// In ../assets/js/treasury-portal.js - add theme management
 applyTheme(themeName = 'default') {
     const themes = {
         default: {
@@ -488,7 +488,7 @@ applyTheme(themeName = 'default') {
 
 #### 2. CSS Variables Setup
 ```css
-/* In assets/css/treasury-portal.css - add CSS variables */
+/* In ../assets/css/treasury-portal.css - add CSS variables */
 .treasury-portal {
     --primary-color: #7216f4;
     --secondary-color: #8f47f6;
