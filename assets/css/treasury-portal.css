@@ -2499,9 +2499,18 @@
 
         .treasury-portal-admin th,
         .treasury-portal-admin td {
-            white-space: nowrap;
             padding: 8px;
             text-align: left;
+        }
+
+        .treasury-portal-admin th {
+            white-space: nowrap;
+        }
+
+        .treasury-portal-admin td {
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .treasury-portal-admin .treasury-portal-admin-search {
