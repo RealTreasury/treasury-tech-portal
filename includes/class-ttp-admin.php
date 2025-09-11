@@ -248,6 +248,7 @@ class TTP_Admin {
             'Product Name',
             'Linked Vendor',
             'Product Website',
+            'Full Website URL',
             'Product Video',
             'Logo URL',
             'Status',

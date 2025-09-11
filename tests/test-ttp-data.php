@@ -19,6 +19,7 @@ class TTP_Data_Test extends TestCase {
             'Product Name'    => 'fld_name',
             'Linked Vendor'   => 'fld_vendor',
             'Product Website' => 'fld_website',
+            'Full Website URL' => 'fld_full_url',
             'Product Video'   => 'fld_video',
             'Logo URL'        => 'fld_logo',
             'Status'          => 'fld_status',
@@ -66,6 +67,7 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
+                'Full Website URL' => 'example.com?utm=1',
                 'Product Video'   => 'example.com/video',
                 'Logo URL'        => 'example.com/logo.png',
                 'Status'          => 'Active',
@@ -125,6 +127,7 @@ class TTP_Data_Test extends TestCase {
         TTP_Data::refresh_vendor_cache();
 
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
+        $this->assertContains($this->schema_map['Full Website URL'], $requested_fields);
         $this->assertFalse($use_ids);
         $this->assertSame(
             ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Capabilities'],
@@ -137,7 +140,8 @@ class TTP_Data_Test extends TestCase {
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
                 'vendor'          => 'Acme Corp',
-                'website'         => 'https://example.com',
+                'full_website_url' => 'https://example.com?utm=1',
+                'website'         => 'https://example.com?utm=1',
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
                 'hosted_type'     => ['Cloud'],
@@ -868,6 +872,7 @@ class TTP_Data_Test extends TestCase {
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
                 'vendor'          => 'Acme Corp',
+                'full_website_url' => '',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
@@ -947,6 +952,7 @@ class TTP_Data_Test extends TestCase {
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
                 'vendor'          => 'Acme Corp',
+                'full_website_url' => '',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
