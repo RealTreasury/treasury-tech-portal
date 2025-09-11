@@ -10,6 +10,7 @@ class TTP_Admin {
         add_action('admin_post_ttp_refresh_vendors', [__CLASS__, 'refresh_vendors']);
         add_action('admin_post_ttp_test_airbase', [__CLASS__, 'test_airbase_connection']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
+        add_action('admin_post_ttp_download_unresolved_report', [__CLASS__, 'download_unresolved_report']);
     }
 
     public static function register_menu() {
@@ -167,16 +168,33 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             return;
         }
-        $unresolved_fields = array();
+        $unresolved_report = array();
         if ( function_exists( 'get_option' ) ) {
-            $unresolved_fields = (array) get_option( 'ttp_unresolved_fields', array() );
-            if ( ! empty( $unresolved_fields ) && function_exists( 'delete_option' ) ) {
-                delete_option( 'ttp_unresolved_fields' );
-            }
+            $unresolved_report = (array) get_option( 'ttp_unresolved_report', array() );
         }
 
         $vendors = TTP_Data::get_all_vendors();
         include dirname(__DIR__) . '/templates/admin-page.php';
+    }
+
+    /**
+     * Download unresolved ID report as a JSON file.
+     */
+    public static function download_unresolved_report() {
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
+        }
+        check_admin_referer('ttp_download_unresolved_report', 'ttp_download_unresolved_report_nonce');
+
+        $report = array();
+        if ( function_exists( 'get_option' ) ) {
+            $report = (array) get_option( 'ttp_unresolved_report', array() );
+        }
+
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="unresolved-report.json"');
+        echo wp_json_encode( $report );
+        exit;
     }
 
     public static function refresh_vendors() {

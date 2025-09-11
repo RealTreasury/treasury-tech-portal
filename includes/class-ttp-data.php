@@ -647,9 +647,11 @@ class TTP_Data {
         }
 
         if ( function_exists( 'get_option' ) && function_exists( 'update_option' ) ) {
-            $existing   = (array) get_option( 'ttp_unresolved_fields', array() );
-            $existing[] = sprintf( '%s unresolved IDs: %s', $field, implode( ', ', $ids ) );
-            update_option( 'ttp_unresolved_fields', $existing );
+            $report    = (array) get_option( 'ttp_unresolved_report', array() );
+            $existing  = isset( $report[ $field ] ) ? (array) $report[ $field ] : array();
+            $merged    = array_merge( $existing, $ids );
+            $report[ $field ] = array_values( array_unique( $merged ) );
+            update_option( 'ttp_unresolved_report', $report );
         }
     }
 

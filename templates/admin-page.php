@@ -103,27 +103,25 @@
     <?php else : ?>
         <p><?php esc_html_e('No vendors found.', 'treasury-tech-portal'); ?></p>
     <?php endif; ?>
-    <?php if (!empty($unresolved_fields)) : ?>
+    <?php if (!empty($unresolved_report)) : ?>
         <div class="treasury-portal-admin-unresolved">
-            <h2><?php esc_html_e('Unresolved Region IDs', 'treasury-tech-portal'); ?></h2>
+            <h2><?php esc_html_e('Unresolved IDs Report', 'treasury-tech-portal'); ?></h2>
             <ul>
-                <?php foreach ($unresolved_fields as $notice) : ?>
-                    <?php if (strpos($notice, 'Regions unresolved IDs:') === 0) : ?>
-                        <?php
-                        $ids_str = trim(str_replace('Regions unresolved IDs:', '', $notice));
-                        $ids     = array_map('trim', explode(',', $ids_str));
-                        ?>
-                        <li>
-                            <?php esc_html_e('Region IDs:', 'treasury-tech-portal'); ?>
-                            <?php foreach ($ids as $index => $id) : ?>
-                                <code><?php echo esc_html($id); ?></code><?php echo $index < count($ids) - 1 ? ', ' : ''; ?>
-                            <?php endforeach; ?>
-                        </li>
-                    <?php else : ?>
-                        <li><?php echo esc_html($notice); ?></li>
-                    <?php endif; ?>
+                <?php foreach ($unresolved_report as $field => $ids) : ?>
+                    <li>
+                        <?php echo esc_html($field); ?>:
+                        <?php $ids = array_map('sanitize_text_field', (array) $ids); ?>
+                        <?php foreach ($ids as $index => $id) : ?>
+                            <code><?php echo esc_html($id); ?></code><?php echo $index < count($ids) - 1 ? ', ' : ''; ?>
+                        <?php endforeach; ?>
+                    </li>
                 <?php endforeach; ?>
             </ul>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <?php wp_nonce_field('ttp_download_unresolved_report', 'ttp_download_unresolved_report_nonce'); ?>
+                <input type="hidden" name="action" value="ttp_download_unresolved_report" />
+                <?php submit_button(__('Download Unresolved Report', 'treasury-tech-portal'), 'secondary'); ?>
+            </form>
         </div>
     <?php endif; ?>
 </div>

@@ -1180,4 +1180,31 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
+
+    public function test_log_unresolved_field_groups_ids() {
+        $options = array();
+
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$options ) {
+            return $options[ $name ] ?? $default;
+        } );
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$options ) {
+            $options[ $name ] = $value;
+            return true;
+        } );
+        when( 'error_log' )->returnArg();
+
+        $method = new \ReflectionMethod( TTP_Data::class, 'log_unresolved_field' );
+        $method->setAccessible( true );
+
+        $method->invoke( null, 'Regions', array( 'r1', 'r2' ) );
+        $method->invoke( null, 'Category', array( 'c1' ) );
+        $method->invoke( null, 'Regions', array( 'r2', 'r3' ) );
+
+        $expected = array(
+            'Regions'  => array( 'r1', 'r2', 'r3' ),
+            'Category' => array( 'c1' ),
+        );
+
+        $this->assertSame( $expected, $options['ttp_unresolved_report'] );
+    }
 }
