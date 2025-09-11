@@ -380,7 +380,7 @@ class TTP_Data_Test extends TestCase {
         TTP_Data::refresh_vendor_cache();
 
         $this->assertSame(['North America', 'Europe'], $captured[0]['regions']);
-        $this->assertSame('Acme Corp', $captured[0]['vendor']);
+        $this->assertSame('Acme Corp, Globex', $captured[0]['vendor']);
         $this->assertSame(['Cloud', 'On-Prem'], $captured[0]['hosted_type']);
         $this->assertSame(['Banking', 'Investing'], $captured[0]['domain']);
         $this->assertSame(['Payments', 'Treasury'], $captured[0]['sub_categories']);

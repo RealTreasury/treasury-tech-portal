@@ -148,19 +148,20 @@ class TTP_Data {
             }
 
             $vendor_field = self::parse_record_ids( $fields['Linked Vendor'] ?? array() );
-            $vendor_name  = '';
+            $vendor_names = array();
             if ( self::contains_record_ids( $vendor_field ) ) {
                 $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor'], $vendor_field );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Linked Vendor: ' . $resolved->get_error_message() );
                     }
-                } elseif ( ! empty( $resolved ) ) {
-                    $vendor_name = sanitize_text_field( reset( $resolved ) );
+                } else {
+                    $vendor_names = array_map( 'sanitize_text_field', (array) $resolved );
                 }
-            } elseif ( ! empty( $vendor_field ) ) {
-                $vendor_name = sanitize_text_field( reset( $vendor_field ) );
+            } else {
+                $vendor_names = array_map( 'sanitize_text_field', $vendor_field );
             }
+            $vendor_name = implode( ', ', array_filter( $vendor_names ) );
 
             $hosted_field = self::parse_record_ids( $fields['Hosted Type'] ?? array() );
             $hosted_type  = array();
