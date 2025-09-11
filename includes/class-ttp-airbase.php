@@ -121,8 +121,12 @@ class TTP_Airbase {
             $id_to_name_map = array();
 
             if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
-                $name_to_id_map = $schema;
-                $id_to_name_map = array_flip( $schema );
+                foreach ( $schema as $name => $info ) {
+                    if ( is_array( $info ) && isset( $info['id'] ) ) {
+                        $name_to_id_map[ $name ]        = $info['id'];
+                        $id_to_name_map[ $info['id'] ] = $name;
+                    }
+                }
             }
 
             $normalized = array();
@@ -301,7 +305,10 @@ class TTP_Airbase {
             if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
                 foreach ( $table['fields'] as $field ) {
                     if ( isset( $field['name'], $field['id'] ) ) {
-                        $map[ $field['name'] ] = $field['id'];
+                        $map[ $field['name'] ] = array(
+                            'id'   => $field['id'],
+                            'type' => isset( $field['type'] ) ? $field['type'] : '',
+                        );
                     }
                 }
             }
@@ -373,6 +380,12 @@ class TTP_Airbase {
 
         $primary_field = sanitize_text_field( $primary_field );
 
+        $schema     = self::get_table_schema( $table_id );
+        $field_type = '';
+        if ( ! is_wp_error( $schema ) && isset( $schema[ $primary_field ] ) && is_array( $schema[ $primary_field ] ) ) {
+            $field_type = $schema[ $primary_field ]['type'] ?? '';
+        }
+
         $args = array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,
@@ -412,7 +425,12 @@ class TTP_Airbase {
             if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
                 foreach ( $data['records'] as $record ) {
                     if ( isset( $record['fields'][ $primary_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                        $raw = $record['fields'][ $primary_field ];
+                        if ( is_numeric( $raw ) && in_array( $field_type, array( 'number', 'numeric', 'integer', 'decimal', 'currency', 'percent', 'rating', 'duration' ), true ) ) {
+                            $values[] = $raw + 0;
+                        } else {
+                            $values[] = sanitize_text_field( $raw );
+                        }
                     }
                 }
             }

@@ -46,6 +46,30 @@ class TTP_Airbase_Test extends TestCase {
             return $response['body'];
         });
 
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
         $self         = $this;
         $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self, $expected_url) {
@@ -259,7 +283,10 @@ class TTP_Airbase_Test extends TestCase {
         });
 
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
-            return ['Name' => 'fldName', 'Email' => 'fldEmail'];
+            return [
+                'Name'  => [ 'id' => 'fldName', 'type' => 'text' ],
+                'Email' => [ 'id' => 'fldEmail', 'type' => 'text' ],
+            ];
         });
 
         $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json&fields[]=Name&fields[]=Email';
@@ -305,8 +332,8 @@ class TTP_Airbase_Test extends TestCase {
 
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
             return [
-                'Product Name' => 'fldProd',
-                'Category'     => 'fldCat',
+                'Product Name' => [ 'id' => 'fldProd', 'type' => 'text' ],
+                'Category'     => [ 'id' => 'fldCat', 'type' => 'text' ],
             ];
         });
 
@@ -352,7 +379,10 @@ class TTP_Airbase_Test extends TestCase {
         });
 
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
-            return ['Name' => 'fldName', 'Email' => 'fldEmail'];
+            return [
+                'Name'  => [ 'id' => 'fldName', 'type' => 'text' ],
+                'Email' => [ 'id' => 'fldEmail', 'type' => 'text' ],
+            ];
         });
 
         $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json&fields[]=fldName&fields[]=fldEmail&returnFieldsByFieldId=true';
@@ -372,14 +402,14 @@ class TTP_Airbase_Test extends TestCase {
 
     public function test_get_table_schema_returns_cached_value() {
         when('get_transient')->alias(function ($key) {
-            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'Name' => 'fldName' ] ] : false;
+            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'Name' => [ 'id' => 'fldName', 'type' => 'text' ] ] ] : false;
         });
 
         expect('wp_remote_get')->never();
         expect('set_transient')->never();
 
         $schema = TTP_Airbase::get_table_schema('tblXYZ');
-        $this->assertSame([ 'Name' => 'fldName' ], $schema);
+        $this->assertSame([ 'Name' => [ 'id' => 'fldName', 'type' => 'text' ] ], $schema);
     }
 
     public function test_get_table_schema_maps_multiple_fields() {
@@ -409,6 +439,9 @@ class TTP_Airbase_Test extends TestCase {
         when('wp_remote_retrieve_body')->alias(function ($response) {
             return $response['body'];
         });
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
 
         $body = json_encode([
             'tables' => [
@@ -416,8 +449,8 @@ class TTP_Airbase_Test extends TestCase {
                     'id' => 'tblXYZ',
                     'name' => 'Products',
                     'fields' => [
-                        [ 'name' => 'Name', 'id' => 'fldName' ],
-                        [ 'name' => 'Status', 'id' => 'fldStatus' ],
+                        [ 'name' => 'Name', 'id' => 'fldName', 'type' => 'text' ],
+                        [ 'name' => 'Status', 'id' => 'fldStatus', 'type' => 'text' ],
                     ],
                 ],
             ],
@@ -432,13 +465,19 @@ class TTP_Airbase_Test extends TestCase {
         expect('set_transient')->once()->andReturnUsing(function ($key, $value, $ttl) use ($self) {
             $self->assertSame('ttp_airbase_schema', $key);
             $self->assertSame(DAY_IN_SECONDS, $ttl);
-            $self->assertSame([ 'Name' => 'fldName', 'Status' => 'fldStatus' ], $value['tblXYZ']);
+            $self->assertSame([
+                'Name'   => [ 'id' => 'fldName', 'type' => 'text' ],
+                'Status' => [ 'id' => 'fldStatus', 'type' => 'text' ],
+            ], $value['tblXYZ']);
             $self->assertSame($value['tblXYZ'], $value['Products']);
             return true;
         });
 
         $schema = TTP_Airbase::get_table_schema('tblXYZ');
-        $this->assertSame([ 'Name' => 'fldName', 'Status' => 'fldStatus' ], $schema);
+        $this->assertSame([
+            'Name'   => [ 'id' => 'fldName', 'type' => 'text' ],
+            'Status' => [ 'id' => 'fldStatus', 'type' => 'text' ],
+        ], $schema);
     }
 
     public function test_get_table_schema_returns_error_when_tables_missing() {
@@ -541,6 +580,9 @@ class TTP_Airbase_Test extends TestCase {
         when('wp_remote_retrieve_body')->alias(function ($response) {
             return $response['body'];
         });
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
 
         $body = json_encode([
             'records' => [
@@ -579,6 +621,9 @@ class TTP_Airbase_Test extends TestCase {
         });
         when('wp_remote_retrieve_body')->alias(function ($response) {
             return $response['body'];
+        });
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
         });
 
         $ids = array();
@@ -627,6 +672,10 @@ class TTP_Airbase_Test extends TestCase {
             return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
         });
 
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
         $result = TTP_Airbase::resolve_linked_records('Vendors', []);
         $this->assertSame([], $result);
     }
@@ -651,6 +700,10 @@ class TTP_Airbase_Test extends TestCase {
             return $response['response']['code'];
         });
 
+        when('get_transient')->alias(function () {
+            return [ 'Vendors' => [ 'Name' => [ 'id' => 'Name', 'type' => 'text' ] ] ];
+        });
+
         expect('wp_remote_get')->once()->andReturn([
             'response' => [ 'code' => 500 ],
             'body'     => '',
@@ -659,6 +712,46 @@ class TTP_Airbase_Test extends TestCase {
         $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1']);
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('api_error', $result->get_error_code());
+    }
+
+    public function test_resolve_linked_records_preserves_numeric_values() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        when('get_transient')->alias(function () {
+            return [ 'Numbers' => [ 'Value' => [ 'id' => 'fldValue', 'type' => 'number' ] ] ];
+        });
+
+        $body = json_encode([
+            'records' => [ [ 'fields' => [ 'Value' => 123 ] ] ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $values = TTP_Airbase::resolve_linked_records('Numbers', ['rec1'], 'Value');
+        $this->assertSame([123], $values);
     }
 
     public function test_get_table_schema_fetches_and_caches_when_missing() {
@@ -694,7 +787,7 @@ class TTP_Airbase_Test extends TestCase {
                 [
                     'id' => 'tblXYZ',
                     'name' => 'Products',
-                    'fields' => [ [ 'name' => 'Name', 'id' => 'fldName' ] ],
+                    'fields' => [ [ 'name' => 'Name', 'id' => 'fldName', 'type' => 'text' ] ],
                 ],
             ],
         ]);
@@ -708,11 +801,11 @@ class TTP_Airbase_Test extends TestCase {
         expect('set_transient')->once()->andReturnUsing(function ($key, $value, $ttl) use ($self) {
             $self->assertSame('ttp_airbase_schema', $key);
             $self->assertSame(DAY_IN_SECONDS, $ttl);
-            $self->assertSame([ 'Name' => 'fldName' ], $value['tblXYZ']);
+            $self->assertSame([ 'Name' => [ 'id' => 'fldName', 'type' => 'text' ] ], $value['tblXYZ']);
             return true;
         });
 
         $schema = TTP_Airbase::get_table_schema('tblXYZ');
-        $this->assertSame([ 'Name' => 'fldName' ], $schema);
+        $this->assertSame([ 'Name' => [ 'id' => 'fldName', 'type' => 'text' ] ], $schema);
     }
 }

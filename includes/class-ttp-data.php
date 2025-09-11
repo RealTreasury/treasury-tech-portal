@@ -170,7 +170,7 @@ class TTP_Data {
 
         if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
             foreach ( $field_names as $name ) {
-                $id               = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $id                      = isset( $schema[ $name ]['id'] ) ? $schema[ $name ]['id'] : $name;
                 $schema_map[ $name ] = $id;
                 $field_ids[]        = $id;
             }
@@ -568,18 +568,31 @@ class TTP_Data {
         foreach ( (array) $value as $item ) {
             if ( is_array( $item ) ) {
                 if ( isset( $item['name'] ) ) {
-                    $results[] = trim( $item['name'] );
+                    $val = $item['name'];
                 } elseif ( isset( $item['id'] ) ) {
-                    $results[] = trim( $item['id'] );
+                    $val = $item['id'];
                 } else {
                     $results = array_merge( $results, self::parse_record_ids( $item ) );
+                    continue;
+                }
+
+                if ( is_numeric( $val ) ) {
+                    $results[] = $val + 0;
+                } else {
+                    $results[] = trim( (string) $val );
                 }
             } else {
-                $results[] = trim( (string) $item );
+                if ( is_numeric( $item ) ) {
+                    $results[] = $item + 0;
+                } else {
+                    $results[] = trim( (string) $item );
+                }
             }
         }
 
-        return array_filter( $results );
+        return array_values( array_filter( $results, function ( $v ) {
+            return $v !== '' && $v !== null;
+        } ) );
     }
 
     /**

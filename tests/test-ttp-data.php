@@ -14,7 +14,7 @@ class TTP_Data_Test extends TestCase {
         });
         when('sanitize_text_field')->returnArg();
 
-        $this->schema_map = [
+        $ids = [
             'Product Name'    => 'fld_name',
             'Linked Vendor'   => 'fld_vendor',
             'Product Website' => 'fld_website',
@@ -32,6 +32,11 @@ class TTP_Data_Test extends TestCase {
             'Founders'        => 'fld_founders',
         ];
 
+        $this->schema_map = [];
+        foreach ( $ids as $name => $id ) {
+            $this->schema_map[ $name ] = [ 'id' => $id, 'type' => 'text' ];
+        }
+
         $schema =& $this->schema_map;
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () use (&$schema) {
             return $schema;
@@ -46,12 +51,13 @@ class TTP_Data_Test extends TestCase {
     private function id_fields( array $fields, $fill_missing = true ) {
         $mapped = [];
         if ( $fill_missing ) {
-            foreach ( $this->schema_map as $name => $id ) {
+            foreach ( $this->schema_map as $name => $info ) {
+                $id             = $info['id'];
                 $mapped[ $id ] = array_key_exists( $name, $fields ) ? $fields[ $name ] : '';
             }
         } else {
             foreach ( $fields as $name => $value ) {
-                $key          = $this->schema_map[ $name ] ?? $name;
+                $key          = $this->schema_map[ $name ]['id'] ?? $name;
                 $mapped[ $key ] = $value;
             }
         }
@@ -118,7 +124,7 @@ class TTP_Data_Test extends TestCase {
 
         TTP_Data::refresh_vendor_cache();
 
-        $this->assertContains($this->schema_map['Product Website'], $requested_fields);
+        $this->assertContains($this->schema_map['Product Website']['id'], $requested_fields);
         $this->assertTrue($return_fields_by_id);
         $this->assertSame(
             ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Category', 'Sub Categories', 'Capabilities'],
@@ -317,10 +323,10 @@ class TTP_Data_Test extends TestCase {
         $this->assertTrue( is_wp_error( $result ) );
         $this->assertFalse( $saved );
         $this->assertStringContainsString('Product Website', $logged);
-        $this->assertStringContainsString($this->schema_map['Product Website'], $logged);
+        $this->assertStringContainsString($this->schema_map['Product Website']['id'], $logged);
         $this->assertIsArray($stored);
         $this->assertContains('Product Website', $stored['fields']);
-        $this->assertContains($this->schema_map['Product Website'], $stored['ids']);
+        $this->assertContains($this->schema_map['Product Website']['id'], $stored['ids']);
     }
 
     public function test_refresh_vendor_cache_resolves_string_record_ids() {
@@ -635,7 +641,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        $field = $this->schema_map[ $field ];
+        $field = $this->schema_map[ $field ]['id'];
         $record['fields'][ $field ] = array_keys( $mapping );
 
         \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
@@ -746,7 +752,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        $field = $this->schema_map[ $field ];
+        $field = $this->schema_map[ $field ]['id'];
         $record['fields'][ $field ] = implode( ', ', array_keys( $mapping ) );
 
         \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
@@ -1111,6 +1117,14 @@ class TTP_Data_Test extends TestCase {
             'comma_inside_name'     => array( '"Foo, Inc",Bar', array( 'Foo, Inc', 'Bar' ) ),
             'semicolon_inside_name' => array( '"Foo; Inc";Bar', array( 'Foo; Inc', 'Bar' ) ),
         );
+    }
+
+    public function test_parse_record_ids_handles_numeric_and_select_values() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $input    = array( '10', 0, array( 'id' => '5' ), array( 'name' => '6' ), array( 'name' => 'Seven' ) );
+        $expected = array( 10, 0, 5, 6, 'Seven' );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
     }
 
     /**

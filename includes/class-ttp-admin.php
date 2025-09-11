@@ -219,7 +219,7 @@ class TTP_Admin {
 
         if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
             foreach ( $field_names as $name ) {
-                $id               = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $id                      = isset( $schema[ $name ]['id'] ) ? $schema[ $name ]['id'] : $name;
                 $schema_map[ $name ] = $id;
                 $field_ids[]        = $id;
             }
