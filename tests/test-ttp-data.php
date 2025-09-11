@@ -1387,6 +1387,51 @@ class TTP_Data_Test extends TestCase {
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
 
+    public function test_vendors_need_resolution_detects_nested_structures() {
+        $vendors = array(
+            array(
+                'level1' => array(
+                    'level2' => (object) array(
+                        'regions' => array(
+                            (object) array( 'id' => 'recABC123' ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_short_circuits_on_first_match() {
+        $vendors = array(
+            array(
+                'regions' => array( 'recABC123' ),
+                'domains' => array( 'recDEF456' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $calls = 0;
+        \Patchwork\replace(
+            'TTP_Data::contains_record_ids',
+            function ( $values ) use ( &$calls ) {
+                $calls++;
+                return $calls === 1;
+            }
+        );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertSame( 1, $calls );
+    }
+
     public function test_log_unresolved_field_groups_ids_by_field() {
         $stored = array();
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored ) {
