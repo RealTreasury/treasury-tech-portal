@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } catch (err) {
                     console.error('Failed to load tools:', err);
                 } finally {
-                    if (container) container.style.display = 'block';
+                    if (container) container.classList.add('loaded');
                     if (bottomNav) bottomNav.style.display = 'flex';
                     if (loading) {
                         clearTimeout(loadingTimer);

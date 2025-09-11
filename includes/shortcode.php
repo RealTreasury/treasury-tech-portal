@@ -21,7 +21,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
         <h1 style="color: #281345; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Treasury Tech Portal</h1>
         <p style="color: #7e7e7e; font-size: 1rem;">Loading financial tools ecosystem...</p>
     </div>
-    <div class="container" style="display: none;">
+    <div class="container">
         <button class="external-menu-toggle" id="externalMenuToggle">Menu</button>
         <button class="external-shortlist-toggle" id="externalShortlistToggle" aria-label="Open shortlist menu" title="Shortlist">Shortlist</button>
         <!-- Header -->
