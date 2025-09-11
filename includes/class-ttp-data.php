@@ -125,6 +125,17 @@ class TTP_Data {
     }
 
     /**
+     * Normalize a field key to lowercase snake_case without ID suffixes.
+     *
+     * @param string $key Original field key.
+     * @return string Normalized field key.
+     */
+    private static function normalize_field_key( $key ) {
+        $normalized = strtolower( str_replace( ' ', '_', $key ) );
+        return preg_replace( '/_ids?$/', '', $normalized );
+    }
+
+    /**
      * Determine if vendor data contains unresolved record IDs.
      *
      * @param array $vendors Vendor records to inspect.
@@ -144,8 +155,7 @@ class TTP_Data {
             $normalized = array();
 
             foreach ( (array) $vendor as $key => $value ) {
-                $normalized_key = strtolower( str_replace( ' ', '_', $key ) );
-                $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
+                $normalized_key = self::normalize_field_key( $key );
                 if ( isset( $aliases[ $normalized_key ] ) ) {
                     $normalized_key = $aliases[ $normalized_key ];
                 }
@@ -190,6 +200,14 @@ class TTP_Data {
 
         $id_to_name = array_flip( $schema_map );
 
+        $expected_map      = array();
+        $expected_norm_keys = array();
+        foreach ( $field_names as $name ) {
+            $normalized                     = self::normalize_field_key( $name );
+            $expected_map[ $normalized ]    = $name;
+            $expected_norm_keys[]           = $normalized;
+        }
+
         $data = TTP_Airbase::get_vendors( $field_ids, true );
         if ( is_wp_error( $data ) ) {
             return;
@@ -197,31 +215,31 @@ class TTP_Data {
 
         $records = self::normalize_vendor_response( $data );
 
+        $present_norm_keys = array();
         foreach ( $records as &$record ) {
             if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
                 $mapped = array();
                 foreach ( $record['fields'] as $key => $value ) {
-                    $mapped[ isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key ] = $value;
+                    $mapped_key     = isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key;
+                    $normalized_key = self::normalize_field_key( $mapped_key );
+                    $mapped[ $normalized_key ] = $value;
+                    $present_norm_keys[]       = $normalized_key;
                 }
                 $record['fields'] = $mapped;
             }
         }
         unset( $record );
 
-        $present_keys = array();
-        foreach ( $records as $record ) {
-            if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
-                $present_keys = array_unique( array_merge( $present_keys, array_keys( $record['fields'] ) ) );
-            }
-        }
-
-        $missing = array_diff( $field_names, $present_keys );
-        if ( ! empty( $missing ) ) {
-            $field_map   = $schema_map;
+        $present_norm_keys = array_unique( $present_norm_keys );
+        $missing_norm      = array_diff( $expected_norm_keys, $present_norm_keys );
+        if ( ! empty( $missing_norm ) ) {
+            $missing    = array();
             $missing_ids = array();
-            foreach ( $missing as $field ) {
-                if ( isset( $field_map[ $field ] ) ) {
-                    $missing_ids[] = $field_map[ $field ];
+            foreach ( $missing_norm as $norm ) {
+                $field = $expected_map[ $norm ];
+                $missing[] = $field;
+                if ( isset( $schema_map[ $field ] ) ) {
+                    $missing_ids[] = $schema_map[ $field ];
                 }
             }
 
@@ -256,14 +274,14 @@ class TTP_Data {
         }
 
         $linked_fields = array(
-            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
-            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
-            'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
-            'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
+            'regions'        => array( 'output_key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
+            'linked_vendor'  => array( 'output_key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'hosted_type'    => array( 'output_key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'domain'         => array( 'output_key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'category'       => array( 'output_key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
+            'sub_categories' => array( 'output_key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'capabilities'   => array( 'output_key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'hq_location'    => array( 'output_key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
 
         $vendors = array();
@@ -271,12 +289,12 @@ class TTP_Data {
             $fields   = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
             $resolved = array();
 
-            foreach ( $linked_fields as $label => $info ) {
-                $values = self::resolve_linked_field( $fields, $label, $info['table'], $info['primary_field'] );
+            foreach ( $linked_fields as $field => $info ) {
+                $values = self::resolve_linked_field( $fields, $field, $info['table'], $info['primary_field'] );
                 if ( ! empty( $info['single'] ) ) {
-                    $resolved[ $info['key'] ] = $values ? reset( $values ) : '';
+                    $resolved[ $info['output_key'] ] = $values ? reset( $values ) : '';
                 } else {
-                    $resolved[ $info['key'] ] = $values;
+                    $resolved[ $info['output_key'] ] = $values;
                 }
             }
 
@@ -287,11 +305,11 @@ class TTP_Data {
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
-                'name'            => $fields['Product Name'] ?? '',
+                'name'            => $fields['product_name'] ?? '',
                 'vendor'          => $resolved['vendor'],
-                'website'         => self::normalize_url( $fields['Product Website'] ?? '' ),
-                'video_url'       => self::normalize_url( $fields['Product Video'] ?? '' ),
-                'status'          => $fields['Status'] ?? '',
+                'website'         => self::normalize_url( $fields['product_website'] ?? '' ),
+                'video_url'       => self::normalize_url( $fields['product_video'] ?? '' ),
+                'status'          => $fields['status'] ?? '',
                 'hosted_type'     => $resolved['hosted_type'],
                 'domain'          => $resolved['domain'],
                 'regions'         => $resolved['regions'],
@@ -300,10 +318,10 @@ class TTP_Data {
                 'category'        => $category,
                 'category_names'  => $category_names,
                 'capabilities'    => $resolved['capabilities'],
-                'logo_url'        => self::normalize_url( $fields['Logo URL'] ?? '' ),
+                'logo_url'        => self::normalize_url( $fields['logo_url'] ?? '' ),
                 'hq_location'     => $resolved['hq_location'],
-                'founded_year'    => $fields['Founded Year'] ?? '',
-                'founders'        => $fields['Founders'] ?? '',
+                'founded_year'    => $fields['founded_year'] ?? '',
+                'founders'        => $fields['founders'] ?? '',
             );
         }
 

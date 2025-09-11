@@ -257,6 +257,95 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $vendor['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_handles_mixed_case_field_names() {
+        $schema_map = [
+            'PrOduct Name'    => 'fld_name',
+            'Linked Vendor'   => 'fld_vendor',
+            'PrOdUcT Website' => 'fld_website',
+            'Product Video'   => 'fld_video',
+            'Logo URL'        => 'fld_logo',
+            'Status'          => 'fld_status',
+            'Hosted Type'     => 'fld_hosted',
+            'Domain'          => 'fld_domain',
+            'ReGions'         => 'fld_regions',
+            'Category'        => 'fld_category',
+            'Sub Categories'  => 'fld_sub',
+            'Capabilities'    => 'fld_caps',
+            'HQ Location'     => 'fld_hq',
+            'Founded Year'    => 'fld_year',
+            'Founders'        => 'fld_founders',
+        ];
+        $this->schema_map = $schema_map;
+
+        \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () use ( $schema_map ) {
+            return $schema_map;
+        } );
+        \Patchwork\replace( 'TTP_Airbase::map_field_names', function ( $fields ) use ( $schema_map ) {
+            return [
+                'schema_map' => $schema_map,
+                'field_ids'  => array_values( $schema_map ),
+            ];
+        } );
+
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'PrOduct Name'    => 'Sample Product',
+                'Linked Vendor'   => ['recven1'],
+                'PrOdUcT Website' => 'example.com',
+                'Product Video'   => 'example.com/video',
+                'Logo URL'        => 'example.com/logo.png',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['rechost1'],
+                'Category'        => ['reccat1'],
+                'Sub Categories'  => ['recsc1'],
+                'ReGions'         => ['recreg1'],
+                'Domain'          => ['recdom1'],
+                'Capabilities'    => ['reccap1'],
+            ]),
+        ];
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+            $maps = [
+                'Regions'        => [ 'recreg1' => 'North America' ],
+                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
+                'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Sub Categories' => [ 'recsc1' => 'Payments' ],
+                'Capabilities'   => [ 'reccap1' => 'API' ],
+            ];
+
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $vendor = $captured[0];
+        $this->assertSame( 'Sample Product', $vendor['name'] );
+        $this->assertSame( 'Acme Corp', $vendor['vendor'] );
+        $this->assertSame( [ 'North America' ], $vendor['regions'] );
+        $this->assertSame( [ 'Banking' ], $vendor['domain'] );
+        $this->assertSame( 'https://example.com', $vendor['website'] );
+        $this->assertSame( 'https://example.com/video', $vendor['video_url'] );
+        $this->assertSame( 'https://example.com/logo.png', $vendor['logo_url'] );
+    }
+
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
         $record = [
             'id'     => 'rec1',
@@ -1270,7 +1359,7 @@ class TTP_Data_Test extends TestCase {
         $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
         $method->setAccessible( true );
 
-        $record = array( 'Regions' => array( 'recreg1' ) );
+        $record = array( 'regions' => array( 'recreg1' ) );
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
@@ -1279,7 +1368,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
     }
 
@@ -1287,7 +1376,7 @@ class TTP_Data_Test extends TestCase {
         $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
         $method->setAccessible( true );
 
-        $record = array( 'Regions' => array( 'Europe' ) );
+        $record = array( 'regions' => array( 'Europe' ) );
         $called = false;
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
@@ -1297,7 +1386,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'regions', 'Regions', 'Name' );
         $this->assertSame( array( 'Europe' ), $result );
         $this->assertFalse( $called );
     }
@@ -1339,6 +1428,20 @@ class TTP_Data_Test extends TestCase {
         $vendors = array(
             array(
                 'regions' => array( '123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_detects_mixed_case_field_names() {
+        $vendors = array(
+            array(
+                'ReGion IDs' => array( 'recABC123' ),
             ),
         );
 
