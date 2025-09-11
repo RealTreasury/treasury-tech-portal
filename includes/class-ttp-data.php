@@ -538,6 +538,10 @@ class TTP_Data {
         if ( ! empty( $ids ) && isset( $linked_tables[ $field ] ) ) {
             $table   = $linked_tables[ $field ]['table'];
             $primary = $linked_tables[ $field ]['primary_field'];
+            /**
+             * Replace stored ID placeholders with readable values by calling
+             * the TTP_Airbase::resolve_linked_records() helper.
+             */
             $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {

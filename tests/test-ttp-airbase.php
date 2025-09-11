@@ -554,6 +554,9 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => $body,
         ]);
 
+        /**
+         * Use helper to swap placeholder IDs with 'Name' field values.
+         */
         $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2']);
         $this->assertSame(['First', 'Second'], $values);
     }
@@ -614,6 +617,9 @@ class TTP_Airbase_Test extends TestCase {
             );
         });
 
+        /**
+         * Helper resolves batched placeholder IDs into names.
+         */
         $values   = TTP_Airbase::resolve_linked_records( 'Vendors', $ids );
         $expected = array();
         for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
@@ -627,6 +633,9 @@ class TTP_Airbase_Test extends TestCase {
             return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
         });
 
+        /**
+         * Empty placeholders result in an empty array from the helper.
+         */
         $result = TTP_Airbase::resolve_linked_records('Vendors', []);
         $this->assertSame([], $result);
     }
@@ -656,6 +665,9 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => '',
         ]);
 
+        /**
+         * Helper propagates API errors when placeholders fail to resolve.
+         */
         $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1']);
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('api_error', $result->get_error_code());
