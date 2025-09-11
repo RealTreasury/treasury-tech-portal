@@ -157,13 +157,24 @@ class TTP_Data {
      * @param array $vendors
      */
     public static function save_vendors($vendors) {
-        $current = get_option(self::VENDOR_OPTION_KEY, []);
+        $current = get_option( self::VENDOR_OPTION_KEY, array() );
 
-        if (wp_json_encode($vendors) === wp_json_encode($current)) {
+        // Ensure required fields exist on each vendor record.
+        foreach ( $vendors as &$vendor ) {
+            if ( ! isset( $vendor['regions'] ) ) {
+                $vendor['regions'] = array();
+            }
+            if ( ! isset( $vendor['category'] ) ) {
+                $vendor['category'] = '';
+            }
+        }
+        unset( $vendor );
+
+        if ( wp_json_encode( $vendors ) === wp_json_encode( $current ) ) {
             return;
         }
 
-        update_option(self::VENDOR_OPTION_KEY, $vendors);
+        update_option( self::VENDOR_OPTION_KEY, $vendors );
         delete_transient( self::get_vendor_cache_key() );
 
         // Immediately refresh the vendor cache so stored data is normalised

@@ -354,7 +354,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     };
                     this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
-                        const rawCategory = Array.isArray(vendor.category) ? vendor.category[0] : (vendor.category || (Array.isArray(vendor.categories) ? vendor.categories[0] : ''));
+                        if (!Array.isArray(vendor.regions) || vendor.regions.length === 0) {
+                            console.warn('Vendor missing regions:', vendor);
+                        }
+                        if (!vendor.category && (!Array.isArray(vendor.categories) || vendor.categories.length === 0)) {
+                            console.warn('Vendor missing category:', vendor);
+                        }
+
+                        let rawCategory = '';
+                        if (Array.isArray(vendor.category) && vendor.category.length > 0) {
+                            rawCategory = vendor.category[0];
+                        } else if (vendor.category) {
+                            rawCategory = vendor.category;
+                        } else if (Array.isArray(vendor.categories) && vendor.categories.length > 0) {
+                            rawCategory = vendor.categories[0];
+                        } else if (Array.isArray(vendor.category_names) && vendor.category_names.length > 0) {
+                            rawCategory = vendor.category_names[0];
+                        }
                         const category = this.normalizeCategory(rawCategory);
                         const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
                         const regions = Array.isArray(vendor.regions) ? vendor.regions.map(r => r.trim()) : [];
