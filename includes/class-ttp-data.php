@@ -175,7 +175,7 @@ class TTP_Data {
             $field_ids = $field_names;
         }
 
-        $data = TTP_Airbase::get_vendors( $field_ids );
+        $data = TTP_Airbase::get_vendors( $field_ids, true );
         if (is_wp_error($data)) {
             return;
         }
