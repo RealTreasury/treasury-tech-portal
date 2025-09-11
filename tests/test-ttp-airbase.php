@@ -382,6 +382,221 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame([ 'Name' => 'fldName' ], $schema);
     }
 
+    public function test_get_table_schema_maps_multiple_fields() {
+        when('get_transient')->alias(function ($key) {
+            return false;
+        });
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([
+            'tables' => [
+                [
+                    'id' => 'tblXYZ',
+                    'name' => 'Products',
+                    'fields' => [
+                        [ 'name' => 'Name', 'id' => 'fldName' ],
+                        [ 'name' => 'Status', 'id' => 'fldStatus' ],
+                    ],
+                ],
+            ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $self = $this;
+        expect('set_transient')->once()->andReturnUsing(function ($key, $value, $ttl) use ($self) {
+            $self->assertSame('ttp_airbase_schema', $key);
+            $self->assertSame(DAY_IN_SECONDS, $ttl);
+            $self->assertSame([ 'Name' => 'fldName', 'Status' => 'fldStatus' ], $value['tblXYZ']);
+            $self->assertSame($value['tblXYZ'], $value['Products']);
+            return true;
+        });
+
+        $schema = TTP_Airbase::get_table_schema('tblXYZ');
+        $this->assertSame([ 'Name' => 'fldName', 'Status' => 'fldStatus' ], $schema);
+    }
+
+    public function test_get_table_schema_returns_error_when_tables_missing() {
+        when('get_transient')->alias(function ($key) {
+            return false;
+        });
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([ 'foo' => 'bar' ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $result = TTP_Airbase::get_table_schema('tblXYZ');
+        $this->assertInstanceOf(WP_Error::class, $result);
+        $this->assertSame('missing_tables', $result->get_error_code());
+    }
+
+    public function test_get_table_schema_returns_error_on_invalid_json() {
+        when('get_transient')->alias(function ($key) {
+            return false;
+        });
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => '{invalid',
+        ]);
+
+        $result = TTP_Airbase::get_table_schema('tblXYZ');
+        $this->assertInstanceOf(WP_Error::class, $result);
+        $this->assertSame('invalid_json', $result->get_error_code());
+    }
+
+    public function test_resolve_linked_records_handles_multiple_ids() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([
+            'records' => [
+                [ 'fields' => [ 'Name' => 'First' ] ],
+                [ 'fields' => [ 'Name' => 'Second' ] ],
+            ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2']);
+        $this->assertSame(['First', 'Second'], $values);
+    }
+
+    public function test_resolve_linked_records_returns_empty_array_when_ids_empty() {
+        when('get_option')->alias(function ($option, $default = false) {
+            return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
+        });
+
+        $result = TTP_Airbase::resolve_linked_records('Vendors', []);
+        $this->assertSame([], $result);
+    }
+
+    public function test_resolve_linked_records_returns_wp_error_on_api_error() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 500 ],
+            'body'     => '',
+        ]);
+
+        $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1']);
+        $this->assertInstanceOf(WP_Error::class, $result);
+        $this->assertSame('api_error', $result->get_error_code());
+    }
+
     public function test_get_table_schema_fetches_and_caches_when_missing() {
         when('get_transient')->alias(function ($key) {
             return false;
