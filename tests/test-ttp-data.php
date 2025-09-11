@@ -1180,4 +1180,47 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
+
+    public function test_vendors_need_resolution_detects_nested_data() {
+        $vendors = array(
+            array(
+                'level1' => array(
+                    'level2' => (object) array(
+                        'sub_categories' => array( 'recABC123' ),
+                    ),
+                ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_short_circuits_on_match() {
+        $bad_value = new class {
+            public function __toString() {
+                throw new \Exception( 'Should not be converted to string' );
+            }
+        };
+
+        $vendors = array(
+            array(
+                'nested' => array(
+                    'regions' => array( 'recABC123' ),
+                ),
+            ),
+            array(
+                'regions' => array( $bad_value ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
 }

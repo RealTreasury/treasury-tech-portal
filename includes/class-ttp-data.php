@@ -120,26 +120,29 @@ class TTP_Data {
             'linked_vendor' => 'vendor',
         );
 
-        foreach ( (array) $vendors as $vendor ) {
-            $normalized = array();
+        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
 
-            foreach ( (array) $vendor as $key => $value ) {
+        $walk = function ( $data ) use ( &$walk, $aliases, $fields ) {
+            foreach ( (array) $data as $key => $value ) {
                 $normalized_key = strtolower( str_replace( ' ', '_', $key ) );
                 $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
                 if ( isset( $aliases[ $normalized_key ] ) ) {
                     $normalized_key = $aliases[ $normalized_key ];
                 }
-                $normalized[ $normalized_key ] = $value;
-            }
 
-            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
-            foreach ( $fields as $field ) {
-                if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
+                if ( in_array( $normalized_key, $fields, true ) && self::contains_record_ids( (array) $value ) ) {
+                    return true;
+                }
+
+                if ( ( is_array( $value ) || is_object( $value ) ) && $walk( $value ) ) {
                     return true;
                 }
             }
-        }
-        return false;
+
+            return false;
+        };
+
+        return $walk( $vendors );
     }
 
     /**
