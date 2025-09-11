@@ -2504,7 +2504,7 @@
         }
 
         .treasury-portal-admin .treasury-portal-admin-search input[type="search"] {
-            max-width: 300px;
+            max-width: 100%;
             width: 100%;
             padding: 6px 8px;
         }
