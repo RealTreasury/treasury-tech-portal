@@ -2555,7 +2555,7 @@
             }
 
             .treasury-portal-admin .treasury-portal-admin-table td::before {
-                content: attr(data-label);
+                content: attr(data-label) ": ";
                 font-weight: 600;
             }
 
