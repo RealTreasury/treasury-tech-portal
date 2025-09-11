@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Enhanced mobile responsive design
 - Improved video integration handling
+- Vendor cache refresh now relies solely on `resolve_linked_field()` and
+  `TTP_Airbase::resolve_linked_records()` for ID resolution, deprecating
+  `rt_airtable_map_ids_to_names()`
 
 ### Removed
 - Slick carousel assets and jQuery dependency for a cleaner front-end
