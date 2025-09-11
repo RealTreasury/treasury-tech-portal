@@ -31,7 +31,7 @@ class TTP_Admin_Test extends TestCase {
             'Linked Vendor'   => 'fld_vendor',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
-            'Product Video'   => 'fld_video',
+            'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
             'Logo URL'        => 'fld_logo',
             'Status'          => 'fld_status',
             'Hosted Type'     => 'fld_hosted',

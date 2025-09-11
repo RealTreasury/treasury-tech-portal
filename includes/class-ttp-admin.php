@@ -249,7 +249,7 @@ class TTP_Admin {
             'Linked Vendor',
             'Product Website',
             'Full Website URL',
-            'Product Video',
+            'Demo Video URL', // Airbase field ID fldHyVJRr3O5rkgd7
             'Logo URL',
             'Status',
             'Hosted Type',
