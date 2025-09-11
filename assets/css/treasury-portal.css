@@ -1612,6 +1612,13 @@
             gap: 8px;
         }
 
+        .treasury-portal #regionFilters,
+        .treasury-portal #categoryFilters,
+        .treasury-portal #subCategoryFilters {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
         .treasury-portal .checkbox-item {
             display: flex;
             align-items: center;
