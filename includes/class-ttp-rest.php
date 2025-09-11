@@ -21,6 +21,12 @@ class TTP_Rest {
             'callback' => [__CLASS__, 'get_vendors'],
             'permission_callback' => '__return_true'
         ]);
+
+        register_rest_route('ttp/v1', '/refresh', [
+            'methods'  => 'POST',
+            'callback' => [__CLASS__, 'refresh_data'],
+            'permission_callback' => '__return_true'
+        ]);
     }
 
     public static function get_tools($request) {
@@ -72,11 +78,13 @@ class TTP_Rest {
         $vendors = (array) $vendors;
         foreach ( $vendors as &$vendor ) {
             $vendor = (array) $vendor;
+            $vendor_needs_resolution = false;
             foreach ( $vendor as $key => $value ) {
                 if ( is_array( $value ) ) {
-                    $filtered = array_values( array_filter( (array) $value, function ( $item ) use ( &$needs_refresh ) {
+                    $filtered = array_values( array_filter( (array) $value, function ( $item ) use ( &$needs_refresh, &$vendor_needs_resolution ) {
                         if ( self::contains_record_ids( $item ) ) {
-                            $needs_refresh = true;
+                            $needs_refresh        = true;
+                            $vendor_needs_resolution = true;
                             return false;
                         }
                         return true;
@@ -89,10 +97,15 @@ class TTP_Rest {
                     }
                 } else {
                     if ( self::contains_record_ids( $value ) ) {
-                        $needs_refresh = true;
+                        $needs_refresh        = true;
+                        $vendor_needs_resolution = true;
                         unset( $vendor[ $key ] );
                     }
                 }
+            }
+
+            if ( $vendor_needs_resolution ) {
+                $vendor['incomplete'] = true;
             }
         }
         unset( $vendor );
@@ -102,6 +115,11 @@ class TTP_Rest {
         }
 
         return rest_ensure_response( $vendors );
+    }
+
+    public static function refresh_data( $request ) {
+        TTP_Data::refresh_vendor_cache();
+        return rest_ensure_response( array( 'status' => 'refreshed' ) );
     }
 
     private static function contains_record_ids( $values ) {

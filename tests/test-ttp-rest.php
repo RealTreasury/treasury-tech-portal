@@ -147,4 +147,35 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame( [ 'North America' ], $response[0]['regions'] );
         $this->assertArrayNotHasKey( 'categories', $response[0] );
     }
+
+    public function test_vendors_endpoint_marks_incomplete_vendors() {
+        $vendor = [
+            'regions'    => ['rec123', 'North America'],
+            'categories' => ['Finance'],
+        ];
+
+        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
+            return [ $vendor ];
+        });
+
+        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () {});
+
+        $request  = new class {};
+        $response = TTP_Rest::get_vendors( $request );
+
+        $this->assertTrue( $response[0]['incomplete'] );
+    }
+
+    public function test_refresh_endpoint_triggers_cache_refresh() {
+        $called = false;
+        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$called ) {
+            $called = true;
+        });
+
+        $request = new class {};
+        $result  = TTP_Rest::refresh_data( $request );
+
+        $this->assertTrue( $called );
+        $this->assertSame( 'refreshed', $result['status'] );
+    }
 }

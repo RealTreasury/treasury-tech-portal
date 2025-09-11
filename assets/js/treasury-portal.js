@@ -36,6 +36,16 @@ function debounce(fn, delay) {
 
 const debouncedPostHeight = debounce(postHeight, 100);
 
+function containsRecordIds(value) {
+    if (Array.isArray(value)) {
+        return value.some(containsRecordIds);
+    }
+    if (value && typeof value === 'object') {
+        return Object.values(value).some(containsRecordIds);
+    }
+    return typeof value === 'string' && /^rec[0-9a-z]/i.test(value);
+}
+
 // Post height more frequently and reliably
 window.addEventListener('load', () => {
     setTimeout(postHeight, 100);
@@ -1173,6 +1183,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 card.draggable = !this.isMobile();
                 card.dataset.name = tool.name;
 
+                const incomplete = containsRecordIds(tool) || tool.incomplete;
+                const warningIcon = incomplete ? '<span class="ttp-warning" title="Some data may be incomplete">⚠️</span>' : '';
+
                 const iconMap = {
                     'TRMS': '🏢',
                     'CASH': '💰',
@@ -1190,7 +1203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <div class="tool-info">
                                 <div class="tool-name">
                                     <div class="tool-name-group">
-                                        <span class="tool-name-title">${tool.name}</span>
+                                        <span class="tool-name-title">${tool.name}</span>${warningIcon}
                                     </div>
                                     ${tool.logoUrl ? `<a href="${tool.websiteUrl || '#'}" target="_blank" rel="noopener noreferrer" class="tool-logo-link" ${!tool.websiteUrl ? 'style="pointer-events: none; cursor: default;"' : ''}><img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo"></a>` : ''}
                                     <div class="tool-actions">

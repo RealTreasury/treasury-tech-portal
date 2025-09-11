@@ -730,6 +730,11 @@
             align-self: flex-start;
             max-width: 220px; /* Allow slightly wider names */
         }
+
+.treasury-portal .ttp-warning {
+            margin-left: 4px;
+            cursor: help;
+        }
         .treasury-portal .tool-logo {
             width: 100px;
             height: 100px;
