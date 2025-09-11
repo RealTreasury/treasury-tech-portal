@@ -1353,11 +1353,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             populateCategoryFilters() {
                 const container = document.getElementById('categoryFilters');
                 if (!container) return;
-                const makeCb = (cat) => {
+                container.innerHTML = '';
+                this.allCategories.forEach(cat => {
                     const id = `cat-${cat.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
-                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${cat}"><label for="${id}">${cat}</label></div>`;
-                };
-                container.innerHTML = this.allCategories.map(makeCb).join('');
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'checkbox-item';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = id;
+                    input.value = cat;
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', id);
+                    label.textContent = cat;
+
+                    wrapper.appendChild(input);
+                    wrapper.appendChild(label);
+                    container.appendChild(wrapper);
+                });
                 const checkboxes = container.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
@@ -1373,11 +1387,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             populateSubcategoryFilters() {
                 const container = document.getElementById('subcategoryFilters');
                 if (!container) return;
-                const makeCb = (sub) => {
+                container.innerHTML = '';
+                this.allSubcategories.forEach(sub => {
                     const id = `sub-${sub.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
-                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${sub}"><label for="${id}">${sub}</label></div>`;
-                };
-                container.innerHTML = this.allSubcategories.map(makeCb).join('');
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'checkbox-item';
+
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = id;
+                    input.value = sub;
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', id);
+                    label.textContent = sub;
+
+                    wrapper.appendChild(input);
+                    wrapper.appendChild(label);
+                    container.appendChild(wrapper);
+                });
                 const checkboxes = container.querySelectorAll('input[type="checkbox"]');
                 checkboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
@@ -1426,14 +1454,39 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderHeaderFilters() {
                 const container = document.getElementById('headerFilters');
                 if (!container) return;
-                const regionOptions = ['<option value="">All Regions</option>', ...this.allRegions.map(r => `<option value="${r}">${r}</option>`)];
-                const categoryOptions = ['<option value="">All Categories</option>', ...this.allCategories.map(c => `<option value="${c}">${c}</option>`)];
-                container.innerHTML = `
-                    <select id="headerRegionFilter" class="header-filter">${regionOptions.join('')}</select>
-                    <select id="headerCategoryFilter" class="header-filter">${categoryOptions.join('')}</select>
-                `;
-                const regionSelect = container.querySelector('#headerRegionFilter');
-                const categorySelect = container.querySelector('#headerCategoryFilter');
+                container.innerHTML = '';
+
+                const regionSelect = document.createElement('select');
+                regionSelect.id = 'headerRegionFilter';
+                regionSelect.className = 'header-filter';
+                const regionAll = document.createElement('option');
+                regionAll.value = '';
+                regionAll.textContent = 'All Regions';
+                regionSelect.appendChild(regionAll);
+                this.allRegions.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r;
+                    opt.textContent = r;
+                    regionSelect.appendChild(opt);
+                });
+
+                const categorySelect = document.createElement('select');
+                categorySelect.id = 'headerCategoryFilter';
+                categorySelect.className = 'header-filter';
+                const categoryAll = document.createElement('option');
+                categoryAll.value = '';
+                categoryAll.textContent = 'All Categories';
+                categorySelect.appendChild(categoryAll);
+                this.allCategories.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = c;
+                    categorySelect.appendChild(opt);
+                });
+
+                container.appendChild(regionSelect);
+                container.appendChild(categorySelect);
+
                 regionSelect.addEventListener('change', e => {
                     const val = e.target.value;
                     this.advancedFilters.regions = val ? [val] : [];
