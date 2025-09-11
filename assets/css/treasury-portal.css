@@ -2481,3 +2481,18 @@
             opacity: 0;
         }
 
+        /* Admin table responsiveness */
+        .treasury-portal-admin__table-wrapper {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .treasury-portal-admin__table-wrapper {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .treasury-portal-admin__table-wrapper table {
+                width: max-content;
+            }
+        }
+

@@ -9,6 +9,7 @@ class TTP_Admin {
         add_action('admin_menu', [__CLASS__, 'register_menu']);
         add_action('admin_post_ttp_refresh_vendors', [__CLASS__, 'refresh_vendors']);
         add_action('admin_post_ttp_test_airbase', [__CLASS__, 'test_airbase_connection']);
+        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_admin_styles']);
     }
 
     public static function register_menu() {
@@ -29,6 +30,27 @@ class TTP_Admin {
             'manage_options',
             'treasury-airbase-settings',
             [__CLASS__, 'render_airbase_settings']
+        );
+    }
+
+    /**
+     * Enqueue admin stylesheet for plugin pages.
+     *
+     * @param string $hook Current admin page hook.
+     */
+    public static function enqueue_admin_styles($hook) {
+        if ('toplevel_page_treasury-tools' !== $hook) {
+            return;
+        }
+
+        $css_file = TTP_DIR . 'assets/css/treasury-portal.css';
+        $css_ver  = file_exists($css_file) ? filemtime($css_file) : '1.0';
+
+        wp_enqueue_style(
+            'treasury-tech-portal-admin',
+            TTP_URL . 'assets/css/treasury-portal.css',
+            array(),
+            $css_ver
         );
     }
 
