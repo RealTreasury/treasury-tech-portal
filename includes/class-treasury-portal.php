@@ -70,9 +70,10 @@ class Treasury_Tech_Portal {
             'treasury-tech-portal-js',
             'TTP_DATA',
             [
-                'rest_url'          => esc_url_raw( rest_url( 'ttp/v1/vendors' ) ),
-                'plugin_url'        => esc_url_raw( $plugin_url ),
-                'enabled_categories' => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array( 'CASH', 'LITE', 'TRMS' ) ),
+                'rest_url'           => esc_url_raw( rest_url( 'ttp/v1/vendors' ) ),
+                'plugin_url'         => esc_url_raw( $plugin_url ),
+                'enabled_categories' => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) ),
+                'available_categories' => array_keys( TTP_CATEGORIES ),
             ]
         );
     }

@@ -33,15 +33,10 @@
         <fieldset>
             <legend class="screen-reader-text"><?php esc_html_e('Enable Categories', 'treasury-tech-portal'); ?></legend>
             <?php
-            $all_categories = array(
-                'CASH' => esc_html__('Cash Tools', 'treasury-tech-portal'),
-                'LITE' => esc_html__('Treasury Management System Lite (TMS-Lite)', 'treasury-tech-portal'),
-                'TRMS' => esc_html__('Treasury & Risk Management Systems (TRMS)', 'treasury-tech-portal'),
-            );
-            foreach ($all_categories as $key => $label) :
+            foreach ( TTP_CATEGORIES as $key => $label ) :
                 $checked = in_array($key, $enabled_categories, true);
                 ?>
-                <label><input type="checkbox" name="enabled_categories[]" value="<?php echo esc_attr($key); ?>" <?php checked($checked); ?> /> <?php echo $label; ?></label><br />
+                <label><input type="checkbox" name="enabled_categories[]" value="<?php echo esc_attr($key); ?>" <?php checked($checked); ?> /> <?php echo esc_html( $label ); ?></label><br />
             <?php endforeach; ?>
         </fieldset>
         <?php submit_button(__('Save Categories', 'treasury-tech-portal'), 'secondary', 'save-categories'); ?>
