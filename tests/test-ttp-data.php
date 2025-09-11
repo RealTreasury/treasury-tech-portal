@@ -262,7 +262,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertStringContainsString('recreg1', implode(' ', $logged));
     }
 
-    public function test_refresh_vendor_cache_logs_missing_fields() {
+    public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
         $record = [
             'id' => 'rec1',
             'fields' => [
@@ -274,7 +274,9 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Data::save_vendors', function () {
+        $saved = false;
+        \Patchwork\replace('TTP_Data::save_vendors', function () use ( &$saved ) {
+            $saved = true;
         });
 
         $logged = '';
@@ -290,8 +292,10 @@ class TTP_Data_Test extends TestCase {
             return true;
         } );
 
-        TTP_Data::refresh_vendor_cache();
+        $result = TTP_Data::refresh_vendor_cache();
 
+        $this->assertTrue( is_wp_error( $result ) );
+        $this->assertFalse( $saved );
         $this->assertStringContainsString('Product Website', $logged);
         $this->assertStringContainsString($this->schema_map['Product Website'], $logged);
         $this->assertIsArray($stored);
