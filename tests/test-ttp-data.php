@@ -868,11 +868,14 @@ class TTP_Data_Test extends TestCase {
 
         $option_calls = 0;
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
-            $option_calls++;
-            if ( 1 === $option_calls ) {
-                return $vendors_with_ids;
+            if ( TTP_Data::SEMICOLON_MIGRATION_KEY === $name ) {
+                return 1;
             }
-            return $vendors_clean;
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                $option_calls++;
+                return 1 === $option_calls ? $vendors_with_ids : $vendors_clean;
+            }
+            return $default;
         } );
 
         $refreshed = false;
@@ -905,6 +908,9 @@ class TTP_Data_Test extends TestCase {
 
         $option_calls = 0;
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
+            if ( TTP_Data::SEMICOLON_MIGRATION_KEY === $name ) {
+                return 1;
+            }
             if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
                 $option_calls++;
                 return 1 === $option_calls ? $vendors_with_ids : $vendors_clean;
@@ -935,6 +941,9 @@ class TTP_Data_Test extends TestCase {
         when( 'delete_transient' )->returnArg();
 
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
+            if ( TTP_Data::SEMICOLON_MIGRATION_KEY === $name ) {
+                return 1;
+            }
             if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
                 return $stored_option;
             }
@@ -983,6 +992,37 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( array( 'EMEA' ), $result[0]['regions'] );
     }
 
+    public function test_maybe_migrate_semicolon_cache_normalizes_fields() {
+        $option_store = array(
+            TTP_Data::VENDOR_OPTION_KEY       => array(
+                array(
+                    'regions'      => 'A;B,C',
+                    'capabilities' => array( 'X;Y', 'Z' ),
+                ),
+            ),
+            TTP_Data::SEMICOLON_MIGRATION_KEY => 0,
+        );
+
+        when( 'get_transient' )->justReturn( false );
+        when( 'set_transient' )->returnArg();
+        when( 'delete_transient' )->returnArg();
+
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_store ) {
+            return $option_store[ $name ] ?? $default;
+        } );
+
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$option_store ) {
+            $option_store[ $name ] = $value;
+            return true;
+        } );
+
+        $result = TTP_Data::get_all_vendors();
+
+        $this->assertSame( array( 'A', 'B', 'C' ), $result[0]['regions'] );
+        $this->assertSame( array( 'X', 'Y', 'Z' ), $result[0]['capabilities'] );
+        $this->assertSame( 1, $option_store[ TTP_Data::SEMICOLON_MIGRATION_KEY ] );
+    }
+
     public function test_save_vendors_triggers_refresh_and_normalises_regions() {
         $stored_option = array();
 
@@ -991,6 +1031,9 @@ class TTP_Data_Test extends TestCase {
         when( 'delete_transient' )->returnArg();
 
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
+            if ( TTP_Data::SEMICOLON_MIGRATION_KEY === $name ) {
+                return 1;
+            }
             if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
                 return $stored_option;
             }
@@ -1082,18 +1125,19 @@ class TTP_Data_Test extends TestCase {
     /**
      * @dataProvider parse_record_ids_string_provider
      */
-    public function test_parse_record_ids_handles_string_formats( $input ) {
+    public function test_parse_record_ids_handles_string_formats( $input, $expected ) {
         $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
         $method->setAccessible( true );
-        $this->assertSame( array( 'A', 'B' ), $method->invoke( null, $input ) );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
     }
 
     public function parse_record_ids_string_provider() {
         return array(
-            'json_string'     => array( '["A","B"]' ),
-            'comma_separated' => array( 'A, B' ),
-            'semicolon'       => array( 'A;B' ),
-            'newline'         => array( "A\nB" ),
+            'json_string'      => array( '["A","B"]', array( 'A', 'B' ) ),
+            'comma_separated'  => array( 'A, B', array( 'A', 'B' ) ),
+            'semicolon'        => array( 'A;B', array( 'A', 'B' ) ),
+            'newline'          => array( "A\nB", array( 'A', 'B' ) ),
+            'mixed_delimiters' => array( 'A;B,C', array( 'A', 'B', 'C' ) ),
         );
     }
 

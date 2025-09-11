@@ -10,6 +10,7 @@ class TTP_Data {
     const CACHE_TTL  = HOUR_IN_SECONDS;
     const VENDOR_OPTION_KEY = 'ttp_vendors';
     const VENDOR_CACHE_KEY  = 'ttp_vendors_cache';
+    const SEMICOLON_MIGRATION_KEY = 'ttp_semicolon_migrated';
 
     /**
      * Indicates when the vendor cache is actively being refreshed.
@@ -60,6 +61,8 @@ class TTP_Data {
      * @return array
     */
     public static function get_all_vendors() {
+        self::maybe_migrate_semicolon_cache();
+
         $vendors = get_transient( self::VENDOR_CACHE_KEY );
         if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
             return $vendors;
@@ -102,6 +105,69 @@ class TTP_Data {
 
             self::$refreshing_vendors = false;
         }
+    }
+
+    /**
+     * Normalize cached vendors that used semicolon-delimited fields.
+     *
+     * Scans the stored vendor option for strings or arrays containing
+     * semicolon-delimited values and re-parses them using parse_record_ids.
+     * Runs only once per site using an option flag.
+     */
+    public static function maybe_migrate_semicolon_cache() {
+        if ( get_option( self::SEMICOLON_MIGRATION_KEY ) ) {
+            return;
+        }
+
+        $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        if ( empty( $vendors ) || ! is_array( $vendors ) ) {
+            update_option( self::SEMICOLON_MIGRATION_KEY, 1 );
+            return;
+        }
+
+        $fields  = array( 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'domain', 'category', 'categories', 'vendor' );
+        $updated = false;
+
+        foreach ( $vendors as &$vendor ) {
+            foreach ( $fields as $field ) {
+                if ( ! isset( $vendor[ $field ] ) ) {
+                    continue;
+                }
+
+                $value = $vendor[ $field ];
+
+                if ( is_string( $value ) && strpos( $value, ';' ) !== false ) {
+                    $vendor[ $field ] = self::parse_record_ids( $value );
+                    $updated          = true;
+                } elseif ( is_array( $value ) ) {
+                    $new     = array();
+                    $changed = false;
+
+                    foreach ( $value as $item ) {
+                        if ( is_string( $item ) && strpos( $item, ';' ) !== false ) {
+                            $new     = array_merge( $new, self::parse_record_ids( $item ) );
+                            $changed = true;
+                        } else {
+                            $new[] = $item;
+                        }
+                    }
+
+                    if ( $changed ) {
+                        $vendor[ $field ] = $new;
+                        $updated          = true;
+                    }
+                }
+            }
+        }
+        unset( $vendor );
+
+        if ( $updated ) {
+            update_option( self::VENDOR_OPTION_KEY, $vendors );
+            delete_transient( self::VENDOR_CACHE_KEY );
+            delete_transient( self::CACHE_KEY );
+        }
+
+        update_option( self::SEMICOLON_MIGRATION_KEY, 1 );
     }
 
     /**
@@ -529,9 +595,9 @@ class TTP_Data {
     /**
      * Parse a raw field value into an array of IDs or names.
      *
-     * Handles comma-separated strings, JSON strings and nested arrays. When
-     * encountering array items, extracts the `id` or `name` properties when
-     * present.
+     * Handles comma- and semicolon-separated strings, JSON strings and nested
+     * arrays. When encountering array items, extracts the `id` or `name`
+     * properties when present.
      *
      * @param mixed $value Raw value to parse.
      * @return array Array of trimmed values.
@@ -551,12 +617,18 @@ class TTP_Data {
                         continue;
                     }
 
-                    $fields = str_getcsv( $line );
-                    if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
-                        $fields = str_getcsv( $line, ';' );
+                    $chars     = str_split( $line );
+                    $in_quotes = false;
+                    foreach ( $chars as $i => $char ) {
+                        if ( '"' === $char ) {
+                            $in_quotes = ! $in_quotes;
+                        } elseif ( ! $in_quotes && ';' === $char ) {
+                            $chars[ $i ] = ',';
+                        }
                     }
 
-                    $parsed = array_merge( $parsed, $fields );
+                    $normalized = implode( '', $chars );
+                    $parsed     = array_merge( $parsed, str_getcsv( $normalized ) );
                 }
 
                 $value = $parsed;
