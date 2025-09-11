@@ -16,6 +16,7 @@ A WordPress plugin that provides an interactive interface for discovering and co
    ```
    [treasury_portal]
    ```
+   If the `.treasury-portal` container isn't present on a page, the frontend script logs a warning and skips initialization.
 
 ### Refreshing the Vendor Cache
 - Bump the `VENDOR_CACHE_VERSION` constant in `includes/class-ttp-data.php` when product-field ID\u2192name mapping or other linked-record logic changes.

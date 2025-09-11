@@ -1,6 +1,7 @@
         const EMBED_ORIGIN = 'https://realtreasury.com';
         let treasuryTechPortal;
-        const portalRoot = document.querySelector('.treasury-portal') || document.body;
+        // Root container for the portal. Setup is skipped if not present.
+        const portalRoot = document.querySelector('.treasury-portal');
 
         function postHeight() {
             if (window.parent !== window) {
@@ -46,6 +47,9 @@ function containsRecordIds(value) {
     return typeof value === 'string' && /^rec[0-9a-z]/i.test(value);
 }
 
+if (!portalRoot) {
+    console.warn('Treasury portal root element (.treasury-portal) not found. Skipping initialization.');
+} else {
 // Post height more frequently and reliably
 window.addEventListener('load', () => {
     setTimeout(postHeight, 100);
@@ -61,26 +65,26 @@ new ResizeObserver(() => {
 new MutationObserver(() => {
     debouncedPostHeight();
 }).observe(portalRoot, {
-    childList: true, 
-    subtree: true, 
+    childList: true,
+    subtree: true,
     attributes: true,
     attributeFilter: ['style', 'class']
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
     treasuryTechPortal = new TreasuryTechPortal();
-    
+
     // Ensure iframe height is set after content loads
     setTimeout(() => {
         if (typeof postHeight === 'function') {
             postHeight();
         }
     }, 1500);
-    
+
     // Handle window resize to properly enable/disable mobile features
     window.addEventListener('resize', () => {
         const isMobile = window.innerWidth <= 768;
-        
+
         if (isMobile) {
             // Close any open menus on mobile
             if (treasuryTechPortal.sideMenuOpen) treasuryTechPortal.closeSideMenu();
@@ -89,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Re-enable sidebar functionality on desktop
             treasuryTechPortal.renderShortlist();
         }
-        
+
         // Update height after resize
         setTimeout(() => {
             if (typeof postHeight === 'function') {
@@ -138,6 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 });
+}
         class TreasuryTechPortal {
             constructor() {
                 this.TREASURY_TOOLS = [];
@@ -2283,6 +2288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+if (portalRoot) {
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function(event) {
             const now = Date.now();
@@ -2293,3 +2299,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, {
             passive: false
         });
+}
