@@ -112,15 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const params = new URLSearchParams(window.location.search);
-    const toolName = params.get('tool');
-    if (toolName && document.cookie.includes('portal_access_token=')) {
-        const toolObj = treasuryTechPortal.TREASURY_TOOLS.find(t =>
-            t.name.toLowerCase() === decodeURIComponent(toolName).toLowerCase());
-        if (toolObj) {
-            setTimeout(() => treasuryTechPortal.showToolModal(toolObj), 500);
-        }
-    }
+    // Tool modal will be handled after vendor data loads
 
 });
         class TreasuryTechPortal {
@@ -493,7 +485,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 };
 
-                this.init();
+                this.TREASURY_TOOLS = [];
+                this.loadVendorTools();
 
                 // Swipe gesture tracking
                 this.swipeStart = null;
@@ -546,6 +539,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 this.applyViewStyles();
+            }
+
+            normalizeCategory(parentCategory, category) {
+                const raw = (parentCategory || category || '').toUpperCase();
+                if (raw.includes('TRM')) {
+                    return 'TRMS';
+                }
+                if (raw.includes('LITE')) {
+                    return 'LITE';
+                }
+                if (raw.includes('CASH')) {
+                    return 'CASH';
+                }
+                return '';
+            }
+
+            mapVendorRecord(vendor) {
+                const {
+                    name = '',
+                    description = '',
+                    parent_category = '',
+                    category = '',
+                    subcategories = [],
+                    region = '',
+                    video_url = '',
+                    website_url = '',
+                    logo_url = '',
+                    target_market = '',
+                    features = []
+                } = vendor || {};
+                const subs = Array.isArray(subcategories) ? subcategories : (subcategories ? [subcategories] : []);
+                return {
+                    name,
+                    desc: description,
+                    category: this.normalizeCategory(parent_category, category),
+                    parentCategory: parent_category,
+                    subCategories: subs,
+                    region,
+                    features,
+                    target: target_market,
+                    videoUrl: video_url,
+                    websiteUrl: website_url,
+                    logoUrl: logo_url
+                };
+            }
+
+            async loadVendorTools() {
+                try {
+                    const response = await fetch(TTP_DATA.rest_url);
+                    const vendors = await response.json();
+                    this.TREASURY_TOOLS = vendors.map(v => this.mapVendorRecord(v));
+                } catch (error) {
+                    console.error('Failed to load vendor tools:', error);
+                }
+                this.init();
+                this.handleInitialTool();
+            }
+
+            handleInitialTool() {
+                const params = new URLSearchParams(window.location.search);
+                const toolName = params.get('tool');
+                if (toolName && document.cookie.includes('portal_access_token=')) {
+                    const toolObj = this.TREASURY_TOOLS.find(t => t.name.toLowerCase() === decodeURIComponent(toolName).toLowerCase());
+                    if (toolObj) {
+                        setTimeout(() => this.showToolModal(toolObj), 500);
+                    }
+                }
             }
 
             init() {
