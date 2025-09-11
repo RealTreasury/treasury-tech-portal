@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AGENTS.md files for AI developer guidance
 - Comprehensive documentation (API.md, TROUBLESHOOTING.md, EXAMPLES.md)
 - CONTRIBUTING.md with development workflow
+- Migration to normalise semicolon-delimited cache entries
 
 ### Changed
 - Enhanced mobile responsive design
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Modal z-index conflicts with navigation
 - Touch gesture handling on mobile devices
+- `parse_record_ids` now treats semicolons as delimiters alongside commas
 
 ## [1.0.1] - 2025-09-10
 

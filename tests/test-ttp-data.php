@@ -257,6 +257,57 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $vendor['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_resolves_semicolon_delimited_ids() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => ['recven1'],
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['rechost1'],
+                'Domain'          => ['recdom1'],
+                'Regions'         => 'recreg1; recreg2',
+                'Category'        => ['reccat1'],
+                'Sub Categories'  => ['recsc1'],
+                'Capabilities'    => ['reccap1'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+            $maps = [
+                'Regions'        => [ 'recreg1' => 'North America', 'recreg2' => 'Europe' ],
+                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
+                'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Sub Categories' => [ 'recsc1' => 'Payments' ],
+                'Capabilities'   => [ 'reccap1' => 'API' ],
+            ];
+
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+            return $out;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( array( 'North America', 'Europe' ), $captured[0]['regions'] );
+    }
+
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
         $record = [
             'id'     => 'rec1',
@@ -1236,6 +1287,22 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
+     * @dataProvider parse_record_ids_mixed_delimiter_provider
+     */
+    public function test_parse_record_ids_handles_mixed_delimiters( $input, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_mixed_delimiter_provider() {
+        return array(
+            array( 'A,B;C', array( 'A', 'B', 'C' ) ),
+            array( 'A;B,C', array( 'A', 'B', 'C' ) ),
+        );
+    }
+
+    /**
      * @dataProvider parse_record_ids_delimiter_in_names_provider
      */
     public function test_parse_record_ids_handles_delimiters_within_names( $input, $expected ) {
@@ -1385,6 +1452,33 @@ class TTP_Data_Test extends TestCase {
         $method->setAccessible( true );
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_migrate_semicolon_cache_splits_values() {
+        $vendors = array(
+            array(
+                'regions'      => array( 'North America; Europe', 'Asia' ),
+                'capabilities' => 'API;SDK',
+            ),
+        );
+
+        $stored = null;
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored ) {
+            if ( 'ttp_vendors' === $name ) {
+                $stored = $value;
+            }
+            return true;
+        } );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'migrate_semicolon_cache' );
+        $method->setAccessible( true );
+
+        $result = $method->invoke( null, $vendors );
+
+        $this->assertSame( array( 'North America', 'Europe', 'Asia' ), $result[0]['regions'] );
+        $this->assertSame( array( 'API', 'SDK' ), $result[0]['capabilities'] );
+        $this->assertSame( $stored, $result );
     }
 
     public function test_log_unresolved_field_groups_ids_by_field() {

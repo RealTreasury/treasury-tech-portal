@@ -66,14 +66,20 @@ class TTP_Data {
 
     public static function get_all_vendors() {
         $vendors = get_transient( self::get_vendor_cache_key() );
-        if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
-            return $vendors;
+        if ( $vendors !== false ) {
+            $vendors = self::migrate_semicolon_cache( $vendors );
+            set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
+            if ( ! self::vendors_need_resolution( $vendors ) ) {
+                return $vendors;
+            }
         }
 
         $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        $vendors = self::migrate_semicolon_cache( $vendors );
         if ( self::vendors_need_resolution( $vendors ) ) {
             self::refresh_vendor_cache();
             $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+            $vendors = self::migrate_semicolon_cache( $vendors );
         }
 
         set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
@@ -160,6 +166,61 @@ class TTP_Data {
             }
         }
         return false;
+    }
+
+    /**
+     * Normalize cached vendor data containing semicolon-delimited values.
+     *
+     * Earlier versions stored some fields as single strings with semicolon
+     * delimiters. This routine scans existing vendor arrays and converts any
+     * such strings to proper arrays.
+     *
+     * @param array $vendors Cached vendor records.
+     * @return array Normalised vendor records.
+     */
+    private static function migrate_semicolon_cache( $vendors ) {
+        $updated = false;
+
+        foreach ( $vendors as &$vendor ) {
+            foreach ( $vendor as $key => &$value ) {
+                if ( is_string( $value ) && strpos( $value, ';' ) !== false ) {
+                    $parts = self::parse_record_ids( $value );
+                    if ( count( $parts ) > 1 ) {
+                        $value   = $parts;
+                        $updated = true;
+                    }
+                } elseif ( is_array( $value ) ) {
+                    $new_vals = array();
+                    $changed  = false;
+
+                    foreach ( $value as $item ) {
+                        if ( is_string( $item ) && strpos( $item, ';' ) !== false ) {
+                            $parts = self::parse_record_ids( $item );
+                            if ( count( $parts ) > 1 ) {
+                                $new_vals = array_merge( $new_vals, $parts );
+                                $changed  = true;
+                            } else {
+                                $new_vals[] = $item;
+                            }
+                        } else {
+                            $new_vals[] = $item;
+                        }
+                    }
+
+                    if ( $changed ) {
+                        $value   = $new_vals;
+                        $updated = true;
+                    }
+                }
+            }
+        }
+        unset( $vendor, $value );
+
+        if ( $updated ) {
+            update_option( self::VENDOR_OPTION_KEY, $vendors );
+        }
+
+        return $vendors;
     }
 
     /**
@@ -370,6 +431,7 @@ class TTP_Data {
      *
      * Recursively searches strings and arrays for `name` or `id` keys at any
      * depth. Strings are treated as JSON when possible or split on common
+     * delimiters. Both commas and semicolons are treated as equivalent
      * delimiters. When both `name` and `id` exist in the same structure the
      * `name` is preferred.
      *
@@ -400,12 +462,13 @@ class TTP_Data {
                     continue;
                 }
 
-                $fields = str_getcsv( $line );
-                if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
-                    $fields = str_getcsv( $line, ';' );
+                $fields = preg_split( '/\s*[;,]\s*(?=(?:[^"]*"[^"]*")*[^"]*$)/', $line );
+                foreach ( $fields as $field ) {
+                    $field = str_getcsv( trim( $field ) );
+                    if ( isset( $field[0] ) && $field[0] !== '' ) {
+                        $parsed[] = $field[0];
+                    }
                 }
-
-                $parsed = array_merge( $parsed, $fields );
             }
 
             return array_map( 'trim', $parsed );
