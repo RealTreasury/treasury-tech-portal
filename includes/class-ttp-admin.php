@@ -72,10 +72,10 @@ class TTP_Admin {
         }
 
         if (isset($_GET['test_success'])) {
-            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Airbase connection successful.', 'treasury-tech-portal') . '</p></div>';
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Airbase vendor fetch successful.', 'treasury-tech-portal') . '</p></div>';
         } elseif (isset($_GET['test_error'])) {
             $message = sanitize_text_field(wp_unslash($_GET['test_error']));
-            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(sprintf(__('Airbase connection failed: %s', 'treasury-tech-portal'), $message)) . '</p></div>';
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(sprintf(__('Airbase vendor fetch failed: %s', 'treasury-tech-portal'), $message)) . '</p></div>';
         }
 
         $missing_fields = array();
@@ -194,7 +194,37 @@ class TTP_Admin {
             wp_die('Unauthorized');
         }
         check_admin_referer('ttp_test_airbase', 'ttp_test_airbase_nonce');
-        $result = TTP_Airbase::get_vendors();
+
+        $field_names = array(
+            'Product Name',
+            'Linked Vendor',
+            'Product Website',
+            'Product Video',
+            'Logo URL',
+            'Status',
+            'Hosted Type',
+            'Domain',
+            'Regions',
+            'Sub Categories',
+            'Parent Category',
+            'Capabilities',
+            'HQ Location',
+            'Founded Year',
+            'Founders',
+        );
+
+        $schema    = TTP_Airbase::get_table_schema();
+        $field_ids = array();
+
+        if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
+            foreach ( $field_names as $name ) {
+                $field_ids[] = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+            }
+        } else {
+            $field_ids = $field_names;
+        }
+
+        $result = TTP_Airbase::get_vendors( $field_ids, true );
         $url    = admin_url('admin.php?page=treasury-airbase-settings');
         if (is_wp_error($result)) {
             $url = add_query_arg('test_error', rawurlencode($result->get_error_message()), $url);
