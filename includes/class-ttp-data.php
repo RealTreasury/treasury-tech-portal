@@ -315,7 +315,7 @@ class TTP_Data {
             'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Region' ),
             'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
             'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
             'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
             'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Sub Category Name' ),
             'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
