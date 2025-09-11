@@ -13,6 +13,10 @@ if (!class_exists('WP_Error')) {
             $this->data    = $data;
         }
 
+        public function get_error_code() {
+            return $this->code;
+        }
+
         public function get_error_message() {
             return $this->message;
         }

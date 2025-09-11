@@ -24,6 +24,7 @@ class TTP_Data_Test extends TestCase {
             'Hosted Type'     => 'fld_hosted',
             'Domain'          => 'fld_domain',
             'Regions'         => 'fld_regions',
+            'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
             'Parent Category' => 'fld_parent',
             'Capabilities'    => 'fld_caps',
@@ -55,10 +56,14 @@ class TTP_Data_Test extends TestCase {
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
                 'Parent Category' => 'Cash',
+                'Category'        => ['reccat1'],
                 'Sub Categories'  => ['recsc1'],
                 'Regions'         => ['recreg1', 'recreg2'],
                 'Domain'          => ['recdom1'],
                 'Capabilities'    => ['reccap1'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -86,6 +91,7 @@ class TTP_Data_Test extends TestCase {
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'ERP' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
             ];
@@ -103,9 +109,10 @@ class TTP_Data_Test extends TestCase {
         TTP_Data::refresh_vendor_cache();
 
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
+        $this->assertContains($this->schema_map['Category'], $requested_fields);
         $this->assertTrue($return_fields_by_id);
         $this->assertSame(
-            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Sub Categories', 'Capabilities'],
+            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Category', 'Sub Categories', 'Capabilities'],
             $tables
         );
 
@@ -120,9 +127,10 @@ class TTP_Data_Test extends TestCase {
                 'hosted_type'     => ['Cloud'],
                 'domain'          => ['Banking'],
                 'regions'         => ['North America', 'Europe'],
+                'categories'      => ['ERP'],
                 'sub_categories'  => ['Payments'],
                 'parent_category' => 'Cash',
-                'category_names'  => ['Cash', 'Payments'],
+                'category_names'  => ['Cash', 'ERP', 'Payments'],
                 'capabilities'    => ['API'],
                 'logo_url'        => 'https://example.com/logo.png',
                 'hq_location'     => '',
@@ -136,7 +144,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame('https://example.com/logo.png', $captured[0]['logo_url']);
         $this->assertSame('Cash', $captured[0]['parent_category']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
-        $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
+        $this->assertSame(['Cash', 'ERP', 'Payments'], $captured[0]['category_names']);
         $this->assertSame(['Banking'], $captured[0]['domain']);
     }
 
@@ -147,13 +155,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
+                'Category'        => ['ERP'],
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -177,6 +191,8 @@ class TTP_Data_Test extends TestCase {
         $this->assertFalse($called);
         $this->assertSame(['North America'], $captured[0]['regions']);
         $this->assertSame('Acme Corp', $captured[0]['vendor']);
+        $this->assertSame(['ERP'], $captured[0]['categories']);
+        $this->assertSame(['Cash', 'ERP', 'Payments'], $captured[0]['category_names']);
     }
 
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
@@ -186,15 +202,21 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
+                'Category'        => [],
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => [
                     [ 'id' => 'recdom1', 'name' => 'Banking' ],
                 ],
                 'Capabilities'    => ['API'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -226,13 +248,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
                 'Parent Category' => 'Cash',
+                'Category'        => [],
                 'Sub Categories'  => ['recsc1'],
                 'Regions'         => ['recreg1'],
                 'Domain'          => ['recdom1'],
                 'Capabilities'    => ['reccap1'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -310,13 +338,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'recven1',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => 'rechost1',
                 'Parent Category' => 'Cash',
+                'Category'        => 'reccat1',
                 'Sub Categories'  => 'recsc1',
                 'Regions'         => 'recreg1',
                 'Domain'          => 'recdom1',
                 'Capabilities'    => 'reccap1',
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -330,6 +364,7 @@ class TTP_Data_Test extends TestCase {
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'ERP' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
             ];
@@ -353,8 +388,10 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertSame(['NORAM'], $captured[0]['regions']);
         $this->assertSame(['Banking'], $captured[0]['domain']);
+        $this->assertSame(['ERP'], $captured[0]['categories']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
         $this->assertSame(['API'], $captured[0]['capabilities']);
+        $this->assertSame(['Cash', 'ERP', 'Payments'], $captured[0]['category_names']);
     }
 
     public function test_refresh_vendor_cache_resolves_mixed_region_values() {
@@ -364,13 +401,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
+                'Category'        => [],
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['recreg1', 'APAC'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -405,13 +448,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'recven1, recven2',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => 'rechost1, rechost2',
                 'Parent Category' => 'Cash',
+                'Category'        => '',
                 'Sub Categories'  => 'recsc1, recsc2',
                 'Regions'         => 'recreg1, recreg2',
                 'Domain'          => 'recdom1, recdom2',
                 'Capabilities'    => 'reccap1, reccap2',
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -488,13 +537,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => 'Cloud',
                 'Parent Category' => 'reccat1',
+                'Category'        => [],
                 'Sub Categories'  => 'Payments',
                 'Regions'         => 'North America',
                 'Domain'          => 'Banking',
                 'Capabilities'    => 'API',
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -533,13 +588,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
+                'Category'        => [],
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -606,6 +667,12 @@ class TTP_Data_Test extends TestCase {
                 'domain',
                 [ 'recdom1' => 'Banking' ],
             ],
+            'categories' => [
+                'Category',
+                'Category',
+                'categories',
+                [ 'reccat1' => 'ERP' ],
+            ],
             'sub_categories' => [
                 'Sub Categories',
                 'Sub Categories',
@@ -637,13 +704,19 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
+                'Category'        => [],
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
             ],
         ];
 
@@ -717,6 +790,15 @@ class TTP_Data_Test extends TestCase {
                 [
                     'recdom1' => 'Banking',
                     'recdom2' => 'Investing',
+                ],
+            ],
+            'categories' => [
+                'Category',
+                'Category',
+                'categories',
+                [
+                    'reccat1' => 'ERP',
+                    'reccat2' => 'Liquidity',
                 ],
             ],
             'sub_categories' => [
@@ -847,8 +929,22 @@ class TTP_Data_Test extends TestCase {
                     array(
                         'id'     => 'rec1',
                         'fields' => array(
-                            'Product Name' => 'Sample Product',
-                            'Regions'      => array( 'recreg1' ),
+                            'Product Name'    => 'Sample Product',
+                            'Linked Vendor'   => '',
+                            'Product Website' => '',
+                            'Product Video'   => '',
+                            'Logo URL'        => '',
+                            'Status'          => '',
+                            'Hosted Type'     => array(),
+                            'Domain'          => array(),
+                            'Regions'         => array( 'recreg1' ),
+                            'Category'        => array(),
+                            'Sub Categories'  => array(),
+                            'Parent Category' => '',
+                            'Capabilities'    => array(),
+                            'HQ Location'     => '',
+                            'Founded Year'    => '',
+                            'Founders'        => '',
                         ),
                     ),
                 ),
@@ -908,8 +1004,22 @@ class TTP_Data_Test extends TestCase {
                     array(
                         'id'     => 'rec1',
                         'fields' => array(
-                            'Product Name' => 'Sample Product',
-                            'Regions'      => array( 'recreg1' ),
+                            'Product Name'    => 'Sample Product',
+                            'Linked Vendor'   => '',
+                            'Product Website' => '',
+                            'Product Video'   => '',
+                            'Logo URL'        => '',
+                            'Status'          => '',
+                            'Hosted Type'     => array(),
+                            'Domain'          => array(),
+                            'Regions'         => array( 'recreg1' ),
+                            'Category'        => array(),
+                            'Sub Categories'  => array(),
+                            'Parent Category' => '',
+                            'Capabilities'    => array(),
+                            'HQ Location'     => '',
+                            'Founded Year'    => '',
+                            'Founders'        => '',
                         ),
                     ),
                 ),
