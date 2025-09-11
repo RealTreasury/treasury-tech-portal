@@ -312,13 +312,13 @@ class TTP_Data {
         }
 
         $linked_fields = array(
-            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
+            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Region' ),
             'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
             'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
             'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
+            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Sub Category Name' ),
+            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
             'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
 

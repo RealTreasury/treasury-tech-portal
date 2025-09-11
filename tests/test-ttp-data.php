@@ -1692,12 +1692,12 @@ class TTP_Data_Test extends TestCase {
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) {
+            function ( $table_id, $ids, $primary_field = 'Region', $use_field_ids = false ) {
                 return array( 'North America' );
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Region' );
         $this->assertSame( array( 'North America' ), $result );
     }
 
@@ -1710,13 +1710,13 @@ class TTP_Data_Test extends TestCase {
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$captured ) {
+            function ( $table_id, $ids, $primary_field = 'Region', $use_field_ids = false ) use ( &$captured ) {
                 $captured = $ids;
                 return array( 'North', 'South' );
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Region' );
         $this->assertSame( array( 'North', 'South' ), $result );
         $this->assertSame( array( 'sel1111111111', 'opt2222222222' ), $captured );
     }
@@ -1729,13 +1729,13 @@ class TTP_Data_Test extends TestCase {
         $called = false;
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id = null, $ids = null, $primary_field = 'Name', $use_field_ids = false ) use ( &$called ) {
+            function ( $table_id = null, $ids = null, $primary_field = 'Region', $use_field_ids = false ) use ( &$called ) {
                 $called = true;
                 return array();
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Region' );
         $this->assertSame( array( 'Europe' ), $result );
         $this->assertFalse( $called );
     }
@@ -1749,7 +1749,7 @@ class TTP_Data_Test extends TestCase {
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) use ( &$calls ) {
+            function ( $table_id, $ids, $primary_field = 'Region', $use_field_ids = false ) use ( &$calls ) {
                 $calls++;
                 if ( 1 === $calls ) {
                     return new WP_Error( 'network', 'Network error' );
@@ -1758,7 +1758,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Region' );
         $this->assertSame( array( 'North America' ), $result );
         $this->assertSame( 2, $calls );
     }
@@ -1772,13 +1772,13 @@ class TTP_Data_Test extends TestCase {
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) use ( &$calls ) {
+            function ( $table_id, $ids, $primary_field = 'Region', $use_field_ids = false ) use ( &$calls ) {
                 $calls++;
                 return new WP_Error( 'network', 'Network error' );
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Region' );
         $this->assertSame( array(), $result );
         $this->assertSame( 3, $calls );
     }
