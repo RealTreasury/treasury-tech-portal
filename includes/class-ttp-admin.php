@@ -187,7 +187,8 @@ class TTP_Admin {
         }
 
         $vendors            = TTP_Data::get_all_vendors();
-        $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) );
+        $categories         = TTP_Data::get_categories();
+        $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
         include dirname( __DIR__ ) . '/templates/admin-page.php';
     }
 
