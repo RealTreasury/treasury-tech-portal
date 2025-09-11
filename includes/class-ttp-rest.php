@@ -73,9 +73,15 @@ class TTP_Rest {
 
     public static function get_vendors($request) {
         $vendors = TTP_Data::get_all_vendors();
+        $enabled = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array( 'CASH', 'LITE', 'TRMS' ) );
+        $vendors = array_filter( (array) $vendors, function ( $vendor ) use ( $enabled ) {
+            $vendor = (array) $vendor;
+            $cat    = $vendor['category'] ?? ( $vendor['categories'][0] ?? '' );
+            return in_array( $cat, $enabled, true );
+        } );
         $needs_refresh = false;
 
-        $vendors = (array) $vendors;
+        $vendors = array_values( $vendors );
         foreach ( $vendors as &$vendor ) {
             $vendor = (array) $vendor;
             $vendor_needs_resolution = false;
