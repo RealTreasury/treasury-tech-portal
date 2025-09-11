@@ -1437,6 +1437,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     totalTools.textContent = filtersActive ? visibleTotal : this.TREASURY_TOOLS.length;
                 }
 
+                const totalCategories = document.getElementById('totalCategories');
+                if (totalCategories) {
+                    if (filtersActive) {
+                        const visibleCategories = new Set(
+                            this.filteredTools.map(t => t.categoryName).filter(Boolean)
+                        );
+                        totalCategories.textContent = visibleCategories.size;
+                    } else {
+                        totalCategories.textContent = this.allCategories.length;
+                    }
+                }
+
                 const subtotal = categoryCounts.reduce((sum, n) => sum + n, 0);
                 if (filtersActive && subtotal !== visibleTotal) {
                     console.warn(`Category counts (${subtotal}) do not sum to visible total (${visibleTotal})`);
@@ -1456,6 +1468,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
                     totalTools.textContent = this.TREASURY_TOOLS.length;
+                }
+
+                const totalCategories = document.getElementById('totalCategories');
+                if (totalCategories) {
+                    totalCategories.textContent = this.allCategories.length;
                 }
             }
 

@@ -42,7 +42,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                         <div class="stat-label">Tools</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">3</div>
+                        <div class="stat-number" id="totalCategories">0</div>
                         <div class="stat-label">Categories</div>
                     </div>
                 </div>
