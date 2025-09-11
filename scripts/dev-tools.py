@@ -4,9 +4,7 @@ Development tools for Treasury Tech Portal
 Provides utilities for automated code modifications
 """
 
-import json
 import re
-import os
 from pathlib import Path
 
 class PortalCodeModifier:
@@ -44,17 +42,6 @@ class PortalCodeModifier:
         card_addition = f'\\1\n                        ${{tool.{property_name} ? `<div class="{property_name.lower().replace("_", "-")}">${{tool.{property_name}}}</div>` : ""}}'
         self._replace_in_file(js_file, card_pattern, card_addition)
         
-        # 5. Update default tools data
-        tools_file = self.repo_root / "data" / "tools.json"
-        with open(tools_file, 'r') as f:
-            tools = json.load(f)
-        
-        for tool in tools:
-            if property_name not in tool:
-                tool[property_name] = default_value
-                
-        with open(tools_file, 'w') as f:
-            json.dump(tools, f, indent=2)
     
     def add_css_rule(self, selector, properties):
         """Add CSS rule to main stylesheet"""

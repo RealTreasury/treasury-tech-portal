@@ -252,14 +252,14 @@ if (!wp_http_validate_url($url)) {
 
 ## Common Backend Modifications
 
-### Adding Tool Import/Export
+### Adding Vendor Import/Export
 ```php
 // In TTP_Admin class
-public static function export_tools() {
-    $tools = TTP_Data::get_all_tools();
+public static function export_vendors() {
+    $vendors = TTP_Data::get_all_vendors();
     header('Content-Type: application/json');
-    header('Content-Disposition: attachment; filename="tools.json"');
-    echo wp_json_encode($tools);
+    header('Content-Disposition: attachment; filename="vendors.json"');
+    echo wp_json_encode($vendors);
     exit;
 }
 ```
