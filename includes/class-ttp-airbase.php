@@ -342,15 +342,21 @@ class TTP_Airbase {
         $schemas = array();
         foreach ( $data['tables'] as $table ) {
             $map          = array();
+            $types        = array();
             $primary_id   = isset( $table['primaryFieldId'] ) ? $table['primaryFieldId'] : '';
             $primary_name = '';
+            $primary_type = '';
 
             if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
                 foreach ( $table['fields'] as $field ) {
                     if ( isset( $field['name'], $field['id'] ) ) {
                         $map[ $field['name'] ] = $field['id'];
+                        if ( isset( $field['type'] ) ) {
+                            $types[ $field['name'] ] = $field['type'];
+                        }
                         if ( $field['id'] === $primary_id ) {
                             $primary_name = $field['name'];
+                            $primary_type = isset( $field['type'] ) ? $field['type'] : '';
                         }
                     }
                 }
@@ -358,9 +364,11 @@ class TTP_Airbase {
 
             $entry = array(
                 'fields'  => $map,
+                'types'   => $types,
                 'primary' => array(
                     'id'   => $primary_id,
                     'name' => $primary_name,
+                    'type' => $primary_type,
                 ),
             );
 
@@ -391,7 +399,7 @@ class TTP_Airbase {
      *
      * @param string $table_id Table name or ID.
      *
-     * @return array|WP_Error Array with 'id' and 'name' keys or WP_Error on failure.
+     * @return array|WP_Error Array with 'id', 'name', and 'type' keys or WP_Error on failure.
      */
     public static function get_primary_field( $table_id ) {
         static $cache = array();
@@ -418,6 +426,66 @@ class TTP_Airbase {
         }
 
         return new WP_Error( 'primary_field_not_found', __( 'Primary field not found for table.', 'treasury-tech-portal' ) );
+    }
+
+    /**
+     * Retrieve the field type for a given table field.
+     *
+     * Falls back to an empty string when the field type cannot be
+     * determined. The schema is fetched when missing from the cache.
+     *
+     * @param string $table_id Table name or ID.
+     * @param string $field    Field name or ID.
+     * @return string Field type or empty string when unknown.
+     */
+    public static function get_field_type( $table_id, $field ) {
+        $schema = get_transient( 'ttp_airbase_schema' );
+        if ( ! is_array( $schema ) || ! isset( $schema[ $table_id ] ) ) {
+            $result = self::get_table_schema( $table_id );
+            if ( is_wp_error( $result ) ) {
+                return '';
+            }
+            $schema = get_transient( 'ttp_airbase_schema' );
+        }
+
+        if ( isset( $schema[ $table_id ]['types'][ $field ] ) ) {
+            return $schema[ $table_id ]['types'][ $field ];
+        }
+
+        if ( isset( $schema[ $table_id ]['fields'] ) ) {
+            $name = array_search( $field, $schema[ $table_id ]['fields'], true );
+            if ( false !== $name && isset( $schema[ $table_id ]['types'][ $name ] ) ) {
+                return $schema[ $table_id ]['types'][ $name ];
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Determine if a field type represents numeric data.
+     *
+     * @param string $type Field type string from schema.
+     * @return bool True if the field type is numeric.
+     */
+    public static function is_numeric_field_type( $type ) {
+        $numeric = array( 'number', 'numeric', 'integer', 'float', 'currency', 'percent' );
+        return in_array( strtolower( (string) $type ), $numeric, true );
+    }
+
+    /**
+     * Cast or sanitize a value based on field type.
+     *
+     * @param mixed  $value Value to sanitize.
+     * @param string $type  Field type string from schema.
+     * @return mixed Sanitized value.
+     */
+    public static function cast_value_by_type( $value, $type ) {
+        if ( self::is_numeric_field_type( $type ) ) {
+            return is_numeric( $value ) ? $value + 0 : 0 + $value;
+        }
+
+        return function_exists( 'sanitize_text_field' ) ? sanitize_text_field( $value ) : $value;
     }
 
     /**
@@ -481,6 +549,8 @@ class TTP_Airbase {
             $result_field = $query_field;
         }
 
+        $field_type = self::get_field_type( $table_id, $result_field );
+
         $args = array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,
@@ -528,14 +598,16 @@ class TTP_Airbase {
 
                     if ( is_array( $value ) ) {
                         if ( isset( $value['name'] ) ) {
-                            $values[] = sanitize_text_field( $value['name'] );
+                            $values[] = self::cast_value_by_type( $value['name'], $field_type );
                         } elseif ( isset( $value['text'] ) ) {
-                            $values[] = sanitize_text_field( $value['text'] );
+                            $values[] = self::cast_value_by_type( $value['text'], $field_type );
                         } elseif ( isset( $value['id'] ) ) {
-                            $values[] = sanitize_text_field( $value['id'] );
+                            $values[] = self::cast_value_by_type( $value['id'], $field_type );
+                        } elseif ( isset( $value['value'] ) ) {
+                            $values[] = self::cast_value_by_type( $value['value'], $field_type );
                         }
                     } elseif ( null !== $value ) {
-                        $values[] = sanitize_text_field( $value );
+                        $values[] = self::cast_value_by_type( $value, $field_type );
                     }
                 }
             }

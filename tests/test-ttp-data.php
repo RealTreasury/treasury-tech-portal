@@ -13,6 +13,9 @@ class TTP_Data_Test extends TestCase {
             return $thing instanceof WP_Error;
         });
         when('sanitize_text_field')->returnArg();
+        \Patchwork\replace( 'TTP_Airbase::get_field_type', function () {
+            return 'text';
+        } );
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
@@ -1340,6 +1343,23 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
+     * @dataProvider parse_record_ids_mixed_provider
+     */
+    public function test_parse_record_ids_handles_numeric_and_select_values( $input, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_mixed_provider() {
+        return array(
+            'numeric_scalar'    => array( 123, array( 123 ) ),
+            'numeric_in_array'   => array( array( 'id' => 456 ), array( 456 ) ),
+            'select_value_key'   => array( array( array( 'value' => 'Choice' ) ), array( 'Choice' ) ),
+        );
+    }
+
+    /**
      * @dataProvider contains_record_ids_provider
      */
     public function test_contains_record_ids_respects_known_prefixes( $values, $expected ) {
@@ -1394,6 +1414,23 @@ class TTP_Data_Test extends TestCase {
         $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
         $this->assertSame( array( 'Europe' ), $result );
         $this->assertFalse( $called );
+    }
+
+    public function test_resolve_linked_field_preserves_numeric_values() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record = array( 'Numbers' => array( 'rec1' ) );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function () {
+            return array( 42 );
+        } );
+        \Patchwork\replace( 'TTP_Airbase::get_field_type', function () {
+            return 'number';
+        } );
+
+        $result = $method->invoke( null, $record, 'Numbers', 'Numbers', 'Count' );
+        $this->assertSame( array( 42 ), $result );
     }
 
     public function vendors_need_resolution_region_provider() {

@@ -13,6 +13,9 @@ class TTP_Airbase_Test extends TestCase {
             return filter_var($url, FILTER_VALIDATE_URL);
         });
         when('sanitize_text_field')->returnArg();
+        \Patchwork\replace( 'TTP_Airbase::get_field_type', function () {
+            return 'text';
+        } );
     }
 
     protected function tearDown(): void {
@@ -372,7 +375,7 @@ class TTP_Airbase_Test extends TestCase {
 
     public function test_get_table_schema_returns_cached_value() {
         when('get_transient')->alias(function ($key) {
-            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'fields' => [ 'Name' => 'fldName' ], 'primary' => [ 'id' => 'fldName', 'name' => 'Name' ] ] ] : false;
+            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'fields' => [ 'Name' => 'fldName' ], 'types' => [ 'Name' => 'text' ], 'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => 'text' ] ] ] : false;
         });
 
         expect('wp_remote_get')->never();
@@ -417,8 +420,8 @@ class TTP_Airbase_Test extends TestCase {
                     'name'           => 'Products',
                     'primaryFieldId' => 'fldName',
                     'fields'         => [
-                        [ 'name' => 'Name', 'id' => 'fldName' ],
-                        [ 'name' => 'Status', 'id' => 'fldStatus' ],
+                        [ 'name' => 'Name', 'id' => 'fldName', 'type' => 'text' ],
+                        [ 'name' => 'Status', 'id' => 'fldStatus', 'type' => 'text' ],
                     ],
                 ],
             ],
@@ -436,7 +439,8 @@ class TTP_Airbase_Test extends TestCase {
             $self->assertSame(
                 [
                     'fields'  => [ 'Name' => 'fldName', 'Status' => 'fldStatus' ],
-                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    'types'   => [ 'Name' => 'text', 'Status' => 'text' ],
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => 'text' ],
                 ],
                 $value['tblXYZ']
             );
@@ -707,6 +711,40 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame(['Vendor A'], $values);
     }
 
+    public function test_resolve_linked_records_preserves_numeric_values() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) { return $thing instanceof WP_Error; });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) { return $response['response']['code']; });
+        when('wp_remote_retrieve_body')->alias(function ($response) { return $response['body']; });
+
+        $body = json_encode([
+            'records' => [
+                [ 'fields' => [ 'Count' => 42 ] ],
+            ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        \Patchwork\replace( 'TTP_Airbase::get_field_type', function () { return 'number'; } );
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Count');
+        $this->assertSame([42], $values);
+    }
+
     public function test_resolve_linked_records_uses_schema_primary_when_missing() {
         when('get_option')->alias(function ($option, $default = false) {
             switch ( $option ) {
@@ -734,7 +772,8 @@ class TTP_Airbase_Test extends TestCase {
             return 'ttp_airbase_schema' === $key ? [
                 'Vendors' => [
                     'fields'  => [ 'Renamed' => 'fld123' ],
-                    'primary' => [ 'id' => 'fld123', 'name' => 'Renamed' ],
+                    'types'   => [ 'Renamed' => 'text' ],
+                    'primary' => [ 'id' => 'fld123', 'name' => 'Renamed', 'type' => 'text' ],
                 ],
             ] : false;
         });
@@ -787,7 +826,7 @@ class TTP_Airbase_Test extends TestCase {
                     'id'             => 'tblXYZ',
                     'name'           => 'Products',
                     'primaryFieldId' => 'fldName',
-                    'fields'         => [ [ 'name' => 'Name', 'id' => 'fldName' ] ],
+                    'fields'         => [ [ 'name' => 'Name', 'id' => 'fldName', 'type' => 'text' ] ],
                 ],
             ],
         ]);
@@ -804,7 +843,8 @@ class TTP_Airbase_Test extends TestCase {
             $self->assertSame(
                 [
                     'fields'  => [ 'Name' => 'fldName' ],
-                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    'types'   => [ 'Name' => 'text' ],
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => 'text' ],
                 ],
                 $value['tblXYZ']
             );

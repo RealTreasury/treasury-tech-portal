@@ -382,7 +382,7 @@ class TTP_Data {
      * - Only simple string delimiters (comma, semicolon, newline) are parsed.
      *
      * @param mixed $value Raw value to parse.
-     * @return array Array of trimmed values.
+     * @return array Array of trimmed or cast values.
      */
     private static function parse_record_ids( $value ) {
         if ( is_string( $value ) ) {
@@ -405,34 +405,57 @@ class TTP_Data {
                     $fields = str_getcsv( $line, ';' );
                 }
 
-                $parsed = array_merge( $parsed, $fields );
+                foreach ( $fields as $field ) {
+                    $parsed[] = self::maybe_cast_value( $field );
+                }
             }
 
-            return array_map( 'trim', $parsed );
+            return $parsed;
         }
 
         $results = array();
 
         foreach ( (array) $value as $item ) {
             if ( is_array( $item ) ) {
-                if ( isset( $item['name'] ) ) {
-                    $results[] = trim( $item['name'] );
-                } elseif ( isset( $item['id'] ) ) {
-                    $results[] = trim( $item['id'] );
+                if ( array_key_exists( 'name', $item ) ) {
+                    $results[] = self::maybe_cast_value( $item['name'] );
+                } elseif ( array_key_exists( 'id', $item ) ) {
+                    $results[] = self::maybe_cast_value( $item['id'] );
+                } elseif ( array_key_exists( 'value', $item ) ) {
+                    $results[] = self::maybe_cast_value( $item['value'] );
                 }
 
-                $nested = array_diff_key( $item, array_flip( array( 'name', 'id' ) ) );
+                $nested = array_diff_key( $item, array_flip( array( 'name', 'id', 'value' ) ) );
                 if ( ! empty( $nested ) ) {
                     $results = array_merge( $results, self::parse_record_ids( $nested ) );
                 }
             } elseif ( is_string( $item ) ) {
                 $results = array_merge( $results, self::parse_record_ids( $item ) );
             } else {
-                $results[] = trim( (string) $item );
+                $results[] = self::maybe_cast_value( $item );
             }
         }
 
-        return array_filter( $results );
+        return array_values( array_filter(
+            $results,
+            static function ( $v ) {
+                return '' !== $v && null !== $v;
+            }
+        ) );
+    }
+
+    /**
+     * Cast a scalar value to the appropriate type.
+     *
+     * @param mixed $value Value to cast.
+     * @return mixed Cast value.
+     */
+    private static function maybe_cast_value( $value ) {
+        if ( is_numeric( $value ) ) {
+            return $value + 0;
+        }
+
+        return trim( (string) $value );
     }
 
     /**
@@ -529,15 +552,16 @@ class TTP_Data {
         $values       = self::parse_record_ids( $value );
         $placeholders = array();
         $ids          = array();
+        $field_type   = TTP_Airbase::get_field_type( $table, $primary_field );
 
         foreach ( $values as $idx => $item ) {
-            $item = (string) $item;
-            if ( self::contains_record_ids( array( $item ) ) ) {
-                $clean               = preg_replace( '/[^A-Za-z0-9]/', '', $item );
+            $as_string = is_scalar( $item ) ? (string) $item : '';
+            if ( self::contains_record_ids( array( $as_string ) ) ) {
+                $clean               = preg_replace( '/[^A-Za-z0-9]/', '', $as_string );
                 $placeholders[ $idx ] = $clean;
                 $ids[]               = $clean;
             } else {
-                $values[ $idx ] = sanitize_text_field( $item );
+                $values[ $idx ] = TTP_Airbase::cast_value_by_type( $item, $field_type );
             }
         }
 
@@ -553,7 +577,12 @@ class TTP_Data {
                     unset( $values[ $idx ] );
                 }
             } else {
-                $resolved = array_map( 'sanitize_text_field', (array) $resolved );
+                $resolved = array_map(
+                    static function ( $v ) use ( $field_type ) {
+                        return TTP_Airbase::cast_value_by_type( $v, $field_type );
+                    },
+                    (array) $resolved
+                );
 
                 if ( empty( $resolved ) ) {
                     self::log_unresolved_field( $field, $ids );
@@ -579,7 +608,12 @@ class TTP_Data {
             }
         }
 
-        return array_values( array_filter( $values ) );
+        return array_values( array_filter(
+            $values,
+            static function ( $v ) {
+                return '' !== $v && null !== $v;
+            }
+        ) );
     }
 
 /**
