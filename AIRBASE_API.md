@@ -199,3 +199,77 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=
 - The API only accepts URLs shorter than 16,000 characters.
 - Values for `Parent Category (from Sub Categories)` are computed and cannot be manually set.
 
+
+## Regions Table
+
+Table ID: `tblmxl6BKXXjQHUez`. Table names and table IDs are interchangeable in API requests; using IDs avoids breakage if the table name changes.
+
+### Fields
+
+| Field Name      | Field ID            | Type                     | Description |
+|-----------------|--------------------|--------------------------|-------------|
+| Region          | `fldM1PNxbzPeV45Kj` | text                     | A single line of text, e.g. "EMEA" |
+| Linked Vendors  | `fldArBrHocWo0FxCr` | text                     | Comma-separated list of vendor names |
+| Sub Categories  | `fldwbPhWdTg3Hcdpu` | link to Sub Categories   | Array of linked record IDs |
+| Products        | `fld2CcSeWkli5ulg2` | link to Products         | Array of linked record IDs |
+
+### Listing Regions
+
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/Regions?maxRecords=3&view=Grid%20view" \\
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+Returned records omit empty fields. The `fields[]`, `filterByFormula`, `maxRecords`, `pageSize`, `sort[]`, and `view` parameters function the same as they do for the Products table.
+
+### Retrieving a Region
+
+```bash
+curl https://api.airtable.com/v0/BASE_ID/Regions/RECORD_ID \\
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Regions
+
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/Regions \\
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  --data '{
+    "records": [
+      {
+        "fields": {
+          "Region": "EMEA",
+          "Linked Vendors": "Alpha Group, Bond Treasury",
+          "Products": ["recbtxzaIPTYxjzwK"]
+        }
+      }
+    ]
+  }'
+```
+
+### Updating or Upserting Regions
+
+Patch requests update only included fields. To upsert, include a `performUpsert` object with `fieldsToMergeOn` specifying identifying fields.
+
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/Regions \\
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  --data '{
+    "records": [
+      {
+        "id": "RECORD_ID",
+        "fields": { "Region": "APAC" }
+      }
+    ]
+  }'
+```
+
+### Deleting Regions
+
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/Regions?records[]=RECORD_ID" \\
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
