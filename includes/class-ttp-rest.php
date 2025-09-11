@@ -67,6 +67,68 @@ class TTP_Rest {
 
     public static function get_vendors($request) {
         $vendors = TTP_Data::get_all_vendors();
-        return rest_ensure_response($vendors);
+        $needs_refresh = false;
+
+        $vendors = (array) $vendors;
+        foreach ( $vendors as &$vendor ) {
+            $vendor = (array) $vendor;
+            foreach ( $vendor as $key => $value ) {
+                if ( is_array( $value ) ) {
+                    $filtered = array_values( array_filter( (array) $value, function ( $item ) use ( &$needs_refresh ) {
+                        if ( self::contains_record_ids( $item ) ) {
+                            $needs_refresh = true;
+                            return false;
+                        }
+                        return true;
+                    } ) );
+
+                    if ( empty( $filtered ) ) {
+                        unset( $vendor[ $key ] );
+                    } else {
+                        $vendor[ $key ] = $filtered;
+                    }
+                } else {
+                    if ( self::contains_record_ids( $value ) ) {
+                        $needs_refresh = true;
+                        unset( $vendor[ $key ] );
+                    }
+                }
+            }
+        }
+        unset( $vendor );
+
+        if ( $needs_refresh ) {
+            TTP_Data::refresh_vendor_cache();
+        }
+
+        return rest_ensure_response( $vendors );
+    }
+
+    private static function contains_record_ids( $values ) {
+        foreach ( (array) $values as $value ) {
+            if ( is_array( $value ) && self::contains_record_ids( $value ) ) {
+                return true;
+            }
+
+            $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
+
+            if ( $candidate === '' ) {
+                continue;
+            }
+
+            if ( ctype_digit( $candidate ) ) {
+                return true;
+            }
+
+            if (
+                preg_match(
+                    '/^r(?:ec|es|cs|cx)[0-9a-z]*\d[0-9a-z]*$/i',
+                    $candidate
+                )
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 }
