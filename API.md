@@ -66,6 +66,8 @@ GET /wp-json/ttp/v1/tools
 ]
 ```
 
+Each tool may also include `parent_category`, `sub_categories`, `category_names`, and `regions` fields when available.
+
 #### Example Requests
 ```javascript
 // Get all tools

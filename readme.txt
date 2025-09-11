@@ -39,6 +39,7 @@ Add the portal to any page or post using the shortcode:
    - `Regions` → `regions`
    - `Sub Categories` → `sub_categories`
    - `Parent Category` → `parent_category`
+   - `category_names` (computed) → `category_names`
    - `Capabilities` → `capabilities`
    - `Logo URL` → `logo_url`
    - `HQ Location` → `hq_location`

@@ -64,6 +64,7 @@ class TTP_Data_Test extends TestCase {
                 'regions'         => ['North America', 'Europe'],
                 'sub_categories'  => ['Payments'],
                 'parent_category' => 'Cash',
+                'category_names'  => ['Cash', 'Payments'],
                 'capabilities'    => [],
                 'logo_url'        => 'https://example.com/logo.png',
                 'hq_location'     => '',
@@ -77,6 +78,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame('https://example.com/logo.png', $captured[0]['logo_url']);
         $this->assertSame('Cash', $captured[0]['parent_category']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
+        $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
     }
 
     public function test_refresh_vendor_cache_logs_missing_fields() {

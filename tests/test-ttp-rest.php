@@ -48,6 +48,7 @@ class TTP_Rest_Test extends TestCase {
             'logo_url'        => 'https://example.com/logo.png',
             'parent_category' => 'Cash',
             'sub_categories'  => ['Payments'],
+            'category_names'  => ['Cash', 'Payments'],
             'regions'         => ['North America'],
         ];
         \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($vendor) {
@@ -66,11 +67,13 @@ class TTP_Rest_Test extends TestCase {
         $this->assertArrayHasKey('logo_url', $response[0]);
         $this->assertArrayHasKey('parent_category', $response[0]);
         $this->assertArrayHasKey('sub_categories', $response[0]);
+        $this->assertArrayHasKey('category_names', $response[0]);
         $this->assertArrayHasKey('regions', $response[0]);
         $this->assertSame('https://example.com/video', $response[0]['video_url']);
         $this->assertSame('https://example.com/logo.png', $response[0]['logo_url']);
         $this->assertSame('Cash', $response[0]['parent_category']);
         $this->assertSame(['Payments'], $response[0]['sub_categories']);
+        $this->assertSame(['Cash', 'Payments'], $response[0]['category_names']);
         $this->assertSame(['North America'], $response[0]['regions']);
     }
 
