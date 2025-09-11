@@ -542,7 +542,8 @@ class TTP_Data {
         }
 
         if ( ! empty( $ids ) ) {
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+            $use_ids = is_string( $primary_field ) && 0 === strpos( $primary_field, 'fld' );
+            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field, $use_ids );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
