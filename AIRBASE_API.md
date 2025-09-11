@@ -29,6 +29,38 @@ curl https://api.airtable.com/v0/BASE_ID/Products \
 - Maximum of **5 requests per second** per base.
 - Exceeding the limit returns HTTP `429`. The plugin automatically retries up to three times using an exponential backoff (1s, 2s, 4s) before surfacing an error. If the limit continues to be exceeded, wait ~30 seconds before manual retries.
 
+## JavaScript Integration
+For build scripts or other Node-based tooling you can use the official [airtable.js library](https://github.com/Airtable/airtable.js).
+
+Install the package and query records:
+
+```bash
+npm install airtable
+```
+
+```javascript
+import Airtable from 'airtable';
+
+const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base('BASE_ID');
+
+base('Products')
+  .select({ maxRecords: 3 })
+  .eachPage((records, fetchNextPage) => {
+    records.forEach(record => {
+      console.log(record.get('Product Name'));
+    });
+    fetchNextPage();
+  }, err => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  });
+```
+
+### PHP vs JavaScript
+Use the plugin's PHP integration for WordPress server-side requests where the API key remains hidden. Reserve `airtable.js` for build scripts or tooling that runs outside WordPress, such as Node-based ETL jobs. Avoid running the JavaScript client in the browser since it would expose your API token.
+
 ## Schema Caching
 Table schemas are requested infrequently and cached in a transient named `ttp_airbase_schema` for 24 hours. Calls to `TTP_Airbase::get_table_schema()` read from this cache before performing network requests.
 
