@@ -5,7 +5,7 @@ This document explains how vendor data moves through the plugin and how linked A
 ## Data Flow
 1. **`TTP_Airbase::get_vendors`** – Fetches raw vendor records from the Airbase API. Each record may contain linked field IDs for related tables.
 2. **`TTP_Data::refresh_vendor_cache`** – Calls `get_vendors`, maps field IDs to readable names and resolves linked record IDs. The final vendor array is cached for faster access.
-3. **`TTP_Airbase::resolve_linked_records`** – Given a table ID and a list of record IDs, retrieves the primary field from that table so that stored IDs become human‑readable values.
+3. **`TTP_Airbase::resolve_linked_records`** – Given a table ID and a list of record IDs, retrieves the primary field from that table so that stored IDs become human‑readable values. Pass `$use_field_ids = true` to request field IDs and append `returnFieldsByFieldId=true` to the API call.
 
 ## Adding a New Linked Field
 Linked fields are configured in `TTP_Data::refresh_vendor_cache()` via the `$linked_tables` array. Each entry defines the Airtable table and the primary field used for display:
@@ -30,7 +30,8 @@ if ( self::contains_record_ids( $industry_field ) ) {
     $resolved = TTP_Airbase::resolve_linked_records(
         $linked_tables['Industry']['table'],
         $industry_field,
-        $linked_tables['Industry']['primary_field']
+        $linked_tables['Industry']['primary_field'],
+        true // Use field IDs when available
     );
     $industries = array_map( 'sanitize_text_field', (array) $resolved );
 } else {

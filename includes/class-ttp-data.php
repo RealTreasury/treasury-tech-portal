@@ -561,7 +561,14 @@ class TTP_Data {
              * TTP_Airbase::resolve_linked_records(). See self::resolve_linked_field()
              * for the full placeholder-replacement strategy.
              */
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+            $pf        = TTP_Airbase::get_primary_field( $table );
+            $pf_value  = $primary_field;
+            $use_ids   = false;
+            if ( ! is_wp_error( $pf ) && ! empty( $pf['id'] ) ) {
+                $pf_value = $pf['id'];
+                $use_ids  = true;
+            }
+            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $pf_value, $use_ids );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );

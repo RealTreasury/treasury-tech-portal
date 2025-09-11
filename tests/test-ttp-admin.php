@@ -48,6 +48,10 @@ class TTP_Admin_Test extends TestCase {
         \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () use ( &$schema ) {
             return $schema;
         } );
+
+        \Patchwork\replace( 'TTP_Airbase::get_primary_field', function () {
+            return array( 'id' => 'fld_primary', 'name' => 'Name' );
+        } );
     }
 
     protected function tearDown(): void {
@@ -84,7 +88,7 @@ class TTP_Admin_Test extends TestCase {
             return array( 'records' => array( $record ) );
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name' ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name', $use_field_ids = false ) {
             $maps = array(
                 'Regions'        => array( 'recreg1' => 'North America' ),
                 'Vendors'        => array( 'recven1' => 'Acme Corp' ),
@@ -146,7 +150,7 @@ class TTP_Admin_Test extends TestCase {
             return array( 'records' => array( $record ) );
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name' ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name', $use_field_ids = false ) {
             if ( 'Regions' === $table ) {
                 return new WP_Error( 'err', 'fail' );
             }

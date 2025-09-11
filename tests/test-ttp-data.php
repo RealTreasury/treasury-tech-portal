@@ -36,6 +36,10 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () use (&$schema) {
             return $schema;
         });
+
+        \Patchwork\replace('TTP_Airbase::get_primary_field', function () {
+            return array( 'id' => 'fld_primary', 'name' => 'Name' );
+        });
     }
 
     protected function tearDown(): void {
@@ -91,8 +95,10 @@ class TTP_Data_Test extends TestCase {
         });
 
         $tables = [];
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$tables) {
+        $uses   = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$tables, &$uses) {
             $tables[] = $table_id;
+            $uses[]   = array( $primary_field, $use_field_ids );
             $maps = [
                 'Regions'        => [
                     'recreg1' => 'North America',
@@ -124,6 +130,10 @@ class TTP_Data_Test extends TestCase {
             ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Category', 'Sub Categories', 'Capabilities'],
             $tables
         );
+        foreach ( $uses as $u ) {
+            $this->assertSame( 'fld_primary', $u[0] );
+            $this->assertTrue( $u[1] );
+        }
 
         $expected = [
             [
@@ -180,7 +190,7 @@ class TTP_Data_Test extends TestCase {
         });
 
         $called = false;
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') use (&$called) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name', $use_field_ids = false) use (&$called) {
             $called = true;
             return [];
         });
@@ -220,7 +230,7 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
@@ -281,7 +291,7 @@ class TTP_Data_Test extends TestCase {
         });
 
         $called = false;
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') use (&$called) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name', $use_field_ids = false) use (&$called) {
             $called = true;
             return [];
         });
@@ -320,7 +330,7 @@ class TTP_Data_Test extends TestCase {
         });
 
         $tables = [];
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$tables) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$tables) {
             $tables[] = $table_id;
             if ('HQ Location' === $table_id) {
                 return ['London'];
@@ -360,7 +370,7 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name', $use_field_ids = false) {
             return new WP_Error('err', 'fail');
         });
 
@@ -398,7 +408,7 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name', $use_field_ids = false) {
             return array();
         });
 
@@ -482,7 +492,7 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ 'rcsreg1' => 'NORAM' ],
                 'Vendors'        => [ 'rcsven1' => 'Acme Corp' ],
@@ -536,7 +546,7 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ 'rcsreg1' => 'NORAM' ],
                 'Vendors'        => [ 'rcsven1' => 'Acme Corp' ],
@@ -592,7 +602,7 @@ class TTP_Data_Test extends TestCase {
             return [ 'records' => [ $record ] ];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ '105' => 'North America' ],
                 'Vendors'        => [ '101' => 'Acme Corp' ],
@@ -665,7 +675,7 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $ids_used = [];
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) use ( &$ids_used ) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) use ( &$ids_used ) {
             $ids_used[ $table_id ] = (array) $ids;
             if ( 'Regions' === $table_id ) {
                 return array( 'NORAM' );
@@ -706,7 +716,7 @@ class TTP_Data_Test extends TestCase {
         });
 
         $ids_used = [];
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$ids_used) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$ids_used) {
             $ids_used[ $table_id ] = (array) $ids;
             $maps = [
                 'Regions'        => [
@@ -789,7 +799,7 @@ class TTP_Data_Test extends TestCase {
         });
 
         $ids_used = [];
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$ids_used) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$ids_used) {
             $ids_used[ $table_id ] = (array) $ids;
             if ('Category' === $table_id) {
                 return ['Cash'];
@@ -837,7 +847,7 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $tables_called = [];
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) use ( $table, $mapping, &$tables_called ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( $table, $mapping, &$tables_called ) {
             $tables_called[] = $table_id;
             if ( $table_id !== $table ) {
                 return array();
@@ -947,7 +957,7 @@ class TTP_Data_Test extends TestCase {
             return [ 'records' => [ $record ] ];
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) use ( $table, $mapping ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( $table, $mapping ) {
             if ( $table_id !== $table ) {
                 return array();
             }
@@ -1157,7 +1167,7 @@ class TTP_Data_Test extends TestCase {
             );
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) {
             if ( 'Regions' === $table_id ) {
                 $map = array( 'recreg1' => 'EMEA' );
                 $out = array();
@@ -1217,7 +1227,7 @@ class TTP_Data_Test extends TestCase {
             );
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) {
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) {
             if ( 'Regions' === $table_id ) {
                 $map = array( 'recreg1' => 'EMEA' );
                 $out = array();
@@ -1366,15 +1376,19 @@ class TTP_Data_Test extends TestCase {
 
         $record = array( 'Regions' => array( 'recreg1' ) );
 
+        $captured = array();
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function ( $table_id, $ids, $primary_field = 'Name' ) {
+            function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) use ( &$captured ) {
+                $captured = array( $primary_field, $use_field_ids );
                 return array( 'North America' );
             }
         );
 
         $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
+        $this->assertSame( 'fld_primary', $captured[0] );
+        $this->assertTrue( $captured[1] );
     }
 
     public function test_resolve_linked_field_skips_when_no_ids() {
@@ -1385,7 +1399,7 @@ class TTP_Data_Test extends TestCase {
         $called = false;
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
-            function () use ( &$called ) {
+            function ( $table_id = null, $ids = null, $primary_field = 'Name', $use_field_ids = false ) use ( &$called ) {
                 $called = true;
                 return array();
             }
