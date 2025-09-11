@@ -845,15 +845,6 @@
             background: rgba(99, 102, 241, 0.2);
             border-color: rgba(99, 102, 241, 0.4);
         }
-
-        .treasury-portal .tool-actions {
-            margin-left: auto;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
         .treasury-portal .tool-type {
             font-size: 0.8rem;
             color: #7e7e7e;

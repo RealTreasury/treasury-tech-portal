@@ -16,8 +16,7 @@ test('filters render escaped user input', () => {
   window.TTP_DATA = {
     available_categories: ['CASH', 'LITE', 'TRMS'],
     enabled_categories: ['CASH', 'LITE', 'TRMS'],
-    category_labels: { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' },
-    category_icons: { CASH: '💰', LITE: '⚡', TRMS: '🏢' }
+    category_labels: { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' }
   };
 
   const origDocAdd = window.document.addEventListener.bind(window.document);

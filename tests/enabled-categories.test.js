@@ -81,6 +81,7 @@ test('fetchTools expands enabledCategories with API data', async () => {
   window.eval(`${script}\nwindow.TreasuryTechPortal = TreasuryTechPortal;`);
   const Portal = window.TreasuryTechPortal;
   const portal = Object.create(Portal.prototype);
+  portal.categoryLabels = { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' };
   portal.enabledCategories = ['CASH'];
   portal.availableCategories = [];
   portal.CATEGORY_TAGS = {};

@@ -16,8 +16,7 @@ test('warning icon appears for unresolved ids', () => {
   window.TTP_DATA = {
     available_categories: ['CASH', 'LITE', 'TRMS'],
     enabled_categories: ['CASH', 'LITE', 'TRMS'],
-    category_labels: { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' },
-    category_icons: { CASH: '💰', LITE: '⚡', TRMS: '🏢' }
+    category_labels: { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' }
   };
 
   const origDocAdd = window.document.addEventListener.bind(window.document);
@@ -39,7 +38,6 @@ test('warning icon appears for unresolved ids', () => {
   const portal = Object.create(TreasuryTechPortal.prototype);
   portal.isMobile = () => false;
   portal.CATEGORY_TAGS = {};
-  portal.categoryIcons = window.TTP_DATA.category_icons;
   portal.categoryLabels = window.TTP_DATA.category_labels;
 
   const tool = { name: 'Vendor', category: 'CASH', desc: '', regions: ['rec123'] };
