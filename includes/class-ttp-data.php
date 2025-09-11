@@ -90,9 +90,15 @@ class TTP_Data {
      */
     private static function vendors_need_resolution( $vendors ) {
         foreach ( (array) $vendors as $vendor ) {
+            $normalized = array();
+
+            foreach ( (array) $vendor as $key => $value ) {
+                $normalized[ strtolower( str_replace( ' ', '_', $key ) ) ] = $value;
+            }
+
             $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type' );
             foreach ( $fields as $field ) {
-                if ( ! empty( $vendor[ $field ] ) && self::contains_record_ids( (array) $vendor[ $field ] ) ) {
+                if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
                     return true;
                 }
             }
@@ -361,10 +367,10 @@ class TTP_Data {
 
         foreach ( (array) $value as $item ) {
             if ( is_array( $item ) ) {
-                if ( isset( $item['id'] ) ) {
-                    $results[] = trim( $item['id'] );
-                } elseif ( isset( $item['name'] ) ) {
+                if ( isset( $item['name'] ) ) {
                     $results[] = trim( $item['name'] );
+                } elseif ( isset( $item['id'] ) ) {
+                    $results[] = trim( $item['id'] );
                 } else {
                     $results = array_merge( $results, self::parse_record_ids( $item ) );
                 }
