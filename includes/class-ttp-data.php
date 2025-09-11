@@ -282,6 +282,9 @@ class TTP_Data {
 
     /**
      * Refresh vendor cache from Airbase.
+     *
+     * Triggers rebuilding of Airtable product-field ID→name maps before
+     * repopulating vendor data.
      */
     public static function refresh_vendor_cache() {
         do_action( 'rt_refresh_vendors' );

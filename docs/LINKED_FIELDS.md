@@ -4,7 +4,7 @@ This document explains how vendor data moves through the plugin and how linked A
 
 ## Data Flow
 1. **`TTP_Airbase::get_vendors`** – Fetches raw vendor records from the Airbase API. Each record may contain linked field IDs for related tables.
-2. **`TTP_Data::refresh_vendor_cache`** – Calls `get_vendors`, maps field IDs to readable names and resolves linked record IDs. The final vendor array is cached for faster access.
+2. **`TTP_Data::refresh_vendor_cache`** – Calls `get_vendors`, maps product-field IDs to readable names and resolves linked record IDs. The resulting product-field ID→name maps and final vendor array are cached for faster access.
 3. **`TTP_Airbase::resolve_linked_records`** – Given a table ID and a list of record IDs, retrieves the primary field from that table so that stored IDs become human‑readable values. Results are cached in-memory per table and record ID for the duration of the request to avoid redundant API calls. Pass the optional `$use_field_ids` flag to request and return values using field IDs instead of field names.
 
 ## Adding a New Linked Field
@@ -54,11 +54,12 @@ Updating linked‑field logic requires both testing and cache invalidation:
    ```bash
    ./scripts/test.sh
    ```
-2. Clear cached vendor data so new logic runs on fresh records:
-   ```bash
-   wp transient delete ttp_vendors_cache
-   wp option delete ttp_vendors
-   ```
+2. Clear cached vendor data so new logic runs on fresh records. This also
+   flushes Airtable product-field ID→name maps:
+    ```bash
+    wp transient delete ttp_vendors_cache
+    wp option delete ttp_vendors
+    ```
    Then regenerate data:
    ```php
    TTP_Data::refresh_vendor_cache();

@@ -637,6 +637,18 @@ class TTP_Airbase {
  *
  * @return array Records with IDs replaced by names.
  */
+/**
+ * Map Airtable product-field record IDs to names using a transient cache.
+ *
+ * Caches per-table product-field ID→name lookups to avoid repeated Airtable
+ * requests.
+ *
+ * @param array  $records         Vendor records to process.
+ * @param array  $field_to_linked Mapping of field keys to linked table names.
+ * @param string $base_id         Airtable base identifier.
+ * @param string $token           API token.
+ * @return array Processed records with IDs replaced by names.
+ */
 function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $base_id, $token ) {
     foreach ( $field_to_linked as $field_name => $linked_table ) {
         $map_key = 'rt_airtable_map_' . $base_id . '_' . $linked_table . '_v1';

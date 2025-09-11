@@ -97,8 +97,9 @@ Array of vendor objects retrieved from Airbase.
 
 Vendor records containing unresolved Airtable record IDs (for example values
 starting with `rec`) are excluded from the response. When such unresolved IDs
-are detected, the vendor cache is automatically refreshed to replace them with
-readable names on subsequent requests.
+are detected, the vendor cache is automatically refreshed to rebuild Airtable
+product-field ID→name maps and replace them with readable names on subsequent
+requests.
 
 See [AIRBASE_API.md](AIRBASE_API.md) for detailed vendor API documentation.
 The integration relies on four WordPress options to configure API access:
