@@ -1030,6 +1030,23 @@ class TTP_Data_Test extends TestCase {
         );
     }
 
+    /**
+     * @dataProvider contains_record_ids_provider
+     */
+    public function test_contains_record_ids_detects_rec_and_res( $values, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'contains_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $values ) );
+    }
+
+    public function contains_record_ids_provider() {
+        return array(
+            'rec_prefix' => array( array( 'recabc123' ), true ),
+            'res_prefix' => array( array( 'resxyz789' ), true ),
+            'non_match'  => array( array( 'abc123' ), false ),
+        );
+    }
+
     public function vendors_need_resolution_region_provider() {
         return array(
             'region'     => array( 'region' ),
@@ -1051,6 +1068,14 @@ class TTP_Data_Test extends TestCase {
         $class  = new \ReflectionClass( TTP_Data::class );
         $method = $class->getMethod( 'vendors_need_resolution' );
         $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+
+        $vendors = array(
+            array(
+                $key => array( 'resABC' ),
+            ),
+        );
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
