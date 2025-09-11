@@ -16,7 +16,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->
-    <div class="loading" id="loadingScreen" style="text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
         <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
         <h1 style="color: #281345; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Treasury Tech Portal</h1>
         <p style="color: #7e7e7e; font-size: 1rem;">Loading financial tools ecosystem...</p>
