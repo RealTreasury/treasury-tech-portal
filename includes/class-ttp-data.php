@@ -130,14 +130,9 @@ class TTP_Data {
                 $regions = array_map( 'sanitize_text_field', $regions_field );
             }
 
-            $parent_category = $fields['Parent Category'] ?? '';
-            $sub_categories  = $fields['Sub Categories'] ?? array();
-            $category_names  = array_filter(
-                array_map(
-                    'sanitize_text_field',
-                    array_merge( (array) $parent_category, (array) $sub_categories )
-                )
-            );
+            $parent_category = sanitize_text_field( $fields['Parent Category'] ?? '' );
+            $sub_categories  = array_map( 'sanitize_text_field', (array) ( $fields['Sub Categories'] ?? array() ) );
+            $category_names  = array_filter( array_merge( $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
 
             $vendors[] = array(
                 'id'              => sanitize_text_field($record['id'] ?? ''),
