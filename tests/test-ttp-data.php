@@ -122,7 +122,7 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
         $this->assertTrue($return_fields_by_id);
-        $this->assertTrue($use_ids);
+        $this->assertFalse($use_ids);
         $this->assertSame(
             ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Category', 'Sub Categories', 'Capabilities'],
             $tables
@@ -258,6 +258,34 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['Cash'], $vendor['categories']);
         $this->assertSame(['Payments'], $vendor['sub_categories']);
         $this->assertSame(['API'], $vendor['capabilities']);
+    }
+
+    public function test_refresh_vendor_cache_passes_primary_field_to_resolver() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'   => 'Sample Product',
+                'Linked Vendor'  => ['recven1'],
+                'Domain'         => ['recdom1'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $captured = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$captured) {
+            $captured[$table_id] = $primary_field;
+            return array_fill( 0, count( (array) $ids ), 'Resolved' );
+        });
+
+        \Patchwork\replace('TTP_Data::save_vendors', function () {});
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame('Name', $captured['Vendors']);
+        $this->assertSame('Domain', $captured['Domain']);
     }
 
     public function test_refresh_vendor_cache_skips_missing_schema_fields() {
