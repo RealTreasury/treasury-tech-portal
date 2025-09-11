@@ -416,8 +416,8 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertSame([], $captured[0]['regions']);
         $this->assertSame('', $captured[0]['vendor']);
-        $this->assertSame(['recreg1'], $logged['Regions']);
-        $this->assertSame(['recven1'], $logged['Linked Vendor']);
+        $this->assertSame(['recreg1'], $logged['regions']);
+        $this->assertSame(['recven1'], $logged['linked_vendor']);
     }
 
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
@@ -1364,7 +1364,7 @@ class TTP_Data_Test extends TestCase {
         $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
         $method->setAccessible( true );
 
-        $record = array( 'Regions' => array( 'recreg1' ) );
+        $record = array( 'regions' => array( 'recreg1' ) );
 
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
@@ -1373,7 +1373,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'regions', 'Regions', 'Name' );
         $this->assertSame( array( 'North America' ), $result );
     }
 
@@ -1381,7 +1381,7 @@ class TTP_Data_Test extends TestCase {
         $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
         $method->setAccessible( true );
 
-        $record = array( 'Regions' => array( 'Europe' ) );
+        $record = array( 'regions' => array( 'Europe' ) );
         $called = false;
         \Patchwork\replace(
             'TTP_Airbase::resolve_linked_records',
@@ -1391,7 +1391,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $result = $method->invoke( null, $record, 'regions', 'Regions', 'Name' );
         $this->assertSame( array( 'Europe' ), $result );
         $this->assertFalse( $called );
     }
@@ -1433,6 +1433,33 @@ class TTP_Data_Test extends TestCase {
         $vendors = array(
             array(
                 'regions' => array( '123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function vendors_need_resolution_mixed_case_provider() {
+        return array(
+            array( 'Regions' ),
+            array( 'subCategory' ),
+            array( 'HostedType' ),
+            array( 'LinkedVendor' ),
+            array( 'Domains' ),
+        );
+    }
+
+    /**
+     * @dataProvider vendors_need_resolution_mixed_case_provider
+     */
+    public function test_vendors_need_resolution_handles_mixed_case_keys( $key ) {
+        $vendors = array(
+            array(
+                $key => array( 'recABC123' ),
             ),
         );
 
