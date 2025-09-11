@@ -2447,3 +2447,13 @@
         .treasury-portal .video-wrapper.playing .video-play-button {
             display: none;
         }
+
+        /* Loading screen transition */
+        .treasury-portal #loadingScreen {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .treasury-portal #loadingScreen.fade-out {
+            opacity: 0;
+        }
