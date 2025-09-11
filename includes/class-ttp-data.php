@@ -234,6 +234,24 @@ class TTP_Data {
             });
         }
 
+        if (!empty($args['region'])) {
+            $tools = array_filter($tools, function ($tool) use ($args) {
+                return in_array($args['region'], $tool['regions'] ?? []);
+            });
+        }
+
+        if (!empty($args['parent_category'])) {
+            $tools = array_filter($tools, function ($tool) use ($args) {
+                return isset($tool['parent_category']) && $tool['parent_category'] === $args['parent_category'];
+            });
+        }
+
+        if (!empty($args['sub_category'])) {
+            $tools = array_filter($tools, function ($tool) use ($args) {
+                return in_array($args['sub_category'], $tool['sub_categories'] ?? []);
+            });
+        }
+
         $page     = max(1, intval($args['page'] ?? 1));
         $per_page = max(1, intval($args['per_page'] ?? count($tools)));
         $offset   = ($page - 1) * $per_page;

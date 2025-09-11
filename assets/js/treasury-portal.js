@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.searchTerm = '';
                 this.filteredTools = [];
                 this.allTags = [];
-                this.advancedFilters = { features: [], hasVideo: false };
+                this.advancedFilters = { features: [], hasVideo: false, region: '', parentCategory: '', subCategory: '' };
                 this.currentSort = 'name';
                 this.currentView = 'grid';
                 this.groupByCategory = true;
@@ -314,7 +314,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (loading) loading.style.display = 'block';
 
                 try {
-                    const response = await fetch(TTP_DATA.rest_url);
+                    let url = TTP_DATA.rest_url;
+                    const params = new URLSearchParams();
+                    const { region, parentCategory, subCategory, hasVideo } = this.advancedFilters || {};
+                    if (region) params.append('region', region);
+                    if (parentCategory) params.append('parent_category', parentCategory);
+                    if (subCategory) params.append('sub_category', subCategory);
+                    if (hasVideo) params.append('has_video', '1');
+                    if ([...params].length) {
+                        url += (url.includes('?') ? '&' : '?') + params.toString();
+                    }
+
+                    const response = await fetch(url);
                     const data = await response.json();
                     this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
                         const parentCategory = Array.isArray(vendor.parent_category) ? vendor.parent_category[0] : (vendor.parent_category || '');
@@ -1962,7 +1973,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.querySelector('.filter-tab[data-category="ALL"]')?.classList.add('active');
                 this.currentFilter = 'ALL';
 
-                this.advancedFilters = { features:[], hasVideo:false };
+                this.advancedFilters = { features:[], hasVideo:false, region:'', parentCategory:'', subCategory:'' };
 
                 const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"],#hasVideoFilter');
                 checkboxes.forEach(cb => cb.checked = false);
@@ -1990,10 +2001,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             updateFilterCount() {
-                const { features, hasVideo } = this.advancedFilters;
+                const { features, hasVideo, region, parentCategory, subCategory } = this.advancedFilters;
                 let count = 0;
                 count += features.length;
                 if (hasVideo) count++;
+                if (region) count++;
+                if (parentCategory) count++;
+                if (subCategory) count++;
                 const el = document.getElementById('filterCount');
                 if (el) el.textContent = count > 0 ? `(${count})` : '';
             }

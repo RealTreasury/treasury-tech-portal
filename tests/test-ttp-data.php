@@ -100,4 +100,32 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertStringContainsString('Product Website', $logged);
     }
+
+    public function test_get_tools_filters_by_region_and_category() {
+        \Patchwork\replace('TTP_Data::get_all_tools', function () {
+            return [
+                [
+                    'name' => 'Tool 1',
+                    'regions' => ['US', 'EU'],
+                    'parent_category' => 'Cash',
+                    'sub_categories' => ['Payments'],
+                ],
+                [
+                    'name' => 'Tool 2',
+                    'regions' => ['EU'],
+                    'parent_category' => 'LITE',
+                    'sub_categories' => ['Accounting'],
+                ],
+            ];
+        });
+
+        $tools = TTP_Data::get_tools([
+            'region' => 'US',
+            'parent_category' => 'Cash',
+            'sub_category' => 'Payments',
+        ]);
+
+        $this->assertCount(1, $tools);
+        $this->assertSame('Tool 1', $tools[0]['name']);
+    }
 }

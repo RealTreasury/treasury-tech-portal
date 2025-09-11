@@ -32,10 +32,10 @@ class TTP_Rest_Test extends TestCase {
         });
         $this->assertNotEmpty($tools_route);
         $route = array_values($tools_route)[0];
-        $this->assertSame([TTP_Rest::class, 'get_vendors'], $route[2]['callback']);
+        $this->assertSame([TTP_Rest::class, 'get_tools'], $route[2]['callback']);
     }
 
-    public function test_tools_endpoint_returns_vendor_with_new_fields() {
+    public function test_vendors_endpoint_returns_vendor_with_new_fields() {
         $vendor = [
             'name'            => 'Sample Product',
             'video_url'       => 'https://example.com/video',
@@ -58,5 +58,31 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame('https://example.com/logo.png', $response[0]['logo_url']);
         $this->assertSame('Cash', $response[0]['parent_category']);
         $this->assertSame(['Payments'], $response[0]['sub_categories']);
+    }
+
+    public function test_get_tools_passes_query_params() {
+        $captured = null;
+        \Patchwork\replace('TTP_Data::get_tools', function ($args = []) use (&$captured) {
+            $captured = $args;
+            return [];
+        });
+
+        $request = new class {
+            public function get_param($key) {
+                $params = [
+                    'region' => 'US',
+                    'parent_category' => 'Cash',
+                    'sub_category' => 'Payments',
+                ];
+                return $params[$key] ?? null;
+            }
+        };
+
+        $response = TTP_Rest::get_tools($request);
+
+        $this->assertSame('US', $captured['region']);
+        $this->assertSame('Cash', $captured['parent_category']);
+        $this->assertSame('Payments', $captured['sub_category']);
+        $this->assertSame([], $response);
     }
 }

@@ -44,6 +44,9 @@ GET /wp-json/ttp/v1/tools
 - `category` (string): Filter by category (CASH, LITE, TRMS, or ALL)
 - `search` (string): Search term for name, description, features
 - `has_video` (boolean): Filter tools that have video demonstrations
+- `region` (string): Filter tools by region availability
+- `parent_category` (string): Filter tools by parent category
+- `sub_category` (string): Filter tools by sub-category
 - `per_page` (integer): Number of tools per page (default: all)
 - `page` (integer): Page number for pagination (default: 1)
 
