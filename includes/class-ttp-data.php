@@ -293,6 +293,9 @@ class TTP_Data {
 
     /**
      * Refresh vendor cache from Airbase.
+     *
+     * Uses the "Demo Video URL" field (ID: fldHyVJRr3O5rkgd7) instead of the legacy
+     * "Product Video" field when syncing vendor records.
      */
     public static function refresh_vendor_cache() {
         do_action( 'rt_refresh_vendors' );
@@ -302,7 +305,7 @@ class TTP_Data {
             'Linked Vendor',
             'Product Website',
             'Full Website URL',
-            'Product Video',
+            'Demo Video URL', // Airbase field ID fldHyVJRr3O5rkgd7
             'Logo URL',
             'Status',
             'Hosted Type',
@@ -471,7 +474,7 @@ class TTP_Data {
                 'vendor'          => $resolved['vendor'],
                 'full_website_url' => self::normalize_url( $fields['full_website_url'] ?? '' ),
                 'website'         => self::normalize_url( $fields['full_website_url'] ?? ( $fields['product_website'] ?? '' ) ),
-                'video_url'       => self::normalize_url( $fields['product_video'] ?? '' ),
+                'video_url'       => self::normalize_url( $fields['demo_video_url'] ?? '' ),
                 'status'          => $fields['status'] ?? '',
                 'hosted_type'     => $resolved['hosted_type'],
                 'domain'          => $resolved['domain'],
