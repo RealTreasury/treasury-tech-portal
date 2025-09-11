@@ -550,14 +550,27 @@ class TTP_Data {
                 }
             } else {
                 $resolved = array_map( 'sanitize_text_field', (array) $resolved );
-                if ( count( $resolved ) < count( $ids ) ) {
-                    $missing = array_slice( $ids, count( $resolved ) );
-                    self::log_unresolved_field( $field, $missing );
-                }
-                $i = 0;
-                foreach ( $placeholders as $idx => $id ) {
-                    $values[ $idx ] = $resolved[ $i ] ?? '';
-                    $i++;
+
+                if ( empty( $resolved ) ) {
+                    self::log_unresolved_field( $field, $ids );
+                    foreach ( $placeholders as $idx => $id ) {
+                        unset( $values[ $idx ] );
+                    }
+                } else {
+                    if ( count( $resolved ) < count( $ids ) ) {
+                        $missing = array_slice( $ids, count( $resolved ) );
+                        self::log_unresolved_field( $field, $missing );
+                    }
+
+                    $i = 0;
+                    foreach ( $placeholders as $idx => $id ) {
+                        if ( isset( $resolved[ $i ] ) ) {
+                            $values[ $idx ] = $resolved[ $i ];
+                        } else {
+                            unset( $values[ $idx ] );
+                        }
+                        $i++;
+                    }
                 }
             }
         }
