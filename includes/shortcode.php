@@ -282,8 +282,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                         <p id="modalDescription"></p>
                     </div>
                     <div class="feature-section">
-                        <h4>🏷️ Tags</h4>
-                        <div id="modalTags" class="tool-tags"></div>
+                        <h4>🛠️ Capabilities</h4>
+                        <div id="modalCapabilities" class="tool-capabilities"></div>
                     </div>
                 </div>
             </div>
