@@ -665,7 +665,7 @@ class TTP_Data {
 
             if (
                 preg_match(
-                    '/^r(?:ec|es|cs|cx)[0-9a-z]*\d[0-9a-z]*$/i',
+                    '/^(?:r(?:ec|es|cs|cx)|sel|opt)[0-9a-z]*\d[0-9a-z]*$/i',
                     $candidate
                 )
             ) {
