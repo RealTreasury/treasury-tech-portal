@@ -160,7 +160,8 @@ class TTP_Data {
                 $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions']['table'], $regions_field, $linked_tables['Regions']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Regions: ' . $resolved->get_error_message() );
+                        $ids = implode( ', ', array_map( 'sanitize_text_field', (array) $regions_field ) );
+                        error_log( sprintf( 'TTP_Data: Failed resolving Regions for record IDs %s: %s', $ids, $resolved->get_error_message() ) );
                     }
                     $regions = array();
                 } else {

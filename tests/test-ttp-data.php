@@ -232,6 +232,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame([], $captured[0]['regions']);
         $this->assertSame('', $captured[0]['vendor']);
         $this->assertNotEmpty($logged);
+        $this->assertStringContainsString('recreg1', implode(' ', $logged));
     }
 
     public function test_refresh_vendor_cache_logs_missing_fields() {
