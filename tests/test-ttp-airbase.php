@@ -713,6 +713,43 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame( [ 'Value1' ], $values );
     }
 
+    public function test_resolve_linked_records_supports_field_ids() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $self = $this;
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($self) {
+            $self->assertStringContainsString('fields[]=fld123', $url);
+            $self->assertStringContainsString('returnFieldsByFieldId=true', $url);
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => json_encode([ 'records' => [ [ 'fields' => [ 'fld123' => 'Value1' ] ] ] ] ),
+            ];
+        });
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'fld123', true);
+        $this->assertSame(['Value1'], $values);
+    }
+
     public function test_get_table_schema_fetches_and_caches_when_missing() {
         when('get_transient')->alias(function ($key) {
             return false;

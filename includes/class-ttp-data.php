@@ -277,6 +277,14 @@ class TTP_Data {
             'HQ Location'    => array( 'table' => 'HQ Location',    'primary_field' => 'Name' ),
         );
 
+        foreach ( $linked_tables as &$info ) {
+            $primary = TTP_Airbase::get_primary_field( $info['table'] );
+            if ( is_array( $primary ) && ! empty( $primary['id'] ) ) {
+                $info['primary_field_id'] = $primary['id'];
+            }
+        }
+        unset( $info );
+
         $vendors = array();
         foreach ( $records as $record ) {
             $fields = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
@@ -552,7 +560,12 @@ class TTP_Data {
         if ( ! empty( $ids ) && isset( $linked_tables[ $field ] ) ) {
             $table   = $linked_tables[ $field ]['table'];
             $primary = $linked_tables[ $field ]['primary_field'];
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
+            $use_ids = false;
+            if ( ! empty( $linked_tables[ $field ]['primary_field_id'] ) ) {
+                $primary = $linked_tables[ $field ]['primary_field_id'];
+                $use_ids = true;
+            }
+            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary, $use_ids );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );

@@ -26,7 +26,8 @@ if ( self::contains_record_ids( $industry_field ) ) {
     $resolved = TTP_Airbase::resolve_linked_records(
         $linked_tables['Industry']['table'],
         $industry_field,
-        $linked_tables['Industry']['primary_field']
+        $linked_tables['Industry']['primary_field'],
+        false
     );
     $industries = array_map( 'sanitize_text_field', (array) $resolved );
 } else {
