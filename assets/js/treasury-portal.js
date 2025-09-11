@@ -1392,6 +1392,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const container = document.querySelector('.filter-tabs');
                 if (!container) return;
                 container.innerHTML = '';
+                container.style.display = 'none';
                 this.advancedFilters.subcategories = [];
                 if (!category || !this.subcategoriesByCategory[category]) {
                     return;
@@ -1400,6 +1401,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!subs.length) {
                     return;
                 }
+                container.style.display = 'flex';
                 const createBtn = (label, value = '') => {
                     const btn = document.createElement('button');
                     btn.className = 'filter-tab';
