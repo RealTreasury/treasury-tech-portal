@@ -1159,29 +1159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 });
 
-                if (window.jQuery && jQuery.fn && typeof jQuery.fn.slick === 'function') {
-                    const $sliders = jQuery('#tools-CASH, #tools-LITE, #tools-TRMS');
-                    $sliders.each(function() {
-                        const $this = jQuery(this);
-                        if ($this.hasClass('slick-initialized')) {
-                            $this.slick('unslick');
-                        }
-                    });
-                    $sliders.each(function() {
-                        const $this = jQuery(this);
-                        if ($this.children().length > 0) {
-                            $this.slick({
-                                slidesToShow: 3,
-                                dots: true,
-                                arrows: true,
-                                responsive: [
-                                    { breakpoint: 1024, settings: { slidesToShow: 2 } },
-                                    { breakpoint: 768, settings: { slidesToShow: 1 } }
-                                ]
-                            });
-                        }
-                    });
-                }
             }
 
             createToolCard(tool, category) {

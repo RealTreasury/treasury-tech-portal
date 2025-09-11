@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced mobile responsive design
 - Improved video integration handling
 
+### Removed
+- Slick carousel assets and jQuery dependency for a cleaner front-end
+
 ### Fixed
 - Modal z-index conflicts with navigation
 - Touch gesture handling on mobile devices

@@ -2481,21 +2481,3 @@
             opacity: 0;
         }
 
-        /* Slick slider styling */
-        .treasury-portal .slick-slider {
-            width: 100%;
-            margin: 0 auto 30px;
-        }
-
-        .treasury-portal .slick-slide {
-            outline: none;
-        }
-
-        .treasury-portal .slick-prev:before,
-        .treasury-portal .slick-next:before {
-            color: #7216f4;
-        }
-
-        .treasury-portal .slick-dots li button:before {
-            color: #7216f4;
-        }

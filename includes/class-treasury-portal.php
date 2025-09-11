@@ -43,40 +43,11 @@ class Treasury_Tech_Portal {
         $css_file = TTP_DIR . 'assets/css/treasury-portal.css';
         $css_ver  = file_exists($css_file) ? filemtime($css_file) : '1.0';
 
-        $slick_css     = TTP_DIR . 'assets/js/lib/slick.css';
-        $slick_css_ver = file_exists($slick_css) ? filemtime($slick_css) : '1.0';
-        wp_enqueue_style(
-            'slick-css',
-            $plugin_url . 'assets/js/lib/slick.css',
-            array(),
-            $slick_css_ver
-        );
-
-        $slick_theme = TTP_DIR . 'assets/js/lib/slick-theme.css';
-        if (file_exists($slick_theme)) {
-            wp_enqueue_style(
-                'slick-theme-css',
-                $plugin_url . 'assets/js/lib/slick-theme.css',
-                array('slick-css'),
-                filemtime($slick_theme)
-            );
-        }
-
         wp_enqueue_style(
             'treasury-tech-portal-css',
             $plugin_url . 'assets/css/treasury-portal.css',
-            array('slick-css'),
+            array(),
             $css_ver
-        );
-
-        $slick_js     = TTP_DIR . 'assets/js/lib/slick.min.js';
-        $slick_js_ver = file_exists($slick_js) ? filemtime($slick_js) : '1.0';
-        wp_enqueue_script(
-            'slick-js',
-            $plugin_url . 'assets/js/lib/slick.min.js',
-            array('jquery'),
-            $slick_js_ver,
-            true
         );
 
         $js_filename = 'treasury-portal.js';
@@ -85,7 +56,7 @@ class Treasury_Tech_Portal {
         wp_enqueue_script(
             'treasury-tech-portal-js',
             $plugin_url . 'assets/js/' . $js_filename,
-            array('jquery', 'slick-js'),
+            array(),
             $js_ver,
             true
         );
