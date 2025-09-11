@@ -774,4 +774,45 @@ class TTP_Airbase_Test extends TestCase {
         $schema = TTP_Airbase::get_table_schema('tblXYZ');
         $this->assertSame([ 'Name' => 'fldName' ], $schema);
     }
+
+    public function test_map_field_names_returns_expected_maps() {
+        \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () {
+            return [
+                'Product Name' => 'fldName',
+                'Category'     => 'fldCategory',
+            ];
+        } );
+        when( 'is_wp_error' )->alias( function ( $thing ) {
+            return $thing instanceof WP_Error;
+        } );
+
+        $fields  = [ 'Product Name', 'Category' ];
+        $mapping = TTP_Airbase::map_field_names( $fields );
+
+        $this->assertSame(
+            [ 'Product Name' => 'fldName', 'Category' => 'fldCategory' ],
+            $mapping['schema_map']
+        );
+        $this->assertSame( [ 'fldName', 'fldCategory' ], $mapping['field_ids'] );
+    }
+
+    public function test_map_field_names_handles_missing_fields() {
+        \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () {
+            return [
+                'Product Name' => 'fldName',
+            ];
+        } );
+        when( 'is_wp_error' )->alias( function ( $thing ) {
+            return $thing instanceof WP_Error;
+        } );
+
+        $fields  = [ 'Product Name', 'Category' ];
+        $mapping = TTP_Airbase::map_field_names( $fields );
+
+        $this->assertSame(
+            [ 'Product Name' => 'fldName', 'Category' => 'Category' ],
+            $mapping['schema_map']
+        );
+        $this->assertSame( [ 'fldName', 'Category' ], $mapping['field_ids'] );
+    }
 }

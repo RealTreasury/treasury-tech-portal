@@ -216,6 +216,50 @@ class TTP_Airbase {
     }
 
     /**
+     * Map field names to their schema IDs.
+     *
+     * Returns both a mapping of the provided field names to their Airtable
+     * field IDs and a list of the IDs (falling back to the original name when
+     * a field is not found). This helper centralises the logic used by multiple
+     * callers when preparing field requests.
+     *
+     * @param array $field_names Field names to map.
+     * @return array {
+     *     @type array $schema_map Mapping of field names to IDs.
+     *     @type array $field_ids List of field IDs or names when unmapped.
+     * }
+     */
+    public static function map_field_names( $field_names ) {
+        $field_names = array_values( array_filter( (array) $field_names ) );
+        $schema_map  = array();
+        $field_ids   = array();
+
+        if ( empty( $field_names ) ) {
+            return array(
+                'schema_map' => array(),
+                'field_ids'  => array(),
+            );
+        }
+
+        $schema = self::get_table_schema();
+        if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
+            foreach ( $field_names as $name ) {
+                $id                = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $schema_map[ $name ] = $id;
+                $field_ids[]         = $id;
+            }
+        } else {
+            $schema_map = array_combine( $field_names, $field_names );
+            $field_ids  = $field_names;
+        }
+
+        return array(
+            'schema_map' => $schema_map,
+            'field_ids'  => $field_ids,
+        );
+    }
+
+    /**
      * Retrieve field schema for the vendor table via the Airtable metadata API.
      *
      * Returns a mapping of field names to their internal Airtable IDs so that

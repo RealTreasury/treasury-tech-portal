@@ -227,20 +227,9 @@ class TTP_Admin {
             'Founders',
         );
 
-        $schema     = TTP_Airbase::get_table_schema();
-        $schema_map = array();
-        $field_ids  = array();
-
-        if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
-            foreach ( $field_names as $name ) {
-                $id               = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
-                $schema_map[ $name ] = $id;
-                $field_ids[]        = $id;
-            }
-        } else {
-            $schema_map = array_combine( $field_names, $field_names );
-            $field_ids  = $field_names;
-        }
+        $mapping    = TTP_Airbase::map_field_names( $field_names );
+        $schema_map = $mapping['schema_map'];
+        $field_ids  = $mapping['field_ids'];
 
         $id_to_name = array_flip( $schema_map );
 
