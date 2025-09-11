@@ -351,6 +351,22 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
+        .treasury-portal .header-filters {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+            margin-left: auto;
+        }
+
+        .treasury-portal .header-filters select {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 0.85rem;
+            background: #fff;
+        }
+
         .treasury-portal .filter-tab {
             background: transparent;
             border: none;

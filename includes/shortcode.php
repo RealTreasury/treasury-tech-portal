@@ -54,6 +54,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                     <button class="filter-tab" data-category="LITE">TMS-Lite</button>
                     <button class="filter-tab" data-category="TRMS">TRMS</button>
                 </div>
+                <div id="headerFilters" class="header-filters"></div>
         </div>
     </div>
     <div class="side-menu-overlay" id="sideMenuOverlay"></div>
