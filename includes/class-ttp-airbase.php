@@ -353,15 +353,21 @@ class TTP_Airbase {
         $schemas = array();
         foreach ( $data['tables'] as $table ) {
             $map          = array();
+            $types        = array();
             $primary_id   = isset( $table['primaryFieldId'] ) ? $table['primaryFieldId'] : '';
             $primary_name = '';
+            $primary_type = '';
 
             if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
                 foreach ( $table['fields'] as $field ) {
                     if ( isset( $field['name'], $field['id'] ) ) {
                         $map[ $field['name'] ] = $field['id'];
+                        if ( isset( $field['type'] ) ) {
+                            $types[ $field['name'] ] = $field['type'];
+                        }
                         if ( $field['id'] === $primary_id ) {
                             $primary_name = $field['name'];
+                            $primary_type = isset( $field['type'] ) ? $field['type'] : '';
                         }
                     }
                 }
@@ -369,9 +375,11 @@ class TTP_Airbase {
 
             $entry = array(
                 'fields'  => $map,
+                'types'   => $types,
                 'primary' => array(
                     'id'   => $primary_id,
                     'name' => $primary_name,
+                    'type' => $primary_type,
                 ),
             );
 
@@ -515,6 +523,16 @@ class TTP_Airbase {
             $result_field = $query_field;
         }
 
+        $field_type = '';
+        if ( function_exists( 'get_transient' ) ) {
+            $schema = get_transient( 'ttp_airbase_schema' );
+            if ( isset( $schema[ $table_id ]['types'][ $result_field ] ) ) {
+                $field_type = $schema[ $table_id ]['types'][ $result_field ];
+            } elseif ( isset( $schema[ $table_id ]['types'][ $query_field ] ) ) {
+                $field_type = $schema[ $table_id ]['types'][ $query_field ];
+            }
+        }
+
         $args = array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,
@@ -571,7 +589,12 @@ class TTP_Airbase {
                             $value = null;
                         }
                     } elseif ( null !== $value ) {
-                        $value = sanitize_text_field( $value );
+                        $type = strtolower( (string) $field_type );
+                        if ( is_numeric( $value ) && in_array( $type, array( 'number', 'count', 'float', 'integer', 'decimal', 'currency', 'percent', 'rating', 'duration' ), true ) ) {
+                            $value = 0 + $value;
+                        } else {
+                            $value = sanitize_text_field( $value );
+                        }
                     }
 
                     if ( $record_id ) {

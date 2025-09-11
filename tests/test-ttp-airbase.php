@@ -13,6 +13,9 @@ class TTP_Airbase_Test extends TestCase {
             return filter_var($url, FILTER_VALIDATE_URL);
         });
         when('sanitize_text_field')->returnArg();
+        when('get_transient')->alias(function () {
+            return false;
+        });
 
         // Reset linked record cache before each test.
         $prop = new \ReflectionProperty(TTP_Airbase::class, 'linked_record_cache');
@@ -441,7 +444,8 @@ class TTP_Airbase_Test extends TestCase {
             $self->assertSame(
                 [
                     'fields'  => [ 'Name' => 'fldName', 'Status' => 'fldStatus' ],
-                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    'types'   => array(),
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => '' ],
                 ],
                 $value['tblXYZ']
             );
@@ -725,6 +729,53 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame(['Vendor A'], $values);
     }
 
+    public function test_resolve_linked_records_preserves_numeric_primary_field() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+        when('get_transient')->alias(function ($key) {
+            return 'ttp_airbase_schema' === $key ? [
+                'Vendors' => [
+                    'fields'  => [ 'Value' => 'fldVal' ],
+                    'types'   => [ 'Value' => 'number' ],
+                    'primary' => [ 'id' => 'fldVal', 'name' => 'Value', 'type' => 'number' ],
+                ],
+            ] : false;
+        });
+
+        $body = json_encode([
+            'records' => [
+                [ 'id' => 'rec1', 'fields' => [ 'Value' => 123 ] ],
+            ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Value');
+        $this->assertSame([123], $values);
+    }
+
     public function test_resolve_linked_records_uses_schema_primary_when_missing() {
         when('get_option')->alias(function ($option, $default = false) {
             switch ( $option ) {
@@ -866,7 +917,8 @@ class TTP_Airbase_Test extends TestCase {
             $self->assertSame(
                 [
                     'fields'  => [ 'Name' => 'fldName' ],
-                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                    'types'   => array(),
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name', 'type' => '' ],
                 ],
                 $value['tblXYZ']
             );
