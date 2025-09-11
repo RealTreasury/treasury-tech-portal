@@ -115,12 +115,13 @@ class TTP_Airbase {
     /**
      * Resolve linked record IDs to their name values.
      *
-     * @param string $table_id Table name or ID to query.
-     * @param array  $ids      Record IDs to resolve.
+     * @param string $table_id      Table name or ID to query.
+     * @param array  $ids           Record IDs to resolve.
+     * @param string $primary_field Primary field to return. Defaults to "Name".
      *
-     * @return array|WP_Error Array of record names or WP_Error on failure.
+     * @return array|WP_Error Array of record field values or WP_Error on failure.
      */
-    public static function resolve_linked_records( $table_id, $ids ) {
+    public static function resolve_linked_records( $table_id, $ids, $primary_field = 'Name' ) {
         $token = get_option( self::OPTION_TOKEN );
         if ( empty( $token ) ) {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
@@ -160,9 +161,10 @@ class TTP_Airbase {
         foreach ( $ids as $id ) {
             $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
         }
-        $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
+        $filter        = 'OR(' . implode( ',', $filter_parts ) . ')';
+        $primary_field = sanitize_text_field( $primary_field );
 
-        $url = $endpoint . '?fields[]=Name&filterByFormula=' . rawurlencode( $filter );
+        $url = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
 
         $args = array(
             'headers' => array(
@@ -188,15 +190,15 @@ class TTP_Airbase {
             return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
         }
 
-        $names = array();
+        $values = array();
         if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
             foreach ( $data['records'] as $record ) {
-                if ( isset( $record['fields']['Name'] ) ) {
-                    $names[] = sanitize_text_field( $record['fields']['Name'] );
+                if ( isset( $record['fields'][ $primary_field ] ) ) {
+                    $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
                 }
             }
         }
 
-        return $names;
+        return $values;
     }
 }
