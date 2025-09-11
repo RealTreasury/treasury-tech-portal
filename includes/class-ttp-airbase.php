@@ -15,6 +15,42 @@ class TTP_Airbase {
     const DEFAULT_API_PATH = 'tblOJ6yL9Jw5ZTdRc';
 
     /**
+     * Perform an HTTP request with basic exponential backoff on rate limits.
+     *
+     * Retries the request when a 429 status code is encountered, waiting
+     * progressively longer between attempts (1s, 2s, 4s). The last response is
+     * returned even if it is not successful so that callers can handle errors
+     * consistently.
+     *
+     * @param string $url          Request URL.
+     * @param array  $args         Arguments passed to wp_remote_get().
+     * @param int    $max_attempts Maximum number of attempts.
+     *
+     * @return array|WP_Error Response array or WP_Error from wp_remote_get().
+     */
+    private static function request_with_backoff( $url, $args, $max_attempts = 3 ) {
+        $delay = 1;
+
+        for ( $attempt = 0; $attempt < $max_attempts; $attempt++ ) {
+            $response = wp_remote_get( $url, $args );
+            if ( is_wp_error( $response ) ) {
+                return $response;
+            }
+
+            $code = wp_remote_retrieve_response_code( $response );
+            if ( 429 === $code && $attempt < ( $max_attempts - 1 ) ) {
+                sleep( $delay );
+                $delay *= 2;
+                continue;
+            }
+
+            return $response;
+        }
+
+        return $response;
+    }
+
+    /**
      * Retrieve vendors from Airbase API.
      *
      * @param array $fields              Optional list of field IDs or names to request.
@@ -131,7 +167,7 @@ class TTP_Airbase {
                 $url .= '?' . implode( '&', $query );
             }
 
-            $response = wp_remote_get( $url, $args );
+            $response = self::request_with_backoff( $url, $args );
             if ( is_wp_error( $response ) ) {
                 return $response;
             }
@@ -219,7 +255,7 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $response = wp_remote_get( $endpoint, $args );
+        $response = self::request_with_backoff( $endpoint, $args );
         if ( is_wp_error( $response ) ) {
             return $response;
         }
@@ -321,7 +357,7 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $response = wp_remote_get( $url, $args );
+        $response = self::request_with_backoff( $url, $args );
         if ( is_wp_error( $response ) ) {
             return $response;
         }

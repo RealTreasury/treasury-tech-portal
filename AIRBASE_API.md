@@ -25,7 +25,7 @@ curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
 
 ## Rate Limits
 - Maximum of **5 requests per second** per base.
-- Exceeding the limit returns HTTP `429`. Wait 30 seconds before retrying.
+- Exceeding the limit returns HTTP `429`. The plugin automatically retries up to three times using an exponential backoff (1s, 2s, 4s) before surfacing an error. If the limit continues to be exceeded, wait ~30 seconds before manual retries.
 
 ## Vendor Response Formats
 `TTP_Data::refresh_vendor_cache()` accepts multiple response shapes and
