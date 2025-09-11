@@ -542,7 +542,24 @@ class TTP_Data {
             if ( json_last_error() === JSON_ERROR_NONE ) {
                 $value = $maybe_json;
             } else {
-                $value = preg_split( '/[\\n;,]+/', $value );
+                $lines  = preg_split( '/\r\n|\n|\r/', $value );
+                $parsed = array();
+
+                foreach ( $lines as $line ) {
+                    $line = trim( $line );
+                    if ( $line === '' ) {
+                        continue;
+                    }
+
+                    $fields = str_getcsv( $line );
+                    if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
+                        $fields = str_getcsv( $line, ';' );
+                    }
+
+                    $parsed = array_merge( $parsed, $fields );
+                }
+
+                $value = $parsed;
             }
         }
 
