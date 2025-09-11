@@ -595,7 +595,9 @@ class TTP_Data {
      *
      * Strips non-alphanumeric characters and performs a case-insensitive search
      * for the `rec` prefix anywhere in the value so IDs wrapped in extra text
-     * or mixed casing are detected.
+     * or mixed casing are detected. Numeric-only strings are also treated as
+     * unresolved record IDs as some linked records may appear as plain numbers
+     * in the source data.
      *
      * @param array $values Values to inspect.
      * @return bool
@@ -607,6 +609,14 @@ class TTP_Data {
             }
 
             $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
+
+            if ( $candidate === '' ) {
+                continue;
+            }
+
+            if ( ctype_digit( $candidate ) ) {
+                return true;
+            }
 
             if (
                 preg_match(

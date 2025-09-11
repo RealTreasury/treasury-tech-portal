@@ -337,14 +337,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const allRegions = new Set();
                     const allCategories = new Set();
                     const allSubcategories = new Set();
+                    const addValue = (set, val) => {
+                        const trimmed = typeof val === 'string' ? val.trim() : '';
+                        if (trimmed && !/^\d+$/.test(trimmed)) {
+                            set.add(trimmed);
+                        }
+                    };
                     this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
                         const parentCategory = Array.isArray(vendor.parent_category) ? vendor.parent_category[0] : (vendor.parent_category || '');
                         const category = this.normalizeCategory(parentCategory || vendor.category);
                         const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
                         const regions = Array.isArray(vendor.regions) ? vendor.regions.map(r => r.trim()) : [];
-                        if (parentCategory) allCategories.add(parentCategory);
-                        subCategories.forEach(sc => allSubcategories.add(sc));
-                        regions.forEach(r => { if (r) allRegions.add(r); });
+                        addValue(allCategories, parentCategory);
+                        subCategories.forEach(sc => addValue(allSubcategories, sc));
+                        regions.forEach(r => addValue(allRegions, r));
                         return {
                             name: vendor.name || '',
                             desc: vendor.status || '',

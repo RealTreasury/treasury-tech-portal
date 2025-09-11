@@ -107,4 +107,20 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame(['Cash'], $captured['parent_category']);
         $this->assertSame(['Payments'], $captured['sub_category']);
     }
+
+    public function test_vendors_endpoint_returns_resolved_names() {
+        $vendor = [
+            'regions'    => ['North America'],
+            'categories' => ['Finance'],
+        ];
+        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
+            return [ $vendor ];
+        });
+
+        $request = new class {};
+        $response = TTP_Rest::get_vendors( $request );
+
+        $this->assertSame( ['North America'], $response[0]['regions'] );
+        $this->assertSame( ['Finance'], $response[0]['categories'] );
+    }
 }
