@@ -11,6 +11,12 @@ class TTP_Rest_Test extends TestCase {
         when('rest_ensure_response')->alias(function ($data) {
             return $data;
         });
+        when('sanitize_text_field')->alias(function ($v) {
+            return $v;
+        });
+        when('absint')->alias(function ($v) {
+            return (int) $v;
+        });
     }
 
     protected function tearDown(): void {
@@ -32,7 +38,7 @@ class TTP_Rest_Test extends TestCase {
         });
         $this->assertNotEmpty($tools_route);
         $route = array_values($tools_route)[0];
-        $this->assertSame([TTP_Rest::class, 'get_vendors'], $route[2]['callback']);
+        $this->assertSame([TTP_Rest::class, 'get_tools'], $route[2]['callback']);
     }
 
     public function test_tools_endpoint_returns_vendor_with_new_fields() {
@@ -43,12 +49,17 @@ class TTP_Rest_Test extends TestCase {
             'parent_category' => 'Cash',
             'sub_categories'  => ['Payments'],
         ];
-
-        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ($vendor) {
+        \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($vendor) {
             return [ $vendor ];
         });
 
-        $response = TTP_Rest::get_vendors(null);
+        $request = new class {
+            public function get_param($key) {
+                return null;
+            }
+        };
+
+        $response = TTP_Rest::get_tools($request);
         $this->assertIsArray($response);
         $this->assertArrayHasKey('video_url', $response[0]);
         $this->assertArrayHasKey('logo_url', $response[0]);
@@ -58,5 +69,33 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame('https://example.com/logo.png', $response[0]['logo_url']);
         $this->assertSame('Cash', $response[0]['parent_category']);
         $this->assertSame(['Payments'], $response[0]['sub_categories']);
+    }
+
+    public function test_tools_endpoint_passes_filter_params() {
+        $captured = null;
+        \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use (&$captured) {
+            $captured = $args;
+            return [];
+        });
+
+        $request = new class {
+            private $params;
+            public function __construct() {
+                $this->params = [
+                    'region'          => 'EMEA',
+                    'parent_category' => 'Cash',
+                    'sub_category'    => 'Payments',
+                ];
+            }
+            public function get_param($key) {
+                return $this->params[$key] ?? null;
+            }
+        };
+
+        TTP_Rest::get_tools($request);
+
+        $this->assertSame(['EMEA'], $captured['region']);
+        $this->assertSame(['Cash'], $captured['parent_category']);
+        $this->assertSame(['Payments'], $captured['sub_category']);
     }
 }

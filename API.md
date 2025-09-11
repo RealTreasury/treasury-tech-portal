@@ -46,6 +46,9 @@ GET /wp-json/ttp/v1/tools
 - `has_video` (boolean): Filter tools that have video demonstrations
 - `per_page` (integer): Number of tools per page (default: all)
 - `page` (integer): Page number for pagination (default: 1)
+- `region` (string|string[]): Limit to tools available in the specified region
+- `parent_category` (string|string[]): Filter by parent category
+- `sub_category` (string|string[]): Filter by sub category
 
 #### Response Format
 ```json
@@ -76,6 +79,9 @@ fetch('/wp-json/ttp/v1/tools?search=AI')
 
 // Get tools with videos, paginated
 fetch('/wp-json/ttp/v1/tools?has_video=1&per_page=10&page=1')
+
+// Filter by region and categories
+fetch('/wp-json/ttp/v1/tools?region=EMEA&parent_category=Cash&sub_category=Payments')
 ```
 
 

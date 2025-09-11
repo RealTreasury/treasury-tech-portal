@@ -12,7 +12,7 @@ class TTP_Rest {
     public static function register_routes() {
         register_rest_route('ttp/v1', '/tools', [
             'methods'  => 'GET',
-            'callback' => [__CLASS__, 'get_vendors'],
+            'callback' => [__CLASS__, 'get_tools'],
             'permission_callback' => '__return_true'
         ]);
 
@@ -21,6 +21,53 @@ class TTP_Rest {
             'callback' => [__CLASS__, 'get_vendors'],
             'permission_callback' => '__return_true'
         ]);
+    }
+
+    public static function get_tools($request) {
+        $args = array();
+
+        $category = $request->get_param('category');
+        if (is_string($category) && $category !== '') {
+            $args['category'] = sanitize_text_field($category);
+        }
+
+        $search = $request->get_param('search');
+        if (is_string($search) && $search !== '') {
+            $args['search'] = sanitize_text_field($search);
+        }
+
+        if ($request->get_param('has_video')) {
+            $args['has_video'] = true;
+        }
+
+        $per_page = $request->get_param('per_page');
+        if ($per_page !== null && $per_page !== '') {
+            $args['per_page'] = absint($per_page);
+        }
+
+        $page = $request->get_param('page');
+        if ($page !== null && $page !== '') {
+            $args['page'] = absint($page);
+        }
+
+        $region = $request->get_param('region');
+        if (!empty($region)) {
+            $args['region'] = array_map('sanitize_text_field', (array) $region);
+        }
+
+        $parent_category = $request->get_param('parent_category');
+        if (!empty($parent_category)) {
+            $args['parent_category'] = array_map('sanitize_text_field', (array) $parent_category);
+        }
+
+        $sub_category = $request->get_param('sub_category');
+        if (!empty($sub_category)) {
+            $args['sub_category'] = array_map('sanitize_text_field', (array) $sub_category);
+        }
+
+        $tools = TTP_Data::get_tools($args);
+
+        return rest_ensure_response($tools);
     }
 
     public static function get_vendors($request) {

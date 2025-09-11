@@ -234,6 +234,29 @@ class TTP_Data {
             });
         }
 
+        if (!empty($args['region'])) {
+            $regions = (array) $args['region'];
+            $tools   = array_filter($tools, function ($tool) use ($regions) {
+                $tool_regions = $tool['regions'] ?? array();
+                return !empty(array_intersect($regions, $tool_regions));
+            });
+        }
+
+        if (!empty($args['parent_category'])) {
+            $parents = (array) $args['parent_category'];
+            $tools   = array_filter($tools, function ($tool) use ($parents) {
+                return isset($tool['parent_category']) && in_array($tool['parent_category'], $parents, true);
+            });
+        }
+
+        if (!empty($args['sub_category'])) {
+            $subs  = (array) $args['sub_category'];
+            $tools = array_filter($tools, function ($tool) use ($subs) {
+                $tool_subs = $tool['sub_categories'] ?? array();
+                return !empty(array_intersect($subs, $tool_subs));
+            });
+        }
+
         $page     = max(1, intval($args['page'] ?? 1));
         $per_page = max(1, intval($args['per_page'] ?? count($tools)));
         $offset   = ($page - 1) * $per_page;
