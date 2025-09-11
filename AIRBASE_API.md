@@ -199,3 +199,88 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=
 - The API only accepts URLs shorter than 16,000 characters.
 - Values for `Parent Category (from Sub Categories)` are computed and cannot be manually set.
 
+## Sub Categories Table
+
+The Sub Categories table ID is `tblEDySEcdvwCweuq`. Table names and IDs are
+interchangeable in API requests.
+
+### Fields
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `Sub Category Name` (`fld6hOaUeXUsi8ZyM`) | text | name of the sub category |
+| `Description` (`fld0WF293CfkNMDu7`) | long text | may include mention tokens |
+| `Category` (`fldRv7UQGPVftu8Id`) | linked records to **Categories** table |
+| `Linked Products` (`fld5Oxt2B7NPkZNxc`) | linked records to **Products** table |
+| `Capabilities` (`fldQXnjhbuiZS0vJV`) | linked records to **Capabilities** table |
+| `Product Count` (`fldpeAWrpXwnkTbnC`) | count | auto-calculated number of linked products |
+| `Count (Parent Category)` (`fldV3e96JCcwfpdus`) | count | auto-calculated number of parent categories |
+| `Region` (`flda8n6TBoZ9zn5vu`) | linked records to **Regions** table |
+
+### Listing Sub Categories
+
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq?maxRecords=3&view=Grid%20view" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+Returned records omit empty fields. All query parameters available to the
+Products table (`fields[]`, `filterByFormula`, `maxRecords`, `pageSize`,
+`sort[]`, `view`, `cellFormat`, `timeZone`, `userLocale`,
+`returnFieldsByFieldId`, `recordMetadata`) are supported.
+
+### Retrieving a Sub Category
+
+```bash
+curl https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq/RECORD_ID \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Sub Categories
+
+Values for `Product Count` and `Count (Parent Category)` are computed and
+cannot be set directly.
+
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "fields": {
+        "Sub Category Name": "Cash Tool",
+        "Category": ["reckz5jhQb2CBocKR"],
+        "Linked Products": ["recgOn3wZbYQE8gtZ"],
+        "Capabilities": ["recn4Y3PBFmPXh6Op"],
+        "Region": ["rec75L3VdbgJC8GpT"]
+      }
+    }]
+  }'
+```
+
+### Updating Sub Categories
+
+Patch only the fields that change. Up to 10 records per request.
+
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "id": "RECORD_ID",
+      "fields": {
+        "Sub Category Name": "Cash Tool"
+      }
+    }]
+  }'
+```
+
+### Deleting Sub Categories
+
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq?records[]=RECORD_ID" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+
