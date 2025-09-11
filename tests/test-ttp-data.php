@@ -11,6 +11,7 @@ class TTP_Data_Test extends TestCase {
         when('is_wp_error')->alias(function ($thing) {
             return $thing instanceof WP_Error;
         });
+        when('sanitize_text_field')->returnArg();
     }
 
     protected function tearDown(): void {
@@ -51,6 +52,7 @@ class TTP_Data_Test extends TestCase {
 
         $expected = [
             [
+                'id'              => 'rec1',
                 'name'            => 'Sample Product',
                 'vendor'          => 'Acme Corp',
                 'website'         => 'https://example.com',
