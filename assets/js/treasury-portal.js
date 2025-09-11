@@ -358,6 +358,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     this.populateRegionFilters();
                     this.populateCategoryFilters();
                     this.populateSubcategoryFilters();
+                    this.renderHeaderFilters();
                     this.filterAndDisplayTools();
                     this.applyViewStyles();
                 } catch (err) {
@@ -1333,6 +1334,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
             }
 
+            renderHeaderFilters() {
+                const container = document.getElementById('headerFilters');
+                if (!container) return;
+                const regionOptions = ['<option value="">All Regions</option>', ...this.allRegions.map(r => `<option value="${r}">${r}</option>`)];
+                const categoryOptions = ['<option value="">All Categories</option>', ...this.allCategories.map(c => `<option value="${c}">${c}</option>`)];
+                container.innerHTML = `
+                    <select id="headerRegionFilter" class="header-filter">${regionOptions.join('')}</select>
+                    <select id="headerCategoryFilter" class="header-filter">${categoryOptions.join('')}</select>
+                `;
+                const regionSelect = container.querySelector('#headerRegionFilter');
+                const categorySelect = container.querySelector('#headerCategoryFilter');
+                regionSelect.addEventListener('change', e => {
+                    const val = e.target.value;
+                    this.advancedFilters.regions = val ? [val] : [];
+                    this.filterAndDisplayTools();
+                    this.updateFilterCount();
+                });
+                categorySelect.addEventListener('change', e => {
+                    const val = e.target.value;
+                    this.advancedFilters.categories = val ? [val] : [];
+                    this.filterAndDisplayTools();
+                    this.updateFilterCount();
+                });
+            }
+
             updateVisibleCounts() {
                 const categories = ['CASH', 'LITE', 'TRMS'];
                 let visibleTotal = 0;
@@ -2051,6 +2077,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"],#hasVideoFilter,#regionFilters input[type="checkbox"],#categoryFilters input[type="checkbox"],#subcategoryFilters input[type="checkbox"]');
                 checkboxes.forEach(cb => cb.checked = false);
+
+                const headerRegion = document.getElementById('headerRegionFilter');
+                if (headerRegion) headerRegion.value = '';
+                const headerCategory = document.getElementById('headerCategoryFilter');
+                if (headerCategory) headerCategory.value = '';
 
                 this.filterAndDisplayTools();
                 this.updateFilterCount();
