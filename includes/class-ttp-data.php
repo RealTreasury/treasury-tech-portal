@@ -213,6 +213,24 @@ class TTP_Data {
     }
 
     /**
+     * Recursively normalize array keys to lowercase snake_case.
+     *
+     * @param array $data Array to normalize.
+     * @return array Normalized array.
+     */
+    private static function normalize_keys( $data ) {
+        $normalized = array();
+        foreach ( (array) $data as $key => $value ) {
+            $new_key = is_int( $key ) ? $key : self::normalize_key( $key );
+            if ( is_array( $value ) ) {
+                $value = self::normalize_keys( $value );
+            }
+            $normalized[ $new_key ] = $value;
+        }
+        return $normalized;
+    }
+
+    /**
      * Determine if vendor data contains unresolved record IDs.
      *
      * @param array $vendors Vendor records to inspect.
@@ -230,10 +248,11 @@ class TTP_Data {
 
         $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
 
+        $vendors = array_map( array( __CLASS__, 'normalize_keys' ), (array) $vendors );
+
         $walker = function ( $data ) use ( &$walker, $aliases, $fields ) {
             foreach ( (array) $data as $key => $value ) {
-                $normalized_key = self::normalize_key( $key );
-                $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
+                $normalized_key = preg_replace( '/_ids?$/', '', $key );
                 if ( isset( $aliases[ $normalized_key ] ) ) {
                     $normalized_key = $aliases[ $normalized_key ];
                 }
@@ -338,18 +357,19 @@ class TTP_Data {
                 $mapped = array();
                 foreach ( $record['fields'] as $key => $value ) {
                     $mapped_name = isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key;
-                    $mapped[ self::normalize_key( $mapped_name ) ] = $value;
+                    $mapped[ $mapped_name ] = $value;
                 }
-                $record['fields'] = $mapped;
+                $record['fields'] = self::normalize_keys( $mapped );
+            } else {
+                $record = self::normalize_keys( $record );
             }
         }
         unset( $record );
 
         $present_keys = array();
         foreach ( $records as $record ) {
-            if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
-                $present_keys = array_unique( array_merge( $present_keys, array_keys( $record['fields'] ) ) );
-            }
+            $fields_arr  = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : ( is_array( $record ) ? $record : array() );
+            $present_keys = array_unique( array_merge( $present_keys, array_keys( $fields_arr ) ) );
         }
 
         $missing_normalized = array_diff( $normalized_field_names, $present_keys );
