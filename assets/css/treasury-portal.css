@@ -675,13 +675,7 @@
             flex-grow: 1;
         }
 
-        .treasury-portal .tool-card-actions {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-.treasury-portal .tool-header {
+        .treasury-portal .tool-header {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -865,7 +859,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
-            margin-top: 0;
+            margin-top: 12px;
             padding-top: 0;
             border-top: none;
         }
