@@ -542,6 +542,11 @@ class TTP_Data {
         }
 
         if ( ! empty( $ids ) ) {
+            /**
+             * Swap placeholder IDs with their readable names using
+             * TTP_Airbase::resolve_linked_records(). See self::resolve_linked_field()
+             * for the full placeholder-replacement strategy.
+             */
             $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
