@@ -78,6 +78,24 @@ class TTP_Admin {
             echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(sprintf(__('Airbase connection failed: %s', 'treasury-tech-portal'), $message)) . '</p></div>';
         }
 
+        $missing_fields = array();
+        if ( function_exists( 'get_option' ) ) {
+            $missing_fields = (array) get_option( 'ttp_missing_fields', array() );
+            if ( ! empty( $missing_fields ) && function_exists( 'delete_option' ) ) {
+                delete_option( 'ttp_missing_fields' );
+            }
+        }
+
+        if ( ! empty( $missing_fields ) ) {
+            $names = array_map( 'sanitize_text_field', (array) ( $missing_fields['fields'] ?? array() ) );
+            $ids   = array_map( 'sanitize_text_field', (array) ( $missing_fields['ids'] ?? array() ) );
+            $message = sprintf( __( 'Missing expected fields from Airtable: %s', 'treasury-tech-portal' ), implode( ', ', $names ) );
+            if ( ! empty( $ids ) ) {
+                $message .= ' ' . sprintf( __( '(Requested field IDs: %s)', 'treasury-tech-portal' ), implode( ', ', $ids ) );
+            }
+            echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html( $message ) . '</p></div>';
+        }
+
         $api_token = get_option(TTP_Airbase::OPTION_TOKEN, '');
         $base_url  = get_option(TTP_Airbase::OPTION_BASE_URL, '');
         $base_id   = get_option(TTP_Airbase::OPTION_BASE_ID, '');
