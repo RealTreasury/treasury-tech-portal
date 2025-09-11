@@ -182,10 +182,10 @@ wp_cache_flush();
 **Debugging Steps**:
 ```bash
 # Check required files exist
-ls -la WORDPRESS-COM-DEPLOYMENT.md readme.txt treasury-tech-portal.php
+ls -la docs/WORDPRESS-COM-DEPLOYMENT.md readme.txt treasury-tech-portal.php
 
 # Run local build test
-bash scripts/build.sh
+bash ../scripts/build.sh
 
 # Check PHP syntax
 find . -name "*.php" -exec php -l {} \;

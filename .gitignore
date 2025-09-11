@@ -26,6 +26,7 @@ vendor/
 # Environment files
 .env
 .env.local
+wp-config.php
 
 # Development artifacts
 *.min.css
