@@ -113,6 +113,94 @@ class TTP_Airbase {
     }
 
     /**
+     * Retrieve field schema for the vendor table via the Airtable metadata API.
+     *
+     * Returns a mapping of field names to their internal Airtable IDs so that
+     * requests can use the correct identifiers without hard-coding them in the
+     * codebase.
+     *
+     * @param string $table_id Optional table ID. Defaults to configured API path.
+     *
+     * @return array|WP_Error Array mapping field names to IDs or WP_Error on failure.
+     */
+    public static function get_table_schema( $table_id = '' ) {
+        $token = get_option( self::OPTION_TOKEN );
+        if ( empty( $token ) ) {
+            return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
+        }
+
+        $base_url = get_option( self::OPTION_BASE_URL, self::DEFAULT_BASE_URL );
+        if ( empty( $base_url ) ) {
+            $base_url = self::DEFAULT_BASE_URL;
+        }
+
+        $parts = wp_parse_url( $base_url );
+        if ( ! is_array( $parts ) || empty( $parts['scheme'] ) || empty( $parts['host'] ) ) {
+            return new WP_Error( 'invalid_base_url', __( 'Invalid Airbase base URL.', 'treasury-tech-portal' ) );
+        }
+
+        if ( empty( $parts['path'] ) || '/' === $parts['path'] ) {
+            $base_url = rtrim( $base_url, '/' ) . '/v0';
+        }
+
+        $base_id  = get_option( self::OPTION_BASE_ID, self::DEFAULT_BASE_ID );
+        $table_id = $table_id ? $table_id : get_option( self::OPTION_API_PATH, self::DEFAULT_API_PATH );
+
+        $endpoint = rtrim( $base_url, '/' ) . '/meta/bases/' . trim( $base_id, '/' ) . '/tables';
+
+        if ( ! wp_http_validate_url( $endpoint ) ) {
+            return new WP_Error( 'invalid_api_url', __( 'Invalid Airbase API URL.', 'treasury-tech-portal' ) );
+        }
+
+        $args = array(
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+            ),
+            'timeout' => 20,
+        );
+
+        $response = wp_remote_get( $endpoint, $args );
+        if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( 200 !== $code ) {
+            return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
+        }
+
+        $body = wp_remote_retrieve_body( $response );
+        $data = json_decode( $body, true );
+        if ( JSON_ERROR_NONE !== json_last_error() ) {
+            return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
+        }
+
+        if ( ! isset( $data['tables'] ) || ! is_array( $data['tables'] ) ) {
+            return new WP_Error( 'missing_tables', __( 'Airbase schema response missing tables.', 'treasury-tech-portal' ) );
+        }
+
+        foreach ( $data['tables'] as $table ) {
+            if (
+                ( isset( $table['id'] ) && $table['id'] === $table_id ) ||
+                ( isset( $table['name'] ) && $table['name'] === $table_id )
+            ) {
+                $map = array();
+                if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
+                    foreach ( $table['fields'] as $field ) {
+                        if ( isset( $field['name'], $field['id'] ) ) {
+                            $map[ $field['name'] ] = $field['id'];
+                        }
+                    }
+                }
+                return $map;
+            }
+        }
+
+        return new WP_Error( 'table_not_found', __( 'Specified Airbase table not found in schema.', 'treasury-tech-portal' ) );
+    }
+
+    /**
      * Resolve linked record IDs to their name values.
      *
      * @param string $table_id      Table name or ID to query.
