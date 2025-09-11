@@ -1393,6 +1393,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (!container) return;
                 container.innerHTML = '';
                 this.advancedFilters.subcategories = [];
+                const subFilterContainer = document.getElementById('subcategoryFilters');
+                if (subFilterContainer) {
+                    subFilterContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                        cb.checked = false;
+                    });
+                }
                 if (!category || !this.subcategoriesByCategory[category]) {
                     return;
                 }
