@@ -11,8 +11,8 @@ class TTP_Airbase {
     const OPTION_API_PATH  = 'ttp_airbase_api_path';
 
     const DEFAULT_BASE_URL = 'https://api.airtable.com/v0';
-    const DEFAULT_BASE_ID  = 'appJdxdz3310aJ3Fd';
-    const DEFAULT_API_PATH = 'tblOJ6yL9Jw5ZTdRc';
+    const DEFAULT_BASE_ID  = '';
+    const DEFAULT_API_PATH = '';
 
     /**
      * Perform an HTTP request with basic exponential backoff on rate limits.
@@ -80,12 +80,12 @@ class TTP_Airbase {
 
         $base_id = get_option( self::OPTION_BASE_ID, self::DEFAULT_BASE_ID );
         if ( empty( $base_id ) ) {
-            $base_id = self::DEFAULT_BASE_ID;
+            return new WP_Error( 'missing_base_id', __( 'Airbase base ID not configured.', 'treasury-tech-portal' ) );
         }
 
         $api_path = get_option( self::OPTION_API_PATH, self::DEFAULT_API_PATH );
         if ( empty( $api_path ) ) {
-            $api_path = self::DEFAULT_API_PATH;
+            return new WP_Error( 'missing_api_path', __( 'Airbase API path not configured.', 'treasury-tech-portal' ) );
         }
 
         $base_endpoint = rtrim( $base_url, '/' ) . '/' . trim( $base_id, '/' ) . '/' . ltrim( $api_path, '/' );
@@ -220,6 +220,9 @@ class TTP_Airbase {
      */
     public static function get_table_schema( $table_id = '' ) {
         $table_id = $table_id ? $table_id : get_option( self::OPTION_API_PATH, self::DEFAULT_API_PATH );
+        if ( empty( $table_id ) ) {
+            return new WP_Error( 'missing_api_path', __( 'Airbase API path not configured.', 'treasury-tech-portal' ) );
+        }
 
         $cached = get_transient( 'ttp_airbase_schema' );
         if ( is_array( $cached ) && isset( $cached[ $table_id ] ) ) {
@@ -247,7 +250,7 @@ class TTP_Airbase {
 
         $base_id = get_option( self::OPTION_BASE_ID, self::DEFAULT_BASE_ID );
         if ( empty( $base_id ) ) {
-            $base_id = self::DEFAULT_BASE_ID;
+            return new WP_Error( 'missing_base_id', __( 'Airbase base ID not configured.', 'treasury-tech-portal' ) );
         }
 
         $endpoint = rtrim( $base_url, '/' ) . '/meta/bases/' . trim( $base_id, '/' ) . '/tables';
@@ -347,7 +350,7 @@ class TTP_Airbase {
 
         $base_id = get_option( self::OPTION_BASE_ID, self::DEFAULT_BASE_ID );
         if ( empty( $base_id ) ) {
-            $base_id = self::DEFAULT_BASE_ID;
+            return new WP_Error( 'missing_base_id', __( 'Airbase base ID not configured.', 'treasury-tech-portal' ) );
         }
 
         $endpoint = rtrim( $base_url, '/' ) . '/' . trim( $base_id, '/' ) . '/' . ltrim( $table_id, '/' );

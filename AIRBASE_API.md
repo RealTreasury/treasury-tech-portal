@@ -4,22 +4,24 @@ This project retrieves vendor information from an Airtable base via the Airbase 
 The following is a condensed reference for developers working with the API.
 
 ## Base Information
-- **Base ID**: `appJdxdz3310aJ3Fd`
-- **Products Table ID**: `tblOJ6yL9Jw5ZTdRc`
+The plugin requires the following identifiers before it can query the Airbase API:
+
+- **Base ID** – Airtable base identifier.
+- **Products Table ID** – ID of the Products table within that base.
 
 ### Plugin Configuration Options
-- `ttp_airbase_token` – API token used for authentication.
-- `ttp_airbase_base_url` – Base API URL. Default: `https://api.airtable.com/v0`
-- `ttp_airbase_base_id` – Airtable base identifier. Default: `appJdxdz3310aJ3Fd`
-- `ttp_airbase_api_path` – Table/endpoint path. Default: `tblOJ6yL9Jw5ZTdRc`
+- `ttp_airbase_token` – API token used for authentication (**required**).
+- `ttp_airbase_base_url` – Base API URL. Default: `https://api.airtable.com/v0`.
+- `ttp_airbase_base_id` – Airtable base identifier. No default; **must be set**.
+- `ttp_airbase_api_path` – Table/endpoint path. No default; **must be set**.
 
-These options are configurable from the **Airbase Settings** page in the WordPress admin.
+These options are configurable from the **Airbase Settings** page in the WordPress admin. Until the token, base ID, and products table ID are provided, the plugin will not make any API requests.
 
 ## Authentication
 All requests require a bearer token:
 
 ```bash
-curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
+curl https://api.airtable.com/v0/BASE_ID/Products \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
@@ -100,7 +102,7 @@ To resolve these warnings:
 Retrieve records from the Products table. Only non-empty fields are returned.
 
 ```bash
-curl "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products?maxRecords=3&view=Grid%20view" \
+curl "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?maxRecords=3&view=Grid%20view" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
@@ -115,7 +117,7 @@ Common query parameters:
 
 ## Retrieving a Product
 ```bash
-curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products/RECORD_ID \
+curl https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID/RECORD_ID \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
@@ -123,7 +125,7 @@ curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products/RECORD_ID \
 Send up to 10 records per request.
 
 ```bash
-curl -X POST https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
+curl -X POST https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{
@@ -141,7 +143,7 @@ curl -X POST https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
 Patch only the fields that change. Up to 10 records per request.
 
 ```bash
-curl -X PATCH https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{
@@ -156,7 +158,7 @@ curl -X PATCH https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
 
 ## Deleting Products
 ```bash
-curl -X DELETE "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products?records[]=RECORD_ID" \
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=RECORD_ID" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 

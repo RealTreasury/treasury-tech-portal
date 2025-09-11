@@ -22,10 +22,11 @@ Add the portal to any page or post using the shortcode:
 
 === Airbase Vendor Sync ===
 
-1. In the WordPress admin go to **Treasury Tools → Airbase Settings** and set:
+1. In the WordPress admin go to **Treasury Tools → Airbase Settings** and set the required values:
    - **API Token** (`ttp_airbase_token`)
    - **Base ID**
    - **Products Table ID**
+   These three fields are **mandatory**—the plugin will not query Airbase until they are provided.
 2. Save the settings.
 3. To fetch vendors immediately visit **Treasury Tools → Vendors** and click **Refresh Vendors**;
    otherwise a scheduled event updates the cache twice daily.

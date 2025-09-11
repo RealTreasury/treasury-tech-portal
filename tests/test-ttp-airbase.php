@@ -65,7 +65,18 @@ class TTP_Airbase_Test extends TestCase {
 
     public function test_returns_wp_error_on_request_failure() {
         when('get_option')->alias(function ($option, $default = false) {
-            return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
         });
 
         expect('wp_remote_get')
@@ -83,6 +94,42 @@ class TTP_Airbase_Test extends TestCase {
     public function test_returns_wp_error_when_token_missing() {
         when('get_option')->alias(function ($option, $default = false) {
             return TTP_Airbase::OPTION_TOKEN === $option ? '' : $default;
+        });
+
+        $result = TTP_Airbase::get_vendors();
+        $this->assertInstanceOf(WP_Error::class, $result);
+    }
+
+    public function test_returns_wp_error_when_base_id_missing() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+
+        $result = TTP_Airbase::get_vendors();
+        $this->assertInstanceOf(WP_Error::class, $result);
+    }
+
+    public function test_returns_wp_error_when_api_path_missing() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
         });
 
         $result = TTP_Airbase::get_vendors();
