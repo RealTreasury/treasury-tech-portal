@@ -387,6 +387,119 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API', 'Analytics'], $captured[0]['capabilities']);
     }
 
+    /**
+     * @dataProvider comma_separated_fields_provider
+     */
+    public function test_refresh_vendor_cache_resolves_comma_separated_ids_for_field( $field, $table, $output_key, $mapping ) {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Parent Category' => 'Cash',
+                'Sub Categories'  => ['Payments'],
+                'Regions'         => ['North America'],
+                'Domain'          => ['Banking'],
+                'Capabilities'    => ['API'],
+            ],
+        ];
+
+        $record['fields'][ $field ] = implode( ', ', array_keys( $mapping ) );
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) use ( $table, $mapping ) {
+            if ( $table_id !== $table ) {
+                return array();
+            }
+            $out = array();
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $mapping[ $id ] ) ) {
+                    $out[] = $mapping[ $id ];
+                }
+            }
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $expected = array_values( $mapping );
+        if ( 'vendor' === $output_key ) {
+            $this->assertSame( reset( $expected ), $captured[0][ $output_key ] );
+        } else {
+            $this->assertSame( $expected, $captured[0][ $output_key ] );
+        }
+    }
+
+    public function comma_separated_fields_provider() {
+        return [
+            'regions' => [
+                'Regions',
+                'Regions',
+                'regions',
+                [
+                    'recreg1' => 'North America',
+                    'recreg2' => 'Europe',
+                ],
+            ],
+            'vendor' => [
+                'Linked Vendor',
+                'Vendors',
+                'vendor',
+                [
+                    'recven1' => 'Acme Corp',
+                    'recven2' => 'Globex',
+                ],
+            ],
+            'hosted_type' => [
+                'Hosted Type',
+                'Hosted Type',
+                'hosted_type',
+                [
+                    'rechost1' => 'Cloud',
+                    'rechost2' => 'On-Prem',
+                ],
+            ],
+            'domain' => [
+                'Domain',
+                'Domain',
+                'domain',
+                [
+                    'recdom1' => 'Banking',
+                    'recdom2' => 'Investing',
+                ],
+            ],
+            'sub_categories' => [
+                'Sub Categories',
+                'Sub Categories',
+                'sub_categories',
+                [
+                    'recsc1' => 'Payments',
+                    'recsc2' => 'Treasury',
+                ],
+            ],
+            'capabilities' => [
+                'Capabilities',
+                'Capabilities',
+                'capabilities',
+                [
+                    'reccap1' => 'API',
+                    'reccap2' => 'Analytics',
+                ],
+            ],
+        ];
+    }
+
     public function test_get_tools_filters_new_arguments() {
         $tools = [
             [
