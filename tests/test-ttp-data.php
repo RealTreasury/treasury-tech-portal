@@ -365,6 +365,66 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Product Website'], $stored['ids']);
     }
 
+    public function test_refresh_vendor_cache_falls_back_when_schema_mismatch() {
+        unset( $this->schema_map['Regions'] );
+
+        $fields = $this->id_fields([
+            'Product Name'    => 'Sample',
+            'Product Website' => 'example.com',
+            'Status'          => 'Active',
+        ]);
+        $fields['Regions'] = 'recreg1';
+
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $fields,
+        ];
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function () use ( $record ) {
+            return array( 'records' => array( $record ) );
+        } );
+
+        $resolved_tables = array();
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table ) use ( &$resolved_tables ) {
+            $resolved_tables[] = $table;
+            return array();
+        } );
+
+        $logs = array();
+        \Patchwork\replace( 'error_log', function ( $msg ) use ( &$logs ) {
+            $logs[] = $msg;
+        } );
+
+        $stored = array();
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored ) {
+            if ( 'ttp_unresolved_fields' === $name ) {
+                return $stored;
+            }
+            return $default;
+        } );
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored ) {
+            if ( 'ttp_unresolved_fields' === $name ) {
+                $stored = $value;
+            }
+            return true;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( array( 'recreg1' ), $captured[0]['regions'] );
+        $this->assertNotContains( 'Regions', $resolved_tables );
+        $this->assertStringContainsString( 'Schema', implode( ' ', $logs ) );
+        $this->assertStringContainsString( 'recreg1', implode( ' ', $logs ) );
+        $this->assertNotEmpty( $stored );
+        $this->assertStringContainsString( 'Schema missing field', implode( ' ', $stored ) );
+        $this->assertStringContainsString( 'recreg1', implode( ' ', $stored ) );
+    }
+
     public function test_refresh_vendor_cache_resolves_string_record_ids() {
         $record = [
             'id'     => 'rec1',

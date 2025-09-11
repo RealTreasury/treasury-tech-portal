@@ -187,17 +187,39 @@ class TTP_Data {
         $schema     = TTP_Airbase::get_table_schema();
         $schema_map = array();
         $field_ids  = array();
+        $missing_schema = array();
 
         if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
             foreach ( $field_names as $name ) {
-                $id               = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
-                $schema_map[ $name ] = $id;
-                $field_ids[]        = $id;
+                if ( isset( $schema[ $name ] ) ) {
+                    $schema_map[ $name ] = $schema[ $name ];
+                    $field_ids[]         = $schema[ $name ];
+                } else {
+                    $schema_map[ $name ] = $name;
+                    $field_ids[]         = $name;
+                    $missing_schema[]    = $name;
+                }
+            }
+            if ( ! empty( $missing_schema ) ) {
+                self::log_missing_schema_fields( $missing_schema );
             }
         } else {
-            $schema_map = array_combine( $field_names, $field_names );
-            $field_ids  = $field_names;
+            $schema_map     = array_combine( $field_names, $field_names );
+            $field_ids      = $field_names;
+            $missing_schema = $field_names;
+            self::log_missing_schema_fields( $missing_schema );
         }
+
+        $missing_linked = array_flip( array_intersect( array_keys( $linked_tables = array(
+            'Regions'        => array( 'table' => 'Regions',        'primary_field' => 'Name' ),
+            'Linked Vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
+            'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'Category'       => array( 'table' => 'Category',       'primary_field' => 'Name' ),
+            'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'HQ Location'    => array( 'table' => 'HQ Location',    'primary_field' => 'Name' ),
+        ) ), $missing_schema ) );
 
         $id_to_name = array_flip( $schema_map );
 
@@ -266,31 +288,20 @@ class TTP_Data {
             );
         }
 
-        $linked_tables = array(
-            'Regions'        => array( 'table' => 'Regions',        'primary_field' => 'Name' ),
-            'Linked Vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
-            'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'table' => 'Category',       'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
-            'HQ Location'    => array( 'table' => 'HQ Location',    'primary_field' => 'Name' ),
-        );
-
         $vendors = array();
         foreach ( $records as $record ) {
             $fields = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
 
-            $regions        = self::resolve_linked_field( 'Regions', $fields['Regions'] ?? array(), $linked_tables );
-            $vendor_field   = self::resolve_linked_field( 'Linked Vendor', $fields['Linked Vendor'] ?? array(), $linked_tables );
+            $regions        = isset( $missing_linked['Regions'] ) ? self::fallback_unresolved_values( 'Regions', $fields['Regions'] ?? array() ) : self::resolve_linked_field( 'Regions', $fields['Regions'] ?? array(), $linked_tables );
+            $vendor_field   = isset( $missing_linked['Linked Vendor'] ) ? self::fallback_unresolved_values( 'Linked Vendor', $fields['Linked Vendor'] ?? array() ) : self::resolve_linked_field( 'Linked Vendor', $fields['Linked Vendor'] ?? array(), $linked_tables );
             $vendor_name    = $vendor_field ? reset( $vendor_field ) : '';
-            $hosted_type    = self::resolve_linked_field( 'Hosted Type', $fields['Hosted Type'] ?? array(), $linked_tables );
-            $domain         = self::resolve_linked_field( 'Domain', $fields['Domain'] ?? array(), $linked_tables );
-            $categories     = self::resolve_linked_field( 'Category', $fields['Category'] ?? array(), $linked_tables );
+            $hosted_type    = isset( $missing_linked['Hosted Type'] ) ? self::fallback_unresolved_values( 'Hosted Type', $fields['Hosted Type'] ?? array() ) : self::resolve_linked_field( 'Hosted Type', $fields['Hosted Type'] ?? array(), $linked_tables );
+            $domain         = isset( $missing_linked['Domain'] ) ? self::fallback_unresolved_values( 'Domain', $fields['Domain'] ?? array() ) : self::resolve_linked_field( 'Domain', $fields['Domain'] ?? array(), $linked_tables );
+            $categories     = isset( $missing_linked['Category'] ) ? self::fallback_unresolved_values( 'Category', $fields['Category'] ?? array() ) : self::resolve_linked_field( 'Category', $fields['Category'] ?? array(), $linked_tables );
             $category       = $categories ? reset( $categories ) : '';
-            $sub_categories = self::resolve_linked_field( 'Sub Categories', $fields['Sub Categories'] ?? array(), $linked_tables );
-            $capabilities   = self::resolve_linked_field( 'Capabilities', $fields['Capabilities'] ?? array(), $linked_tables );
-            $hq_location_field = self::resolve_linked_field( 'HQ Location', $fields['HQ Location'] ?? array(), $linked_tables );
+            $sub_categories = isset( $missing_linked['Sub Categories'] ) ? self::fallback_unresolved_values( 'Sub Categories', $fields['Sub Categories'] ?? array() ) : self::resolve_linked_field( 'Sub Categories', $fields['Sub Categories'] ?? array(), $linked_tables );
+            $capabilities   = isset( $missing_linked['Capabilities'] ) ? self::fallback_unresolved_values( 'Capabilities', $fields['Capabilities'] ?? array() ) : self::resolve_linked_field( 'Capabilities', $fields['Capabilities'] ?? array(), $linked_tables );
+            $hq_location_field = isset( $missing_linked['HQ Location'] ) ? self::fallback_unresolved_values( 'HQ Location', $fields['HQ Location'] ?? array() ) : self::resolve_linked_field( 'HQ Location', $fields['HQ Location'] ?? array(), $linked_tables );
             $hq_location    = $hq_location_field ? reset( $hq_location_field ) : '';
 
             $category_names = array_filter( array_merge( $categories, $sub_categories ) );
@@ -472,6 +483,34 @@ class TTP_Data {
     }
 
     /**
+     * Log missing schema fields for visibility in logs and admin.
+     *
+     * @param array $fields Field names missing from the Airtable schema.
+     */
+    private static function log_missing_schema_fields( $fields ) {
+        $fields = array_filter( (array) $fields );
+        if ( empty( $fields ) ) {
+            return;
+        }
+
+        if ( function_exists( 'sanitize_text_field' ) ) {
+            $fields = array_map( 'sanitize_text_field', $fields );
+        }
+
+        if ( function_exists( 'error_log' ) ) {
+            error_log( 'TTP_Data: Schema missing fields: ' . implode( ', ', $fields ) );
+        }
+
+        if ( function_exists( 'get_option' ) && function_exists( 'update_option' ) ) {
+            $existing = (array) get_option( 'ttp_unresolved_fields', array() );
+            foreach ( $fields as $field ) {
+                $existing[] = sprintf( 'Schema missing field: %s', $field );
+            }
+            update_option( 'ttp_unresolved_fields', $existing );
+        }
+    }
+
+    /**
      * Log unresolved Airtable record IDs for visibility in logs and admin.
      *
      * Stores a transient notice via the options API when available so admin
@@ -500,6 +539,21 @@ class TTP_Data {
             $existing[] = sprintf( '%s unresolved IDs: %s', $field, implode( ', ', $ids ) );
             update_option( 'ttp_unresolved_fields', $existing );
         }
+    }
+
+    /**
+     * Fallback handler when schema is missing for a linked field.
+     *
+     * Parses and sanitizes values, logs unresolved IDs and returns raw strings.
+     *
+     * @param string $field Field label.
+     * @param mixed  $value Raw field value.
+     * @return array Sanitized raw values.
+     */
+    private static function fallback_unresolved_values( $field, $value ) {
+        $values = array_map( 'sanitize_text_field', self::parse_record_ids( $value ) );
+        self::log_unresolved_field( $field, $values );
+        return array_values( array_filter( $values ) );
     }
 
     /**
