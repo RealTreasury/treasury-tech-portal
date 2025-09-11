@@ -13,7 +13,8 @@ if ($video_url && !wp_http_validate_url($video_url)) {
 if ($poster_url && !wp_http_validate_url($poster_url)) {
     $poster_url = '';
 }
-$enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) );
+$categories         = TTP_Data::get_categories();
+$enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->

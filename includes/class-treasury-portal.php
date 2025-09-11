@@ -66,14 +66,17 @@ class Treasury_Tech_Portal {
             true
         );
 
+        $categories = TTP_Data::get_categories();
         wp_localize_script(
             'treasury-tech-portal-js',
             'TTP_DATA',
             [
-                'rest_url'           => esc_url_raw( rest_url( 'ttp/v1/vendors' ) ),
-                'plugin_url'         => esc_url_raw( $plugin_url ),
-                'enabled_categories' => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) ),
-                'available_categories' => array_keys( TTP_CATEGORIES ),
+                'rest_url'            => esc_url_raw( rest_url( 'ttp/v1/vendors' ) ),
+                'plugin_url'          => esc_url_raw( $plugin_url ),
+                'enabled_categories'  => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) ),
+                'available_categories' => array_keys( $categories ),
+                'category_labels'     => $categories,
+                'category_icons'      => TTP_Data::get_category_icons(),
             ]
         );
     }
@@ -113,13 +116,9 @@ class Treasury_Tech_Portal {
     }
 
     private function map_category_to_bcb($portal_category) {
-        $mapping = array(
-            'CASH' => 'TMS',
-            'LITE' => 'TMS',
-            'TRMS' => 'TMS',
-        );
+        $mapping = array_fill_keys( array_keys( TTP_Data::get_categories() ), 'TMS' );
 
-        return $mapping[$portal_category] ?? 'TMS';
+        return $mapping[ $portal_category ] ?? 'TMS';
     }
 
     public function provide_sectors_to_bcb($sectors = array()) {

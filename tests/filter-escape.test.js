@@ -13,6 +13,13 @@ test('filters render escaped user input', () => {
   window.ResizeObserver = class { constructor() {} observe() {} };
   window.MutationObserver = class { constructor() {} observe() {} };
 
+  window.TTP_DATA = {
+    available_categories: ['CASH', 'LITE', 'TRMS'],
+    enabled_categories: ['CASH', 'LITE', 'TRMS'],
+    category_labels: { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' },
+    category_icons: { CASH: '💰', LITE: '⚡', TRMS: '🏢' }
+  };
+
   const origDocAdd = window.document.addEventListener.bind(window.document);
   window.document.addEventListener = (type, listener, options) => {
     if (type !== 'DOMContentLoaded') {

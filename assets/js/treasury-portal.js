@@ -217,6 +217,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 };
                 this.availableCategories = Array.isArray(window.TTP_DATA && TTP_DATA.available_categories) && TTP_DATA.available_categories.length ? TTP_DATA.available_categories : [];
                 this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : this.availableCategories;
+                this.categoryLabels = (window.TTP_DATA && TTP_DATA.category_labels) || {};
+                this.categoryIcons = (window.TTP_DATA && TTP_DATA.category_icons) || {};
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
@@ -318,9 +320,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             normalizeCategory(category) {
                 const upper = (category || '').toString().toUpperCase();
-                if (upper.includes('CASH')) return 'CASH';
-                if (upper.includes('LITE')) return 'LITE';
-                if (upper.includes('TRMS') || upper.includes('TMS')) return 'TRMS';
+                for (const slug in this.categoryLabels) {
+                    if (!Object.prototype.hasOwnProperty.call(this.categoryLabels, slug)) continue;
+                    const label = (this.categoryLabels[slug] || '').toString().toUpperCase();
+                    if (upper.includes(slug.toUpperCase()) || (label && upper.includes(label.toUpperCase()))) {
+                        return slug;
+                    }
+                }
                 return '';
             }
 
@@ -1201,11 +1207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const incomplete = containsRecordIds(tool) || tool.incomplete;
                 const warningIcon = incomplete ? '<span class="ttp-warning" title="Some data may be incomplete">⚠️</span>' : '';
 
-                const iconMap = {
-                    'TRMS': '🏢',
-                    'CASH': '💰',
-                    'LITE': '⚡'
-                };
+                const iconMap = this.categoryIcons || {};
 
                 const capabilities = tool.capabilities || [];
                 const sortedCaps = [...capabilities].sort((a, b) => a.localeCompare(b));
@@ -1226,7 +1228,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                     </div>
                                 </div>
                                 ${tool.videoUrl ? '<button type="button" class="video-indicator">\u25B6 Demo</button>' : ''}
-                                <div class="tool-type">${tool.category === 'CASH' ? 'Cash Tools' : tool.category === 'LITE' ? 'TMS-Lite' : tool.category}</div>
+                                <div class="tool-type">${this.categoryLabels[tool.category] || tool.category}</div>
                             </div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>

@@ -73,7 +73,7 @@ class TTP_Rest {
 
     public static function get_vendors($request) {
         $vendors = TTP_Data::get_all_vendors();
-        $enabled = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) );
+        $enabled = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
         $vendors = array_filter( (array) $vendors, function ( $vendor ) use ( $enabled ) {
             $vendor = (array) $vendor;
             $cat    = $vendor['category'] ?? ( $vendor['categories'][0] ?? '' );

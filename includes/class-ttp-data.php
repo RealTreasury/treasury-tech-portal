@@ -86,6 +86,78 @@ class TTP_Data {
     }
 
     /**
+     * Retrieve list of categories derived from vendor records.
+     *
+     * @return array Mapping of category slug => label.
+     */
+    public static function get_categories() {
+        $vendors    = self::get_all_vendors();
+        $categories = array();
+
+        foreach ( (array) $vendors as $vendor ) {
+            $vendor = (array) $vendor;
+
+            $slug = '';
+            if ( ! empty( $vendor['category'] ) ) {
+                $slug = strtoupper( $vendor['category'] );
+            } elseif ( ! empty( $vendor['categories'][0] ) ) {
+                $slug = strtoupper( $vendor['categories'][0] );
+            }
+
+            if ( empty( $slug ) ) {
+                continue;
+            }
+
+            $label = '';
+            if ( ! empty( $vendor['category_names'][0] ) ) {
+                $label = $vendor['category_names'][0];
+            } elseif ( ! empty( $vendor['category'] ) ) {
+                $label = $vendor['category'];
+            } else {
+                $label = $slug;
+            }
+
+            if ( ! isset( $categories[ $slug ] ) ) {
+                $categories[ $slug ] = $label;
+            }
+        }
+
+        if ( ! empty( $categories ) ) {
+            asort( $categories );
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Retrieve icon mapping for categories.
+     *
+     * @return array Mapping of category slug => icon string.
+     */
+    public static function get_category_icons() {
+        $cats  = self::get_categories();
+        $icons = array();
+
+        foreach ( $cats as $slug => $label ) {
+            switch ( $slug ) {
+                case 'CASH':
+                    $icons[ $slug ] = '💰';
+                    break;
+                case 'LITE':
+                    $icons[ $slug ] = '⚡';
+                    break;
+                case 'TRMS':
+                    $icons[ $slug ] = '🏢';
+                    break;
+                default:
+                    $icons[ $slug ] = '💼';
+            }
+        }
+
+        return $icons;
+    }
+
+    /**
      * Migration: normalise semicolon-delimited values stored in the vendor cache.
      *
      * Older caches may contain strings with semicolon separators where arrays of
@@ -889,7 +961,7 @@ class TTP_Data {
     public static function get_tools($args = []) {
         $tools = self::get_all_tools();
         if ( empty( $args['category'] ) ) {
-            $args['category'] = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) );
+            $args['category'] = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( self::get_categories() ) );
         }
 
         if (!empty($args['search'])) {
