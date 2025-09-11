@@ -286,7 +286,7 @@ foreach ($tools as $tool) {
 **Solutions**:
 1. **Data Migration Needed**: Run data migration for new properties
 2. **Validation Missing**: Add validation in `TTP_Admin::save_tool()`
-3. **Corrupted Data**: Restore from backup or refresh vendor cache
+3. **Corrupted Data**: Restore from backup or refresh vendor cache to rebuild product-field ID\u2192name mappings
 
 ### Search Results Incorrect
 **Symptoms**: Search returns wrong tools, missing expected results

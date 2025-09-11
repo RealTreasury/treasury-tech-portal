@@ -16,8 +16,8 @@ A WordPress plugin that provides an interactive interface for discovering and co
    ```
 
 ### Refreshing the Vendor Cache
-- Bump the `VENDOR_CACHE_VERSION` constant in `includes/class-ttp-data.php` when linked-record logic changes.
-- Run `wp ttp refresh-cache` or use the **Refresh Vendors** button on the Vendors admin page to rebuild cached data.
+- Bump the `VENDOR_CACHE_VERSION` constant in `includes/class-ttp-data.php` when product-field ID\u2192name mapping or other linked-record logic changes.
+- Run `wp ttp refresh-cache` or use the **Refresh Vendors** button on the Vendors admin page to rebuild cached data and product-field ID\u2192name mappings.
 
 ## Documentation
 Detailed guides and additional documentation can be found in the [docs](docs/) directory:

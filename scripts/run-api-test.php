@@ -15,7 +15,7 @@ if ( ! function_exists( 'is_wp_error' ) ) {
 }
 
 function run_api_test() {
-    // Refresh vendor cache which also resolves linked record IDs.
+    // Refresh vendor cache and rebuild product-field ID\u2192name mappings.
     $result = TTP_Data::refresh_vendor_cache();
     if ( is_wp_error( $result ) ) {
         echo 'Error: ' . $result->get_error_message() . PHP_EOL;

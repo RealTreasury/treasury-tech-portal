@@ -38,7 +38,7 @@ if ( ! TTP_IS_WPCOM && function_exists( 'register_activation_hook' ) ) {
 Treasury_Tech_Portal::instance();
 
 /**
- * Flush cached Airtable ID\u2192name maps and vendor caches.
+ * Flush cached Airtable product-field ID\u2192name maps and vendor caches.
  */
 function rt_airtable_flush_maps() {
     global $wpdb;
