@@ -427,10 +427,32 @@ class TTP_Data {
      * @return array Array of trimmed values.
      */
     private static function parse_record_ids( $value ) {
-        if ( is_string( $value ) ) {
-            $value = explode( ',', $value );
+        $result = array();
+
+        foreach ( (array) $value as $item ) {
+            if ( is_array( $item ) ) {
+                if ( isset( $item['name'] ) ) {
+                    $result[] = trim( $item['name'] );
+                } elseif ( isset( $item['Name'] ) ) {
+                    $result[] = trim( $item['Name'] );
+                } elseif ( isset( $item['id'] ) ) {
+                    $result[] = trim( $item['id'] );
+                } else {
+                    $result   = array_merge( $result, self::parse_record_ids( $item ) );
+                }
+            } elseif ( is_string( $item ) ) {
+                foreach ( explode( ',', $item ) as $part ) {
+                    $part = trim( $part );
+                    if ( '' !== $part ) {
+                        $result[] = $part;
+                    }
+                }
+            }
         }
-        return array_filter( array_map( 'trim', (array) $value ) );
+
+        return array_values( array_filter( $result, function ( $val ) {
+            return $val !== '';
+        } ) );
     }
 
     /**
@@ -441,7 +463,11 @@ class TTP_Data {
      */
     private static function contains_record_ids( $values ) {
         foreach ( (array) $values as $value ) {
-            if ( is_string( $value ) && strpos( ltrim( $value ), 'rec' ) === 0 ) {
+            if ( is_array( $value ) ) {
+                if ( self::contains_record_ids( $value ) ) {
+                    return true;
+                }
+            } elseif ( is_string( $value ) && strpos( ltrim( $value ), 'rec' ) === 0 ) {
                 return true;
             }
         }
