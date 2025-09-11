@@ -170,9 +170,6 @@ this.CATEGORY_TAGS = {
     border: 1px solid rgba(255, 165, 0, 0.2);
 }
 
-.treasury-portal .tool-newcat .tool-icon {
-    background: linear-gradient(135deg, rgba(255, 165, 0, 0.8), rgba(255, 140, 0, 0.8));
-}
 ```
 
 ### Adding Custom Modal Content

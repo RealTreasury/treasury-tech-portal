@@ -218,7 +218,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.availableCategories = Array.isArray(window.TTP_DATA && TTP_DATA.available_categories) && TTP_DATA.available_categories.length ? TTP_DATA.available_categories : [];
                 this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : this.availableCategories;
                 this.categoryLabels = (window.TTP_DATA && TTP_DATA.category_labels) || {};
-                this.categoryIcons = (window.TTP_DATA && TTP_DATA.category_icons) || {};
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
@@ -327,7 +326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         return slug;
                     }
                 }
-                return '';
+                return upper;
             }
 
             async fetchTools() {
@@ -1207,8 +1206,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const incomplete = containsRecordIds(tool) || tool.incomplete;
                 const warningIcon = incomplete ? '<span class="ttp-warning" title="Some data may be incomplete">⚠️</span>' : '';
 
-                const iconMap = this.categoryIcons || {};
-
                 const capabilities = tool.capabilities || [];
                 const sortedCaps = [...capabilities].sort((a, b) => a.localeCompare(b));
                 const displayCaps = sortedCaps.slice(0, 3);
@@ -1223,9 +1220,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                                         <span class="tool-name-title">${tool.name}</span>${warningIcon}
                                     </div>
                                     ${tool.logoUrl ? `<a href="${tool.websiteUrl || '#'}" target="_blank" rel="noopener noreferrer" class="tool-logo-link" ${!tool.websiteUrl ? 'style="pointer-events: none; cursor: default;"' : ''}><img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo"></a>` : ''}
-                                    <div class="tool-actions">
-                                        <div class="tool-icon">${iconMap[tool.category]}</div>
-                                    </div>
                                 </div>
                                 ${tool.videoUrl ? '<button type="button" class="video-indicator">\u25B6 Demo</button>' : ''}
                                 <div class="tool-type">${this.categoryLabels[tool.category] || tool.category}</div>
