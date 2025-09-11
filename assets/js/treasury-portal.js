@@ -1406,6 +1406,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 container.style.display = 'flex';
                 const createBtn = (label, value = '') => {
                     const btn = document.createElement('button');
+                    btn.type = 'button';
                     btn.className = 'filter-tab';
                     btn.textContent = label;
                     btn.dataset.subcategory = value;
