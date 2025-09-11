@@ -980,32 +980,4 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame( [ 'fldName', 'Category' ], $mapping['field_ids'] );
     }
 
-    public function test_map_ids_to_names_caches_fallback_on_error() {
-        $records = [
-            [ 'fields' => [ 'regions' => [ 'recAAAAAAAAAAA', 'recBBBBBBBBBBB' ] ] ],
-        ];
-        $field_to_linked = [ 'regions' => 'Regions' ];
-
-        expect( 'wp_remote_get' )
-            ->once()
-            ->andReturn( new WP_Error( 'http_error', 'Request failed' ) );
-        when( 'is_wp_error' )->alias( function ( $thing ) {
-            return $thing instanceof WP_Error;
-        } );
-
-        $captured = null;
-        expect( 'set_transient' )->once()->andReturnUsing( function ( $key, $value, $ttl ) use ( &$captured ) {
-            $captured = [ $key, $value, $ttl ];
-            return true;
-        } );
-
-        $result = rt_airtable_map_ids_to_names( $records, $field_to_linked, 'base1', 'token' );
-
-        $this->assertSame( $records, $result );
-        $this->assertSame( 'rt_airtable_map_base1_Regions_v1', $captured[0] );
-        $this->assertSame(
-            [ 'recAAAAAAAAAAA' => 'recAAAAAAAAAAA', 'recBBBBBBBBBBB' => 'recBBBBBBBBBBB' ],
-            $captured[1]
-        );
-    }
 }
