@@ -43,14 +43,14 @@ class TTP_Rest_Test extends TestCase {
 
     public function test_tools_endpoint_returns_vendor_with_new_fields() {
         $vendor = [
-            'name'            => 'Sample Product',
-            'video_url'       => 'https://example.com/video',
-            'logo_url'        => 'https://example.com/logo.png',
-            'categories'      => ['Finance'],
-            'parent_category' => 'Cash',
-            'sub_categories'  => ['Payments'],
-            'category_names'  => ['Finance', 'Cash', 'Payments'],
-            'regions'         => ['North America'],
+            'name'           => 'Sample Product',
+            'video_url'      => 'https://example.com/video',
+            'logo_url'       => 'https://example.com/logo.png',
+            'categories'     => ['Finance'],
+            'category'       => 'Cash',
+            'sub_categories' => ['Payments'],
+            'category_names' => ['Finance', 'Cash', 'Payments'],
+            'regions'        => ['North America'],
         ];
         \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($vendor) {
             return [ $vendor ];
@@ -66,14 +66,14 @@ class TTP_Rest_Test extends TestCase {
         $this->assertIsArray($response);
         $this->assertArrayHasKey('video_url', $response[0]);
         $this->assertArrayHasKey('logo_url', $response[0]);
-        $this->assertArrayHasKey('parent_category', $response[0]);
+        $this->assertArrayHasKey('category', $response[0]);
         $this->assertArrayHasKey('sub_categories', $response[0]);
         $this->assertArrayHasKey('categories', $response[0]);
         $this->assertArrayHasKey('category_names', $response[0]);
         $this->assertArrayHasKey('regions', $response[0]);
         $this->assertSame('https://example.com/video', $response[0]['video_url']);
         $this->assertSame('https://example.com/logo.png', $response[0]['logo_url']);
-        $this->assertSame('Cash', $response[0]['parent_category']);
+        $this->assertSame('Cash', $response[0]['category']);
         $this->assertSame(['Payments'], $response[0]['sub_categories']);
         $this->assertSame(['Finance'], $response[0]['categories']);
         $this->assertSame(['Finance', 'Cash', 'Payments'], $response[0]['category_names']);
@@ -91,9 +91,9 @@ class TTP_Rest_Test extends TestCase {
             private $params;
             public function __construct() {
                 $this->params = [
-                    'region'          => 'North America',
-                    'parent_category' => 'Cash',
-                    'sub_category'    => 'Payments',
+                    'region'       => 'North America',
+                    'category'     => 'Cash',
+                    'sub_category' => 'Payments',
                 ];
             }
             public function get_param($key) {
@@ -104,7 +104,7 @@ class TTP_Rest_Test extends TestCase {
         TTP_Rest::get_tools($request);
 
         $this->assertSame(['North America'], $captured['region']);
-        $this->assertSame(['Cash'], $captured['parent_category']);
+        $this->assertSame(['Cash'], $captured['category']);
         $this->assertSame(['Payments'], $captured['sub_category']);
     }
 

@@ -305,23 +305,23 @@ class TTP_Airbase_Test extends TestCase {
 
         \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
             return [
-                'Product Name'    => 'fldProd',
-                'Parent Category' => 'fldParent',
+                'Product Name' => 'fldProd',
+                'Category'     => 'fldCat',
             ];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=Product%20Name&fields[]=Parent%20Category';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=Product%20Name&fields[]=Category';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
                 'response' => ['code' => 200],
                 'body'     => json_encode([
-                    'records' => [ [ 'fields' => [ 'Product Name' => 'P', 'Parent Category' => 'C' ] ] ],
+                    'records' => [ [ 'fields' => [ 'Product Name' => 'P', 'Category' => 'C' ] ] ],
                 ]),
             ];
         });
 
-        $records = TTP_Airbase::get_vendors(['Product Name', 'Parent Category']);
+        $records = TTP_Airbase::get_vendors(['Product Name', 'Category']);
         $this->assertIsArray($records);
     }
 

@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const url = new URL(TTP_DATA.rest_url);
                     const { regions = [], categories = [], subcategories = [] } = this.advancedFilters || {};
                     regions.forEach(r => url.searchParams.append('region', r));
-                    categories.forEach(c => url.searchParams.append('parent_category', c));
+                    categories.forEach(c => url.searchParams.append('category', c));
                     subcategories.forEach(s => url.searchParams.append('sub_category', s));
                     const response = await fetch(url.toString());
                     const data = await response.json();
@@ -344,18 +344,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     };
                     this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
-                        const parentCategory = Array.isArray(vendor.parent_category) ? vendor.parent_category[0] : (vendor.parent_category || '');
-                        const category = this.normalizeCategory(parentCategory || vendor.category);
+                        const rawCategory = Array.isArray(vendor.category) ? vendor.category[0] : (vendor.category || (Array.isArray(vendor.categories) ? vendor.categories[0] : ''));
+                        const category = this.normalizeCategory(rawCategory);
                         const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
                         const regions = Array.isArray(vendor.regions) ? vendor.regions.map(r => r.trim()) : [];
-                        addValue(allCategories, parentCategory);
+                        addValue(allCategories, rawCategory);
                         subCategories.forEach(sc => addValue(allSubcategories, sc));
                         regions.forEach(r => addValue(allRegions, r));
                         return {
                             name: vendor.name || '',
                             desc: vendor.status || '',
                             category,
-                            parentCategory,
+                            categoryName: rawCategory,
                             subCategories,
                             regions,
                             videoUrl: vendor.video_url || '',
@@ -1074,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     tools = tools.filter(t => (t.regions || []).some(r => regions.includes(r)));
                 }
                 if (categories.length) {
-                    tools = tools.filter(t => categories.includes(t.parentCategory));
+                    tools = tools.filter(t => categories.includes(t.categoryName));
                 }
                 if (subcategories.length) {
                     tools = tools.filter(t => (t.subCategories || []).some(sc => subcategories.includes(sc)));

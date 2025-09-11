@@ -41,13 +41,12 @@ GET /wp-json/ttp/v1/tools
 ```
 
 #### Parameters
-- `category` (string): Filter by category (CASH, LITE, TRMS, or ALL)
+- `category` (string|string[]): Filter by category
 - `search` (string): Search term for name, description, features
 - `has_video` (boolean): Filter tools that have video demonstrations
 - `per_page` (integer): Number of tools per page (default: all)
 - `page` (integer): Page number for pagination (default: 1)
 - `region` (string|string[]): Limit to tools available in the specified region
-- `parent_category` (string|string[]): Filter by parent category
 - `sub_category` (string|string[]): Filter by sub category
 
 #### Response Format
@@ -55,8 +54,7 @@ GET /wp-json/ttp/v1/tools
 [
   {
     "name": "Kyriba",
-    "category": "TRMS",
-    "parent_category": "Cash",
+    "category": "Cash",
     "sub_categories": ["Payments"],
     "desc": "Market-leading cloud treasury platform...",
     "features": ["AI-driven cash forecasting", "Real-time risk analytics"],
@@ -68,7 +66,7 @@ GET /wp-json/ttp/v1/tools
 ]
 ```
 
-Each tool may also include `parent_category`, `sub_categories`, `category_names`, and `regions` fields when available. `parent_category` and `sub_categories` return human-readable category names rather than record IDs.
+Each tool may also include `sub_categories`, `category_names`, and `regions` fields when available. `category` and `sub_categories` return human-readable category names rather than record IDs.
 
 #### Example Requests
 ```javascript
@@ -85,7 +83,7 @@ fetch('/wp-json/ttp/v1/tools?search=AI')
 fetch('/wp-json/ttp/v1/tools?has_video=1&per_page=10&page=1')
 
 // Filter by region and categories
-fetch('/wp-json/ttp/v1/tools?region=EMEA&parent_category=Cash&sub_category=Payments')
+fetch('/wp-json/ttp/v1/tools?region=EMEA&category=Cash&sub_category=Payments')
 ```
 
 

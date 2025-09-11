@@ -116,8 +116,7 @@ following field names are accepted (including their common synonyms):
   `capability_ids`
 - **Hosted Type** – `hosted_type`, `hosted_types`, `hosted_type_id`,
   `hosted_type_ids`
-- **Category** – `category`, `categories`, `category_id`, `category_ids`,
-  `parent_category`, `parent_categories`, `parent_category_id`, `parent_category_ids`
+- **Category** – `category`, `categories`, `category_id`, `category_ids`
 
 These variations are normalised before attempting to resolve linked records.
 
@@ -346,7 +345,7 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?records[]=
 ## Additional Notes
 - Use `typecast=true` to let Airtable create new select options automatically.
 - The API only accepts URLs shorter than 16,000 characters.
-- Values for `Parent Category (from Sub Categories)` are computed and cannot be manually set.
+- Values for `Category (from Sub Categories)` are computed and cannot be manually set.
 
 ## Sub Categories Table
 
@@ -363,7 +362,7 @@ interchangeable in API requests.
 | `Linked Products` (`fld5Oxt2B7NPkZNxc`) | linked records to **Products** table |
 | `Capabilities` (`fldQXnjhbuiZS0vJV`) | linked records to **Capabilities** table |
 | `Product Count` (`fldpeAWrpXwnkTbnC`) | count | auto-calculated number of linked products |
-| `Count (Parent Category)` (`fldV3e96JCcwfpdus`) | count | auto-calculated number of parent categories |
+| `Count (Category)` (`fldV3e96JCcwfpdus`) | count | auto-calculated number of categories |
 | `Region` (`flda8n6TBoZ9zn5vu`) | linked records to **Regions** table |
 
 ### Listing Sub Categories
@@ -387,7 +386,7 @@ curl https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq/RECORD_ID \
 
 ### Creating Sub Categories
 
-Values for `Product Count` and `Count (Parent Category)` are computed and
+Values for `Product Count` and `Count (Category)` are computed and
 cannot be set directly.
 
 ```bash

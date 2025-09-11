@@ -55,11 +55,6 @@ class TTP_Rest {
             $args['region'] = array_map('sanitize_text_field', (array) $region);
         }
 
-        $parent_category = $request->get_param('parent_category');
-        if (!empty($parent_category)) {
-            $args['parent_category'] = array_map('sanitize_text_field', (array) $parent_category);
-        }
-
         $sub_category = $request->get_param('sub_category');
         if (!empty($sub_category)) {
             $args['sub_category'] = array_map('sanitize_text_field', (array) $sub_category);

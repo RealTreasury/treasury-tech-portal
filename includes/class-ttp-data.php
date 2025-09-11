@@ -112,14 +112,12 @@ class TTP_Data {
      */
     private static function vendors_need_resolution( $vendors ) {
         $aliases = array(
-            'region'            => 'regions',
-            'sub_category'      => 'sub_categories',
-            'capability'        => 'capabilities',
-            'hosted_types'      => 'hosted_type',
-            'domains'           => 'domain',
-            'category'         => 'categories',
-            'parent_categories' => 'parent_category',
-            'linked_vendor'     => 'vendor',
+            'region'        => 'regions',
+            'sub_category'  => 'sub_categories',
+            'capability'    => 'capabilities',
+            'hosted_types'  => 'hosted_type',
+            'domains'       => 'domain',
+            'linked_vendor' => 'vendor',
         );
 
         foreach ( (array) $vendors as $vendor ) {
@@ -134,7 +132,7 @@ class TTP_Data {
                 $normalized[ $normalized_key ] = $value;
             }
 
-            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category', 'vendor', 'categories' );
+            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
             foreach ( $fields as $field ) {
                 if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
                     return true;
@@ -160,7 +158,6 @@ class TTP_Data {
             'Regions',
             'Category',
             'Sub Categories',
-            'Parent Category',
             'Capabilities',
             'HQ Location',
             'Founded Year',
@@ -254,9 +251,8 @@ class TTP_Data {
             'Linked Vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
             'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
             'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'      => array( 'table' => 'Category',      'primary_field' => 'Name' ),
+            'Category'       => array( 'table' => 'Category',      'primary_field' => 'Name' ),
             'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Parent Category' => array( 'table' => 'Category',      'primary_field' => 'Name' ),
             'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
         );
 
@@ -379,6 +375,7 @@ class TTP_Data {
 
             $category_field = self::parse_record_ids( $fields['Category'] ?? array() );
             $categories     = array();
+            $category       = '';
             if ( self::contains_record_ids( $category_field ) ) {
                 $original_category_ids = $category_field;
                 $resolved               = TTP_Airbase::resolve_linked_records( $linked_tables['Category']['table'], $category_field, $linked_tables['Category']['primary_field'] );
@@ -399,6 +396,7 @@ class TTP_Data {
             } else {
                 $categories = array_map( 'sanitize_text_field', $category_field );
             }
+            $category = $categories ? reset( $categories ) : '';
 
             $sub_field      = self::parse_record_ids( $fields['Sub Categories'] ?? array() );
             $sub_categories = array();
@@ -446,30 +444,7 @@ class TTP_Data {
                 $capabilities = array_map( 'sanitize_text_field', $cap_field );
             }
 
-            $parent_field    = self::parse_record_ids( $fields['Parent Category'] ?? array() );
-            $parent_category = '';
-            if ( self::contains_record_ids( $parent_field ) ) {
-                $original_parent_ids = $parent_field;
-                $resolved             = TTP_Airbase::resolve_linked_records( $linked_tables['Parent Category']['table'], $parent_field, $linked_tables['Parent Category']['primary_field'] );
-                if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Parent Category: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Parent Category', $original_parent_ids );
-                } else {
-                    if ( count( (array) $resolved ) < count( (array) $original_parent_ids ) ) {
-                        $missing = array_slice( (array) $original_parent_ids, count( (array) $resolved ) );
-                        self::log_unresolved_field( 'Parent Category', $missing );
-                    }
-                    $parent_field    = array_map( 'sanitize_text_field', (array) $resolved );
-                    $parent_category = $parent_field ? reset( $parent_field ) : '';
-                }
-            } else {
-                $parent_field    = array_map( 'sanitize_text_field', (array) $parent_field );
-                $parent_category = $parent_field ? reset( $parent_field ) : '';
-            }
-
-            $category_names = array_filter( array_merge( $categories, $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
+            $category_names = array_filter( array_merge( $categories, $sub_categories ) );
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
@@ -483,7 +458,7 @@ class TTP_Data {
                 'regions'         => $regions,
                 'categories'      => $categories,
                 'sub_categories'  => $sub_categories,
-                'parent_category' => $parent_category,
+                'category'        => $category,
                 'category_names'  => $category_names,
                 'capabilities'    => $capabilities,
                 'logo_url'        => self::normalize_url( $fields['Logo URL'] ?? '' ),
@@ -675,12 +650,6 @@ class TTP_Data {
     public static function get_tools($args = []) {
         $tools = self::get_all_tools();
 
-        if (!empty($args['category']) && $args['category'] !== 'ALL') {
-            $tools = array_filter($tools, function ($tool) use ($args) {
-                return isset($tool['category']) && $tool['category'] === $args['category'];
-            });
-        }
-
         if (!empty($args['search'])) {
             $search = strtolower($args['search']);
             $tools = array_filter($tools, function ($tool) use ($search) {
@@ -703,10 +672,10 @@ class TTP_Data {
             });
         }
 
-        if (!empty($args['parent_category'])) {
-            $parents = (array) $args['parent_category'];
+        if (!empty($args['category'])) {
+            $parents = (array) $args['category'];
             $tools   = array_filter($tools, function ($tool) use ($parents) {
-                return isset($tool['parent_category']) && in_array($tool['parent_category'], $parents, true);
+                return isset($tool['category']) && in_array($tool['category'], $parents, true);
             });
         }
 
