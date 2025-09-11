@@ -372,7 +372,7 @@ class TTP_Airbase_Test extends TestCase {
 
     public function test_get_table_schema_returns_cached_value() {
         when('get_transient')->alias(function ($key) {
-            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'Name' => 'fldName' ] ] : false;
+            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'fields' => [ 'Name' => 'fldName' ], 'primary' => [ 'id' => 'fldName', 'name' => 'Name' ] ] ] : false;
         });
 
         expect('wp_remote_get')->never();
@@ -413,9 +413,10 @@ class TTP_Airbase_Test extends TestCase {
         $body = json_encode([
             'tables' => [
                 [
-                    'id' => 'tblXYZ',
-                    'name' => 'Products',
-                    'fields' => [
+                    'id'             => 'tblXYZ',
+                    'name'           => 'Products',
+                    'primaryFieldId' => 'fldName',
+                    'fields'         => [
                         [ 'name' => 'Name', 'id' => 'fldName' ],
                         [ 'name' => 'Status', 'id' => 'fldStatus' ],
                     ],
@@ -432,8 +433,14 @@ class TTP_Airbase_Test extends TestCase {
         expect('set_transient')->once()->andReturnUsing(function ($key, $value, $ttl) use ($self) {
             $self->assertSame('ttp_airbase_schema', $key);
             $self->assertSame(DAY_IN_SECONDS, $ttl);
-            $self->assertSame([ 'Name' => 'fldName', 'Status' => 'fldStatus' ], $value['tblXYZ']);
-            $self->assertSame($value['tblXYZ'], $value['Products']);
+            $self->assertSame(
+                [
+                    'fields'  => [ 'Name' => 'fldName', 'Status' => 'fldStatus' ],
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                ],
+                $value['tblXYZ']
+            );
+            $self->assertSame( $value['tblXYZ'], $value['Products'] );
             return true;
         });
 
@@ -554,7 +561,7 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => $body,
         ]);
 
-        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2']);
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2'], 'Name');
         $this->assertSame(['First', 'Second'], $values);
     }
 
@@ -614,7 +621,7 @@ class TTP_Airbase_Test extends TestCase {
             );
         });
 
-        $values   = TTP_Airbase::resolve_linked_records( 'Vendors', $ids );
+        $values   = TTP_Airbase::resolve_linked_records( 'Vendors', $ids, 'Name' );
         $expected = array();
         for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
             $expected[] = 'Name' . $i;
@@ -627,7 +634,7 @@ class TTP_Airbase_Test extends TestCase {
             return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
         });
 
-        $result = TTP_Airbase::resolve_linked_records('Vendors', []);
+        $result = TTP_Airbase::resolve_linked_records('Vendors', [], 'Name');
         $this->assertSame([], $result);
     }
 
@@ -656,9 +663,54 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => '',
         ]);
 
-        $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1']);
+        $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Name');
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('api_error', $result->get_error_code());
+    }
+
+    public function test_resolve_linked_records_uses_schema_primary_when_missing() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ( $option ) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ( $thing ) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ( $response ) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ( $response ) {
+            return $response['body'];
+        });
+
+        when('get_transient')->alias(function ( $key ) {
+            return 'ttp_airbase_schema' === $key ? [
+                'Vendors' => [
+                    'fields'  => [ 'Renamed' => 'fld123' ],
+                    'primary' => [ 'id' => 'fld123', 'name' => 'Renamed' ],
+                ],
+            ] : false;
+        });
+
+        $self = $this;
+        expect('wp_remote_get')->once()->andReturnUsing(function ( $url ) use ( $self ) {
+            $self->assertStringContainsString('fields[]=fld123', $url);
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => json_encode( [ 'records' => [ [ 'fields' => [ 'Renamed' => 'Value1' ] ] ] ] ),
+            ];
+        });
+
+        $values = TTP_Airbase::resolve_linked_records( 'Vendors', [ 'rec1' ] );
+        $this->assertSame( [ 'Value1' ], $values );
     }
 
     public function test_get_table_schema_fetches_and_caches_when_missing() {
@@ -692,9 +744,10 @@ class TTP_Airbase_Test extends TestCase {
         $body = json_encode([
             'tables' => [
                 [
-                    'id' => 'tblXYZ',
-                    'name' => 'Products',
-                    'fields' => [ [ 'name' => 'Name', 'id' => 'fldName' ] ],
+                    'id'             => 'tblXYZ',
+                    'name'           => 'Products',
+                    'primaryFieldId' => 'fldName',
+                    'fields'         => [ [ 'name' => 'Name', 'id' => 'fldName' ] ],
                 ],
             ],
         ]);
@@ -708,7 +761,13 @@ class TTP_Airbase_Test extends TestCase {
         expect('set_transient')->once()->andReturnUsing(function ($key, $value, $ttl) use ($self) {
             $self->assertSame('ttp_airbase_schema', $key);
             $self->assertSame(DAY_IN_SECONDS, $ttl);
-            $self->assertSame([ 'Name' => 'fldName' ], $value['tblXYZ']);
+            $self->assertSame(
+                [
+                    'fields'  => [ 'Name' => 'fldName' ],
+                    'primary' => [ 'id' => 'fldName', 'name' => 'Name' ],
+                ],
+                $value['tblXYZ']
+            );
             return true;
         });
 

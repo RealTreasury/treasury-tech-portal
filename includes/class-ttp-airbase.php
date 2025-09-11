@@ -233,8 +233,8 @@ class TTP_Airbase {
         }
 
         $cached = get_transient( 'ttp_airbase_schema' );
-        if ( is_array( $cached ) && isset( $cached[ $table_id ] ) ) {
-            return $cached[ $table_id ];
+        if ( is_array( $cached ) && isset( $cached[ $table_id ]['fields'] ) ) {
+            return $cached[ $table_id ]['fields'];
         }
 
         $token = get_option( self::OPTION_TOKEN );
@@ -297,29 +297,83 @@ class TTP_Airbase {
 
         $schemas = array();
         foreach ( $data['tables'] as $table ) {
-            $map = array();
+            $map          = array();
+            $primary_id   = isset( $table['primaryFieldId'] ) ? $table['primaryFieldId'] : '';
+            $primary_name = '';
+
             if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
                 foreach ( $table['fields'] as $field ) {
                     if ( isset( $field['name'], $field['id'] ) ) {
                         $map[ $field['name'] ] = $field['id'];
+                        if ( $field['id'] === $primary_id ) {
+                            $primary_name = $field['name'];
+                        }
                     }
                 }
             }
+
+            $entry = array(
+                'fields'  => $map,
+                'primary' => array(
+                    'id'   => $primary_id,
+                    'name' => $primary_name,
+                ),
+            );
+
             if ( isset( $table['id'] ) ) {
-                $schemas[ $table['id'] ] = $map;
+                $schemas[ $table['id'] ] = $entry;
             }
             if ( isset( $table['name'] ) ) {
-                $schemas[ $table['name'] ] = $map;
+                $schemas[ $table['name'] ] = $entry;
             }
         }
 
         set_transient( 'ttp_airbase_schema', $schemas, DAY_IN_SECONDS );
 
-        if ( isset( $schemas[ $table_id ] ) ) {
-            return $schemas[ $table_id ];
+        if ( isset( $schemas[ $table_id ]['fields'] ) ) {
+            return $schemas[ $table_id ]['fields'];
         }
 
         return new WP_Error( 'table_not_found', __( 'Specified Airbase table not found in schema.', 'treasury-tech-portal' ) );
+    }
+
+    /**
+     * Retrieve the primary field details for a given table.
+     *
+     * Uses cached schema data when available to avoid additional network
+     * requests. The returned array contains both the field ID and current
+     * name. Results are cached in a static property for subsequent lookups
+     * within the same request.
+     *
+     * @param string $table_id Table name or ID.
+     *
+     * @return array|WP_Error Array with 'id' and 'name' keys or WP_Error on failure.
+     */
+    public static function get_primary_field( $table_id ) {
+        static $cache = array();
+
+        if ( isset( $cache[ $table_id ] ) ) {
+            return $cache[ $table_id ];
+        }
+
+        $schema = get_transient( 'ttp_airbase_schema' );
+        if ( is_array( $schema ) && isset( $schema[ $table_id ]['primary'] ) ) {
+            $cache[ $table_id ] = $schema[ $table_id ]['primary'];
+            return $cache[ $table_id ];
+        }
+
+        $result = self::get_table_schema( $table_id );
+        if ( is_wp_error( $result ) ) {
+            return $result;
+        }
+
+        $schema = get_transient( 'ttp_airbase_schema' );
+        if ( is_array( $schema ) && isset( $schema[ $table_id ]['primary'] ) ) {
+            $cache[ $table_id ] = $schema[ $table_id ]['primary'];
+            return $cache[ $table_id ];
+        }
+
+        return new WP_Error( 'primary_field_not_found', __( 'Primary field not found for table.', 'treasury-tech-portal' ) );
     }
 
     /**
@@ -335,7 +389,7 @@ class TTP_Airbase {
      *
      * @return array|WP_Error Array of record field values or WP_Error on failure.
      */
-    public static function resolve_linked_records( $table_id, $ids, $primary_field = 'Name' ) {
+    public static function resolve_linked_records( $table_id, $ids, $primary_field = '' ) {
         $token = get_option( self::OPTION_TOKEN );
         if ( empty( $token ) ) {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
@@ -371,7 +425,17 @@ class TTP_Airbase {
             return new WP_Error( 'invalid_api_url', __( 'Invalid Airbase API URL.', 'treasury-tech-portal' ) );
         }
 
-        $primary_field = sanitize_text_field( $primary_field );
+        if ( empty( $primary_field ) ) {
+            $primary = self::get_primary_field( $table_id );
+            if ( is_wp_error( $primary ) ) {
+                return $primary;
+            }
+            $query_field  = sanitize_text_field( $primary['id'] ? $primary['id'] : $primary['name'] );
+            $result_field = $primary['name'] ? $primary['name'] : $primary['id'];
+        } else {
+            $query_field  = sanitize_text_field( $primary_field );
+            $result_field = $query_field;
+        }
 
         $args = array(
             'headers' => array(
@@ -391,7 +455,7 @@ class TTP_Airbase {
             }
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $url      = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
+            $url      = $endpoint . '?fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
             $response = self::request_with_backoff( $url, $args );
 
             if ( is_wp_error( $response ) ) {
@@ -411,8 +475,10 @@ class TTP_Airbase {
 
             if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
                 foreach ( $data['records'] as $record ) {
-                    if ( isset( $record['fields'][ $primary_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                    if ( isset( $record['fields'][ $result_field ] ) ) {
+                        $values[] = sanitize_text_field( $record['fields'][ $result_field ] );
+                    } elseif ( isset( $record['fields'][ $query_field ] ) ) {
+                        $values[] = sanitize_text_field( $record['fields'][ $query_field ] );
                     }
                 }
             }
