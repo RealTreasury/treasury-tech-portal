@@ -341,10 +341,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const parentCategory = Array.isArray(vendor.parent_category) ? vendor.parent_category[0] : (vendor.parent_category || '');
                         const category = this.normalizeCategory(parentCategory || vendor.category);
                         const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
-                        const regions = Array.isArray(vendor.regions) ? vendor.regions : [];
+                        const regions = Array.isArray(vendor.regions) ? vendor.regions.map(r => r.trim()) : [];
                         if (parentCategory) allCategories.add(parentCategory);
                         subCategories.forEach(sc => allSubcategories.add(sc));
-                        regions.forEach(r => allRegions.add(r));
+                        regions.forEach(r => { if (r) allRegions.add(r); });
                         return {
                             name: vendor.name || '',
                             desc: vendor.status || '',
