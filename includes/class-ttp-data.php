@@ -105,6 +105,18 @@ class TTP_Data {
     }
 
     /**
+     * Normalize a field key to lowercase snake_case.
+     *
+     * @param string $key Raw field key.
+     * @return string Normalized key.
+     */
+    private static function normalize_field_key( $key ) {
+        $key = strtolower( (string) $key );
+        $key = preg_replace( '/[^a-z0-9]+/', '_', $key );
+        return trim( $key, '_' );
+    }
+
+    /**
      * Determine if vendor data contains unresolved record IDs.
      *
      * @param array $vendors Vendor records to inspect.
@@ -124,7 +136,7 @@ class TTP_Data {
             $normalized = array();
 
             foreach ( (array) $vendor as $key => $value ) {
-                $normalized_key = strtolower( str_replace( ' ', '_', $key ) );
+                $normalized_key = self::normalize_field_key( $key );
                 $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
                 if ( isset( $aliases[ $normalized_key ] ) ) {
                     $normalized_key = $aliases[ $normalized_key ];
@@ -164,6 +176,11 @@ class TTP_Data {
             'Founders',
         );
 
+        $normalized_field_names = array();
+        foreach ( $field_names as $name ) {
+            $normalized_field_names[ self::normalize_field_key( $name ) ] = $name;
+        }
+
         $schema     = TTP_Airbase::get_table_schema();
         $schema_map = array();
         $field_ids  = array();
@@ -192,7 +209,8 @@ class TTP_Data {
             if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
                 $mapped = array();
                 foreach ( $record['fields'] as $key => $value ) {
-                    $mapped[ isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key ] = $value;
+                    $field_name                   = isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key;
+                    $mapped[ self::normalize_field_key( $field_name ) ] = $value;
                 }
                 $record['fields'] = $mapped;
             }
@@ -206,7 +224,11 @@ class TTP_Data {
             }
         }
 
-        $missing = array_diff( $field_names, $present_keys );
+        $missing_keys = array_diff( array_keys( $normalized_field_names ), $present_keys );
+        $missing      = array();
+        foreach ( $missing_keys as $key ) {
+            $missing[] = $normalized_field_names[ $key ];
+        }
         if ( ! empty( $missing ) ) {
             $field_map   = $schema_map;
             $missing_ids = array();
@@ -247,20 +269,20 @@ class TTP_Data {
         }
 
         $linked_tables = array(
-            'Regions'        => array( 'table' => 'Regions',        'primary_field' => 'Name' ),
-            'Linked Vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
-            'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'table' => 'Category',      'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'regions'        => array( 'table' => 'Regions',        'primary_field' => 'Name' ),
+            'linked_vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
+            'hosted_type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'category'       => array( 'table' => 'Category',      'primary_field' => 'Name' ),
+            'sub_categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
         );
 
         $vendors = array();
         foreach ($records as $record) {
             $fields = isset($record['fields']) && is_array($record['fields']) ? $record['fields'] : $record;
 
-            $regions_field = self::parse_record_ids( $fields['Regions'] ?? array() );
+            $regions_field = self::parse_record_ids( $fields['regions'] ?? array() );
             $regions       = array();
             $region_ids    = array();
 
@@ -276,7 +298,7 @@ class TTP_Data {
             }
 
             if ( ! empty( $region_ids ) ) {
-                $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions']['table'], $region_ids, $linked_tables['Regions']['primary_field'] );
+                $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['regions']['table'], $region_ids, $linked_tables['regions']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         $ids = implode( ', ', array_map( 'sanitize_text_field', $region_ids ) );
@@ -305,11 +327,11 @@ class TTP_Data {
 
             $regions = array_values( array_filter( $regions ) );
 
-            $vendor_field = self::parse_record_ids( $fields['Linked Vendor'] ?? array() );
+            $vendor_field = self::parse_record_ids( $fields['linked_vendor'] ?? array() );
             $vendor_name  = '';
             if ( self::contains_record_ids( $vendor_field ) ) {
                 $original_vendor_ids = $vendor_field;
-                $resolved             = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor']['table'], $vendor_field, $linked_tables['Linked Vendor']['primary_field'] );
+                $resolved             = TTP_Airbase::resolve_linked_records( $linked_tables['linked_vendor']['table'], $vendor_field, $linked_tables['linked_vendor']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Linked Vendor: ' . $resolved->get_error_message() );
@@ -328,11 +350,11 @@ class TTP_Data {
                 $vendor_name  = $vendor_field ? reset( $vendor_field ) : '';
             }
 
-            $hosted_field = self::parse_record_ids( $fields['Hosted Type'] ?? array() );
+            $hosted_field = self::parse_record_ids( $fields['hosted_type'] ?? array() );
             $hosted_type  = array();
             if ( self::contains_record_ids( $hosted_field ) ) {
                 $original_hosted_ids = $hosted_field;
-                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Hosted Type']['table'], $hosted_field, $linked_tables['Hosted Type']['primary_field'] );
+                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['hosted_type']['table'], $hosted_field, $linked_tables['hosted_type']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Hosted Type: ' . $resolved->get_error_message() );
@@ -350,11 +372,11 @@ class TTP_Data {
                 $hosted_type = array_map( 'sanitize_text_field', $hosted_field );
             }
 
-            $domain_field = self::parse_record_ids( $fields['Domain'] ?? array() );
+            $domain_field = self::parse_record_ids( $fields['domain'] ?? array() );
             $domain       = array();
             if ( self::contains_record_ids( $domain_field ) ) {
                 $original_domain_ids = $domain_field;
-                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Domain']['table'], $domain_field, $linked_tables['Domain']['primary_field'] );
+                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['domain']['table'], $domain_field, $linked_tables['domain']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Domain: ' . $resolved->get_error_message() );
@@ -373,12 +395,12 @@ class TTP_Data {
                 $domain = array_map( 'sanitize_text_field', $domain_field );
             }
 
-            $category_field = self::parse_record_ids( $fields['Category'] ?? array() );
+            $category_field = self::parse_record_ids( $fields['category'] ?? array() );
             $categories     = array();
             $category       = '';
             if ( self::contains_record_ids( $category_field ) ) {
                 $original_category_ids = $category_field;
-                $resolved               = TTP_Airbase::resolve_linked_records( $linked_tables['Category']['table'], $category_field, $linked_tables['Category']['primary_field'] );
+                $resolved               = TTP_Airbase::resolve_linked_records( $linked_tables['category']['table'], $category_field, $linked_tables['category']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Category: ' . $resolved->get_error_message() );
@@ -398,11 +420,11 @@ class TTP_Data {
             }
             $category = $categories ? reset( $categories ) : '';
 
-            $sub_field      = self::parse_record_ids( $fields['Sub Categories'] ?? array() );
+            $sub_field      = self::parse_record_ids( $fields['sub_categories'] ?? array() );
             $sub_categories = array();
             if ( self::contains_record_ids( $sub_field ) ) {
                 $original_sub_ids = $sub_field;
-                $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['Sub Categories']['table'], $sub_field, $linked_tables['Sub Categories']['primary_field'] );
+                $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['sub_categories']['table'], $sub_field, $linked_tables['sub_categories']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Sub Categories: ' . $resolved->get_error_message() );
@@ -421,11 +443,11 @@ class TTP_Data {
                 $sub_categories = array_map( 'sanitize_text_field', $sub_field );
             }
 
-            $cap_field    = self::parse_record_ids( $fields['Capabilities'] ?? array() );
+            $cap_field    = self::parse_record_ids( $fields['capabilities'] ?? array() );
             $capabilities = array();
             if ( self::contains_record_ids( $cap_field ) ) {
                 $original_cap_ids = $cap_field;
-                $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['Capabilities']['table'], $cap_field, $linked_tables['Capabilities']['primary_field'] );
+                $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['capabilities']['table'], $cap_field, $linked_tables['capabilities']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Capabilities: ' . $resolved->get_error_message() );
@@ -448,11 +470,11 @@ class TTP_Data {
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
-                'name'            => $fields['Product Name'] ?? '',
+                'name'            => $fields['product_name'] ?? '',
                 'vendor'          => $vendor_name,
-                'website'         => self::normalize_url( $fields['Product Website'] ?? '' ),
-                'video_url'       => self::normalize_url( $fields['Product Video'] ?? '' ),
-                'status'          => $fields['Status'] ?? '',
+                'website'         => self::normalize_url( $fields['product_website'] ?? '' ),
+                'video_url'       => self::normalize_url( $fields['product_video'] ?? '' ),
+                'status'          => $fields['status'] ?? '',
                 'hosted_type'     => $hosted_type,
                 'domain'          => $domain,
                 'regions'         => $regions,
@@ -461,10 +483,10 @@ class TTP_Data {
                 'category'        => $category,
                 'category_names'  => $category_names,
                 'capabilities'    => $capabilities,
-                'logo_url'        => self::normalize_url( $fields['Logo URL'] ?? '' ),
-                'hq_location'     => $fields['HQ Location'] ?? '',
-                'founded_year'    => $fields['Founded Year'] ?? '',
-                'founders'        => $fields['Founders'] ?? '',
+                'logo_url'        => self::normalize_url( $fields['logo_url'] ?? '' ),
+                'hq_location'     => $fields['hq_location'] ?? '',
+                'founded_year'    => $fields['founded_year'] ?? '',
+                'founders'        => $fields['founders'] ?? '',
             );
         }
 

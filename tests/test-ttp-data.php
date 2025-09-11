@@ -449,6 +449,65 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( $expected[0]['category'], $captured[0]['category'] );
     }
 
+    public function test_refresh_vendor_cache_handles_mixed_case_field_names() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'LiNkEd VeNdOr'   => 'rcsven1',
+                'Product Website' => 'example.com',
+                'Product Video'   => 'example.com/video',
+                'Logo URL'        => 'example.com/logo.png',
+                'Status'          => 'Active',
+                'Hosted Type'     => 'rcshost1',
+                'ReGiOns'         => 'rcsreg1',
+                'DoMaIn'          => 'rcsdom1',
+                'Category'        => 'reccat1',
+                'Sub Categories'  => 'rcssc1',
+                'Capabilities'    => 'rcscap1',
+                'HQ Location'     => 'HQ',
+                'Founded Year'    => '2020',
+                'Founders'        => 'John',
+            ], false ),
+        ];
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+            $maps = [
+                'Regions'        => [ 'rcsreg1' => 'NORAM' ],
+                'Vendors'        => [ 'rcsven1' => 'Acme Corp' ],
+                'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
+                'Domain'         => [ 'rcsdom1' => 'Banking' ],
+                'Sub Categories' => [ 'rcssc1' => 'Payments' ],
+                'Capabilities'   => [ 'rcscap1' => 'API' ],
+                'Category'       => [ 'reccat1' => 'Cash' ],
+            ];
+
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( [ 'NORAM' ], $captured[0]['regions'] );
+        $this->assertSame( [ 'Banking' ], $captured[0]['domain'] );
+        $this->assertSame( 'Acme Corp', $captured[0]['vendor'] );
+    }
+
     public function test_refresh_vendor_cache_resolves_mixed_region_values() {
         $record = [
             'id'     => 'rec1',
@@ -1171,6 +1230,31 @@ class TTP_Data_Test extends TestCase {
         $vendors = array(
             array(
                 'regions' => array( '123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function vendors_need_resolution_mixed_case_provider() {
+        return array(
+            'regions_mixed'       => array( 'ReGiOnS' ),
+            'domain_mixed'        => array( 'DoMaIn' ),
+            'linked_vendor_mixed' => array( 'LiNkEd VeNdOr' ),
+        );
+    }
+
+    /**
+     * @dataProvider vendors_need_resolution_mixed_case_provider
+     */
+    public function test_vendors_need_resolution_detects_mixed_case_fields( $key ) {
+        $vendors = array(
+            array(
+                $key => array( 'recABC123' ),
             ),
         );
 
