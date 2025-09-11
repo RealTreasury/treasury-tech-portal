@@ -1335,19 +1335,29 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             updateVisibleCounts() {
                 const categories = ['CASH', 'LITE', 'TRMS'];
-                let visibleTotal = 0;
-                categories.forEach(category => {
+                const categoryCounts = categories.map(category => {
                     const count = this.filteredTools.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);
                     if (countElement) {
                         countElement.textContent = count;
                     }
-                    visibleTotal += count;
+                    return count;
                 });
+
+                const visibleTotal = this.filteredTools.length;
+                const filtersActive = this.searchTerm ||
+                    this.advancedFilters.features.length || this.advancedFilters.hasVideo ||
+                    this.advancedFilters.regions.length || this.advancedFilters.categories.length ||
+                    this.advancedFilters.subcategories.length;
 
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
-                    totalTools.textContent = this.searchTerm ? visibleTotal : this.TREASURY_TOOLS.length;
+                    totalTools.textContent = filtersActive ? visibleTotal : this.TREASURY_TOOLS.length;
+                }
+
+                const subtotal = categoryCounts.reduce((sum, n) => sum + n, 0);
+                if (filtersActive && subtotal !== visibleTotal) {
+                    console.warn(`Category counts (${subtotal}) do not sum to visible total (${visibleTotal})`);
                 }
             }
 
