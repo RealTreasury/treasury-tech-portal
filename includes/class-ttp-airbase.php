@@ -120,11 +120,19 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $fields   = array_filter( (array) $fields );
+        $fields   = array_map( 'sanitize_text_field', array_filter( (array) $fields ) );
         $records  = array();
         $offset   = '';
 
-        if ( ! empty( $fields ) ) {
+        $all_ids = true;
+        foreach ( $fields as $field ) {
+            if ( ! preg_match( '/^fld[A-Za-z0-9]{14}$/', (string) $field ) ) {
+                $all_ids = false;
+                break;
+            }
+        }
+
+        if ( ! empty( $fields ) && ! $all_ids ) {
             $schema         = self::get_table_schema();
             $name_to_id_map = array();
             $id_to_name_map = array();
@@ -156,7 +164,7 @@ class TTP_Airbase {
             $url   = $base_endpoint;
             $query = array(
                 'pageSize=100',
-                'returnFieldsByFieldId=false',
+                'returnFieldsByFieldId=' . ( $all_ids ? 'true' : 'false' ),
                 'userLocale=en-US',
                 'timeZone=UTC',
             );

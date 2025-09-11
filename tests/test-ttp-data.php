@@ -16,22 +16,22 @@ class TTP_Data_Test extends TestCase {
         when('sanitize_text_field')->returnArg();
 
         $this->schema_map = [
-            'Product Name'    => 'fld_name',
-            'Linked Vendor'   => 'fld_vendor',
-            'Product Website' => 'fld_website',
-            'Full Website URL' => 'fld_full_url',
-            'Product Video'   => 'fld_video',
-            'Logo URL'        => 'fld_logo',
-            'Status'          => 'fld_status',
-            'Hosted Type'     => 'fld_hosted',
-            'Domain'          => 'fld_domain',
-            'Regions'         => 'fld_regions',
-            'Category'        => 'fld_category',
-            'Sub Categories'  => 'fld_sub',
-            'Capabilities'    => 'fld_caps',
-            'HQ Location'     => 'fld_hq',
-            'Founded Year'    => 'fld_year',
-            'Founders'        => 'fld_founders',
+            'Product Name'    => 'fld2hocSMtPQYWfPa',
+            'Linked Vendor'   => 'fldsrlwpO9AfkmjcH',
+            'Product Website' => 'fldznljEJpn4lv79r',
+            'Full Website URL' => 'fldpyWsRTiDiLX6nm',
+            'Product Video'   => 'fldHyVJRr3O5rkgd7',
+            'Logo URL'        => 'fldfZPuRMjQKCv3U6',
+            'Status'          => 'fldFsaznNFvfh3x7k',
+            'Hosted Type'     => 'fldGyZDaIUFFidaXA',
+            'Domain'          => 'fldU53MVlWgkPbPDw',
+            'Regions'         => 'fldE8buvdk7TDG1ex',
+            'Category'        => 'fldXqnpKe8ioYOYhP',
+            'Sub Categories'  => 'fldl2g5bYDq9TibuF',
+            'Capabilities'    => 'fldvvv8jnCKoJSI7x',
+            'HQ Location'     => 'fldTIplvUIwNH7C4X',
+            'Founded Year'    => 'fldwsUY6nSqxBk62J',
+            'Founders'        => 'fldoTMkJIl1i8oo0r',
         ];
 
         $schema =& $this->schema_map;
@@ -63,7 +63,7 @@ class TTP_Data_Test extends TestCase {
     public function test_refresh_vendor_cache_maps_fields() {
         $record = [
             'id'     => 'rec1',
-            'fields' => [
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
@@ -80,7 +80,7 @@ class TTP_Data_Test extends TestCase {
                 'HQ Location'     => '',
                 'Founded Year'    => '',
                 'Founders'        => '',
-            ],
+            ], false),
         ];
 
         $requested_fields = null;

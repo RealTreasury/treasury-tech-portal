@@ -297,65 +297,51 @@ class TTP_Data {
     public static function refresh_vendor_cache() {
         do_action( 'rt_refresh_vendors' );
 
-        $field_names = array(
-            'Product Name',
-            'Linked Vendor',
-            'Product Website',
-            'Full Website URL',
-            'Product Video',
-            'Logo URL',
-            'Status',
-            'Hosted Type',
-            'Domain',
-            'Regions',
-            'Category',
-            'Sub Categories',
-            'Capabilities',
-            'HQ Location',
-            'Founded Year',
-            'Founders',
+        $field_ids = array(
+            'fld2hocSMtPQYWfPa', // Product Name
+            'fldsrlwpO9AfkmjcH', // Linked Vendor
+            'fldznljEJpn4lv79r', // Product Website
+            'fldpyWsRTiDiLX6nm', // Full Website URL
+            'fldHyVJRr3O5rkgd7', // Product Video
+            'fldfZPuRMjQKCv3U6', // Logo URL
+            'fldFsaznNFvfh3x7k', // Status
+            'fldGyZDaIUFFidaXA', // Hosted Type
+            'fldU53MVlWgkPbPDw', // Domain
+            'fldE8buvdk7TDG1ex', // Regions
+            'fldXqnpKe8ioYOYhP', // Category
+            'fldl2g5bYDq9TibuF', // Sub Categories
+            'fldvvv8jnCKoJSI7x', // Capabilities
+            'fldTIplvUIwNH7C4X', // HQ Location
+            'fldwsUY6nSqxBk62J', // Founded Year
+            'fldoTMkJIl1i8oo0r', // Founders
         );
 
         $normalized_field_names = array();
         $normalized_to_label    = array();
-        foreach ( $field_names as $name ) {
-            $normalized_field_names[]          = self::normalize_key( $name );
-            $normalized_to_label[ self::normalize_key( $name ) ] = $name;
+        foreach ( $field_ids as $field_id ) {
+            $normalized_key                        = self::normalize_key( $field_id );
+            $normalized_field_names[]              = $normalized_key;
+            $normalized_to_label[ $normalized_key ] = $field_id;
         }
 
         $linked_fields = array(
-            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Region' ),
-            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
-            'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
-            'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
-            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Sub Category Name' ),
-            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
-            'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
+            'fldE8buvdk7TDG1ex' => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Region' ),
+            'fldsrlwpO9AfkmjcH' => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'fldGyZDaIUFFidaXA' => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'fldU53MVlWgkPbPDw' => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
+            'fldXqnpKe8ioYOYhP' => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
+            'fldl2g5bYDq9TibuF' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Sub Category Name' ),
+            'fldvvv8jnCKoJSI7x' => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
+            'fldTIplvUIwNH7C4X' => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
 
-        foreach ( $linked_fields as $label => &$info ) {
-            $info['field'] = self::normalize_key( $label );
+        foreach ( $linked_fields as $field_id => &$info ) {
+            $info['field'] = self::normalize_key( $field_id );
         }
         unset( $info );
 
-        $mapping    = TTP_Airbase::map_field_names( $field_names );
-        $schema_map = $mapping['schema_map'];
-        $field_ids  = $mapping['field_ids'];
-
+        $schema_map    = array_combine( $field_ids, $field_ids );
         $missing_linked = array();
-        foreach ( $linked_fields as $label => $info ) {
-            if ( ! isset( $schema_map[ $label ] ) || $schema_map[ $label ] === $label ) {
-                if ( function_exists( 'error_log' ) ) {
-                    error_log( sprintf( 'TTP_Data: Field %s missing from schema; skipping resolution', $label ) );
-                }
-                $missing_linked[ $label ] = $info;
-                unset( $linked_fields[ $label ] );
-                $field_names             = array_diff( $field_names, array( $label ) );
-                $normalized_field_names  = array_diff( $normalized_field_names, array( $info['field'] ) );
-                unset( $normalized_to_label[ $info['field'] ] );
-            }
-        }
 
         $data = TTP_Airbase::get_vendors( $field_ids );
         if ( is_wp_error( $data ) ) {
