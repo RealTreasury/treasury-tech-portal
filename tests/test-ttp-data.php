@@ -1098,6 +1098,22 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
+     * @dataProvider parse_record_ids_delimiter_in_names_provider
+     */
+    public function test_parse_record_ids_handles_delimiters_within_names( $input, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_delimiter_in_names_provider() {
+        return array(
+            'comma_inside_name'     => array( '"Foo, Inc",Bar', array( 'Foo, Inc', 'Bar' ) ),
+            'semicolon_inside_name' => array( '"Foo; Inc";Bar', array( 'Foo; Inc', 'Bar' ) ),
+        );
+    }
+
+    /**
      * @dataProvider contains_record_ids_provider
      */
     public function test_contains_record_ids_respects_known_prefixes( $values, $expected ) {
