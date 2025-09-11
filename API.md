@@ -55,7 +55,9 @@ GET /wp-json/ttp/v1/tools
 [
   {
     "name": "Kyriba",
-    "category": "TRMS", 
+    "category": "TRMS",
+    "parent_category": "Cash",
+    "sub_categories": ["Payments"],
     "desc": "Market-leading cloud treasury platform...",
     "features": ["AI-driven cash forecasting", "Real-time risk analytics"],
     "target": "Large enterprises and multinational corporations",
@@ -66,7 +68,7 @@ GET /wp-json/ttp/v1/tools
 ]
 ```
 
-Each tool may also include `parent_category`, `sub_categories`, `category_names`, and `regions` fields when available.
+Each tool may also include `parent_category`, `sub_categories`, `category_names`, and `regions` fields when available. `parent_category` and `sub_categories` return human-readable category names rather than record IDs.
 
 #### Example Requests
 ```javascript
