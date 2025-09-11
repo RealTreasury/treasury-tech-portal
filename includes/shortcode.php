@@ -15,15 +15,14 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
 }
 ?>
 <div class="treasury-portal">
-    <div class="container">
+    <div class="loading" id="loadingScreen" style="text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+        <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
+        <h1 style="color: #281345; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Treasury Tech Portal</h1>
+        <p style="color: #7e7e7e; font-size: 1rem;">Loading financial tools ecosystem...</p>
+    </div>
+    <div class="container" style="display: none;">
         <button class="external-menu-toggle" id="externalMenuToggle">Menu</button>
         <button class="external-shortlist-toggle" id="externalShortlistToggle" aria-label="Open shortlist menu" title="Shortlist">Shortlist</button>
-        <!-- Loading Screen -->
-        <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-            <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
-            <h1 style="color: #281345; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Treasury Tech Portal</h1>
-            <p style="color: #7e7e7e; font-size: 1rem;">Loading financial tools ecosystem...</p>
-        </div>
 
         <!-- Header -->
         <div class="header">

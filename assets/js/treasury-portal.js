@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             async fetchTools() {
                 const loading = document.getElementById('loadingScreen');
+                const container = document.querySelector('.treasury-portal .container');
                 if (loading) loading.style.display = 'block';
 
                 try {
@@ -363,7 +364,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } catch (err) {
                     console.error('Failed to load tools:', err);
                 } finally {
-                    if (loading) loading.style.display = 'none';
+                    if (container) container.style.display = 'block';
+                    if (loading) {
+                        loading.classList.add('fade-out');
+                        loading.addEventListener('transitionend', () => loading.style.display = 'none', { once: true });
+                    }
                 }
             }
 
