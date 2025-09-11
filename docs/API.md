@@ -95,6 +95,11 @@ GET /wp-json/ttp/v1/vendors
 #### Response Format
 Array of vendor objects retrieved from Airbase.
 
+Vendor records containing unresolved Airtable record IDs (for example values
+starting with `rec`) are excluded from the response. When such unresolved IDs
+are detected, the vendor cache is automatically refreshed to replace them with
+readable names on subsequent requests.
+
 See [AIRBASE_API.md](AIRBASE_API.md) for detailed vendor API documentation.
 The integration relies on four WordPress options to configure API access:
 `ttp_airbase_token`, `ttp_airbase_base_url`, `ttp_airbase_base_id`, and `ttp_airbase_api_path`.
