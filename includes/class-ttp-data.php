@@ -823,7 +823,7 @@ class TTP_Data {
             }
         }
 
-        return array_values(
+        $values = array_values(
             array_filter(
                 $values,
                 function ( $v ) {
@@ -831,6 +831,56 @@ class TTP_Data {
                 }
             )
         );
+
+        if ( self::contains_record_ids( $values ) ) {
+            $remaining = array();
+            foreach ( $values as $idx => $item ) {
+                if ( is_string( $item ) && self::contains_record_ids( array( $item ) ) ) {
+                    $remaining[ $idx ] = preg_replace( '/[^A-Za-z0-9]/', '', $item );
+                }
+            }
+
+            if ( ! empty( $remaining ) ) {
+                $fallback = TTP_Airbase::resolve_linked_records( $table, array_values( $remaining ), '', true );
+
+                if ( is_wp_error( $fallback ) || empty( $fallback ) ) {
+                    self::log_unresolved_field( $field, array_values( $remaining ) );
+                    foreach ( array_keys( $remaining ) as $idx ) {
+                        unset( $values[ $idx ] );
+                    }
+                } else {
+                    $sanitized = array();
+                    foreach ( (array) $fallback as $val ) {
+                        if ( is_string( $val ) ) {
+                            $sanitized[] = sanitize_text_field( $val );
+                        } elseif ( is_numeric( $val ) ) {
+                            $sanitized[] = $val + 0;
+                        }
+                    }
+
+                    $i = 0;
+                    foreach ( $remaining as $idx => $id ) {
+                        if ( isset( $sanitized[ $i ] ) ) {
+                            $values[ $idx ] = $sanitized[ $i ];
+                        } else {
+                            unset( $values[ $idx ] );
+                        }
+                        $i++;
+                    }
+
+                    $values = array_values(
+                        array_filter(
+                            $values,
+                            function ( $v ) {
+                                return $v !== null && $v !== '' && $v !== false;
+                            }
+                        )
+                    );
+                }
+            }
+        }
+
+        return $values;
     }
 
 /**
