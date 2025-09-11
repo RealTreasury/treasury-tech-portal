@@ -99,6 +99,18 @@ Any of these structures will be cached as a plain array of vendors.
 | `Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
 | `Logo URL` (`fldfZPuRMjQKCv3U6`) | text URL |
 
+## Domain Table Fields
+Table ID: `tbli7l5i5QxQzbpNV`. Table names and IDs can be used interchangeably in requests. Field names and field IDs are also interchangeable; field IDs are recommended for stability.
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `Domain Name` (`fldoGBU2lWXKoFoAM`) | text | name of the domain |
+| `Linked Vendors` (`fldAWqHU9rv7oX6MT`) | text | comma-separated vendor names |
+| `Vendor Count` (`fldlcq0OMqFUEJMla`) | count | computed number of linked vendors |
+| `Domain Summary` (`fldaMrJFqT5nkaa2L`) | text | optional description of the domain |
+| `Categories` (`fldFAUQgi8WT1hdlA`) | linked records to **Categories** table |
+| `Products` (`fldbhTNGdTp006wPd`) | linked records to **Products** table |
+
 ## Linked Record Field Names
 
 The plugin resolves linked record identifiers for several vendor fields. The
@@ -191,6 +203,51 @@ curl -X PATCH https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
 ## Deleting Products
 ```bash
 curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=RECORD_ID" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+## Domain Table Operations
+
+### Listing Domains
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV?maxRecords=3&view=Grid%20view" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Retrieving a Domain
+```bash
+curl https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV/RECORD_ID \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Domains
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "fields": { "Domain Name": "Treasury" }
+    }]
+  }'
+```
+
+### Updating Domains
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "id": "RECORD_ID",
+      "fields": { "Domain Name": "New Name" }
+    }]
+  }'
+```
+
+### Deleting Domains
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV?records[]=RECORD_ID" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
