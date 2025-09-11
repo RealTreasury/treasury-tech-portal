@@ -2501,48 +2501,31 @@
 
         @media (max-width: 768px) {
             .treasury-portal-admin .treasury-portal-admin-table-wrapper {
-                overflow-x: visible;
+                overflow-x: auto;
             }
 
             .treasury-portal-admin .treasury-portal-admin-table-wrapper table {
                 font-size: 12px;
-                min-width: 0;
+                min-width: 800px;
+                border-collapse: separate;
+                border-spacing: 0 12px;
             }
 
-            .treasury-portal-admin table,
-            .treasury-portal-admin thead,
-            .treasury-portal-admin tbody,
+            .treasury-portal-admin tbody tr {
+                border-top: 1px solid #e5e7eb;
+            }
+
+            .treasury-portal-admin tbody tr:first-child {
+                border-top: none;
+            }
+
             .treasury-portal-admin th,
-            .treasury-portal-admin td,
-            .treasury-portal-admin tr {
-                display: block;
-            }
-
-            .treasury-portal-admin thead {
-                display: none;
-            }
-
-            .treasury-portal-admin tr {
-                margin-bottom: 12px;
-                border: 1px solid #e5e7eb;
-                padding: 8px;
-            }
-
             .treasury-portal-admin td {
+                padding: 8px;
+                text-align: left;
                 white-space: normal;
-                position: relative;
-                padding-left: 50%;
                 word-break: break-word;
-            }
-
-            .treasury-portal-admin td::before {
-                content: attr(data-label);
-                position: absolute;
-                top: 8px;
-                left: 8px;
-                width: calc(50% - 16px);
-                font-weight: 600;
-                white-space: nowrap;
+                overflow-wrap: anywhere;
             }
         }
 
