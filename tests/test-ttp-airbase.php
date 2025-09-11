@@ -322,4 +322,71 @@ class TTP_Airbase_Test extends TestCase {
         $records = TTP_Airbase::get_vendors(['Name', 'Email'], true);
         $this->assertIsArray($records);
     }
+
+    public function test_get_table_schema_returns_cached_value() {
+        when('get_transient')->alias(function ($key) {
+            return 'ttp_airbase_schema' === $key ? [ 'tblXYZ' => [ 'Name' => 'fldName' ] ] : false;
+        });
+
+        expect('wp_remote_get')->never();
+        expect('set_transient')->never();
+
+        $schema = TTP_Airbase::get_table_schema('tblXYZ');
+        $this->assertSame([ 'Name' => 'fldName' ], $schema);
+    }
+
+    public function test_get_table_schema_fetches_and_caches_when_missing() {
+        when('get_transient')->alias(function ($key) {
+            return false;
+        });
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([
+            'tables' => [
+                [
+                    'id' => 'tblXYZ',
+                    'name' => 'Products',
+                    'fields' => [ [ 'name' => 'Name', 'id' => 'fldName' ] ],
+                ],
+            ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $self = $this;
+        expect('set_transient')->once()->andReturnUsing(function ($key, $value, $ttl) use ($self) {
+            $self->assertSame('ttp_airbase_schema', $key);
+            $self->assertSame(DAY_IN_SECONDS, $ttl);
+            $self->assertSame([ 'Name' => 'fldName' ], $value['tblXYZ']);
+            return true;
+        });
+
+        $schema = TTP_Airbase::get_table_schema('tblXYZ');
+        $this->assertSame([ 'Name' => 'fldName' ], $schema);
+    }
 }

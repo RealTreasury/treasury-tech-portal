@@ -219,6 +219,13 @@ class TTP_Airbase {
      * @return array|WP_Error Array mapping field names to IDs or WP_Error on failure.
      */
     public static function get_table_schema( $table_id = '' ) {
+        $table_id = $table_id ? $table_id : get_option( self::OPTION_API_PATH, self::DEFAULT_API_PATH );
+
+        $cached = get_transient( 'ttp_airbase_schema' );
+        if ( is_array( $cached ) && isset( $cached[ $table_id ] ) ) {
+            return $cached[ $table_id ];
+        }
+
         $token = get_option( self::OPTION_TOKEN );
         if ( empty( $token ) ) {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
@@ -238,8 +245,10 @@ class TTP_Airbase {
             $base_url = rtrim( $base_url, '/' ) . '/v0';
         }
 
-        $base_id  = get_option( self::OPTION_BASE_ID, self::DEFAULT_BASE_ID );
-        $table_id = $table_id ? $table_id : get_option( self::OPTION_API_PATH, self::DEFAULT_API_PATH );
+        $base_id = get_option( self::OPTION_BASE_ID, self::DEFAULT_BASE_ID );
+        if ( empty( $base_id ) ) {
+            $base_id = self::DEFAULT_BASE_ID;
+        }
 
         $endpoint = rtrim( $base_url, '/' ) . '/meta/bases/' . trim( $base_id, '/' ) . '/tables';
 
@@ -275,21 +284,28 @@ class TTP_Airbase {
             return new WP_Error( 'missing_tables', __( 'Airbase schema response missing tables.', 'treasury-tech-portal' ) );
         }
 
+        $schemas = array();
         foreach ( $data['tables'] as $table ) {
-            if (
-                ( isset( $table['id'] ) && $table['id'] === $table_id ) ||
-                ( isset( $table['name'] ) && $table['name'] === $table_id )
-            ) {
-                $map = array();
-                if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
-                    foreach ( $table['fields'] as $field ) {
-                        if ( isset( $field['name'], $field['id'] ) ) {
-                            $map[ $field['name'] ] = $field['id'];
-                        }
+            $map = array();
+            if ( isset( $table['fields'] ) && is_array( $table['fields'] ) ) {
+                foreach ( $table['fields'] as $field ) {
+                    if ( isset( $field['name'], $field['id'] ) ) {
+                        $map[ $field['name'] ] = $field['id'];
                     }
                 }
-                return $map;
             }
+            if ( isset( $table['id'] ) ) {
+                $schemas[ $table['id'] ] = $map;
+            }
+            if ( isset( $table['name'] ) ) {
+                $schemas[ $table['name'] ] = $map;
+            }
+        }
+
+        set_transient( 'ttp_airbase_schema', $schemas, DAY_IN_SECONDS );
+
+        if ( isset( $schemas[ $table_id ] ) ) {
+            return $schemas[ $table_id ];
         }
 
         return new WP_Error( 'table_not_found', __( 'Specified Airbase table not found in schema.', 'treasury-tech-portal' ) );

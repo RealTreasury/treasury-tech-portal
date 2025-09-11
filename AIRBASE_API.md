@@ -27,6 +27,15 @@ curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products \
 - Maximum of **5 requests per second** per base.
 - Exceeding the limit returns HTTP `429`. The plugin automatically retries up to three times using an exponential backoff (1s, 2s, 4s) before surfacing an error. If the limit continues to be exceeded, wait ~30 seconds before manual retries.
 
+## Schema Caching
+Table schemas are requested infrequently and cached in a transient named `ttp_airbase_schema` for 24 hours. Calls to `TTP_Airbase::get_table_schema()` read from this cache before performing network requests.
+
+### Forcing a Refresh
+The schema cache is refreshed automatically when missing or expired. To manually invalidate it:
+
+- Use WP-CLI: `wp transient delete ttp_airbase_schema`
+- Or programmatically: `delete_transient('ttp_airbase_schema');`
+
 ## Vendor Response Formats
 `TTP_Data::refresh_vendor_cache()` accepts multiple response shapes and
 normalizes them into a single vendor array. The following formats are supported:
