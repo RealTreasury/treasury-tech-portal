@@ -4,7 +4,7 @@ Tags: treasury, technology, comparison
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,9 @@ See [AIRBASE_API.md](AIRBASE_API.md) for detailed API reference.
 This plugin is automatically deployed from GitHub to your WordPress site through your hosting provider's integration.
 
 == Changelog ==
+
+= 1.0.2 =
+* Update documentation and regenerate minified assets.
 
 = 1.0.1 =
 * Bump version and update documentation.

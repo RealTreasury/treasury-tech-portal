@@ -1,5 +1,7 @@
 # Treasury Tech Portal
 
+> Current version: 1.0.2
+
 A WordPress plugin that provides an interactive interface for discovering and comparing treasury technology solutions across Cash Tools, TMS-Lite platforms, and Enterprise TRMS suites.
 
 ## Features
@@ -26,6 +28,18 @@ Detailed guides and additional documentation can be found in the [docs](docs/) d
 - [Deployment Guide](docs/WORDPRESS-COM-DEPLOYMENT.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Linked Field Resolution](docs/LINKED_FIELDS.md)
+
+## Development
+
+Minified assets are generated from their unminified sources:
+
+```
+npx csso assets/css/treasury-portal.css --output assets/css/treasury-portal.min.css
+npx terser assets/js/treasury-portal.js -c -m -o assets/js/treasury-portal.min.js
+npx terser assets/js/treasury-portal-admin.js -c -m -o assets/js/treasury-portal-admin.min.js
+```
+
+Run these commands after modifying the corresponding CSS or JavaScript files.
 
 ## License
 Distributed under the GPL-2.0-or-later license. See `readme.txt` for more details.

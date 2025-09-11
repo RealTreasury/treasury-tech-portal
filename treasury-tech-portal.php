@@ -3,7 +3,7 @@
  * Plugin Name: Treasury Tech Portal
  * Plugin URI: https://realtreasury.com
  * Description: Embed the Treasury Tech Portal tool using the [treasury_portal] shortcode. A comprehensive platform for discovering and comparing treasury technology solutions.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Requires at least: 5.0
  * Requires PHP: 7.4
  * Author: Real Treasury
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin version.
-define( 'TTP_VERSION', '1.0.1' );
+define( 'TTP_VERSION', '1.0.2' );
 
 define( 'TTP_FILE', __FILE__ );
 define( 'TTP_BASENAME', plugin_basename( TTP_FILE ) );
