@@ -546,6 +546,67 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( $vendors_clean, $result );
     }
 
+    public function test_get_all_vendors_handles_mixed_case_keys() {
+        $stored_option = array(
+            array(
+                'Regions' => array( 'recreg1' ),
+            ),
+        );
+
+        when( 'get_transient' )->justReturn( false );
+        when( 'set_transient' )->returnArg();
+        when( 'delete_transient' )->returnArg();
+
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                return $stored_option;
+            }
+            return $default;
+        } );
+
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored_option ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                $stored_option = $value;
+            }
+            return true;
+        } );
+
+        $airbase_called = false;
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function () use ( &$airbase_called ) {
+            $airbase_called = true;
+            return array(
+                'records' => array(
+                    array(
+                        'id'     => 'rec1',
+                        'fields' => array(
+                            'Product Name' => 'Sample Product',
+                            'Regions'      => array( 'recreg1' ),
+                        ),
+                    ),
+                ),
+            );
+        } );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) {
+            if ( 'Regions' === $table_id ) {
+                $map = array( 'recreg1' => 'EMEA' );
+                $out = array();
+                foreach ( (array) $ids as $id ) {
+                    if ( isset( $map[ $id ] ) ) {
+                        $out[] = $map[ $id ];
+                    }
+                }
+                return $out;
+            }
+            return array();
+        } );
+
+        $result = TTP_Data::get_all_vendors();
+
+        $this->assertTrue( $airbase_called );
+        $this->assertSame( array( 'EMEA' ), $result[0]['regions'] );
+    }
+
     public function test_get_tools_filters_new_arguments() {
         $tools = [
             [
