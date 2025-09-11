@@ -474,9 +474,8 @@ class TTP_Data {
     /**
      * Log unresolved Airtable record IDs for visibility in logs and admin.
      *
-     * Stores a transient notice via the options API when available so admin
-     * users can be alerted, and always writes to `error_log` when that
-     * function exists.
+     * Records unresolved IDs grouped by field in the `ttp_unresolved_report`
+     * option and always writes to `error_log` when that function exists.
      *
      * @param string $field Field label.
      * @param array  $ids   IDs that failed to resolve.
@@ -488,7 +487,8 @@ class TTP_Data {
         }
 
         if ( function_exists( 'sanitize_text_field' ) ) {
-            $ids = array_map( 'sanitize_text_field', $ids );
+            $ids  = array_map( 'sanitize_text_field', $ids );
+            $field = sanitize_text_field( $field );
         }
 
         $log_id = uniqid( 'ttp_', true );
@@ -498,12 +498,12 @@ class TTP_Data {
         }
 
         if ( function_exists( 'get_option' ) && function_exists( 'update_option' ) ) {
-            $existing   = (array) get_option( 'ttp_unresolved_fields', array() );
-            $existing[] = array(
-                'id'      => $log_id,
-                'message' => sprintf( '%s unresolved IDs: %s', $field, implode( ', ', $ids ) ),
-            );
-            update_option( 'ttp_unresolved_fields', $existing );
+            $report = (array) get_option( 'ttp_unresolved_report', array() );
+            if ( ! isset( $report[ $field ] ) ) {
+                $report[ $field ] = array();
+            }
+            $report[ $field ] = array_values( array_unique( array_merge( $report[ $field ], $ids ) ) );
+            update_option( 'ttp_unresolved_report', $report );
         }
     }
 
