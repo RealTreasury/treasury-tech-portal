@@ -5,7 +5,7 @@
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <?php wp_nonce_field('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce'); ?>
         <input type="hidden" name="action" value="ttp_refresh_vendors" />
-        <?php submit_button(__('Refresh Vendors', 'treasury-tech-portal')); ?>
+        <?php submit_button(__('Refresh Vendors', 'treasury-tech-portal'), 'primary', 'refresh-vendors'); ?>
     </form>
     <?php if (isset($_GET['refreshed'])) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Vendor cache refreshed.', 'treasury-tech-portal'); ?></p></div>

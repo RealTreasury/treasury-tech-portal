@@ -152,12 +152,12 @@ class TTP_Admin {
                         </td>
                     </tr>
                 </table>
-                <?php submit_button(); ?>
+                <?php submit_button(__('Save Changes', 'treasury-tech-portal'), 'primary', 'save-changes'); ?>
             </form>
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <?php wp_nonce_field('ttp_test_airbase', 'ttp_test_airbase_nonce'); ?>
                 <input type="hidden" name="action" value="ttp_test_airbase" />
-                <?php submit_button(__('Test Connection', 'treasury-tech-portal'), 'secondary'); ?>
+                <?php submit_button(__('Test Connection', 'treasury-tech-portal'), 'secondary', 'test-connection'); ?>
             </form>
         </div>
         <?php
