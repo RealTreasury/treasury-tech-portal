@@ -87,6 +87,18 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                             </div>
                         </div>
                         <div class="filter-group">
+                            <span class="filter-label">Regions</span>
+                            <div class="checkbox-group" id="regionFilters"></div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Categories</span>
+                            <div class="checkbox-group" id="categoryFilters"></div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Subcategories</span>
+                            <div class="checkbox-group" id="subcategoryFilters"></div>
+                        </div>
+                        <div class="filter-group">
                             <span class="filter-label">Tags</span>
                             <div class="search-container tag-search">
                                 <input type="text" id="tagSearchInput" class="search-input" placeholder="Search tags...">

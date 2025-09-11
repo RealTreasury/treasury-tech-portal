@@ -210,7 +210,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.searchTerm = '';
                 this.filteredTools = [];
                 this.allTags = [];
-                this.advancedFilters = { features: [], hasVideo: false };
+                this.allRegions = [];
+                this.allCategories = [];
+                this.allSubcategories = [];
+                this.advancedFilters = { features: [], hasVideo: false, regions: [], categories: [], subcategories: [] };
                 this.currentSort = 'name';
                 this.currentView = 'grid';
                 this.groupByCategory = true;
@@ -316,11 +319,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     const response = await fetch(TTP_DATA.rest_url);
                     const data = await response.json();
+                    const allRegions = new Set();
+                    const allCategories = new Set();
+                    const allSubcategories = new Set();
                     this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
                         const parentCategory = Array.isArray(vendor.parent_category) ? vendor.parent_category[0] : (vendor.parent_category || '');
                         const category = this.normalizeCategory(parentCategory || vendor.category);
                         const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
                         const regions = Array.isArray(vendor.regions) ? vendor.regions : [];
+                        if (parentCategory) allCategories.add(parentCategory);
+                        subCategories.forEach(sc => allSubcategories.add(sc));
+                        regions.forEach(r => allRegions.add(r));
                         return {
                             name: vendor.name || '',
                             desc: vendor.status || '',
@@ -335,9 +344,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                             target: ''
                         };
                     });
+                    this.allRegions = Array.from(allRegions).sort((a, b) => a.localeCompare(b));
+                    this.allCategories = Array.from(allCategories).sort((a, b) => a.localeCompare(b));
+                    this.allSubcategories = Array.from(allSubcategories).sort((a, b) => a.localeCompare(b));
                     this.assignTags();
                     this.updateCounts();
                     this.populateCategoryTags();
+                    this.populateRegionFilters();
+                    this.populateCategoryFilters();
+                    this.populateSubcategoryFilters();
                     this.filterAndDisplayTools();
                     this.applyViewStyles();
                 } catch (err) {
@@ -1022,6 +1037,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
 
                 // Advanced Filters
+                const { regions, categories, subcategories } = this.advancedFilters;
+                if (regions.length) {
+                    tools = tools.filter(t => (t.regions || []).some(r => regions.includes(r)));
+                }
+                if (categories.length) {
+                    tools = tools.filter(t => categories.includes(t.parentCategory));
+                }
+                if (subcategories.length) {
+                    tools = tools.filter(t => (t.subCategories || []).some(sc => subcategories.includes(sc)));
+                }
                 if (this.advancedFilters.features.length) {
                     tools = tools.filter(t => this.advancedFilters.features.every(f => (t.tags || []).includes(f)));
                 }
@@ -1050,7 +1075,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const listContainer = document.getElementById('listViewContainer');
                 const ungroup = !this.groupByCategory || this.searchTerm ||
-                                  this.advancedFilters.features.length || this.advancedFilters.hasVideo;
+                                  this.advancedFilters.features.length || this.advancedFilters.hasVideo ||
+                                  this.advancedFilters.regions.length || this.advancedFilters.categories.length || this.advancedFilters.subcategories.length;
 
                 if (ungroup) {
                     categories.forEach(cat => {
@@ -1246,6 +1272,60 @@ document.addEventListener('DOMContentLoaded', async () => {
                     container.innerHTML += `<button class="show-more-filter-tags-btn" id="showMoreTagFilters">Show more</button>`;
                     container.innerHTML += `<button class="show-less-filter-tags-btn" id="showLessTagFilters" style="display:none;">Show less</button>`;
                 }
+            }
+
+            populateRegionFilters() {
+                const container = document.getElementById('regionFilters');
+                if (!container) return;
+                const makeCb = (region) => {
+                    const id = `region-${region.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${region}"><label for="${id}">${region}</label></div>`;
+                };
+                container.innerHTML = this.allRegions.map(makeCb).join('');
+                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        this.advancedFilters.regions = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                });
+            }
+
+            populateCategoryFilters() {
+                const container = document.getElementById('categoryFilters');
+                if (!container) return;
+                const makeCb = (cat) => {
+                    const id = `cat-${cat.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${cat}"><label for="${id}">${cat}</label></div>`;
+                };
+                container.innerHTML = this.allCategories.map(makeCb).join('');
+                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        this.advancedFilters.categories = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                });
+            }
+
+            populateSubcategoryFilters() {
+                const container = document.getElementById('subcategoryFilters');
+                if (!container) return;
+                const makeCb = (sub) => {
+                    const id = `sub-${sub.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`;
+                    return `<div class="checkbox-item"><input type="checkbox" id="${id}" value="${sub}"><label for="${id}">${sub}</label></div>`;
+                };
+                container.innerHTML = this.allSubcategories.map(makeCb).join('');
+                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        this.advancedFilters.subcategories = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
+                        this.filterAndDisplayTools();
+                        this.updateFilterCount();
+                    });
+                });
             }
 
             updateVisibleCounts() {
@@ -1962,9 +2042,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.querySelector('.filter-tab[data-category="ALL"]')?.classList.add('active');
                 this.currentFilter = 'ALL';
 
-                this.advancedFilters = { features:[], hasVideo:false };
+                this.advancedFilters = { features:[], hasVideo:false, regions:[], categories:[], subcategories:[] };
 
-                const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"],#hasVideoFilter');
+                const checkboxes = document.querySelectorAll('#tagFilters input[type="checkbox"],#hasVideoFilter,#regionFilters input[type="checkbox"],#categoryFilters input[type="checkbox"],#subcategoryFilters input[type="checkbox"]');
                 checkboxes.forEach(cb => cb.checked = false);
 
                 this.filterAndDisplayTools();
@@ -1990,9 +2070,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             updateFilterCount() {
-                const { features, hasVideo } = this.advancedFilters;
+                const { features, hasVideo, regions, categories, subcategories } = this.advancedFilters;
                 let count = 0;
-                count += features.length;
+                count += features.length + regions.length + categories.length + subcategories.length;
                 if (hasVideo) count++;
                 const el = document.getElementById('filterCount');
                 if (el) el.textContent = count > 0 ? `(${count})` : '';
