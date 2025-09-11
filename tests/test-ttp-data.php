@@ -199,6 +199,83 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['Finance', 'Cash', 'Payments'], $captured[0]['category_names']);
     }
 
+    public function test_refresh_vendor_cache_falls_back_when_schema_missing() {
+        $schema = $this->schema_map;
+        unset( $schema['Regions'] );
+        \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () use ( $schema ) {
+            return $schema;
+        } );
+
+        $record = [
+            'id'     => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Product Video'   => '',
+                'Logo URL'        => '',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Domain'          => ['Banking'],
+                'Regions'         => ['recreg1'],
+                'Category'        => ['Finance'],
+                'Sub Categories'  => ['Payments'],
+                'Capabilities'    => ['API'],
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
+            ],
+        ];
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        $called = false;
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function () use ( &$called ) {
+            $called = true;
+            return [];
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        $logs = [];
+        \Patchwork\replace( 'error_log', function ( $msg ) use ( &$logs ) {
+            $logs[] = $msg;
+        } );
+
+        $unresolved = [];
+        when( 'get_option' )->alias( function ( $name, $default = false ) use ( &$unresolved ) {
+            if ( 'ttp_unresolved_fields' === $name ) {
+                return $unresolved;
+            }
+            return $default;
+        } );
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$unresolved ) {
+            if ( 'ttp_unresolved_fields' === $name ) {
+                $unresolved = $value;
+            }
+            return true;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertFalse( $called );
+        $this->assertSame( ['recreg1'], $captured[0]['regions'] );
+        $this->assertStringContainsString( 'Regions', implode( ' ', $logs ) );
+        $found = false;
+        foreach ( $unresolved as $msg ) {
+            if ( strpos( $msg, 'recreg1' ) !== false ) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue( $found );
+    }
+
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
         $record = [
             'id'     => 'rec1',
