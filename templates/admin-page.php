@@ -63,6 +63,9 @@
                         <td data-label="<?php echo esc_attr__('Name', 'treasury-tech-portal'); ?>">
                             <?php
                             echo esc_html($vendor['name'] ?? '');
+                            if ( TTP_Data::has_unresolved_ids( $vendor ) ) {
+                                echo ' <span class="ttp-warning-icon" title="' . esc_attr__( 'Vendor data may be incomplete', 'treasury-tech-portal' ) . '">⚠️</span>';
+                            }
                             if (!empty($vendor['id'])) {
                                 echo ' (' . esc_html($vendor['id']) . ')';
                             }

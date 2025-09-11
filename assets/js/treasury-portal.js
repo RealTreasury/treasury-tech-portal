@@ -1166,12 +1166,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 });
 
             }
+            containsRecordIds(value) {
+                if (Array.isArray(value)) {
+                    return value.some(v => this.containsRecordIds(v));
+                }
+                if (value && typeof value === 'object') {
+                    return Object.values(value).some(v => this.containsRecordIds(v));
+                }
+                if (typeof value === 'string') {
+                    const candidate = value.replace(/[^A-Za-z0-9]/g, '');
+                    if (!candidate) {
+                        return false;
+                    }
+                    return /^r(?:ec|es|cs|cx)[0-9a-z]*\d[0-9a-z]*$/i.test(candidate);
+                }
+                return false;
+            }
 
             createToolCard(tool, category) {
                 const card = document.createElement('div');
                 card.className = `tool-card tool-${category.toLowerCase()}`;
                 card.draggable = !this.isMobile();
                 card.dataset.name = tool.name;
+                const incomplete = this.containsRecordIds(tool);
 
                 const iconMap = {
                     'TRMS': '🏢',
@@ -1191,6 +1208,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <div class="tool-name">
                                     <div class="tool-name-group">
                                         <span class="tool-name-title">${tool.name}</span>
+                                        ${incomplete ? '<span class="ttp-warning-icon" title="Data may be incomplete">⚠️</span>' : ''}
                                     </div>
                                     ${tool.logoUrl ? `<a href="${tool.websiteUrl || '#'}" target="_blank" rel="noopener noreferrer" class="tool-logo-link" ${!tool.websiteUrl ? 'style="pointer-events: none; cursor: default;"' : ''}><img class="tool-logo-inline" src="${tool.logoUrl}" alt="${tool.name} logo"></a>` : ''}
                                     <div class="tool-actions">

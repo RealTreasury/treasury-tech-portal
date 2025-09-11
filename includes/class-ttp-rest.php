@@ -21,6 +21,14 @@ class TTP_Rest {
             'callback' => [__CLASS__, 'get_vendors'],
             'permission_callback' => '__return_true'
         ]);
+
+        register_rest_route('ttp/v1', '/vendors/refresh', [
+            'methods'  => 'POST',
+            'callback' => [__CLASS__, 'refresh_vendors'],
+            'permission_callback' => function () {
+                return current_user_can('manage_options');
+            }
+        ]);
     }
 
     public static function get_tools($request) {
@@ -68,5 +76,10 @@ class TTP_Rest {
     public static function get_vendors($request) {
         $vendors = TTP_Data::get_all_vendors();
         return rest_ensure_response($vendors);
+    }
+
+    public static function refresh_vendors($request) {
+        TTP_Data::refresh_vendor_cache();
+        return rest_ensure_response( array( 'refreshed' => true ) );
     }
 }

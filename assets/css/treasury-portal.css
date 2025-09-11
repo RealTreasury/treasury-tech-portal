@@ -2564,6 +2564,12 @@
         }
     }
 
+    .treasury-portal .ttp-warning-icon,
+    .treasury-portal-admin .ttp-warning-icon {
+        margin-left: 4px;
+        cursor: help;
+    }
+
     /* Unresolved region IDs notice */
     .treasury-portal-admin .treasury-portal-admin-unresolved {
         margin-top: 20px;

@@ -17,6 +17,7 @@ class TTP_Rest_Test extends TestCase {
         when('absint')->alias(function ($v) {
             return (int) $v;
         });
+        when('current_user_can')->justReturn(true);
     }
 
     protected function tearDown(): void {
@@ -39,6 +40,22 @@ class TTP_Rest_Test extends TestCase {
         $this->assertNotEmpty($tools_route);
         $route = array_values($tools_route)[0];
         $this->assertSame([TTP_Rest::class, 'get_tools'], $route[2]['callback']);
+    }
+
+    public function test_registers_refresh_endpoint() {
+        $routes = [];
+        when('register_rest_route')->alias(function ($namespace, $route, $args) use (&$routes) {
+            $routes[] = [$namespace, $route, $args];
+        });
+
+        TTP_Rest::register_routes();
+
+        $refresh_route = array_filter($routes, function ($r) {
+            return $r[0] === 'ttp/v1' && $r[1] === '/vendors/refresh';
+        });
+        $this->assertNotEmpty($refresh_route);
+        $route = array_values($refresh_route)[0];
+        $this->assertSame([TTP_Rest::class, 'refresh_vendors'], $route[2]['callback']);
     }
 
     public function test_tools_endpoint_returns_vendor_with_new_fields() {
@@ -122,5 +139,18 @@ class TTP_Rest_Test extends TestCase {
 
         $this->assertSame( ['North America'], $response[0]['regions'] );
         $this->assertSame( ['Finance'], $response[0]['categories'] );
+    }
+
+    public function test_refresh_endpoint_triggers_cache_refresh() {
+        $called = false;
+        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use (&$called) {
+            $called = true;
+        });
+
+        $request = new class {};
+        $response = TTP_Rest::refresh_vendors( $request );
+
+        $this->assertTrue( $called );
+        $this->assertTrue( $response['refreshed'] );
     }
 }

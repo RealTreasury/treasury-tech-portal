@@ -623,6 +623,18 @@ class TTP_Data {
     }
 
     /**
+     * Determine if the given vendor still contains unresolved record IDs.
+     *
+     * Public wrapper around contains_record_ids() for external checks.
+     *
+     * @param array $vendor Vendor record to inspect.
+     * @return bool True if unresolved IDs are present.
+     */
+    public static function has_unresolved_ids( $vendor ) {
+        return self::contains_record_ids( $vendor );
+    }
+
+    /**
      * Log unresolved Airtable record IDs for visibility in logs and admin.
      *
      * Stores a transient notice via the options API when available so admin
