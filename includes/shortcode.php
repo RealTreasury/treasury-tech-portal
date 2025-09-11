@@ -95,6 +95,18 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                             <div class="checkbox-group" id="tagFilters"></div>
                         </div>
                         <div class="filter-group">
+                            <span class="filter-label">Regions</span>
+                            <div class="checkbox-group" id="regionFilters"></div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Categories</span>
+                            <div class="checkbox-group" id="categoryFilters"></div>
+                        </div>
+                        <div class="filter-group">
+                            <span class="filter-label">Subcategories</span>
+                            <div class="checkbox-group" id="subCategoryFilters"></div>
+                        </div>
+                        <div class="filter-group">
                             <label class="filter-label" for="sortFilter">Sort By</label>
                             <select id="sortFilter" class="filter-select">
                                 <option value="name">Name</option>
