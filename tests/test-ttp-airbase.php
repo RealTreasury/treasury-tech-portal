@@ -12,9 +12,11 @@ class TTP_Airbase_Test extends TestCase {
         when('wp_http_validate_url')->alias(function ($url) {
             return filter_var($url, FILTER_VALIDATE_URL);
         });
+        when('sanitize_text_field')->returnArg();
     }
 
     protected function tearDown(): void {
+        \Patchwork\restoreAll();
         \Brain\Monkey\tearDown();
     }
 
@@ -209,12 +211,18 @@ class TTP_Airbase_Test extends TestCase {
             return $response['body'];
         });
 
+        \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
+            return ['Name' => 'fldName', 'Email' => 'fldEmail'];
+        });
+
         $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=Name&fields[]=Email';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
                 'response' => ['code' => 200],
-                'body'     => json_encode(['records' => []]),
+                'body'     => json_encode([
+                    'records' => [ [ 'fields' => [ 'Name' => 'Acme', 'Email' => 'a@b.com' ] ] ],
+                ]),
             ];
         });
 
@@ -248,16 +256,70 @@ class TTP_Airbase_Test extends TestCase {
             return $response['body'];
         });
 
+        \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
+            return [
+                'Product Name'    => 'fldProd',
+                'Parent Category' => 'fldParent',
+            ];
+        });
+
         $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=Product%20Name&fields[]=Parent%20Category';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
                 'response' => ['code' => 200],
-                'body'     => json_encode(['records' => []]),
+                'body'     => json_encode([
+                    'records' => [ [ 'fields' => [ 'Product Name' => 'P', 'Parent Category' => 'C' ] ] ],
+                ]),
             ];
         });
 
         $records = TTP_Airbase::get_vendors(['Product Name', 'Parent Category']);
+        $this->assertIsArray($records);
+    }
+
+    public function test_adds_field_id_query_parameters() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                case TTP_Airbase::OPTION_API_PATH:
+                    return 'tblXYZ';
+                default:
+                    return $default;
+            }
+        });
+
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        \Patchwork\replace('TTP_Airbase::get_table_schema', function () {
+            return ['Name' => 'fldName', 'Email' => 'fldEmail'];
+        });
+
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=fldName&fields[]=fldEmail&returnFieldsByFieldId=true';
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
+            $this->assertSame($expected_url, $url);
+            return [
+                'response' => ['code' => 200],
+                'body'     => json_encode([
+                    'records' => [ [ 'fields' => [ 'fldName' => 'Acme', 'fldEmail' => 'a@b.com' ] ] ],
+                ]),
+            ];
+        });
+
+        $records = TTP_Airbase::get_vendors(['Name', 'Email'], true);
         $this->assertIsArray($records);
     }
 }

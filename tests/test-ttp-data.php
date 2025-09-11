@@ -63,7 +63,7 @@ class TTP_Data_Test extends TestCase {
         ];
 
         $requested_fields = null;
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record, &$requested_fields) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record, &$requested_fields) {
             $requested_fields = $fields;
             return ['records' => [ $record ]];
         });
@@ -154,7 +154,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -195,7 +195,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -233,7 +233,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function () use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -267,7 +267,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -301,7 +301,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -355,7 +355,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -396,7 +396,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -479,7 +479,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -526,7 +526,7 @@ class TTP_Data_Test extends TestCase {
 
         $record['fields'][ $field ] = array_keys( $mapping );
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -630,7 +630,7 @@ class TTP_Data_Test extends TestCase {
 
         $record['fields'][ $field ] = implode( ', ', array_keys( $mapping ) );
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -784,7 +784,7 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $airbase_called = false;
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function () use ( &$airbase_called ) {
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( &$airbase_called ) {
             $airbase_called = true;
             return array(
                 'records' => array(
@@ -846,7 +846,7 @@ class TTP_Data_Test extends TestCase {
             }
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function () {
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) {
             return array(
                 'records' => array(
                     array(

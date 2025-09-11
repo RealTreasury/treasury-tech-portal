@@ -17,11 +17,12 @@ class TTP_Airbase {
     /**
      * Retrieve vendors from Airbase API.
      *
-     * @param array $fields Optional list of field IDs or names to request.
+     * @param array $fields              Optional list of field IDs or names to request.
+     * @param bool  $return_fields_by_id Whether to request and return fields by ID.
      *
      * @return array|WP_Error Array of vendor records or WP_Error on failure.
      */
-    public static function get_vendors( $fields = array() ) {
+    public static function get_vendors( $fields = array(), $return_fields_by_id = false ) {
         $token = get_option( self::OPTION_TOKEN );
         if ( empty( $token ) ) {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
@@ -65,8 +66,49 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $records = array();
-        $offset  = '';
+        $fields   = array_filter( (array) $fields );
+        $records  = array();
+        $offset   = '';
+
+        // Normalize fields to names or IDs based on returnFieldsByFieldId.
+        if ( ! empty( $fields ) ) {
+            $schema         = self::get_table_schema();
+            $name_to_id_map = array();
+            $id_to_name_map = array();
+
+            if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
+                $name_to_id_map = $schema;
+                $id_to_name_map = array_flip( $schema );
+            }
+
+            $normalized = array();
+            foreach ( $fields as $field ) {
+                $field = sanitize_text_field( $field );
+                if ( $return_fields_by_id ) {
+                    if ( isset( $name_to_id_map[ $field ] ) ) {
+                        $normalized[] = $name_to_id_map[ $field ];
+                    } elseif ( isset( $id_to_name_map[ $field ] ) ) {
+                        $normalized[] = $field; // Already an ID.
+                    } else {
+                        $normalized[] = $field;
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Airbase: Unknown requested field ' . $field );
+                        }
+                    }
+                } else {
+                    if ( isset( $id_to_name_map[ $field ] ) ) {
+                        $normalized[] = $id_to_name_map[ $field ];
+                    } else {
+                        $normalized[] = $field;
+                        if ( ! isset( $name_to_id_map[ $field ] ) && function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Airbase: Unknown requested field ' . $field );
+                        }
+                    }
+                }
+            }
+
+            $fields = $normalized;
+        }
 
         do {
             $url   = $base_endpoint;
@@ -79,6 +121,9 @@ class TTP_Airbase {
             if ( ! empty( $fields ) ) {
                 foreach ( $fields as $field ) {
                     $query[] = 'fields[]=' . rawurlencode( $field );
+                }
+                if ( $return_fields_by_id ) {
+                    $query[] = 'returnFieldsByFieldId=true';
                 }
             }
 
@@ -108,6 +153,20 @@ class TTP_Airbase {
 
             $offset = isset( $data['offset'] ) ? $data['offset'] : '';
         } while ( $offset );
+
+        if ( ! empty( $fields ) ) {
+            $present = array();
+            foreach ( $records as $record ) {
+                if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
+                    $present = array_unique( array_merge( $present, array_keys( $record['fields'] ) ) );
+                }
+            }
+
+            $missing = array_diff( $fields, $present );
+            if ( ! empty( $missing ) && function_exists( 'error_log' ) ) {
+                error_log( 'TTP_Airbase: Missing expected fields: ' . implode( ', ', $missing ) );
+            }
+        }
 
         return $records;
     }
