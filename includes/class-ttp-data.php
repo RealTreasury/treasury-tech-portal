@@ -124,10 +124,15 @@ class TTP_Data {
 
             $regions_field = $fields['Regions'] ?? array();
             $regions       = array();
-            if ( is_string( $regions_field ) ) {
+            if ( is_array( $regions_field ) && ! empty( $regions_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( 'Regions', $regions_field );
+                if ( ! is_wp_error( $resolved ) ) {
+                    $regions = array_map( 'sanitize_text_field', (array) $resolved );
+                } else {
+                    $regions = array_map( 'sanitize_text_field', $regions_field );
+                }
+            } elseif ( is_string( $regions_field ) ) {
                 $regions = array_filter( array_map( 'trim', explode( ',', $regions_field ) ) );
-            } elseif ( is_array( $regions_field ) ) {
-                $regions = array_map( 'sanitize_text_field', $regions_field );
             }
 
             $parent_category = sanitize_text_field( $fields['Parent Category'] ?? '' );

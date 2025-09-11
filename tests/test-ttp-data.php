@@ -32,7 +32,7 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
                 'Sub Categories'  => ['Payments'],
-                'Regions'         => 'North America, Europe',
+                'Regions'         => ['reg1', 'reg2'],
             ],
         ];
 
@@ -45,6 +45,10 @@ class TTP_Data_Test extends TestCase {
         $captured = null;
         \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
             $captured = $vendors;
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids) {
+            return ['North America', 'Europe'];
         });
 
         TTP_Data::refresh_vendor_cache();
