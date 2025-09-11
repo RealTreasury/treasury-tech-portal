@@ -380,6 +380,79 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $captured[0]['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_resolves_numeric_ids() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => '101',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => '102',
+                'Parent Category' => '103',
+                'Sub Categories'  => '104',
+                'Regions'         => '105',
+                'Domain'          => '106',
+                'Capabilities'    => '107',
+                'Category'        => '108',
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+            $maps = [
+                'Regions'        => [ '105' => 'North America' ],
+                'Vendors'        => [ '101' => 'Acme Corp' ],
+                'Hosted Type'    => [ '102' => 'Cloud' ],
+                'Domain'         => [ '106' => 'Banking' ],
+                'Sub Categories' => [ '104' => 'Payments' ],
+                'Capabilities'   => [ '107' => 'API' ],
+                'Category'       => [ '108' => 'Finance', '103' => 'Cash' ],
+            ];
+
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+
+            return $out;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $expected = [
+            [
+                'regions'         => [ 'North America' ],
+                'vendor'          => 'Acme Corp',
+                'hosted_type'     => [ 'Cloud' ],
+                'domain'          => [ 'Banking' ],
+                'sub_categories'  => [ 'Payments' ],
+                'capabilities'    => [ 'API' ],
+                'categories'      => [ 'Finance' ],
+                'parent_category' => 'Cash',
+            ],
+        ];
+
+        $this->assertSame( $expected[0]['regions'], $captured[0]['regions'] );
+        $this->assertSame( $expected[0]['vendor'], $captured[0]['vendor'] );
+        $this->assertSame( $expected[0]['hosted_type'], $captured[0]['hosted_type'] );
+        $this->assertSame( $expected[0]['domain'], $captured[0]['domain'] );
+        $this->assertSame( $expected[0]['sub_categories'], $captured[0]['sub_categories'] );
+        $this->assertSame( $expected[0]['capabilities'], $captured[0]['capabilities'] );
+        $this->assertSame( $expected[0]['categories'], $captured[0]['categories'] );
+        $this->assertSame( $expected[0]['parent_category'], $captured[0]['parent_category'] );
+    }
+
     public function test_refresh_vendor_cache_resolves_mixed_region_values() {
         $record = [
             'id'     => 'rec1',
@@ -1045,6 +1118,7 @@ class TTP_Data_Test extends TestCase {
             'res_prefix'       => array( array( 'res1234567890abcd' ), true ),
             'rcs_prefix'       => array( array( 'rcs1234567890abcd' ), true ),
             'rcx_prefix'       => array( array( 'rcx1234567890abcd' ), true ),
+            'numeric_only'     => array( array( '123456' ), true ),
             'r_prefixed_words' => array( array( 'Reporting', 'Risk Management' ), false ),
             'non_match'        => array( array( 'abc123' ), false ),
         );
@@ -1079,6 +1153,20 @@ class TTP_Data_Test extends TestCase {
                 $key => array( 'resABC123' ),
             ),
         );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_detects_numeric_ids() {
+        $vendors = array(
+            array(
+                'regions' => array( '123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
