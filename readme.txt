@@ -20,7 +20,9 @@ Add the portal to any page or post using the shortcode:
 
 [treasury_portal]
 
-=== Airbase Vendor Sync ===
+=== Airbase Product Field Sync ===
+
+Vendor entries are built from Airtable product fields. Follow these steps to configure the sync:
 
 1. In the WordPress admin go to **Treasury Tools → Airbase Settings** and set the required values:
    - **API Token** (`ttp_airbase_token`)
