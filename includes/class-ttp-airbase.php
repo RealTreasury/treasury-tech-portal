@@ -156,11 +156,15 @@ class TTP_Airbase {
             $url   = $base_endpoint;
             $query = array(
                 'pageSize=100',
-                'cellFormat=string',
                 'returnFieldsByFieldId=false',
                 'userLocale=en-US',
                 'timeZone=UTC',
             );
+
+            // Ensure returned linked records contain human-readable values.
+            if ( ! in_array( 'cellFormat=string', $query, true ) ) {
+                array_splice( $query, 1, 0, 'cellFormat=string' );
+            }
 
             if ( $offset ) {
                 $query[] = 'offset=' . rawurlencode( $offset );
