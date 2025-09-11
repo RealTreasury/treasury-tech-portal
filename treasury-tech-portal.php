@@ -49,5 +49,6 @@ function rt_airtable_flush_maps() {
     $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_rt_airtable_map_%'" );
     delete_transient( TTP_Data::CACHE_KEY );
     delete_transient( TTP_Data::VENDOR_CACHE_KEY . '_v' . TTP_Data::VENDOR_CACHE_VERSION );
+    delete_transient( 'ttp_airbase_schema' );
 }
 add_action( 'rt_refresh_vendors', 'rt_airtable_flush_maps' );

@@ -630,8 +630,8 @@ function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $
         $map_key = 'rt_airtable_map_' . $base_id . '_' . $linked_table . '_v1';
         $map     = get_transient( $map_key );
         if ( false === $map ) {
-            $map    = array();
-            $link   = add_query_arg(
+            $map  = array();
+            $link = add_query_arg(
                 array(
                     'pageSize'               => 100,
                     'cellFormat'             => 'string',
@@ -641,21 +641,40 @@ function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $
                 ),
                 'https://api.airtable.com/v0/' . $base_id . '/' . $linked_table
             );
-            $resp   = wp_remote_get(
+            $resp = wp_remote_get(
                 $link,
                 array(
                     'headers' => array( 'Authorization' => 'Bearer ' . $token ),
                     'timeout' => 15,
                 )
             );
+
             if ( ! is_wp_error( $resp ) ) {
                 $data = json_decode( wp_remote_retrieve_body( $resp ), true );
                 foreach ( ( $data['records'] ?? array() ) as $r ) {
                     $primary          = $r['fields'][ array_key_first( $r['fields'] ) ] ?? $r['id'];
                     $map[ $r['id'] ] = is_string( $primary ) ? $primary : ( is_array( $primary ) ? reset( $primary ) : $r['id'] );
                 }
-                set_transient( $map_key, $map, DAY_IN_SECONDS );
+            } else {
+                // Cache a fallback map of IDs to themselves to prevent repeated API calls.
+                foreach ( $records as $rec ) {
+                    if ( ! isset( $rec['fields'][ $field_name ] ) ) {
+                        continue;
+                    }
+                    $values = $rec['fields'][ $field_name ];
+                    $values = is_array( $values ) ? $values : array( $values );
+                    foreach ( $values as $id ) {
+                        if ( is_string( $id ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $id ) ) {
+                            if ( function_exists( 'sanitize_text_field' ) ) {
+                                $id = sanitize_text_field( $id );
+                            }
+                            $map[ $id ] = $id;
+                        }
+                    }
+                }
             }
+
+            set_transient( $map_key, $map, DAY_IN_SECONDS );
         }
 
         foreach ( $records as &$rec ) {
