@@ -276,6 +276,10 @@ class TTP_Data {
             }
 
             if ( ! empty( $region_ids ) ) {
+                /**
+                 * Placeholders from self::parse_record_ids() are replaced here with
+                 * the resolved Region names while keeping their original order.
+                 */
                 $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions']['table'], $region_ids, $linked_tables['Regions']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
@@ -309,6 +313,10 @@ class TTP_Data {
             $vendor_name  = '';
             if ( self::contains_record_ids( $vendor_field ) ) {
                 $original_vendor_ids = $vendor_field;
+                /**
+                 * Replace placeholders from self::parse_record_ids() with the
+                 * linked vendor name while preserving the detected order.
+                 */
                 $resolved             = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor']['table'], $vendor_field, $linked_tables['Linked Vendor']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
@@ -332,6 +340,10 @@ class TTP_Data {
             $hosted_type  = array();
             if ( self::contains_record_ids( $hosted_field ) ) {
                 $original_hosted_ids = $hosted_field;
+                /**
+                 * resolve_linked_records() swaps placeholders from
+                 * self::parse_record_ids() for Hosted Type labels.
+                 */
                 $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Hosted Type']['table'], $hosted_field, $linked_tables['Hosted Type']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
@@ -354,6 +366,10 @@ class TTP_Data {
             $domain       = array();
             if ( self::contains_record_ids( $domain_field ) ) {
                 $original_domain_ids = $domain_field;
+                /**
+                 * Swap parsed ID placeholders for Domain values using
+                 * resolve_linked_records() so order stays intact.
+                 */
                 $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Domain']['table'], $domain_field, $linked_tables['Domain']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
@@ -378,6 +394,10 @@ class TTP_Data {
             $category       = '';
             if ( self::contains_record_ids( $category_field ) ) {
                 $original_category_ids = $category_field;
+                /**
+                 * Convert ID placeholders parsed earlier into Category names via
+                 * resolve_linked_records() for clarity and consistent ordering.
+                 */
                 $resolved               = TTP_Airbase::resolve_linked_records( $linked_tables['Category']['table'], $category_field, $linked_tables['Category']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
@@ -402,6 +422,10 @@ class TTP_Data {
             $sub_categories = array();
             if ( self::contains_record_ids( $sub_field ) ) {
                 $original_sub_ids = $sub_field;
+                /**
+                 * resolve_linked_records() replaces parsed ID placeholders with
+                 * Sub Category names so display mirrors source ordering.
+                 */
                 $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['Sub Categories']['table'], $sub_field, $linked_tables['Sub Categories']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
@@ -425,6 +449,10 @@ class TTP_Data {
             $capabilities = array();
             if ( self::contains_record_ids( $cap_field ) ) {
                 $original_cap_ids = $cap_field;
+                /**
+                 * Replace placeholders parsed via self::parse_record_ids() with
+                 * Capability names returned from resolve_linked_records().
+                 */
                 $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['Capabilities']['table'], $cap_field, $linked_tables['Capabilities']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
