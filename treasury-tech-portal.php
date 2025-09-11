@@ -29,6 +29,7 @@ define( 'TTP_DIR', plugin_dir_path( TTP_FILE ) );
 
 define( 'TTP_IS_WPCOM', defined( 'IS_WPCOM' ) && IS_WPCOM );
 
+require_once TTP_DIR . 'includes/categories.php';
 require_once TTP_DIR . 'includes/class-treasury-portal.php';
 
 if ( ! TTP_IS_WPCOM && function_exists( 'register_activation_hook' ) ) {

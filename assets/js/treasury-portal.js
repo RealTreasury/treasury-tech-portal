@@ -215,7 +215,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     LITE: liteTags,
                     TRMS: trmsTags
                 };
-                this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : ['CASH', 'LITE', 'TRMS'];
+                this.availableCategories = Array.isArray(window.TTP_DATA && TTP_DATA.available_categories) && TTP_DATA.available_categories.length ? TTP_DATA.available_categories : [];
+                this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : this.availableCategories;
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];

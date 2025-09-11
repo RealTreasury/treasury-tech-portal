@@ -889,7 +889,7 @@ class TTP_Data {
     public static function get_tools($args = []) {
         $tools = self::get_all_tools();
         if ( empty( $args['category'] ) ) {
-            $args['category'] = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array( 'CASH', 'LITE', 'TRMS' ) );
+            $args['category'] = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) );
         }
 
         if (!empty($args['search'])) {

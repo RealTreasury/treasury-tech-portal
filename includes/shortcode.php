@@ -13,7 +13,7 @@ if ($video_url && !wp_http_validate_url($video_url)) {
 if ($poster_url && !wp_http_validate_url($poster_url)) {
     $poster_url = '';
 }
-$enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array( 'CASH', 'LITE', 'TRMS' ) );
+$enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_CATEGORIES ) );
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->
