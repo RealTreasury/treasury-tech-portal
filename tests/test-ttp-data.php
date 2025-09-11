@@ -334,7 +334,9 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') {
+        $ids_used = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$ids_used) {
+            $ids_used[ $table_id ] = (array) $ids;
             $maps = [
                 'Regions'        => [
                     'recreg1' => 'North America',
@@ -378,6 +380,13 @@ class TTP_Data_Test extends TestCase {
         });
 
         TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame(['recreg1', 'recreg2'], $ids_used['Regions']);
+        $this->assertSame(['recven1', 'recven2'], $ids_used['Vendors']);
+        $this->assertSame(['rechost1', 'rechost2'], $ids_used['Hosted Type']);
+        $this->assertSame(['recdom1', 'recdom2'], $ids_used['Domain']);
+        $this->assertSame(['recsc1', 'recsc2'], $ids_used['Sub Categories']);
+        $this->assertSame(['reccap1', 'reccap2'], $ids_used['Capabilities']);
 
         $this->assertSame(['North America', 'Europe'], $captured[0]['regions']);
         $this->assertSame('Acme Corp', $captured[0]['vendor']);
