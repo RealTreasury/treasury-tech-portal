@@ -80,11 +80,25 @@ class Treasury_Tech_Portal {
         );
     }
 
-    public function shortcode_handler($atts = array(), $content = null) {
+    public function shortcode_handler( $atts = array(), $content = null ) {
         $this->enqueue_assets();
         ob_start();
-        include plugin_dir_path(__FILE__) . 'shortcode.php';
-        return ob_get_clean();
+
+        // Load the shortcode template with error handling to avoid blank output on failure.
+        try {
+            include plugin_dir_path( __FILE__ ) . 'shortcode.php';
+
+            return ob_get_clean();
+        } catch ( \Throwable $e ) {
+            // Log the error for debugging and show a user-friendly message.
+            ob_end_clean();
+            error_log( 'Treasury Portal shortcode error: ' . $e->getMessage() );
+
+            return '<div class="treasury-portal-error">' . esc_html__(
+                'An error occurred while loading the Treasury Portal.',
+                'treasury-tech-portal'
+            ) . '</div>';
+        }
     }
 
     public function provide_vendors_to_bcb($vendors = array()) {
