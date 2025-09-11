@@ -148,7 +148,7 @@ class TTP_Airbase {
 
         do {
             $url   = $base_endpoint;
-            $query = array( 'cellFormat=string' );
+            $query = array( 'cellFormat=json' );
 
             if ( $offset ) {
                 $query[] = 'offset=' . rawurlencode( $offset );

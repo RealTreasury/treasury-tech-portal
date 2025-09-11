@@ -47,7 +47,7 @@ class TTP_Airbase_Test extends TestCase {
         });
 
         $self         = $this;
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self, $expected_url) {
             $self->assertSame($expected_url, $url);
             $self->assertArrayHasKey('headers', $args);
@@ -162,7 +162,7 @@ class TTP_Airbase_Test extends TestCase {
             return $response['body'];
         });
 
-        $expected_url = 'https://api.airtable.com/v0/base123/tblXYZ?cellFormat=string';
+        $expected_url = 'https://api.airtable.com/v0/base123/tblXYZ?cellFormat=json';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
@@ -202,7 +202,7 @@ class TTP_Airbase_Test extends TestCase {
         });
 
         $self       = $this;
-        $base_url   = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string';
+        $base_url   = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json';
         $call_count = 0;
         expect('wp_remote_get')->twice()->andReturnUsing(function ($url) use ($self, $base_url, &$call_count) {
             $call_count++;
@@ -262,7 +262,7 @@ class TTP_Airbase_Test extends TestCase {
             return ['Name' => 'fldName', 'Email' => 'fldEmail'];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=Name&fields[]=Email';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json&fields[]=Name&fields[]=Email';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
@@ -310,7 +310,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=Product%20Name&fields[]=Category';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json&fields[]=Product%20Name&fields[]=Category';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
@@ -355,7 +355,7 @@ class TTP_Airbase_Test extends TestCase {
             return ['Name' => 'fldName', 'Email' => 'fldEmail'];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=string&fields[]=fldName&fields[]=fldEmail&returnFieldsByFieldId=true';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?cellFormat=json&fields[]=fldName&fields[]=fldEmail&returnFieldsByFieldId=true';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
