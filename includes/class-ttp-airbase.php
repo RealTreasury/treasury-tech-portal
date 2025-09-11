@@ -619,57 +619,128 @@ class TTP_Airbase {
 /**
  * Replace Airtable record IDs with their primary field names.
  *
- * @param array  $records             Airtable records.
- * @param array  $field_to_linked     Map of field name => linked table name.
- * @param string $base_id             Airtable base ID.
- * @param string $token               API token.
- * @return array                      Records with IDs replaced by names.
+ * Fetches only the required linked records by using `filterByFormula` with the
+ * requested IDs. Requests are made in batches of 100 IDs and paginated
+ * responses are merged to ensure no lookups are truncated. The table's primary
+ * field is requested explicitly via `fields[]` with
+ * `returnFieldsByFieldId=true` so that field keys remain stable even if the
+ * field name changes.
+ *
+ * @param array  $records         Airtable records.
+ * @param array  $field_to_linked Map of field name => linked table name.
+ * @param string $base_id         Airtable base ID.
+ * @param string $token           API token.
+ *
+ * @return array Records with IDs replaced by names.
  */
 function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $base_id, $token ) {
     foreach ( $field_to_linked as $field_name => $linked_table ) {
         $map_key = 'rt_airtable_map_' . $base_id . '_' . $linked_table . '_v1';
         $map     = get_transient( $map_key );
-        if ( false === $map ) {
-            $map  = array();
-            $link = add_query_arg(
-                array(
-                    'pageSize'               => 100,
-                    'cellFormat'             => 'string',
-                    'returnFieldsByFieldId'  => false,
-                    'userLocale'             => 'en-US',
-                    'timeZone'               => 'UTC',
-                ),
-                'https://api.airtable.com/v0/' . $base_id . '/' . $linked_table
-            );
-            $resp = wp_remote_get(
-                $link,
-                array(
-                    'headers' => array( 'Authorization' => 'Bearer ' . $token ),
-                    'timeout' => 15,
-                )
-            );
+        $map     = is_array( $map ) ? $map : array();
 
-            if ( ! is_wp_error( $resp ) ) {
-                $data = json_decode( wp_remote_retrieve_body( $resp ), true );
-                foreach ( ( $data['records'] ?? array() ) as $r ) {
-                    $primary          = $r['fields'][ array_key_first( $r['fields'] ) ] ?? $r['id'];
-                    $map[ $r['id'] ] = is_string( $primary ) ? $primary : ( is_array( $primary ) ? reset( $primary ) : $r['id'] );
+        // Collect all record IDs used in this field.
+        $all_ids = array();
+        foreach ( $records as $rec ) {
+            if ( ! isset( $rec['fields'][ $field_name ] ) ) {
+                continue;
+            }
+            $values = $rec['fields'][ $field_name ];
+            $values = is_array( $values ) ? $values : array( $values );
+            foreach ( $values as $id ) {
+                if ( is_string( $id ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $id ) ) {
+                    $all_ids[ $id ] = true;
                 }
-            } else {
-                // Cache a fallback map of IDs to themselves to prevent repeated API calls.
-                foreach ( $records as $rec ) {
-                    if ( ! isset( $rec['fields'][ $field_name ] ) ) {
-                        continue;
+            }
+        }
+
+        if ( empty( $all_ids ) ) {
+            continue;
+        }
+
+        // Determine which IDs are not yet cached.
+        $missing_ids = array_diff( array_keys( $all_ids ), array_keys( $map ) );
+
+        if ( ! empty( $missing_ids ) ) {
+            $primary    = TTP_Airbase::get_primary_field( $linked_table );
+            $primary_id = ! is_wp_error( $primary ) ? sanitize_text_field( $primary['id'] ? $primary['id'] : $primary['name'] ) : '';
+
+            $chunks = array_chunk( $missing_ids, 100 );
+            foreach ( $chunks as $chunk ) {
+                $offset = '';
+                do {
+                    $parts = array(
+                        'pageSize=100',
+                        'cellFormat=string',
+                        'returnFieldsByFieldId=true',
+                        'userLocale=en-US',
+                        'timeZone=UTC',
+                    );
+
+                    $filters = array();
+                    foreach ( $chunk as $id ) {
+                        $filters[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
                     }
-                    $values = $rec['fields'][ $field_name ];
-                    $values = is_array( $values ) ? $values : array( $values );
-                    foreach ( $values as $id ) {
-                        if ( is_string( $id ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $id ) ) {
-                            if ( function_exists( 'sanitize_text_field' ) ) {
-                                $id = sanitize_text_field( $id );
+                    $parts[] = 'filterByFormula=' . rawurlencode( 'OR(' . implode( ',', $filters ) . ')' );
+
+                    if ( $primary_id ) {
+                        $parts[] = 'fields[]=' . rawurlencode( $primary_id );
+                    }
+
+                    if ( $offset ) {
+                        $parts[] = 'offset=' . rawurlencode( $offset );
+                    }
+
+                    $url  = 'https://api.airtable.com/v0/' . $base_id . '/' . $linked_table;
+                    $url .= '?' . implode( '&', $parts );
+
+                    $resp = wp_remote_get(
+                        $url,
+                        array(
+                            'headers' => array( 'Authorization' => 'Bearer ' . $token ),
+                            'timeout' => 15,
+                        )
+                    );
+
+                    if ( is_wp_error( $resp ) ) {
+                        // Cache IDs to themselves to avoid repeated failed lookups.
+                        foreach ( $chunk as $id ) {
+                            if ( ! isset( $map[ $id ] ) ) {
+                                $map[ $id ] = $id;
                             }
-                            $map[ $id ] = $id;
                         }
+                        break;
+                    }
+
+                    $data = json_decode( wp_remote_retrieve_body( $resp ), true );
+                    foreach ( ( $data['records'] ?? array() ) as $r ) {
+                        $value = $r['id'];
+                        if ( isset( $r['fields'] ) && is_array( $r['fields'] ) ) {
+                            $field_val = $primary_id && isset( $r['fields'][ $primary_id ] )
+                                ? $r['fields'][ $primary_id ]
+                                : ( isset( $r['fields'][ array_key_first( $r['fields'] ) ] ) ? $r['fields'][ array_key_first( $r['fields'] ) ] : '' );
+
+                            if ( is_array( $field_val ) ) {
+                                $value = is_string( reset( $field_val ) ) ? reset( $field_val ) : $value;
+                            } elseif ( is_string( $field_val ) ) {
+                                $value = $field_val;
+                            }
+                        }
+
+                        if ( function_exists( 'sanitize_text_field' ) ) {
+                            $value = sanitize_text_field( $value );
+                        }
+
+                        $map[ $r['id'] ] = $value;
+                    }
+
+                    $offset = isset( $data['offset'] ) ? $data['offset'] : '';
+                } while ( $offset );
+
+                // Ensure IDs not returned are cached to avoid repeated lookups.
+                foreach ( $chunk as $id ) {
+                    if ( ! isset( $map[ $id ] ) ) {
+                        $map[ $id ] = $id;
                     }
                 }
             }
@@ -700,5 +771,6 @@ function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $
         }
         unset( $rec );
     }
+
     return $records;
 }
