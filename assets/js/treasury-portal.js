@@ -1407,6 +1407,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     btn.className = 'filter-tab';
                     btn.textContent = label;
                     btn.dataset.subcategory = value;
+                    btn.type = 'button';
                     return btn;
                 };
                 const allBtn = createBtn('All');

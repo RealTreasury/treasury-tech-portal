@@ -8,7 +8,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node --test tests/js-warning.test.js"
+    "test": "node --test tests/js-warning.test.js tests/subcategory-button.test.js"
   },
   "keywords": [],
   "author": "",
