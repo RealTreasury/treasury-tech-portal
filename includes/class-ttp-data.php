@@ -184,9 +184,32 @@ class TTP_Data {
             'Founders',
         );
 
+        $linked_fields = array(
+            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
+            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'Category'       => array( 'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
+            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
+        );
+
         $mapping    = TTP_Airbase::map_field_names( $field_names );
         $schema_map = $mapping['schema_map'];
         $field_ids  = $mapping['field_ids'];
+
+        $missing_linked = array();
+        foreach ( $linked_fields as $label => $info ) {
+            if ( ! isset( $schema_map[ $label ] ) || $schema_map[ $label ] === $label ) {
+                if ( function_exists( 'error_log' ) ) {
+                    error_log( sprintf( 'TTP_Data: Field %s missing from schema; skipping resolution', $label ) );
+                }
+                $missing_linked[ $label ] = $info;
+                unset( $linked_fields[ $label ] );
+                $field_names = array_diff( $field_names, array( $label ) );
+            }
+        }
 
         $id_to_name = array_flip( $schema_map );
 
@@ -255,17 +278,6 @@ class TTP_Data {
             );
         }
 
-        $linked_fields = array(
-            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
-            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
-            'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
-            'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
-        );
-
         $vendors = array();
         foreach ( $records as $record ) {
             $fields   = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
@@ -277,6 +289,28 @@ class TTP_Data {
                     $resolved[ $info['key'] ] = $values ? reset( $values ) : '';
                 } else {
                     $resolved[ $info['key'] ] = $values;
+                }
+            }
+
+            foreach ( $missing_linked as $label => $info ) {
+                $raw_values = self::parse_record_ids( $fields[ $label ] ?? array() );
+                $raw_values = array_map( 'sanitize_text_field', $raw_values );
+
+                $ids_to_log = array();
+                foreach ( $raw_values as $val ) {
+                    if ( self::contains_record_ids( array( $val ) ) ) {
+                        $ids_to_log[] = preg_replace( '/[^A-Za-z0-9]/', '', (string) $val );
+                    }
+                }
+
+                if ( ! empty( $ids_to_log ) ) {
+                    self::log_unresolved_field( $label, $ids_to_log );
+                }
+
+                if ( ! empty( $info['single'] ) ) {
+                    $resolved[ $info['key'] ] = $raw_values ? reset( $raw_values ) : '';
+                } else {
+                    $resolved[ $info['key'] ] = $raw_values;
                 }
             }
 

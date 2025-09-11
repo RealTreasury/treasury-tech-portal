@@ -257,6 +257,60 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $vendor['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_skips_missing_schema_fields() {
+        unset( $this->schema_map['Linked Vendor'] );
+
+        $fields = $this->id_fields([
+            'Product Name'    => 'Sample Product',
+            'Product Website' => 'example.com',
+            'Status'          => 'Active',
+            'Hosted Type'     => ['rechost1'],
+            'Category'        => ['reccat1'],
+            'Sub Categories'  => ['recsc1'],
+            'Regions'         => ['recreg1'],
+            'Domain'          => ['recdom1'],
+            'Capabilities'    => ['reccap1'],
+        ]);
+        $fields['Linked Vendor'] = 'recven1';
+
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $fields,
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $tables = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$tables) {
+            $tables[] = $table_id;
+            return [];
+        });
+
+        $logged = [];
+        \Patchwork\replace('TTP_Data::log_unresolved_field', function ($field, $ids) use (&$logged) {
+            $logged = [ $field, $ids ];
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        $error = '';
+        \Patchwork\replace('error_log', function ($message) use (&$error) {
+            $error = $message;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertNotContains('Vendors', $tables);
+        $this->assertSame('recven1', $captured[0]['vendor']);
+        $this->assertSame(['Linked Vendor', ['recven1']], $logged);
+        $this->assertStringContainsString('Linked Vendor', $error);
+    }
+
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
         $record = [
             'id'     => 'rec1',
