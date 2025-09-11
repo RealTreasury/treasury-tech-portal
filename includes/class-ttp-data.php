@@ -12,6 +12,15 @@ class TTP_Data {
     const VENDOR_CACHE_KEY  = 'ttp_vendors_cache';
 
     /**
+     * Indicates when the vendor cache is actively being refreshed.
+     * Prevents recursive refresh calls when saving inside the refresh
+     * routine itself.
+     *
+     * @var bool
+     */
+    private static $refreshing_vendors = false;
+
+    /**
      * Retrieve all tools with caching.
      *
      * @return array
@@ -80,6 +89,19 @@ class TTP_Data {
 
         update_option(self::VENDOR_OPTION_KEY, $vendors);
         delete_transient(self::VENDOR_CACHE_KEY);
+
+        // Immediately refresh the vendor cache so stored data is normalised
+        // before any subsequent access. Use a guard to avoid recursive calls
+        // when this method is invoked from within the refresh routine itself.
+        if ( ! self::$refreshing_vendors ) {
+            self::$refreshing_vendors = true;
+
+            // Trigger the refresh through the existing action hook to ensure
+            // consistent behaviour with scheduled events.
+            do_action( 'ttp_refresh_vendor_cache' );
+
+            self::$refreshing_vendors = false;
+        }
     }
 
     /**
