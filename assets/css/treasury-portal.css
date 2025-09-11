@@ -2527,26 +2527,36 @@
 
             .treasury-portal-admin .treasury-portal-admin-table-wrapper table {
                 font-size: 12px;
-                min-width: 800px;
+                width: 100%;
+                min-width: unset;
                 border-collapse: separate;
                 border-spacing: 0 12px;
             }
 
-            .treasury-portal-admin tbody tr {
+            .treasury-portal-admin .treasury-portal-admin-table thead {
+                display: none;
+            }
+
+            .treasury-portal-admin .treasury-portal-admin-table tbody tr {
                 border-top: 1px solid #e5e7eb;
             }
 
-            .treasury-portal-admin tbody tr:first-child {
+            .treasury-portal-admin .treasury-portal-admin-table tbody tr:first-child {
                 border-top: none;
             }
 
-            .treasury-portal-admin th,
-            .treasury-portal-admin td {
+            .treasury-portal-admin .treasury-portal-admin-table td {
+                display: block;
                 padding: 8px;
                 text-align: left;
                 white-space: normal;
                 word-break: break-word;
                 overflow-wrap: anywhere;
+            }
+
+            .treasury-portal-admin .treasury-portal-admin-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
             }
         }
 
