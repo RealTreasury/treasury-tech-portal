@@ -357,4 +357,82 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq?records[]=
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
+## Regions Table
+
+The Regions table ID is `tblmxl6BKXXjQHUez`. Table names and IDs are
+interchangeable in API requests.
+
+### Fields
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `Region` (`fldM1PNxbzPeV45Kj`) | text | single line region name |
+| `Linked Vendors` (`fldArBrHocWo0FxCr`) | text | list of vendors in that region |
+| `Sub Categories` (`fldwbPhWdTg3Hcdpu`) | linked records to **Sub Categories** table | array of record IDs |
+| `Products` (`fld2CcSeWkli5ulg2`) | linked records to **Products** table | array of record IDs |
+
+### Listing Regions
+
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez?maxRecords=3&view=Grid%20view" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+Returned records omit empty fields. All query parameters available to the
+Products table (`fields[]`, `filterByFormula`, `maxRecords`, `pageSize`,
+`sort[]`, `view`, `cellFormat`, `timeZone`, `userLocale`,
+`returnFieldsByFieldId`, `recordMetadata`) are supported.
+
+### Retrieving a Region
+
+```bash
+curl https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez/RECORD_ID \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Regions
+
+Up to 10 records may be created per request.
+
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "fields": {
+        "Region": "EMEA",
+        "Linked Vendors": "Alpha Group, Bond Treasury",
+        "Products": ["recbtxzaIPTYxjzwK", "rec130cwb06hCCkwk"],
+        "Sub Categories": ["rec8116cdd76088af", "rec245db9343f55e8"]
+      }
+    }]
+  }'
+```
+
+### Updating Regions
+
+Patch only the fields that change. Up to 10 records per request.
+
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "id": "RECORD_ID",
+      "fields": {
+        "Region": "APAC"
+      }
+    }]
+  }'
+```
+
+### Deleting Regions
+
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez?records[]=RECORD_ID" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
 
