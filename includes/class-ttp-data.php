@@ -595,11 +595,21 @@ class TTP_Data {
              * TTP_Airbase::resolve_linked_records(). See self::resolve_linked_field()
              * for the full placeholder-replacement strategy.
              */
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+            $attempt      = 0;
+            $max_attempts = 3;
+
+            do {
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+                $attempt++;
+                if ( ! is_wp_error( $resolved ) ) {
+                    break;
+                }
+            } while ( $attempt < $max_attempts );
+
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
-                    error_log( sprintf( 'TTP_Data: Failed resolving %s for record IDs %s: %s', $field, $ids_str, $resolved->get_error_message() ) );
+                    error_log( sprintf( 'TTP_Data: Failed resolving %s in %s for record IDs %s: %s', $field, $table, $ids_str, $resolved->get_error_message() ) );
                 }
                 self::log_unresolved_field( $field, $ids );
                 foreach ( $placeholders as $idx => $id ) {

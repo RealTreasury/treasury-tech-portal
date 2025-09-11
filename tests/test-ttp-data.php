@@ -1450,6 +1450,49 @@ class TTP_Data_Test extends TestCase {
         $this->assertFalse( $called );
     }
 
+    public function test_resolve_linked_field_retries_on_wp_error() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record = array( 'Regions' => array( 'recreg1' ) );
+        $calls  = 0;
+
+        \Patchwork\replace(
+            'TTP_Airbase::resolve_linked_records',
+            function ( $table_id, $ids, $primary_field = 'Name' ) use ( &$calls ) {
+                $calls++;
+                if ( 1 === $calls ) {
+                    return new WP_Error( 'network', 'Network error' );
+                }
+                return array( 'North America' );
+            }
+        );
+
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $this->assertSame( array( 'North America' ), $result );
+        $this->assertSame( 2, $calls );
+    }
+
+    public function test_resolve_linked_field_purges_ids_after_retries() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record = array( 'Regions' => array( 'recreg1' ) );
+        $calls  = 0;
+
+        \Patchwork\replace(
+            'TTP_Airbase::resolve_linked_records',
+            function ( $table_id, $ids, $primary_field = 'Name' ) use ( &$calls ) {
+                $calls++;
+                return new WP_Error( 'network', 'Network error' );
+            }
+        );
+
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $this->assertSame( array(), $result );
+        $this->assertSame( 3, $calls );
+    }
+
     public function vendors_need_resolution_region_provider() {
         return array(
             'region'     => array( 'region' ),
