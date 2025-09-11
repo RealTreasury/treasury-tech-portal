@@ -40,3 +40,14 @@ if (!defined('HOUR_IN_SECONDS')) {
 if (!defined('DAY_IN_SECONDS')) {
     define('DAY_IN_SECONDS', 86400);
 }
+
+if ( ! defined( 'TTP_CATEGORIES' ) ) {
+    define(
+        'TTP_CATEGORIES',
+        array(
+            'CASH' => 'Cash Tools',
+            'LITE' => 'Treasury Management System Lite (TMS-Lite)',
+            'TRMS' => 'Treasury & Risk Management Systems (TRMS)',
+        )
+    );
+}

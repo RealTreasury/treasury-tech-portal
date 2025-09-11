@@ -5,6 +5,7 @@ use function Brain\Monkey\Functions\when;
 require_once __DIR__ . '/../includes/class-ttp-record-utils.php';
 require_once __DIR__ . '/../includes/class-ttp-rest.php';
 require_once __DIR__ . '/../includes/class-ttp-data.php';
+require_once __DIR__ . '/../includes/class-ttp-admin.php';
 
 class TTP_Rest_Test extends TestCase {
     protected function setUp(): void {
@@ -18,11 +19,13 @@ class TTP_Rest_Test extends TestCase {
         when('absint')->alias(function ($v) {
             return (int) $v;
         });
+        $GLOBALS['wp_options'][ TTP_Admin::OPTION_ENABLED_CATEGORIES ] = array( 'Cash', 'Finance' );
     }
 
     protected function tearDown(): void {
         \Patchwork\restoreAll();
         \Brain\Monkey\tearDown();
+        unset( $GLOBALS['wp_options'][ TTP_Admin::OPTION_ENABLED_CATEGORIES ] );
     }
 
     public function test_registers_tools_endpoint() {
@@ -109,6 +112,24 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame(['Payments'], $captured['sub_category']);
     }
 
+    public function test_tools_endpoint_defaults_to_enabled_categories() {
+        $captured = null;
+        \Patchwork\replace('TTP_Data::get_tools', function ( $args = array() ) use ( &$captured ) {
+            $captured = $args;
+            return array();
+        });
+
+        $request = new class {
+            public function get_param( $key ) {
+                return null;
+            }
+        };
+
+        TTP_Rest::get_tools( $request );
+
+        $this->assertSame( array( 'Cash', 'Finance' ), $captured['category'] );
+    }
+
     public function test_vendors_endpoint_returns_resolved_names() {
         $vendor = [
             'regions'    => ['North America'],
@@ -132,6 +153,7 @@ class TTP_Rest_Test extends TestCase {
         ];
 
         $refresh_called = false;
+        $GLOBALS['wp_options'][ TTP_Admin::OPTION_ENABLED_CATEGORIES ] = array( 'rec456' );
 
         \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
             return [ $vendor ];
