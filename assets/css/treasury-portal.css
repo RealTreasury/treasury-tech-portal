@@ -900,7 +900,7 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        .treasury-portal .tool-tags {
+        .treasury-portal .tool-capabilities {
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
@@ -909,7 +909,7 @@
             border-top: none;
         }
 
-        .treasury-portal .tool-tag {
+        .treasury-portal .tool-capability {
             background: #f3f4f6;
             color: #6b7280;
             padding: 3px 6px;
@@ -919,8 +919,8 @@
             border: 1px solid #e5e7eb;
         }
 
-        .treasury-portal .show-more-tags-btn,
-        .treasury-portal .show-less-tags-btn {
+        .treasury-portal .show-more-capabilities-btn,
+        .treasury-portal .show-less-capabilities-btn {
             background: none;
             border: none;
             color: #6366f1;
@@ -932,13 +932,13 @@
             margin-left: 4px;
         }
 
-        .treasury-portal .show-more-tags-btn:hover,
-        .treasury-portal .show-less-tags-btn:hover {
+        .treasury-portal .show-more-capabilities-btn:hover,
+        .treasury-portal .show-less-capabilities-btn:hover {
             background: #f3f4f6;
         }
 
-        .treasury-portal .show-more-modal-tags-btn,
-        .treasury-portal .show-less-modal-tags-btn {
+        .treasury-portal .show-more-modal-capabilities-btn,
+        .treasury-portal .show-less-modal-capabilities-btn {
             background: none;
             border: none;
             color: #6366f1;
@@ -951,8 +951,8 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
-        .treasury-portal .show-more-modal-tags-btn:hover,
-        .treasury-portal .show-less-modal-tags-btn:hover {
+        .treasury-portal .show-more-modal-capabilities-btn:hover,
+        .treasury-portal .show-less-modal-capabilities-btn:hover {
             background: #f3f4f6;
         }
 
