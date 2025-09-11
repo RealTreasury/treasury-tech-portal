@@ -276,13 +276,8 @@ class TTP_Data {
             }
 
             if ( ! empty( $region_ids ) ) {
-                $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions']['table'], $region_ids, $linked_tables['Regions']['primary_field'] );
+                $resolved = self::resolve_linked_records_with_retry( $linked_tables['Regions']['table'], $region_ids, $linked_tables['Regions']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        $ids = implode( ', ', array_map( 'sanitize_text_field', $region_ids ) );
-                        error_log( sprintf( 'TTP_Data: Failed resolving Regions for record IDs %s: %s', $ids, $resolved->get_error_message() ) );
-                    }
-                    self::log_unresolved_field( 'Regions', $region_ids );
                     // remove placeholders for IDs on error
                     $regions = array_filter( $regions, function ( $val ) use ( $region_ids ) {
                         return ! in_array( $val, $region_ids, true );
@@ -309,12 +304,9 @@ class TTP_Data {
             $vendor_name  = '';
             if ( self::contains_record_ids( $vendor_field ) ) {
                 $original_vendor_ids = $vendor_field;
-                $resolved             = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor']['table'], $vendor_field, $linked_tables['Linked Vendor']['primary_field'] );
+                $resolved             = self::resolve_linked_records_with_retry( $linked_tables['Linked Vendor']['table'], $vendor_field, $linked_tables['Linked Vendor']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Linked Vendor: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Linked Vendor', $original_vendor_ids );
+                    $vendor_field = array();
                 } elseif ( ! empty( $resolved ) ) {
                     if ( count( (array) $resolved ) < count( (array) $original_vendor_ids ) ) {
                         $missing = array_slice( (array) $original_vendor_ids, count( (array) $resolved ) );
@@ -332,12 +324,9 @@ class TTP_Data {
             $hosted_type  = array();
             if ( self::contains_record_ids( $hosted_field ) ) {
                 $original_hosted_ids = $hosted_field;
-                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Hosted Type']['table'], $hosted_field, $linked_tables['Hosted Type']['primary_field'] );
+                $resolved            = self::resolve_linked_records_with_retry( $linked_tables['Hosted Type']['table'], $hosted_field, $linked_tables['Hosted Type']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Hosted Type: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Hosted Type', $original_hosted_ids );
+                    $hosted_type = array();
                 } else {
                     if ( count( (array) $resolved ) < count( (array) $original_hosted_ids ) ) {
                         $missing = array_slice( (array) $original_hosted_ids, count( (array) $resolved ) );
@@ -354,12 +343,8 @@ class TTP_Data {
             $domain       = array();
             if ( self::contains_record_ids( $domain_field ) ) {
                 $original_domain_ids = $domain_field;
-                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Domain']['table'], $domain_field, $linked_tables['Domain']['primary_field'] );
+                $resolved            = self::resolve_linked_records_with_retry( $linked_tables['Domain']['table'], $domain_field, $linked_tables['Domain']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Domain: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Domain', $original_domain_ids );
                     $domain = array();
                 } else {
                     if ( count( (array) $resolved ) < count( (array) $original_domain_ids ) ) {
@@ -378,12 +363,8 @@ class TTP_Data {
             $category       = '';
             if ( self::contains_record_ids( $category_field ) ) {
                 $original_category_ids = $category_field;
-                $resolved               = TTP_Airbase::resolve_linked_records( $linked_tables['Category']['table'], $category_field, $linked_tables['Category']['primary_field'] );
+                $resolved               = self::resolve_linked_records_with_retry( $linked_tables['Category']['table'], $category_field, $linked_tables['Category']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Category: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Category', $original_category_ids );
                     $categories = array();
                 } else {
                     if ( count( (array) $resolved ) < count( (array) $original_category_ids ) ) {
@@ -402,12 +383,8 @@ class TTP_Data {
             $sub_categories = array();
             if ( self::contains_record_ids( $sub_field ) ) {
                 $original_sub_ids = $sub_field;
-                $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['Sub Categories']['table'], $sub_field, $linked_tables['Sub Categories']['primary_field'] );
+                $resolved         = self::resolve_linked_records_with_retry( $linked_tables['Sub Categories']['table'], $sub_field, $linked_tables['Sub Categories']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Sub Categories: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Sub Categories', $original_sub_ids );
                     $sub_categories = array();
                 } else {
                     if ( count( (array) $resolved ) < count( (array) $original_sub_ids ) ) {
@@ -425,12 +402,8 @@ class TTP_Data {
             $capabilities = array();
             if ( self::contains_record_ids( $cap_field ) ) {
                 $original_cap_ids = $cap_field;
-                $resolved         = TTP_Airbase::resolve_linked_records( $linked_tables['Capabilities']['table'], $cap_field, $linked_tables['Capabilities']['primary_field'] );
+                $resolved         = self::resolve_linked_records_with_retry( $linked_tables['Capabilities']['table'], $cap_field, $linked_tables['Capabilities']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
-                    if ( function_exists( 'error_log' ) ) {
-                        error_log( 'TTP_Data: Failed resolving Capabilities: ' . $resolved->get_error_message() );
-                    }
-                    self::log_unresolved_field( 'Capabilities', $original_cap_ids );
                     $capabilities = array();
                 } else {
                     if ( count( (array) $resolved ) < count( (array) $original_cap_ids ) ) {
@@ -620,6 +593,45 @@ class TTP_Data {
             }
         }
         return false;
+    }
+
+    /**
+     * Resolve linked records with retry logic.
+     *
+     * Attempts to resolve linked record IDs up to three times before giving
+     * up. Failures are logged with the table and IDs for easier debugging.
+     *
+     * @param string $table         Table name or ID.
+     * @param array  $ids           Record IDs to resolve.
+     * @param string $primary_field Primary field to return.
+     *
+     * @return array|WP_Error Array of resolved values or WP_Error on failure.
+     */
+    private static function resolve_linked_records_with_retry( $table, $ids, $primary_field ) {
+        $attempts = 0;
+        do {
+            $result = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+            if ( ! is_wp_error( $result ) ) {
+                return $result;
+            }
+            $attempts++;
+        } while ( $attempts < 3 );
+
+        if ( function_exists( 'error_log' ) ) {
+            $safe_ids = function_exists( 'sanitize_text_field' ) ? array_map( 'sanitize_text_field', (array) $ids ) : (array) $ids;
+            error_log(
+                sprintf(
+                    'TTP_Data: Failed resolving %s for record IDs %s: %s',
+                    $table,
+                    implode( ', ', $safe_ids ),
+                    $result->get_error_message()
+                )
+            );
+        }
+
+        self::log_unresolved_field( $table, $ids );
+
+        return $result;
     }
 
     /**

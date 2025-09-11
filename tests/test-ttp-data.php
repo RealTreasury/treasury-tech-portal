@@ -282,6 +282,40 @@ class TTP_Data_Test extends TestCase {
         $this->assertStringContainsString('recreg1', implode(' ', $logged));
     }
 
+    public function test_refresh_vendor_cache_retries_and_purges_ids_on_failure() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Regions'         => ['recreg1'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $attempts = 0;
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$attempts) {
+            $attempts++;
+            return new WP_Error('err', 'fail');
+        });
+
+        \Patchwork\replace('error_log', function () {});
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame([], $captured[0]['regions']);
+        $this->assertSame(3, $attempts);
+    }
+
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
         $record = [
             'id'     => 'rec1',
