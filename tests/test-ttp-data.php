@@ -259,6 +259,60 @@ class TTP_Data_Test extends TestCase {
         $this->assertStringContainsString('Product Website', $logged);
     }
 
+    public function test_refresh_vendor_cache_resolves_string_record_ids() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'recven1',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => 'rechost1',
+                'Parent Category' => 'Cash',
+                'Sub Categories'  => 'recsc1',
+                'Regions'         => 'recreg1',
+                'Domain'          => 'recdom1',
+                'Capabilities'    => 'reccap1',
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids) {
+            $maps = [
+                'Regions'        => [ 'recreg1' => 'NORAM' ],
+                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
+                'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Sub Categories' => [ 'recsc1' => 'Payments' ],
+                'Capabilities'   => [ 'reccap1' => 'API' ],
+            ];
+
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+
+            return $out;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame(['NORAM'], $captured[0]['regions']);
+        $this->assertSame(['Banking'], $captured[0]['domain']);
+        $this->assertSame(['Payments'], $captured[0]['sub_categories']);
+        $this->assertSame(['API'], $captured[0]['capabilities']);
+    }
+
     public function test_get_tools_filters_new_arguments() {
         $tools = [
             [
