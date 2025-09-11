@@ -257,6 +257,57 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $vendor['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_handles_mixed_case_field_names() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'LiNkEd VeNdOr'   => ['recven1'],
+                'REgions'         => ['recreg1'],
+                'Product Website' => '',
+                'Product Video'   => '',
+                'Logo URL'        => '',
+                'Status'          => '',
+                'Hosted Type'     => [],
+                'Domain'          => [],
+                'Category'        => [],
+                'Sub Categories'  => [],
+                'Capabilities'    => [],
+                'HQ Location'     => [],
+                'Founded Year'    => '',
+                'Founders'        => '',
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return array( 'records' => array( $record ) );
+        } );
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+            $maps = array(
+                'Regions' => array( 'recreg1' => 'North America' ),
+                'Vendors' => array( 'recven1' => 'Acme Corp' ),
+            );
+            $out = array();
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( 'Acme Corp', $captured[0]['vendor'] );
+        $this->assertSame( array( 'North America' ), $captured[0]['regions'] );
+    }
+
     public function test_refresh_vendor_cache_skips_missing_schema_fields() {
         unset( $this->schema_map['Linked Vendor'] );
 
@@ -1583,6 +1634,31 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
         $this->assertSame( 1, $calls );
+    }
+
+    public function vendors_need_resolution_mixed_case_provider() {
+        return array(
+            'camel' => array( 'linkedVendor' ),
+            'upper' => array( 'LINKED_VENDOR' ),
+            'spaces' => array( 'LiNkEd VeNdOr IDs' ),
+        );
+    }
+
+    /**
+     * @dataProvider vendors_need_resolution_mixed_case_provider
+     */
+    public function test_vendors_need_resolution_detects_mixed_case_keys( $key ) {
+        $vendors = array(
+            array(
+                $key => array( 'recABC123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
     }
 
     public function test_log_unresolved_field_groups_ids_by_field() {

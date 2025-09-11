@@ -125,6 +125,24 @@ class TTP_Data {
     }
 
     /**
+     * Normalize a field key to lowercase snake_case.
+     *
+     * Converts camelCase and other separators to underscores.
+     *
+     * @param string $key Original field key.
+     * @return string Normalized key.
+     */
+    private static function normalize_key( $key ) {
+        $original = (string) $key;
+        if ( strpos( $original, ' ' ) === false && strpos( $original, '_' ) === false && strpos( $original, '-' ) === false ) {
+            $original = preg_replace( '/([a-z0-9])([A-Z])/', '$1_$2', $original );
+        }
+        $original = strtolower( $original );
+        $original = preg_replace( '/[^a-z0-9]+/', '_', $original );
+        return trim( $original, '_' );
+    }
+
+    /**
      * Determine if vendor data contains unresolved record IDs.
      *
      * @param array $vendors Vendor records to inspect.
@@ -144,7 +162,7 @@ class TTP_Data {
 
         $walker = function ( $data ) use ( &$walker, $aliases, $fields ) {
             foreach ( (array) $data as $key => $value ) {
-                $normalized_key = strtolower( str_replace( ' ', '_', $key ) );
+                $normalized_key = self::normalize_key( $key );
                 $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
                 if ( isset( $aliases[ $normalized_key ] ) ) {
                     $normalized_key = $aliases[ $normalized_key ];
@@ -196,29 +214,37 @@ class TTP_Data {
         );
 
         $linked_fields = array(
-            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
-            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
-            'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
-            'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
+            'regions'        => array( 'label' => 'Regions',        'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
+            'linked_vendor'  => array( 'label' => 'Linked Vendor',  'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'hosted_type'    => array( 'label' => 'Hosted Type',    'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'domain'         => array( 'label' => 'Domain',         'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'category'       => array( 'label' => 'Category',       'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
+            'sub_categories' => array( 'label' => 'Sub Categories', 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'capabilities'   => array( 'label' => 'Capabilities',   'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'hq_location'    => array( 'label' => 'HQ Location',    'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
+
+        $field_label_map = array();
+        foreach ( $field_names as $label ) {
+            $field_label_map[ self::normalize_key( $label ) ] = $label;
+        }
+        $normalized_fields = array_keys( $field_label_map );
 
         $mapping    = TTP_Airbase::map_field_names( $field_names );
         $schema_map = $mapping['schema_map'];
         $field_ids  = $mapping['field_ids'];
 
         $missing_linked = array();
-        foreach ( $linked_fields as $label => $info ) {
+        foreach ( $linked_fields as $field => $info ) {
+            $label = $info['label'];
             if ( ! isset( $schema_map[ $label ] ) || $schema_map[ $label ] === $label ) {
                 if ( function_exists( 'error_log' ) ) {
                     error_log( sprintf( 'TTP_Data: Field %s missing from schema; skipping resolution', $label ) );
                 }
-                $missing_linked[ $label ] = $info;
-                unset( $linked_fields[ $label ] );
+                $missing_linked[ $field ] = $info;
+                unset( $linked_fields[ $field ] );
                 $field_names = array_diff( $field_names, array( $label ) );
+                unset( $field_label_map[ self::normalize_key( $label ) ] );
             }
         }
 
@@ -235,7 +261,8 @@ class TTP_Data {
             if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
                 $mapped = array();
                 foreach ( $record['fields'] as $key => $value ) {
-                    $mapped[ isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key ] = $value;
+                    $name            = isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key;
+                    $mapped[ self::normalize_key( $name ) ] = $value;
                 }
                 $record['fields'] = $mapped;
             }
@@ -249,13 +276,16 @@ class TTP_Data {
             }
         }
 
-        $missing = array_diff( $field_names, $present_keys );
-        if ( ! empty( $missing ) ) {
+        $missing_keys = array_diff( $normalized_fields, $present_keys );
+        if ( ! empty( $missing_keys ) ) {
             $field_map   = $schema_map;
+            $missing     = array();
             $missing_ids = array();
-            foreach ( $missing as $field ) {
-                if ( isset( $field_map[ $field ] ) ) {
-                    $missing_ids[] = $field_map[ $field ];
+            foreach ( $missing_keys as $key ) {
+                $label      = $field_label_map[ $key ] ?? $key;
+                $missing[]  = $label;
+                if ( isset( $field_map[ $label ] ) ) {
+                    $missing_ids[] = $field_map[ $label ];
                 }
             }
 
@@ -294,8 +324,8 @@ class TTP_Data {
             $fields   = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
             $resolved = array();
 
-            foreach ( $linked_fields as $label => $info ) {
-                $values = self::resolve_linked_field( $fields, $label, $info['table'], $info['primary_field'] );
+            foreach ( $linked_fields as $field => $info ) {
+                $values = self::resolve_linked_field( $fields, $field, $info['table'], $info['primary_field'], $info['label'] );
                 if ( ! empty( $info['single'] ) ) {
                     $resolved[ $info['key'] ] = $values ? reset( $values ) : '';
                 } else {
@@ -303,8 +333,8 @@ class TTP_Data {
                 }
             }
 
-            foreach ( $missing_linked as $label => $info ) {
-                $raw_values = self::parse_record_ids( $fields[ $label ] ?? array() );
+            foreach ( $missing_linked as $field => $info ) {
+                $raw_values = self::parse_record_ids( $fields[ $field ] ?? array() );
                 $raw_values = array_map( 'sanitize_text_field', $raw_values );
 
                 $ids_to_log = array();
@@ -315,7 +345,7 @@ class TTP_Data {
                 }
 
                 if ( ! empty( $ids_to_log ) ) {
-                    self::log_unresolved_field( $label, $ids_to_log );
+                    self::log_unresolved_field( $info['label'], $ids_to_log );
                 }
 
                 if ( ! empty( $info['single'] ) ) {
@@ -332,11 +362,11 @@ class TTP_Data {
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
-                'name'            => $fields['Product Name'] ?? '',
+                'name'            => $fields['product_name'] ?? '',
                 'vendor'          => $resolved['vendor'],
-                'website'         => self::normalize_url( $fields['Product Website'] ?? '' ),
-                'video_url'       => self::normalize_url( $fields['Product Video'] ?? '' ),
-                'status'          => $fields['Status'] ?? '',
+                'website'         => self::normalize_url( $fields['product_website'] ?? '' ),
+                'video_url'       => self::normalize_url( $fields['product_video'] ?? '' ),
+                'status'          => $fields['status'] ?? '',
                 'hosted_type'     => $resolved['hosted_type'],
                 'domain'          => $resolved['domain'],
                 'regions'         => $resolved['regions'],
@@ -345,10 +375,10 @@ class TTP_Data {
                 'category'        => $category,
                 'category_names'  => $category_names,
                 'capabilities'    => $resolved['capabilities'],
-                'logo_url'        => self::normalize_url( $fields['Logo URL'] ?? '' ),
+                'logo_url'        => self::normalize_url( $fields['logo_url'] ?? '' ),
                 'hq_location'     => $resolved['hq_location'],
-                'founded_year'    => $fields['Founded Year'] ?? '',
-                'founders'        => $fields['Founders'] ?? '',
+                'founded_year'    => $fields['founded_year'] ?? '',
+                'founders'        => $fields['founders'] ?? '',
             );
         }
 
@@ -572,8 +602,9 @@ class TTP_Data {
      * @param string $primary_field Primary field name in linked table.
      * @return array Sanitized values with IDs replaced by names.
      */
-    private static function resolve_linked_field( $record, $field, $table, $primary_field ) {
+    private static function resolve_linked_field( $record, $field, $table, $primary_field, $label = '' ) {
         $value        = $record[ $field ] ?? array();
+        $label        = $label ? $label : $field;
         $values       = self::parse_record_ids( $value );
         $placeholders = array();
         $ids          = array();
@@ -609,9 +640,9 @@ class TTP_Data {
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
-                    error_log( sprintf( 'TTP_Data: Failed resolving %s in %s for record IDs %s: %s', $field, $table, $ids_str, $resolved->get_error_message() ) );
+                    error_log( sprintf( 'TTP_Data: Failed resolving %s in %s for record IDs %s: %s', $label, $table, $ids_str, $resolved->get_error_message() ) );
                 }
-                self::log_unresolved_field( $field, $ids );
+                self::log_unresolved_field( $label, $ids );
                 foreach ( $placeholders as $idx => $id ) {
                     unset( $values[ $idx ] );
                 }
@@ -619,14 +650,14 @@ class TTP_Data {
                 $resolved = array_map( 'sanitize_text_field', (array) $resolved );
 
                 if ( empty( $resolved ) ) {
-                    self::log_unresolved_field( $field, $ids );
+                    self::log_unresolved_field( $label, $ids );
                     foreach ( $placeholders as $idx => $id ) {
                         unset( $values[ $idx ] );
                     }
                 } else {
                     if ( count( $resolved ) < count( $ids ) ) {
                         $missing = array_slice( $ids, count( $resolved ) );
-                        self::log_unresolved_field( $field, $missing );
+                        self::log_unresolved_field( $label, $missing );
                     }
 
                     $i = 0;
