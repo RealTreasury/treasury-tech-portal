@@ -1619,6 +1619,16 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( array( 'Alpha', 'Beta' ), $method->invoke( null, $input ) );
     }
 
+    public function test_parse_record_ids_handles_value_field_arrays() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $input = array(
+            array( 'id' => 'sel1', 'value' => 'Alpha' ),
+            array( 'id' => 'sel2' ),
+        );
+        $this->assertSame( array( 'Alpha', 'sel2' ), $method->invoke( null, $input ) );
+    }
+
     /**
      * @dataProvider contains_record_ids_provider
      */
