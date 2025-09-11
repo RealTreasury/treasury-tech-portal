@@ -24,16 +24,16 @@
                     <th><?php esc_html_e('Website', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Status', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Domain', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Regions', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Parent Category', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Parent Category', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -80,20 +80,20 @@
                             <?php endif; ?>
                         </td>
                         <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['status'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"><?php echo esc_html($hosted); ?></td>
-                        <td data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>"><?php echo esc_html($domain); ?></td>
-                        <td data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>"><?php echo esc_html($regions); ?></td>
-                        <td data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"><?php echo esc_html($subs); ?></td>
-                        <td data-label="<?php echo esc_attr__('Parent Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['parent_category'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($capabilities); ?></td>
-                        <td data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>">
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"><?php echo esc_html($hosted); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>"><?php echo esc_html($domain); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>"><?php echo esc_html($regions); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"><?php echo esc_html($subs); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Parent Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['parent_category'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($capabilities); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>">
                             <?php if (!empty($logo_href)) : ?>
                                 <a href="<?php echo $logo_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $logo_text; ?></a>
                             <?php endif; ?>
                         </td>
-                        <td data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

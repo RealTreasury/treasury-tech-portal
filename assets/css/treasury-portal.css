@@ -2558,5 +2558,9 @@
                 content: attr(data-label);
                 font-weight: 600;
             }
+
+            .is-mobile-hidden {
+                display: none;
+            }
         }
 
