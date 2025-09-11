@@ -190,8 +190,31 @@ class TTP_Data {
         }
 
         $missing = array_diff( $field_names, $present_keys );
-        if (!empty($missing) && function_exists('error_log')) {
-            error_log('TTP_Data: Missing expected fields: ' . implode(', ', $missing));
+        if ( ! empty( $missing ) ) {
+            $field_map   = array_combine( $field_names, $field_ids );
+            $missing_ids = array();
+            foreach ( $missing as $field ) {
+                if ( isset( $field_map[ $field ] ) ) {
+                    $missing_ids[] = $field_map[ $field ];
+                }
+            }
+            if ( function_exists( 'error_log' ) ) {
+                $message = 'TTP_Data: Missing expected fields: ' . implode( ', ', $missing );
+                if ( ! empty( $missing_ids ) ) {
+                    $message .= ' (requested IDs: ' . implode( ', ', $missing_ids ) . ')';
+                }
+                error_log( $message );
+            }
+            if ( function_exists( 'sanitize_text_field' ) ) {
+                $missing     = array_map( 'sanitize_text_field', $missing );
+                $missing_ids = array_map( 'sanitize_text_field', $missing_ids );
+            }
+            if ( function_exists( 'update_option' ) ) {
+                update_option( 'ttp_missing_fields', array(
+                    'fields' => $missing,
+                    'ids'    => $missing_ids,
+                ) );
+            }
         }
 
         $linked_tables = array(

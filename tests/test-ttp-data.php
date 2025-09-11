@@ -279,9 +279,21 @@ class TTP_Data_Test extends TestCase {
             $logged = $message;
         });
 
+        $stored = null;
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored ) {
+            if ( 'ttp_missing_fields' === $name ) {
+                $stored = $value;
+            }
+            return true;
+        } );
+
         TTP_Data::refresh_vendor_cache();
 
         $this->assertStringContainsString('Product Website', $logged);
+        $this->assertStringContainsString($this->schema_map['Product Website'], $logged);
+        $this->assertIsArray($stored);
+        $this->assertContains('Product Website', $stored['fields']);
+        $this->assertContains($this->schema_map['Product Website'], $stored['ids']);
     }
 
     public function test_refresh_vendor_cache_resolves_string_record_ids() {
