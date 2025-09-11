@@ -111,11 +111,25 @@ class TTP_Data {
      * @return bool
      */
     private static function vendors_need_resolution( $vendors ) {
+        $aliases = array(
+            'region'            => 'regions',
+            'sub_category'      => 'sub_categories',
+            'capability'        => 'capabilities',
+            'hosted_types'      => 'hosted_type',
+            'domains'           => 'domain',
+            'parent_categories' => 'parent_category',
+        );
+
         foreach ( (array) $vendors as $vendor ) {
             $normalized = array();
 
             foreach ( (array) $vendor as $key => $value ) {
-                $normalized[ strtolower( str_replace( ' ', '_', $key ) ) ] = $value;
+                $normalized_key = strtolower( str_replace( ' ', '_', $key ) );
+                $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
+                if ( isset( $aliases[ $normalized_key ] ) ) {
+                    $normalized_key = $aliases[ $normalized_key ];
+                }
+                $normalized[ $normalized_key ] = $value;
             }
 
             $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category' );
