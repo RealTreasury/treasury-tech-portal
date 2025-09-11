@@ -280,7 +280,7 @@ class TTP_Airbase_Test extends TestCase {
             return ['Name' => 'fldName', 'Email' => 'fldEmail'];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?pageSize=100&cellFormat=string&returnFieldsByFieldId=false&userLocale=en-US&timeZone=UTC&fields[]=Name&fields[]=Email';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?pageSize=100&cellFormat=string&returnFieldsByFieldId=false&userLocale=en-US&timeZone=UTC&fields[]=fldName&fields[]=fldEmail';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
@@ -328,7 +328,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?pageSize=100&cellFormat=string&returnFieldsByFieldId=false&userLocale=en-US&timeZone=UTC&fields[]=Product%20Name&fields[]=Category';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?pageSize=100&cellFormat=string&returnFieldsByFieldId=false&userLocale=en-US&timeZone=UTC&fields[]=fldProd&fields[]=fldCat';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [

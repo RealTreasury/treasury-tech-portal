@@ -237,7 +237,7 @@ class TTP_Data_Test extends TestCase {
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
-                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
             ];
@@ -293,7 +293,7 @@ class TTP_Data_Test extends TestCase {
         TTP_Data::refresh_vendor_cache();
 
         $this->assertSame('Name', $captured['Vendors']);
-        $this->assertSame('Domain', $captured['Domain']);
+        $this->assertSame('Domain Name', $captured['Domain']);
     }
 
     public function test_refresh_vendor_cache_skips_missing_schema_fields() {
@@ -513,6 +513,53 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['recven1'], $logged['linked_vendor']);
     }
 
+    public function test_refresh_vendor_cache_handles_unresolved_category_ids() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Category'       => ['reccat1'],
+                'Sub Categories' => ['recsc1'],
+                'Regions'         => ['North America'],
+                'Domain'          => ['Banking'],
+                'Capabilities'    => ['API'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null) {
+            if ('Categories' === $table_id || 'Sub Categories' === $table_id) {
+                throw new \RuntimeException('fail');
+            }
+            return [];
+        });
+
+        $logged = [];
+        \Patchwork\replace('TTP_Data::log_unresolved_field', function ($field, $ids) use (&$logged) {
+            $logged[ $field ] = $ids;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame([], $captured[0]['categories']);
+        $this->assertSame([], $captured[0]['sub_categories']);
+        $this->assertSame('', $captured[0]['category']);
+        $this->assertSame([], $captured[0]['category_names']);
+        $this->assertSame(['reccat1'], $logged['category']);
+        $this->assertSame(['recsc1'], $logged['sub_categories']);
+    }
+
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
         $record = [
             'id'     => 'rec1',
@@ -693,7 +740,7 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ '106' => 'Banking' ],
                 'Sub Categories' => [ '104' => 'Payments' ],
                 'Capabilities'   => [ '107' => 'API' ],
-                'Category'       => [ '108' => 'Finance', '103' => 'Cash' ],
+                'Categories'     => [ '108' => 'Finance', '103' => 'Cash' ],
             ];
 
             $out = [];
@@ -844,7 +891,7 @@ class TTP_Data_Test extends TestCase {
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
-                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
                 'HQ Location'    => [ 'rechq1' => 'NY' ],
@@ -924,7 +971,7 @@ class TTP_Data_Test extends TestCase {
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
-                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
                 'HQ Location'    => [ 'rechq1' => 'NY' ],
@@ -1081,7 +1128,7 @@ class TTP_Data_Test extends TestCase {
         $ids_used = [];
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$ids_used) {
             $ids_used[ $table_id ] = (array) $ids;
-            if ('Category' === $table_id) {
+            if ('Categories' === $table_id) {
                 return ['Cash'];
             }
             return [];
@@ -1094,7 +1141,7 @@ class TTP_Data_Test extends TestCase {
 
         TTP_Data::refresh_vendor_cache();
 
-        $this->assertSame(['reccat1'], $ids_used['Category']);
+        $this->assertSame(['reccat1'], $ids_used['Categories']);
         $this->assertSame('Cash', $captured[0]['category']);
         $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
     }
@@ -1197,13 +1244,13 @@ class TTP_Data_Test extends TestCase {
             ],
             'categories' => [
                 'Category',
-                'Category',
+                'Categories',
                 'categories',
                 [ 'reccat1' => 'Finance' ],
             ],
             'category' => [
                 'Category',
-                'Category',
+                'Categories',
                 'category',
                 [ 'reccat1' => 'Cash' ],
             ],
@@ -1314,7 +1361,7 @@ class TTP_Data_Test extends TestCase {
             ],
             'categories' => [
                 'Category',
-                'Category',
+                'Categories',
                 'categories',
                 [
                     'reccat1' => 'Finance',
@@ -1879,6 +1926,34 @@ class TTP_Data_Test extends TestCase {
                         ),
                     ),
                 ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_detects_category_ids() {
+        $vendors = array(
+            array(
+                'categories' => array( 'recABC123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function test_vendors_need_resolution_detects_category_name_ids() {
+        $vendors = array(
+            array(
+                'category_names' => array( 'recABC123' ),
             ),
         );
 

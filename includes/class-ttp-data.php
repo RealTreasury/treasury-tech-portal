@@ -257,7 +257,7 @@ class TTP_Data {
             'linked_vendor' => 'vendor',
         );
 
-        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
+        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category', 'category_names' );
 
         $vendors = array_map( array( __CLASS__, 'normalize_keys' ), (array) $vendors );
 
@@ -365,13 +365,24 @@ class TTP_Data {
             return;
         }
 
-        $records = self::normalize_vendor_response( $data );
+        $records     = self::normalize_vendor_response( $data );
+        $id_to_label = array_flip( $schema_map );
 
         foreach ( $records as &$record ) {
             if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
-                $record['fields'] = self::normalize_keys( $record['fields'] );
+                $mapped = array();
+                foreach ( $record['fields'] as $key => $value ) {
+                    $label           = $id_to_label[ $key ] ?? $key;
+                    $mapped[ $label ] = $value;
+                }
+                $record['fields'] = self::normalize_keys( $mapped );
             } else {
-                $record = self::normalize_keys( $record );
+                $mapped = array();
+                foreach ( (array) $record as $key => $value ) {
+                    $label       = $id_to_label[ $key ] ?? $key;
+                    $mapped[ $label ] = $value;
+                }
+                $record = self::normalize_keys( $mapped );
             }
         }
         unset( $record );
@@ -467,6 +478,29 @@ class TTP_Data {
             $sub_categories = $resolved['sub_categories'];
             $category       = $categories ? reset( $categories ) : '';
             $category_names = array_filter( array_merge( $categories, $sub_categories ) );
+
+            $category_names = array_map( 'sanitize_text_field', $category_names );
+            if ( TTP_Record_Utils::contains_record_ids( $category_names ) ) {
+                $ids_to_log = array();
+                foreach ( $category_names as $val ) {
+                    if ( TTP_Record_Utils::contains_record_ids( array( $val ) ) ) {
+                        $ids_to_log[] = preg_replace( '/[^A-Za-z0-9]/', '', (string) $val );
+                    }
+                }
+
+                if ( ! empty( $ids_to_log ) ) {
+                    self::log_unresolved_field( 'Category Names', $ids_to_log );
+                }
+
+                $category_names = array_values(
+                    array_filter(
+                        $category_names,
+                        function ( $v ) {
+                            return ! TTP_Record_Utils::contains_record_ids( array( $v ) );
+                        }
+                    )
+                );
+            }
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
@@ -722,7 +756,12 @@ class TTP_Data {
             $max_attempts = 3;
 
             do {
-                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+                try {
+                    $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+                } catch ( \Throwable $e ) {
+                    $resolved = new WP_Error( 'resolver_exception', $e->getMessage() );
+                }
+
                 $attempt++;
                 if ( ! is_wp_error( $resolved ) ) {
                     break;
@@ -790,7 +829,11 @@ class TTP_Data {
             }
 
             if ( ! empty( $remaining ) ) {
-                $fallback = TTP_Airbase::resolve_linked_records( $table, array_values( $remaining ), '', true );
+                try {
+                    $fallback = TTP_Airbase::resolve_linked_records( $table, array_values( $remaining ), '', true );
+                } catch ( \Throwable $e ) {
+                    $fallback = new WP_Error( 'resolver_exception', $e->getMessage() );
+                }
 
                 if ( is_wp_error( $fallback ) || empty( $fallback ) ) {
                     self::log_unresolved_field( $field, array_values( $remaining ) );
