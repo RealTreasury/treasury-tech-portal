@@ -608,7 +608,7 @@ class TTP_Data {
 
             $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
 
-            if ( preg_match( '/rec[0-9a-z]{3,}/i', $candidate ) ) {
+            if ( preg_match( '/(?:rec|res)[0-9a-z]{3,}/i', $candidate ) ) {
                 return true;
             }
         }
