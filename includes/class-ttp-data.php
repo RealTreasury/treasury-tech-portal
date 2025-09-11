@@ -97,4 +97,25 @@ class TTP_Data {
 
         return $tools;
     }
+
+    /**
+     * Check if a value contains Airtable record IDs.
+     *
+     * Airtable record identifiers begin with "rec" or "res" followed by
+     * 14 alphanumeric characters (17 characters total). This stricter
+     * pattern avoids misclassifying regular strings that merely start with
+     * "res".
+     *
+     * @param string|array $value Value to inspect.
+     * @return bool Whether the value contains at least one record ID.
+     */
+    public static function contains_record_ids( $value ) {
+        if ( is_array( $value ) ) {
+            $value = implode( ' ', $value );
+        }
+
+        $value = sanitize_text_field( $value );
+
+        return preg_match( '/\b(?:rec|res)[0-9a-z]{14}\b/i', $value ) === 1;
+    }
 }
