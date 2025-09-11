@@ -407,6 +407,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     Object.keys(subcategoriesByCategory).forEach(cat => {
                         this.subcategoriesByCategory[cat] = Array.from(subcategoriesByCategory[cat]).sort((a, b) => a.localeCompare(b));
                     });
+                    const categoriesFromData = Array.from(new Set(this.TREASURY_TOOLS.map(t => t.category)));
+                    this.enabledCategories = Array.from(new Set([...this.enabledCategories, ...categoriesFromData])).sort((a, b) => a.localeCompare(b));
                     this.updateCounts();
                     this.populateCategoryTags();
                     this.populateRegionFilters();
@@ -1071,7 +1073,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             filterAndDisplayTools() {
-                let tools = this.TREASURY_TOOLS.filter(t => this.enabledCategories.includes(t.category));
+                let tools = [...this.TREASURY_TOOLS];
 
                 if (this.searchTerm) {
                     const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
