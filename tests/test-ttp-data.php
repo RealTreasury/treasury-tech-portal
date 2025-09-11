@@ -397,6 +397,48 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API', 'Analytics'], $captured[0]['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_resolves_parent_category_record_ids() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => 'Cloud',
+                'Parent Category' => 'reccat1',
+                'Sub Categories'  => 'Payments',
+                'Regions'         => 'North America',
+                'Domain'          => 'Banking',
+                'Capabilities'    => 'API',
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $ids_used = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name') use (&$ids_used) {
+            $ids_used[ $table_id ] = (array) $ids;
+            if ('Category' === $table_id) {
+                return ['Cash'];
+            }
+            return [];
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame(['reccat1'], $ids_used['Category']);
+        $this->assertSame('Cash', $captured[0]['parent_category']);
+        $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
+    }
+
     /**
      * @dataProvider comma_separated_fields_provider
      */
