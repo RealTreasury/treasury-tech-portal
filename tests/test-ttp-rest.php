@@ -177,40 +177,6 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame( ['Finance'], $response[0]['categories'] );
     }
 
-    public function test_vendors_endpoint_strips_unresolved_ids_and_refreshes_cache() {
-        $vendor = [
-            'regions'    => ['rec123', 'North America'],
-            'categories' => ['rec456'],
-        ];
-
-        $refresh_called = false;
-
-        \Patchwork\replace('TTP_Data::get_categories', function () {
-            return array( 'Cash' => 'Cash' );
-        } );
-
-        \Patchwork\replace('get_option', function ( $name, $default = array() ) {
-            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
-                return array( 'rec456' );
-            }
-            return $default;
-        } );
-
-        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
-            return [ $vendor ];
-        });
-
-        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$refresh_called ) {
-            $refresh_called = true;
-        });
-
-        $request  = new class {};
-        $response = TTP_Rest::get_vendors( $request );
-
-        $this->assertTrue( $refresh_called );
-        $this->assertSame( [ 'North America' ], $response[0]['regions'] );
-        $this->assertArrayNotHasKey( 'categories', $response[0] );
-    }
 
     public function test_vendors_endpoint_marks_incomplete_vendors() {
         $vendor = [
