@@ -67,15 +67,18 @@ class Treasury_Tech_Portal {
         );
 
         $categories = TTP_Data::get_categories();
+        $domains    = TTP_Data::get_domains();
         wp_localize_script(
             'treasury-tech-portal-js',
             'TTP_DATA',
             [
-                'rest_url'            => esc_url_raw( rest_url( 'ttp/v1/vendors' ) ),
-                'plugin_url'          => esc_url_raw( $plugin_url ),
-                'enabled_categories'  => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) ),
+                'rest_url'             => esc_url_raw( rest_url( 'ttp/v1/vendors' ) ),
+                'plugin_url'           => esc_url_raw( $plugin_url ),
+                'enabled_categories'   => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) ),
                 'available_categories' => array_keys( $categories ),
-                'category_labels'     => $categories
+                'category_labels'      => $categories,
+                'enabled_domains'      => (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( $domains ) ),
+                'available_domains'    => array_keys( $domains ),
             ]
         );
     }

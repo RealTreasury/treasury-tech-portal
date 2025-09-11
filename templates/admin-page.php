@@ -28,6 +28,23 @@
     <?php if (isset($_GET['cats_updated'])) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Categories updated.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
+
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+        <?php wp_nonce_field('ttp_save_domains', 'ttp_save_domains_nonce'); ?>
+        <input type="hidden" name="action" value="ttp_save_domains" />
+        <fieldset>
+            <legend class="screen-reader-text"><?php esc_html_e('Enable Domains', 'treasury-tech-portal'); ?></legend>
+            <?php foreach ( $domains as $key => $label ) :
+                $checked = in_array( $key, $enabled_domains, true );
+                ?>
+                <label><input type="checkbox" name="enabled_domains[]" value="<?php echo esc_attr( $key ); ?>" <?php checked( $checked ); ?> /> <?php echo esc_html( $label ); ?></label><br />
+            <?php endforeach; ?>
+        </fieldset>
+        <?php submit_button(__('Save Domains', 'treasury-tech-portal'), 'secondary', 'save-domains'); ?>
+    </form>
+    <?php if (isset($_GET['domains_updated'])) : ?>
+        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Domains updated.', 'treasury-tech-portal'); ?></p></div>
+    <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
         <div class="treasury-portal-admin-search">
             <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>

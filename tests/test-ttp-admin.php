@@ -190,5 +190,36 @@ class TTP_Admin_Test extends TestCase {
         $this->assertNotEmpty( $logged );
         $this->assertStringContainsString( 'recreg1', implode( ' ', $logged ) );
     }
+
+    public function test_save_domains_updates_option() {
+        $updated = array();
+        when( 'current_user_can' )->justReturn( true );
+        when( 'check_admin_referer' )->justReturn( true );
+        when( 'wp_redirect' )->alias( function () {
+            throw new Exception( 'redirect' );
+        } );
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$updated ) {
+            $updated[ $name ] = $value;
+            return true;
+        } );
+        when( 'admin_url' )->alias( function ( $url = '' ) {
+            return $url;
+        } );
+        when( 'add_query_arg' )->alias( function ( $key, $value, $url ) {
+            return $url;
+        } );
+
+        $_POST['enabled_domains'] = array( 'Treasury', 'Payments' );
+
+        try {
+            TTP_Admin::save_domains();
+        } catch ( Exception $e ) {
+            // Expected redirect.
+        }
+
+        $this->assertSame( array( 'Treasury', 'Payments' ), $updated[ TTP_Admin::OPTION_ENABLED_DOMAINS ] );
+
+        unset( $_POST['enabled_domains'] );
+    }
 }
 

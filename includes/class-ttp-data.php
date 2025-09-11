@@ -130,6 +130,35 @@ class TTP_Data {
     }
 
     /**
+     * Retrieve list of unique domains derived from vendor records.
+     *
+     * @return array Mapping of domain name => label.
+     */
+    public static function get_domains() {
+        $vendors = self::get_all_vendors();
+        $domains = array();
+
+        foreach ( (array) $vendors as $vendor ) {
+            $vendor = (array) $vendor;
+            foreach ( (array) ( $vendor['domain'] ?? array() ) as $domain ) {
+                $domain = sanitize_text_field( $domain );
+                if ( $domain === '' ) {
+                    continue;
+                }
+                if ( ! isset( $domains[ $domain ] ) ) {
+                    $domains[ $domain ] = $domain;
+                }
+            }
+        }
+
+        if ( ! empty( $domains ) ) {
+            asort( $domains );
+        }
+
+        return $domains;
+    }
+
+    /**
      * Migration: normalise semicolon-delimited values stored in the vendor cache.
      *
      * Older caches may contain strings with semicolon separators where arrays of
@@ -866,6 +895,21 @@ class TTP_Data {
      */
     public static function get_tools($args = []) {
         $tools = self::get_all_tools();
+
+        $enabled_domains = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( self::get_domains() ) );
+        if ( ! empty( $enabled_domains ) ) {
+            $tools = array_filter(
+                $tools,
+                function ( $tool ) use ( $enabled_domains ) {
+                    $tool_domains = $tool['domain'] ?? array();
+                    $tool_domains = is_array( $tool_domains ) ? $tool_domains : array( $tool_domains );
+                    if ( empty( $tool_domains ) ) {
+                        return true;
+                    }
+                    return ! empty( array_intersect( $enabled_domains, $tool_domains ) );
+                }
+            );
+        }
 
         if (!empty($args['search'])) {
             $search = strtolower($args['search']);
