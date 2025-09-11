@@ -25,6 +25,7 @@ Detailed guides and additional documentation can be found in the [docs](docs/) d
 - [API Documentation](docs/API.md)
 - [Deployment Guide](docs/WORDPRESS-COM-DEPLOYMENT.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [Linked Field Resolution](docs/LINKED_FIELDS.md)
 
 ## License
 Distributed under the GPL-2.0-or-later license. See `readme.txt` for more details.
