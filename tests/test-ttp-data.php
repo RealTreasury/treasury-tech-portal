@@ -1266,6 +1266,42 @@ class TTP_Data_Test extends TestCase {
         );
     }
 
+    public function test_resolve_linked_field_resolves_ids() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record = array( 'Regions' => array( 'recreg1' ) );
+
+        \Patchwork\replace(
+            'TTP_Airbase::resolve_linked_records',
+            function ( $table_id, $ids, $primary_field = 'Name' ) {
+                return array( 'North America' );
+            }
+        );
+
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $this->assertSame( array( 'North America' ), $result );
+    }
+
+    public function test_resolve_linked_field_skips_when_no_ids() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record = array( 'Regions' => array( 'Europe' ) );
+        $called = false;
+        \Patchwork\replace(
+            'TTP_Airbase::resolve_linked_records',
+            function () use ( &$called ) {
+                $called = true;
+                return array();
+            }
+        );
+
+        $result = $method->invoke( null, $record, 'Regions', 'Regions', 'Name' );
+        $this->assertSame( array( 'Europe' ), $result );
+        $this->assertFalse( $called );
+    }
+
     public function vendors_need_resolution_region_provider() {
         return array(
             'region'     => array( 'region' ),

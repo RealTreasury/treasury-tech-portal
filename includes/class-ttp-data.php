@@ -255,52 +255,53 @@ class TTP_Data {
             );
         }
 
-        $linked_tables = array(
-            'Regions'        => array( 'table' => 'Regions',        'primary_field' => 'Name' ),
-            'Linked Vendor'  => array( 'table' => 'Vendors',        'primary_field' => 'Name' ),
-            'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
-            'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
-            'Category'       => array( 'table' => 'Category',       'primary_field' => 'Name' ),
-            'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
-            'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
-            'HQ Location'    => array( 'table' => 'HQ Location',    'primary_field' => 'Name' ),
+        $linked_fields = array(
+            'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Name' ),
+            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
+            'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain' ),
+            'Category'       => array( 'key' => 'categories',     'table' => 'Category',       'primary_field' => 'Name' ),
+            'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => 'Name' ),
+            'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
 
         $vendors = array();
         foreach ( $records as $record ) {
-            $fields = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
+            $fields   = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
+            $resolved = array();
 
-            $regions        = self::resolve_linked_field( 'Regions', $fields['Regions'] ?? array(), $linked_tables );
-            $vendor_field   = self::resolve_linked_field( 'Linked Vendor', $fields['Linked Vendor'] ?? array(), $linked_tables );
-            $vendor_name    = $vendor_field ? reset( $vendor_field ) : '';
-            $hosted_type    = self::resolve_linked_field( 'Hosted Type', $fields['Hosted Type'] ?? array(), $linked_tables );
-            $domain         = self::resolve_linked_field( 'Domain', $fields['Domain'] ?? array(), $linked_tables );
-            $categories     = self::resolve_linked_field( 'Category', $fields['Category'] ?? array(), $linked_tables );
+            foreach ( $linked_fields as $label => $info ) {
+                $values = self::resolve_linked_field( $fields, $label, $info['table'], $info['primary_field'] );
+                if ( ! empty( $info['single'] ) ) {
+                    $resolved[ $info['key'] ] = $values ? reset( $values ) : '';
+                } else {
+                    $resolved[ $info['key'] ] = $values;
+                }
+            }
+
+            $categories     = $resolved['categories'];
+            $sub_categories = $resolved['sub_categories'];
             $category       = $categories ? reset( $categories ) : '';
-            $sub_categories = self::resolve_linked_field( 'Sub Categories', $fields['Sub Categories'] ?? array(), $linked_tables );
-            $capabilities   = self::resolve_linked_field( 'Capabilities', $fields['Capabilities'] ?? array(), $linked_tables );
-            $hq_location_field = self::resolve_linked_field( 'HQ Location', $fields['HQ Location'] ?? array(), $linked_tables );
-            $hq_location    = $hq_location_field ? reset( $hq_location_field ) : '';
-
             $category_names = array_filter( array_merge( $categories, $sub_categories ) );
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
                 'name'            => $fields['Product Name'] ?? '',
-                'vendor'          => $vendor_name,
+                'vendor'          => $resolved['vendor'],
                 'website'         => self::normalize_url( $fields['Product Website'] ?? '' ),
                 'video_url'       => self::normalize_url( $fields['Product Video'] ?? '' ),
                 'status'          => $fields['Status'] ?? '',
-                'hosted_type'     => $hosted_type,
-                'domain'          => $domain,
-                'regions'         => $regions,
+                'hosted_type'     => $resolved['hosted_type'],
+                'domain'          => $resolved['domain'],
+                'regions'         => $resolved['regions'],
                 'categories'      => $categories,
                 'sub_categories'  => $sub_categories,
                 'category'        => $category,
                 'category_names'  => $category_names,
-                'capabilities'    => $capabilities,
+                'capabilities'    => $resolved['capabilities'],
                 'logo_url'        => self::normalize_url( $fields['Logo URL'] ?? '' ),
-                'hq_location'     => $hq_location,
+                'hq_location'     => $resolved['hq_location'],
                 'founded_year'    => $fields['Founded Year'] ?? '',
                 'founders'        => $fields['Founders'] ?? '',
             );
@@ -517,12 +518,14 @@ class TTP_Data {
      * primary-field names retrieved via the API, and sanitizes the final
      * values. Unresolved IDs are logged and removed from the result.
      *
-     * @param string $field         Field label for logging.
-     * @param mixed  $value         Raw field value.
-     * @param array  $linked_tables Mapping of field labels to table info.
+     * @param array  $record        Source record.
+     * @param string $field         Field label for logging and lookup.
+     * @param string $table         Airtable table name.
+     * @param string $primary_field Primary field name in linked table.
      * @return array Sanitized values with IDs replaced by names.
      */
-    private static function resolve_linked_field( $field, $value, $linked_tables ) {
+    private static function resolve_linked_field( $record, $field, $table, $primary_field ) {
+        $value        = $record[ $field ] ?? array();
         $values       = self::parse_record_ids( $value );
         $placeholders = array();
         $ids          = array();
@@ -538,10 +541,8 @@ class TTP_Data {
             }
         }
 
-        if ( ! empty( $ids ) && isset( $linked_tables[ $field ] ) ) {
-            $table   = $linked_tables[ $field ]['table'];
-            $primary = $linked_tables[ $field ]['primary_field'];
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
+        if ( ! empty( $ids ) ) {
+            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
