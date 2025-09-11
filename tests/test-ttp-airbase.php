@@ -544,15 +544,20 @@ class TTP_Airbase_Test extends TestCase {
 
         $body = json_encode([
             'records' => [
-                [ 'fields' => [ 'Name' => 'First' ] ],
-                [ 'fields' => [ 'Name' => 'Second' ] ],
+                [ 'fields' => [ 'Name' => [ 'text' => 'First' ] ] ],
+                [ 'fields' => [ 'Name' => [ 'text' => 'Second' ] ] ],
             ],
         ]);
 
-        expect('wp_remote_get')->once()->andReturn([
-            'response' => [ 'code' => 200 ],
-            'body'     => $body,
-        ]);
+        $self        = $this;
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/Vendors?cellFormat=json&fields[]=Name&filterByFormula=' . rawurlencode("OR(RECORD_ID()='rec1',RECORD_ID()='rec2')");
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($self, $expected_url, $body) {
+            $self->assertSame($expected_url, $url);
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => $body,
+            ];
+        });
 
         $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2']);
         $this->assertSame(['First', 'Second'], $values);
@@ -587,10 +592,15 @@ class TTP_Airbase_Test extends TestCase {
             return $response['response']['code'];
         });
 
-        expect('wp_remote_get')->once()->andReturn([
-            'response' => [ 'code' => 500 ],
-            'body'     => '',
-        ]);
+        $self        = $this;
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/Vendors?cellFormat=json&fields[]=Name&filterByFormula=' . rawurlencode("OR(RECORD_ID()='rec1')");
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($self, $expected_url) {
+            $self->assertSame($expected_url, $url);
+            return [
+                'response' => [ 'code' => 500 ],
+                'body'     => '',
+            ];
+        });
 
         $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1']);
         $this->assertInstanceOf(WP_Error::class, $result);

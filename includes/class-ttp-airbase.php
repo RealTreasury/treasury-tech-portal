@@ -366,7 +366,7 @@ class TTP_Airbase {
         $filter        = 'OR(' . implode( ',', $filter_parts ) . ')';
         $primary_field = sanitize_text_field( $primary_field );
 
-        $url = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
+        $url = $endpoint . '?cellFormat=json&fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
 
         $args = array(
             'headers' => array(
@@ -396,7 +396,18 @@ class TTP_Airbase {
         if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
             foreach ( $data['records'] as $record ) {
                 if ( isset( $record['fields'][ $primary_field ] ) ) {
-                    $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                    $value = $record['fields'][ $primary_field ];
+                    if ( is_array( $value ) ) {
+                        if ( isset( $value['text'] ) ) {
+                            $values[] = sanitize_text_field( $value['text'] );
+                        } elseif ( isset( $value['name'] ) ) {
+                            $values[] = sanitize_text_field( $value['name'] );
+                        } elseif ( ! empty( $value ) ) {
+                            $values[] = sanitize_text_field( reset( $value ) );
+                        }
+                    } else {
+                        $values[] = sanitize_text_field( $value );
+                    }
                 }
             }
         }
