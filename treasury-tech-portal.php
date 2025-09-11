@@ -36,3 +36,18 @@ if ( ! TTP_IS_WPCOM && function_exists( 'register_activation_hook' ) ) {
 }
 
 Treasury_Tech_Portal::instance();
+
+/**
+ * Flush cached Airtable ID\u2192name maps and vendor caches.
+ */
+function rt_airtable_flush_maps() {
+    global $wpdb;
+    if ( ! isset( $wpdb ) ) {
+        return;
+    }
+    $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_rt_airtable_map_%'" );
+    $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_rt_airtable_map_%'" );
+    delete_transient( TTP_Data::CACHE_KEY );
+    delete_transient( TTP_Data::VENDOR_CACHE_KEY . '_v' . TTP_Data::VENDOR_CACHE_VERSION );
+}
+add_action( 'rt_refresh_vendors', 'rt_airtable_flush_maps' );
