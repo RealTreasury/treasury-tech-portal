@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     LITE: liteTags,
                     TRMS: trmsTags
                 };
-
+                this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : ['CASH', 'LITE', 'TRMS'];
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
@@ -1070,11 +1070,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             filterAndDisplayTools() {
-                let tools;
+                let tools = this.TREASURY_TOOLS.filter(t => this.enabledCategories.includes(t.category));
 
                 if (this.searchTerm) {
                     const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
-                    tools = this.TREASURY_TOOLS.filter(tool => {
+                    tools = tools.filter(tool => {
                         const searchableText = [
                             tool.name,
                             tool.desc,
@@ -1086,8 +1086,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     });
                 } else {
                     tools = this.currentFilter === 'ALL' ?
-                        this.TREASURY_TOOLS :
-                        this.TREASURY_TOOLS.filter(tool => tool.category === this.currentFilter);
+                        tools :
+                        tools.filter(tool => tool.category === this.currentFilter);
                 }
 
                 // Advanced Filters
@@ -1121,7 +1121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             displayFilteredTools() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 const hasResults = this.filteredTools.length > 0;
 
                 const noResults = document.getElementById('noResults');
@@ -1296,7 +1296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             populateCategoryTags() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 categories.forEach(category => {
                     const container = document.getElementById(`category-tags-${category}`);
                     if (container) {
@@ -1453,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             updateVisibleCounts() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 const categoryCounts = categories.map(category => {
                     const count = this.filteredTools.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);
@@ -1493,7 +1493,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             updateCounts() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 categories.forEach(category => {
                     const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);

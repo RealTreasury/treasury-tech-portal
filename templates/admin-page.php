@@ -27,6 +27,28 @@
     <?php if (isset($_GET['refreshed'])) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Product cache refreshed.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+        <?php wp_nonce_field('ttp_save_categories', 'ttp_save_categories_nonce'); ?>
+        <input type="hidden" name="action" value="ttp_save_categories" />
+        <fieldset>
+            <legend class="screen-reader-text"><?php esc_html_e('Enable Categories', 'treasury-tech-portal'); ?></legend>
+            <?php
+            $all_categories = array(
+                'CASH' => esc_html__('Cash Tools', 'treasury-tech-portal'),
+                'LITE' => esc_html__('Treasury Management System Lite (TMS-Lite)', 'treasury-tech-portal'),
+                'TRMS' => esc_html__('Treasury & Risk Management Systems (TRMS)', 'treasury-tech-portal'),
+            );
+            foreach ($all_categories as $key => $label) :
+                $checked = in_array($key, $enabled_categories, true);
+                ?>
+                <label><input type="checkbox" name="enabled_categories[]" value="<?php echo esc_attr($key); ?>" <?php checked($checked); ?> /> <?php echo $label; ?></label><br />
+            <?php endforeach; ?>
+        </fieldset>
+        <?php submit_button(__('Save Categories', 'treasury-tech-portal'), 'secondary', 'save-categories'); ?>
+    </form>
+    <?php if (isset($_GET['cats_updated'])) : ?>
+        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Categories updated.', 'treasury-tech-portal'); ?></p></div>
+    <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
         <div class="treasury-portal-admin-search">
             <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>

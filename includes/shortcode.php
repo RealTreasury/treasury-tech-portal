@@ -13,6 +13,7 @@ if ($video_url && !wp_http_validate_url($video_url)) {
 if ($poster_url && !wp_http_validate_url($poster_url)) {
     $poster_url = '';
 }
+$enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array( 'CASH', 'LITE', 'TRMS' ) );
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->
@@ -190,6 +191,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
             </div>
             <div class="tools-grid" id="listViewContainer" style="display:none;"></div>
 
+            <?php if ( in_array( 'CASH', $enabled_categories, true ) ) : ?>
             <!-- Cash Tools Section -->
             <div class="category-section category-cash" data-category="CASH" style="display: block;">
                 <div class="category-header" data-category="CASH">
@@ -213,7 +215,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                     <!-- Tools will be populated by JavaScript -->
                 </div>
             </div>
-
+            <?php endif; ?>
+            <?php if ( in_array( 'LITE', $enabled_categories, true ) ) : ?>
             <!-- TMS-Lite Section -->
             <div class="category-section category-lite" data-category="LITE" style="display: block;">
                 <div class="category-header" data-category="LITE">
@@ -237,7 +240,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                     <!-- Tools will be populated by JavaScript -->
                 </div>
             </div>
-
+            <?php endif; ?>
+            <?php if ( in_array( 'TRMS', $enabled_categories, true ) ) : ?>
             <!-- Enterprise Section -->
             <div class="category-section category-enterprise" data-category="TRMS" style="display: block;">
                 <div class="category-header" data-category="TRMS">
@@ -260,7 +264,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                 <div class="tools-grid" id="tools-TRMS">
                     <!-- Tools will be populated by JavaScript -->
                 </div>
-        </div>
+            </div>
+            <?php endif; ?>
     </div>
 
     <!-- Tool Details Modal -->
