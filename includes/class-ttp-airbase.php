@@ -23,6 +23,17 @@ class TTP_Airbase {
     const RECORD_BATCH_SIZE = 50;
 
     /**
+     * In-memory cache of resolved linked record values.
+     *
+     * Structured as [ table_id ][ record_id ] => value. A null value indicates
+     * that the record was requested but no value was returned from the API.
+     * Cache persists only for the duration of the request.
+     *
+     * @var array
+     */
+    private static $linked_record_cache = array();
+
+    /**
      * Perform an HTTP request with basic exponential backoff on rate limits.
      *
      * Retries the request when a 429 status code is encountered, waiting
@@ -434,14 +445,37 @@ class TTP_Airbase {
      * @return array|WP_Error Array of record field values or WP_Error on failure.
      */
     public static function resolve_linked_records( $table_id, $ids, $primary_field = '' ) {
-        $token = get_option( self::OPTION_TOKEN );
-        if ( empty( $token ) ) {
-            return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
-        }
-
         $ids = array_filter( (array) $ids );
         if ( empty( $ids ) ) {
             return array();
+        }
+
+        $table_id = (string) $table_id;
+        $missing  = array();
+
+        // Determine which IDs are not already cached.
+        foreach ( $ids as $id ) {
+            $id = (string) $id;
+            if ( ! isset( self::$linked_record_cache[ $table_id ][ $id ] ) ) {
+                $missing[] = $id;
+            }
+        }
+
+        // If all IDs are cached, return them in the original order.
+        if ( empty( $missing ) ) {
+            $ordered = array();
+            foreach ( $ids as $id ) {
+                $val = self::$linked_record_cache[ $table_id ][ $id ];
+                if ( null !== $val ) {
+                    $ordered[] = $val;
+                }
+            }
+            return $ordered;
+        }
+
+        $token = get_option( self::OPTION_TOKEN );
+        if ( empty( $token ) ) {
+            return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
         }
 
         $base_url = get_option( self::OPTION_BASE_URL, self::DEFAULT_BASE_URL );
@@ -489,8 +523,7 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $values = array();
-        $chunks = array_chunk( $ids, self::RECORD_BATCH_SIZE );
+        $chunks = array_chunk( $missing, self::RECORD_BATCH_SIZE );
 
         foreach ( $chunks as $chunk ) {
             $filter_parts = array();
@@ -519,7 +552,8 @@ class TTP_Airbase {
 
             if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
                 foreach ( $data['records'] as $record ) {
-                    $value = null;
+                    $record_id = isset( $record['id'] ) ? (string) $record['id'] : '';
+                    $value     = null;
                     if ( isset( $record['fields'][ $result_field ] ) ) {
                         $value = $record['fields'][ $result_field ];
                     } elseif ( isset( $record['fields'][ $query_field ] ) ) {
@@ -528,19 +562,42 @@ class TTP_Airbase {
 
                     if ( is_array( $value ) ) {
                         if ( isset( $value['name'] ) ) {
-                            $values[] = sanitize_text_field( $value['name'] );
+                            $value = sanitize_text_field( $value['name'] );
                         } elseif ( isset( $value['text'] ) ) {
-                            $values[] = sanitize_text_field( $value['text'] );
+                            $value = sanitize_text_field( $value['text'] );
                         } elseif ( isset( $value['id'] ) ) {
-                            $values[] = sanitize_text_field( $value['id'] );
+                            $value = sanitize_text_field( $value['id'] );
+                        } else {
+                            $value = null;
                         }
                     } elseif ( null !== $value ) {
-                        $values[] = sanitize_text_field( $value );
+                        $value = sanitize_text_field( $value );
                     }
+
+                    if ( $record_id ) {
+                        self::$linked_record_cache[ $table_id ][ $record_id ] = $value;
+                    }
+                }
+            }
+
+            // Mark any IDs not returned as null to avoid repeated lookups.
+            foreach ( $chunk as $id ) {
+                if ( ! isset( self::$linked_record_cache[ $table_id ][ $id ] ) ) {
+                    self::$linked_record_cache[ $table_id ][ $id ] = null;
                 }
             }
         }
 
-        return $values;
+        $ordered = array();
+        foreach ( $ids as $id ) {
+            if ( array_key_exists( $id, self::$linked_record_cache[ $table_id ] ) ) {
+                $val = self::$linked_record_cache[ $table_id ][ $id ];
+                if ( null !== $val ) {
+                    $ordered[] = $val;
+                }
+            }
+        }
+
+        return $ordered;
     }
 }
