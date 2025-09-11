@@ -1,22 +1,6 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 <div class="wrap treasury-portal-admin">
     <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
-    <?php if (!empty($unresolved_fields)) : ?>
-        <div class="notice notice-warning">
-            <p><?php esc_html_e('Some product fields could not be resolved.', 'treasury-tech-portal'); ?></p>
-            <ul>
-                <?php foreach ($unresolved_fields as $field => $ids) : ?>
-                    <li><?php echo esc_html(sprintf('%s unresolved IDs: %s', $field, implode(', ', $ids))); ?></li>
-                <?php endforeach; ?>
-            </ul>
-            <p><a href="<?php echo esc_url(admin_url('admin.php?page=treasury-unresolved-report')); ?>"><?php esc_html_e('View full report', 'treasury-tech-portal'); ?></a></p>
-            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                <?php wp_nonce_field('ttp_retry_resolution', 'ttp_retry_resolution_nonce'); ?>
-                <input type="hidden" name="action" value="ttp_retry_resolution" />
-                <?php submit_button(__('Retry Resolution', 'treasury-tech-portal'), 'secondary', 'retry-resolution', false); ?>
-            </form>
-        </div>
-    <?php endif; ?>
     <p><?php esc_html_e('Use the button below to manually refresh the product cache after changing Airbase settings or when product data appears outdated.', 'treasury-tech-portal'); ?></p>
     <p><?php esc_html_e('Linked field IDs such as regions or categories are automatically converted to names for easier reading.', 'treasury-tech-portal'); ?></p>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
@@ -136,18 +120,5 @@
         </div>
     <?php else : ?>
         <p><?php esc_html_e('No vendors found.', 'treasury-tech-portal'); ?></p>
-    <?php endif; ?>
-    <?php if (!empty($unresolved_fields)) : ?>
-        <div class="treasury-portal-admin-unresolved">
-            <h2><?php esc_html_e('Unresolved IDs', 'treasury-tech-portal'); ?></h2>
-            <?php foreach ($unresolved_fields as $field => $ids) : ?>
-                <h3><?php echo esc_html($field); ?></h3>
-                <ul>
-                    <?php foreach ($ids as $id) : ?>
-                        <li><code><?php echo esc_html($id); ?></code></li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endforeach; ?>
-        </div>
     <?php endif; ?>
 </div>
