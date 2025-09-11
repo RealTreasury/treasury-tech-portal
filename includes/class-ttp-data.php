@@ -605,11 +605,13 @@ class TTP_Data {
                     $results[] = trim( $item['name'] );
                 } elseif ( isset( $item['text'] ) ) {
                     $results[] = trim( $item['text'] );
+                } elseif ( isset( $item['value'] ) ) {
+                    $results[] = trim( $item['value'] );
                 } elseif ( isset( $item['id'] ) ) {
                     $results[] = trim( $item['id'] );
                 }
 
-                $nested = array_diff_key( $item, array_flip( array( 'name', 'id', 'text' ) ) );
+                $nested = array_diff_key( $item, array_flip( array( 'name', 'id', 'text', 'value' ) ) );
                 if ( ! empty( $nested ) ) {
                     $results = array_merge( $results, self::parse_record_ids( $nested ) );
                 }
