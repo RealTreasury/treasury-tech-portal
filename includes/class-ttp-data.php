@@ -163,21 +163,43 @@ class TTP_Data {
 
             $regions_field = self::parse_record_ids( $fields['Regions'] ?? array() );
             $regions       = array();
-            if ( self::contains_record_ids( $regions_field ) ) {
-                $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions']['table'], $regions_field, $linked_tables['Regions']['primary_field'] );
+            $region_ids    = array();
+
+            foreach ( (array) $regions_field as $item ) {
+                $item = (string) $item;
+                if ( self::contains_record_ids( array( $item ) ) ) {
+                    $clean       = preg_replace( '/[^A-Za-z0-9]/', '', $item );
+                    $region_ids[] = $clean;
+                    $regions[]    = $clean; // placeholder for order
+                } else {
+                    $regions[] = sanitize_text_field( $item );
+                }
+            }
+
+            if ( ! empty( $region_ids ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions']['table'], $region_ids, $linked_tables['Regions']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
-                        $ids = implode( ', ', array_map( 'sanitize_text_field', (array) $regions_field ) );
+                        $ids = implode( ', ', array_map( 'sanitize_text_field', $region_ids ) );
                         error_log( sprintf( 'TTP_Data: Failed resolving Regions for record IDs %s: %s', $ids, $resolved->get_error_message() ) );
                     }
-                    $regions = array();
+                    // remove placeholders for IDs on error
+                    $regions = array_filter( $regions, function ( $val ) use ( $region_ids ) {
+                        return ! in_array( $val, $region_ids, true );
+                    } );
                 } else {
-                    $regions       = array_map( 'sanitize_text_field', (array) $resolved );
-                    $regions_field = $regions;
+                    $resolved = array_map( 'sanitize_text_field', (array) $resolved );
+                    $i        = 0;
+                    foreach ( $regions as $idx => $val ) {
+                        if ( in_array( $val, $region_ids, true ) ) {
+                            $regions[ $idx ] = $resolved[ $i ] ?? '';
+                            $i++;
+                        }
+                    }
                 }
-            } else {
-                $regions = array_map( 'sanitize_text_field', $regions_field );
             }
+
+            $regions = array_values( array_filter( $regions ) );
 
             $vendor_field = self::parse_record_ids( $fields['Linked Vendor'] ?? array() );
             $vendor_name  = '';
@@ -403,21 +425,22 @@ class TTP_Data {
     /**
      * Check if an array contains Airtable record IDs.
      *
-     * Strips non-alphanumeric characters before checking for the `rec` prefix
-     * so IDs wrapped in JSON or other formatting are detected.
+     * Strips non-alphanumeric characters and performs a case-insensitive search
+     * for the `rec` prefix anywhere in the value so IDs wrapped in extra text
+     * or mixed casing are detected.
      *
      * @param array $values Values to inspect.
      * @return bool
      */
     private static function contains_record_ids( $values ) {
         foreach ( (array) $values as $value ) {
-            if ( ! is_string( $value ) ) {
-                continue;
+            if ( is_array( $value ) && self::contains_record_ids( $value ) ) {
+                return true;
             }
 
-            $stripped = preg_replace( '/[^A-Za-z0-9]/', '', $value );
+            $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
 
-            if ( strpos( strtolower( $stripped ), 'rec' ) === 0 ) {
+            if ( preg_match( '/rec[0-9a-z]{3,}/i', $candidate ) ) {
                 return true;
             }
         }
