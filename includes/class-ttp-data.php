@@ -65,6 +65,29 @@ class TTP_Data {
     }
 
     /**
+     * Get list of categories present in the tool catalog.
+     *
+     * @return array Map of category slugs to human‑readable labels.
+     */
+    public static function get_categories() {
+        $tools      = self::get_all_tools();
+        $categories = array();
+
+        foreach ( $tools as $tool ) {
+            if ( empty( $tool['category'] ) ) {
+                continue;
+            }
+
+            $slug  = sanitize_key( $tool['category'] );
+            $label = TTP_CATEGORIES[ $slug ] ?? $slug;
+
+            $categories[ $slug ] = $label;
+        }
+
+        return $categories;
+    }
+
+    /**
      * Filter and search tools server-side.
      *
      * @param array $args
