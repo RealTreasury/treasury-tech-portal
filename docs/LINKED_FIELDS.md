@@ -22,7 +22,7 @@ When processing product records, parse the field and resolve the IDs:
 ```php
 $industry_field = self::parse_record_ids( $fields['Industry'] ?? [] );
 $industries = [];
-if ( self::contains_record_ids( $industry_field ) ) {
+if ( TTP_Record_Utils::contains_record_ids( $industry_field ) ) {
     /**
      * Replace placeholder IDs with names retrieved from Airtable.
      * Real code uses TTP_Data::resolve_linked_field() for this swap.

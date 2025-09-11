@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 use function Brain\Monkey\Functions\when;
 
+require_once __DIR__ . '/../includes/class-ttp-record-utils.php';
 require_once __DIR__ . '/../includes/class-ttp-rest.php';
 require_once __DIR__ . '/../includes/class-ttp-data.php';
 

@@ -82,7 +82,7 @@ class TTP_Rest {
             foreach ( $vendor as $key => $value ) {
                 if ( is_array( $value ) ) {
                     $filtered = array_values( array_filter( (array) $value, function ( $item ) use ( &$needs_refresh, &$vendor_needs_resolution ) {
-                        if ( self::contains_record_ids( $item ) ) {
+                        if ( TTP_Record_Utils::contains_record_ids( $item ) ) {
                             $needs_refresh        = true;
                             $vendor_needs_resolution = true;
                             return false;
@@ -96,7 +96,7 @@ class TTP_Rest {
                         $vendor[ $key ] = $filtered;
                     }
                 } else {
-                    if ( self::contains_record_ids( $value ) ) {
+                    if ( TTP_Record_Utils::contains_record_ids( $value ) ) {
                         $needs_refresh        = true;
                         $vendor_needs_resolution = true;
                         unset( $vendor[ $key ] );
@@ -122,31 +122,4 @@ class TTP_Rest {
         return rest_ensure_response( array( 'status' => 'refreshed' ) );
     }
 
-    private static function contains_record_ids( $values ) {
-        foreach ( (array) $values as $value ) {
-            if ( is_array( $value ) && self::contains_record_ids( $value ) ) {
-                return true;
-            }
-
-            $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
-
-            if ( $candidate === '' ) {
-                continue;
-            }
-
-            if ( ctype_digit( $candidate ) ) {
-                return true;
-            }
-
-            if (
-                preg_match(
-                    '/^r(?:ec|es|cs|cx)[0-9a-z]*\d[0-9a-z]*$/i',
-                    $candidate
-                )
-            ) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

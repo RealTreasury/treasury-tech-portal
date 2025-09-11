@@ -269,7 +269,7 @@ class TTP_Data {
                 }
 
                 if ( in_array( $normalized_key, $fields, true ) ) {
-                    if ( ! empty( $value ) && self::contains_record_ids( (array) $value ) ) {
+                    if ( ! empty( $value ) && TTP_Record_Utils::contains_record_ids( (array) $value ) ) {
                         return true;
                     }
                 }
@@ -467,7 +467,7 @@ class TTP_Data {
 
                 $ids_to_log = array();
                 foreach ( $raw_values as $val ) {
-                    if ( self::contains_record_ids( array( $val ) ) ) {
+                    if ( TTP_Record_Utils::contains_record_ids( array( $val ) ) ) {
                         $ids_to_log[] = preg_replace( '/[^A-Za-z0-9]/', '', (string) $val );
                     }
                 }
@@ -663,49 +663,6 @@ class TTP_Data {
     }
 
     /**
-     * Check if an array contains Airtable record IDs.
-     *
-     * Strips non-alphanumeric characters and performs a case-insensitive search
-     * for the `rec` prefix anywhere in the value so IDs wrapped in extra text
-     * or mixed casing are detected. Numeric-only strings are also treated as
-     * unresolved record IDs as some linked records may appear as plain numbers
-     * in the source data.
-     *
-     * @param array $values Values to inspect.
-     * @return bool
-     */
-    private static function contains_record_ids( $values ) {
-        foreach ( (array) $values as $value ) {
-            if ( is_array( $value ) || is_object( $value ) ) {
-                if ( self::contains_record_ids( (array) $value ) ) {
-                    return true;
-                }
-                continue;
-            }
-
-            $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
-
-            if ( $candidate === '' ) {
-                continue;
-            }
-
-            if ( ctype_digit( $candidate ) ) {
-                return true;
-            }
-
-            if (
-                preg_match(
-                    '/^(?:r(?:ec|es|cs|cx)|sel|opt)[0-9a-z]*\d[0-9a-z]*$/i',
-                    $candidate
-                )
-            ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Log unresolved Airtable record IDs for visibility in logs and admin.
      *
      * Records unresolved IDs grouped by field in the `ttp_unresolved_report`
@@ -761,7 +718,7 @@ class TTP_Data {
         $ids          = array();
 
         foreach ( $values as $idx => $item ) {
-            if ( is_string( $item ) && self::contains_record_ids( array( $item ) ) ) {
+            if ( is_string( $item ) && TTP_Record_Utils::contains_record_ids( array( $item ) ) ) {
                 $clean               = preg_replace( '/[^A-Za-z0-9]/', '', $item );
                 $placeholders[ $idx ] = $clean;
                 $ids[]               = $clean;
@@ -843,10 +800,10 @@ class TTP_Data {
             )
         );
 
-        if ( self::contains_record_ids( $values ) ) {
+        if ( TTP_Record_Utils::contains_record_ids( $values ) ) {
             $remaining = array();
             foreach ( $values as $idx => $item ) {
-                if ( is_string( $item ) && self::contains_record_ids( array( $item ) ) ) {
+                if ( is_string( $item ) && TTP_Record_Utils::contains_record_ids( array( $item ) ) ) {
                     $remaining[ $idx ] = preg_replace( '/[^A-Za-z0-9]/', '', $item );
                 }
             }
