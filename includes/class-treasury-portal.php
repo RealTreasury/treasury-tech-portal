@@ -15,6 +15,7 @@ class Treasury_Tech_Portal {
     }
 
     private function __construct() {
+        require_once dirname(__FILE__) . '/class-ttp-record-utils.php';
         require_once dirname(__FILE__) . '/class-ttp-data.php';
         require_once dirname(__FILE__) . '/class-ttp-rest.php';
         require_once dirname(__FILE__) . '/class-ttp-admin.php';

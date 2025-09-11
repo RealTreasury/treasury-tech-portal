@@ -2,6 +2,7 @@
 use PHPUnit\Framework\TestCase;
 use function Brain\Monkey\Functions\when;
 
+require_once __DIR__ . '/../includes/class-ttp-record-utils.php';
 require_once __DIR__ . '/../includes/class-ttp-data.php';
 require_once __DIR__ . '/../includes/class-ttp-airbase.php';
 
@@ -1671,9 +1672,7 @@ class TTP_Data_Test extends TestCase {
      * @dataProvider contains_record_ids_provider
      */
     public function test_contains_record_ids_respects_known_prefixes( $values, $expected ) {
-        $method = new \ReflectionMethod( TTP_Data::class, 'contains_record_ids' );
-        $method->setAccessible( true );
-        $this->assertSame( $expected, $method->invoke( null, $values ) );
+        $this->assertSame( $expected, TTP_Record_Utils::contains_record_ids( $values ) );
     }
 
     public function contains_record_ids_provider() {
@@ -1898,7 +1897,7 @@ class TTP_Data_Test extends TestCase {
 
         $calls = 0;
         \Patchwork\replace(
-            'TTP_Data::contains_record_ids',
+            'TTP_Record_Utils::contains_record_ids',
             function ( $values ) use ( &$calls ) {
                 $calls++;
                 return $calls === 1;
