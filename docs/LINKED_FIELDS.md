@@ -23,6 +23,10 @@ When processing vendor records, parse the field and resolve the IDs:
 $industry_field = self::parse_record_ids( $fields['Industry'] ?? [] );
 $industries = [];
 if ( self::contains_record_ids( $industry_field ) ) {
+    /**
+     * Replace placeholder IDs with names retrieved from Airtable.
+     * Real code uses TTP_Data::resolve_linked_field() for this swap.
+     */
     $resolved = TTP_Airbase::resolve_linked_records(
         $linked_tables['Industry']['table'],
         $industry_field,
