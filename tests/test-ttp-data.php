@@ -282,6 +282,68 @@ class TTP_Data_Test extends TestCase {
         $this->assertStringContainsString('recreg1', implode(' ', $logged));
     }
 
+    public function test_refresh_vendor_cache_removes_ids_when_resolution_empty() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => ['recven1'],
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['rechost1'],
+                'Category'        => ['reccat1'],
+                'Sub Categories'  => ['recsc1'],
+                'Regions'         => ['recreg1'],
+                'Domain'          => ['recdom1'],
+                'Capabilities'    => ['reccap1'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+            if ( 'Vendors' === $table_id ) {
+                return array();
+            }
+            $maps = [
+                'Regions'        => [ 'recreg1' => 'North America' ],
+                'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
+                'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Sub Categories' => [ 'recsc1' => 'Payments' ],
+                'Capabilities'   => [ 'reccap1' => 'API' ],
+            ];
+
+            $out = array();
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+
+            return $out;
+        });
+
+        $logged = array();
+        \Patchwork\replace('TTP_Data::log_unresolved_field', function ( $field, $ids ) use ( &$logged ) {
+            $logged[ $field ] = $ids;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( '', $captured[0]['vendor'] );
+        $this->assertSame( array( 'North America' ), $captured[0]['regions'] );
+        $this->assertArrayHasKey( 'Linked Vendor', $logged );
+        $this->assertSame( array( 'recven1' ), $logged['Linked Vendor'] );
+    }
+
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
         $record = [
             'id'     => 'rec1',

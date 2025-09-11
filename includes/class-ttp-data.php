@@ -309,13 +309,19 @@ class TTP_Data {
             $vendor_name  = '';
             if ( self::contains_record_ids( $vendor_field ) ) {
                 $original_vendor_ids = $vendor_field;
-                $resolved             = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor']['table'], $vendor_field, $linked_tables['Linked Vendor']['primary_field'] );
+                $resolved            = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor']['table'], $vendor_field, $linked_tables['Linked Vendor']['primary_field'] );
                 if ( is_wp_error( $resolved ) ) {
                     if ( function_exists( 'error_log' ) ) {
                         error_log( 'TTP_Data: Failed resolving Linked Vendor: ' . $resolved->get_error_message() );
                     }
                     self::log_unresolved_field( 'Linked Vendor', $original_vendor_ids );
-                } elseif ( ! empty( $resolved ) ) {
+                    $vendor_field = array();
+                    $vendor_name  = '';
+                } elseif ( empty( $resolved ) ) {
+                    self::log_unresolved_field( 'Linked Vendor', $original_vendor_ids );
+                    $vendor_field = array();
+                    $vendor_name  = '';
+                } else {
                     if ( count( (array) $resolved ) < count( (array) $original_vendor_ids ) ) {
                         $missing = array_slice( (array) $original_vendor_ids, count( (array) $resolved ) );
                         self::log_unresolved_field( 'Linked Vendor', $missing );
