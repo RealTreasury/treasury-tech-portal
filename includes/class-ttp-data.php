@@ -135,25 +135,89 @@ class TTP_Data {
                 $regions = array_filter( array_map( 'trim', explode( ',', $regions_field ) ) );
             }
 
+            $vendor_field = $fields['Linked Vendor'] ?? array();
+            $vendor_name  = '';
+            if ( is_array( $vendor_field ) && ! empty( $vendor_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( 'Vendors', $vendor_field );
+                if ( ! is_wp_error( $resolved ) && ! empty( $resolved ) ) {
+                    $vendor_name = sanitize_text_field( reset( $resolved ) );
+                } else {
+                    $vendor_name = sanitize_text_field( reset( $vendor_field ) );
+                }
+            } elseif ( ! empty( $vendor_field ) ) {
+                $vendor_name = sanitize_text_field( $vendor_field );
+            }
+
+            $hosted_field = $fields['Hosted Type'] ?? array();
+            $hosted_type  = array();
+            if ( is_array( $hosted_field ) && ! empty( $hosted_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( 'Hosted Type', $hosted_field );
+                if ( ! is_wp_error( $resolved ) ) {
+                    $hosted_type = array_map( 'sanitize_text_field', (array) $resolved );
+                } else {
+                    $hosted_type = array_map( 'sanitize_text_field', $hosted_field );
+                }
+            } elseif ( is_string( $hosted_field ) ) {
+                $hosted_type = array_filter( array_map( 'trim', explode( ',', $hosted_field ) ) );
+            }
+
+            $domain_field = $fields['Domain'] ?? array();
+            $domain       = array();
+            if ( is_array( $domain_field ) && ! empty( $domain_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( 'Domain', $domain_field );
+                if ( ! is_wp_error( $resolved ) ) {
+                    $domain = array_map( 'sanitize_text_field', (array) $resolved );
+                } else {
+                    $domain = array_map( 'sanitize_text_field', $domain_field );
+                }
+            } elseif ( is_string( $domain_field ) ) {
+                $domain = array_filter( array_map( 'trim', explode( ',', $domain_field ) ) );
+            }
+
+            $sub_field     = $fields['Sub Categories'] ?? array();
+            $sub_categories = array();
+            if ( is_array( $sub_field ) && ! empty( $sub_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( 'Sub Categories', $sub_field );
+                if ( ! is_wp_error( $resolved ) ) {
+                    $sub_categories = array_map( 'sanitize_text_field', (array) $resolved );
+                } else {
+                    $sub_categories = array_map( 'sanitize_text_field', $sub_field );
+                }
+            } elseif ( is_string( $sub_field ) ) {
+                $sub_categories = array_filter( array_map( 'trim', explode( ',', $sub_field ) ) );
+            }
+
+            $cap_field   = $fields['Capabilities'] ?? array();
+            $capabilities = array();
+            if ( is_array( $cap_field ) && ! empty( $cap_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( 'Capabilities', $cap_field );
+                if ( ! is_wp_error( $resolved ) ) {
+                    $capabilities = array_map( 'sanitize_text_field', (array) $resolved );
+                } else {
+                    $capabilities = array_map( 'sanitize_text_field', $cap_field );
+                }
+            } elseif ( is_string( $cap_field ) ) {
+                $capabilities = array_filter( array_map( 'trim', explode( ',', $cap_field ) ) );
+            }
+
             $parent_category = sanitize_text_field( $fields['Parent Category'] ?? '' );
-            $sub_categories  = array_map( 'sanitize_text_field', (array) ( $fields['Sub Categories'] ?? array() ) );
             $category_names  = array_filter( array_merge( $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
 
             $vendors[] = array(
-                'id'              => sanitize_text_field($record['id'] ?? ''),
+                'id'              => sanitize_text_field( $record['id'] ?? '' ),
                 'name'            => $fields['Product Name'] ?? '',
-                'vendor'          => $fields['Linked Vendor'] ?? '',
-                'website'         => self::normalize_url($fields['Product Website'] ?? ''),
-                'video_url'       => self::normalize_url($fields['Product Video'] ?? ''),
+                'vendor'          => $vendor_name,
+                'website'         => self::normalize_url( $fields['Product Website'] ?? '' ),
+                'video_url'       => self::normalize_url( $fields['Product Video'] ?? '' ),
                 'status'          => $fields['Status'] ?? '',
-                'hosted_type'     => $fields['Hosted Type'] ?? array(),
-                'domain'          => $fields['Domain'] ?? array(),
+                'hosted_type'     => $hosted_type,
+                'domain'          => $domain,
                 'regions'         => $regions,
                 'sub_categories'  => $sub_categories,
                 'parent_category' => $parent_category,
                 'category_names'  => $category_names,
-                'capabilities'    => $fields['Capabilities'] ?? array(),
-                'logo_url'        => self::normalize_url($fields['Logo URL'] ?? ''),
+                'capabilities'    => $capabilities,
+                'logo_url'        => self::normalize_url( $fields['Logo URL'] ?? '' ),
                 'hq_location'     => $fields['HQ Location'] ?? '',
                 'founded_year'    => $fields['Founded Year'] ?? '',
                 'founders'        => $fields['Founders'] ?? '',

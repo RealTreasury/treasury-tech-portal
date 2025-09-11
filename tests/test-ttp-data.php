@@ -24,15 +24,17 @@ class TTP_Data_Test extends TestCase {
             'id' => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Linked Vendor'   => ['ven1'],
                 'Product Website' => 'example.com',
                 'Product Video'   => 'example.com/video',
                 'Logo URL'        => 'example.com/logo.png',
                 'Status'          => 'Active',
-                'Hosted Type'     => ['Cloud'],
+                'Hosted Type'     => ['ht1'],
                 'Parent Category' => 'Cash',
-                'Sub Categories'  => ['Payments'],
+                'Sub Categories'  => ['sc1'],
                 'Regions'         => ['reg1', 'reg2'],
+                'Domain'          => ['dom1'],
+                'Capabilities'    => ['cap1'],
             ],
         ];
 
@@ -48,7 +50,26 @@ class TTP_Data_Test extends TestCase {
         });
 
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids) {
-            return ['North America', 'Europe'];
+            $maps = [
+                'Regions'        => [
+                    'reg1' => 'North America',
+                    'reg2' => 'Europe',
+                ],
+                'Vendors'        => [ 'ven1' => 'Acme Corp' ],
+                'Hosted Type'    => [ 'ht1' => 'Cloud' ],
+                'Domain'         => [ 'dom1' => 'Banking' ],
+                'Sub Categories' => [ 'sc1' => 'Payments' ],
+                'Capabilities'   => [ 'cap1' => 'API' ],
+            ];
+
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+
+            return $out;
         });
 
         TTP_Data::refresh_vendor_cache();
@@ -64,12 +85,12 @@ class TTP_Data_Test extends TestCase {
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
                 'hosted_type'     => ['Cloud'],
-                'domain'          => [],
+                'domain'          => ['Banking'],
                 'regions'         => ['North America', 'Europe'],
                 'sub_categories'  => ['Payments'],
                 'parent_category' => 'Cash',
                 'category_names'  => ['Cash', 'Payments'],
-                'capabilities'    => [],
+                'capabilities'    => ['API'],
                 'logo_url'        => 'https://example.com/logo.png',
                 'hq_location'     => '',
                 'founded_year'    => '',
@@ -83,6 +104,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame('Cash', $captured[0]['parent_category']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
         $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
+        $this->assertSame(['Banking'], $captured[0]['domain']);
     }
 
     public function test_refresh_vendor_cache_logs_missing_fields() {
