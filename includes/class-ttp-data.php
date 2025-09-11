@@ -750,13 +750,12 @@ class TTP_Data {
              * TTP_Airbase::resolve_linked_records(). See self::resolve_linked_field()
              * for the full placeholder-replacement strategy.
              */
-            $attempt      = 0;
-            $max_attempts = 3;
+            $attempt       = 0;
+            $max_attempts  = 3;
             $use_field_ids = empty( $primary_field );
-            $primary_arg   = $primary_field ? sanitize_text_field( $primary_field ) : '';
 
             do {
-                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_arg, $use_field_ids );
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field, $use_field_ids );
                 $attempt++;
                 if ( ! is_wp_error( $resolved ) ) {
                     break;

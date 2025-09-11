@@ -795,7 +795,7 @@ class TTP_Data_Test extends TestCase {
             return [ 'records' => [ $record ] ];
         } );
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) {
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
@@ -874,7 +874,7 @@ class TTP_Data_Test extends TestCase {
             return [ 'records' => [ $record ] ];
         } );
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) {
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) {
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
