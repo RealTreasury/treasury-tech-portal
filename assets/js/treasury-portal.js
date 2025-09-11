@@ -317,7 +317,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (loading) loading.style.display = 'block';
 
                 try {
-                    const response = await fetch(TTP_DATA.rest_url);
+                    const url = new URL(TTP_DATA.rest_url);
+                    const { regions = [], categories = [], subcategories = [] } = this.advancedFilters || {};
+                    regions.forEach(r => url.searchParams.append('region', r));
+                    categories.forEach(c => url.searchParams.append('parent_category', c));
+                    subcategories.forEach(s => url.searchParams.append('sub_category', s));
+                    const response = await fetch(url.toString());
                     const data = await response.json();
                     const allRegions = new Set();
                     const allCategories = new Set();
