@@ -29,6 +29,8 @@ class TTP_Data_Test extends TestCase {
                 'Logo URL'        => 'example.com/logo.png',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
+                'Parent Category' => 'Cash',
+                'Sub Categories'  => ['Payments'],
             ],
         ];
 
@@ -53,8 +55,8 @@ class TTP_Data_Test extends TestCase {
                 'hosted_type'     => ['Cloud'],
                 'domain'          => [],
                 'regions'         => [],
-                'sub_categories'  => [],
-                'parent_category' => '',
+                'sub_categories'  => ['Payments'],
+                'parent_category' => 'Cash',
                 'capabilities'    => [],
                 'logo_url'        => 'https://example.com/logo.png',
                 'hq_location'     => '',
@@ -64,5 +66,9 @@ class TTP_Data_Test extends TestCase {
         ];
 
         $this->assertSame($expected, $captured);
+        $this->assertSame('https://example.com/video', $captured[0]['video_url']);
+        $this->assertSame('https://example.com/logo.png', $captured[0]['logo_url']);
+        $this->assertSame('Cash', $captured[0]['parent_category']);
+        $this->assertSame(['Payments'], $captured[0]['sub_categories']);
     }
 }
