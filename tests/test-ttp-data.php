@@ -681,4 +681,22 @@ class TTP_Data_Test extends TestCase {
         $this->assertCount(1, $filtered);
         $this->assertSame('Tool A', $filtered[0]['name']);
     }
+
+    /**
+     * @dataProvider parse_record_ids_string_provider
+     */
+    public function test_parse_record_ids_handles_string_formats( $input ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( array( 'A', 'B' ), $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_string_provider() {
+        return array(
+            array( '["A","B"]' ),
+            array( 'A, B' ),
+            array( 'A;B' ),
+            array( 'A' . PHP_EOL . 'B' ),
+        );
+    }
 }
