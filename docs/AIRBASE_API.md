@@ -1,6 +1,6 @@
-# Airbase Vendor API Documentation
+# Airbase Product API Documentation
 
-This project retrieves vendor information from an Airtable base via the Airbase API.
+This project retrieves product information from the **Products** table in an Airtable base via the Airbase API.
 The following is a condensed reference for developers working with the API.
 
 ## Base Information
@@ -75,16 +75,16 @@ The schema cache is refreshed automatically when missing or expired. To manually
 - Use WP-CLI: `wp transient delete ttp_airbase_schema`
 - Or programmatically: `delete_transient('ttp_airbase_schema');`
 
-## Vendor Response Formats
+## Response Formats
 `TTP_Data::refresh_vendor_cache()` accepts multiple response shapes and
-normalizes them into a single vendor array. The following formats are supported:
+normalizes them into a single array of records built from product fields. The following formats are supported:
 
 - `{ "records": [...] }`
 - `{ "products": [...] }`
 - `{ "vendors": [...] }`
-- `[ ... ]` (top-level array of vendors)
+- `[ ... ]` (top-level array of product records)
 
-Any of these structures will be cached as a plain array of vendors.
+Any of these structures will be cached as a plain array of records built from product fields.
 
 ## Products Table Fields
 | Field | Type | Notes |
@@ -110,7 +110,7 @@ Any of these structures will be cached as a plain array of vendors.
 
 ## Linked Record Field Names
 
-The plugin resolves linked record identifiers for several vendor fields. The
+The plugin resolves linked record identifiers for several product fields. The
 following field names are accepted (including their common synonyms):
 
 - **Domain** – `domain`, `domains`, `domain_id`, `domain_ids`
@@ -135,8 +135,8 @@ Unresolved Report page in the WordPress admin interface.
 To resolve these warnings:
 
 1. Confirm each ID exists in the Airtable **Regions** table.
-2. Ensure vendor records reference the correct region IDs.
-3. Refresh vendors from the admin page after correcting any data issues.
+2. Ensure product records reference the correct region IDs.
+3. Refresh products from the admin page after correcting any data issues.
 
 ## Listing Products
 Retrieve records from the Products table. Only non-empty fields are returned.
