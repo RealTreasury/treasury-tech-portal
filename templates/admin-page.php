@@ -15,12 +15,31 @@
                 <tr>
                     <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Website', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Status', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Domain', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Regions', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Parent Category', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($vendors as $vendor) : ?>
                     <?php
-                    $cats = implode(', ', array_map('sanitize_text_field', (array) ($vendor['category_names'] ?? array())));
+                    $cats         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['category_names'] ?? array())));
+                    $hosted       = implode(', ', array_map('sanitize_text_field', (array) ($vendor['hosted_type'] ?? array())));
+                    $domain       = implode(', ', array_map('sanitize_text_field', (array) ($vendor['domain'] ?? array())));
+                    $regions      = implode(', ', array_map('sanitize_text_field', (array) ($vendor['regions'] ?? array())));
+                    $subs         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['sub_categories'] ?? array())));
+                    $capabilities = implode(', ', array_map('sanitize_text_field', (array) ($vendor['capabilities'] ?? array())));
                     ?>
                     <tr>
                         <td>
@@ -32,6 +51,20 @@
                             ?>
                         </td>
                         <td><?php echo esc_html($cats); ?></td>
+                        <td><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
+                        <td><?php echo esc_url($vendor['website'] ?? ''); ?></td>
+                        <td><?php echo esc_url($vendor['video_url'] ?? ''); ?></td>
+                        <td><?php echo esc_html($vendor['status'] ?? ''); ?></td>
+                        <td><?php echo esc_html($hosted); ?></td>
+                        <td><?php echo esc_html($domain); ?></td>
+                        <td><?php echo esc_html($regions); ?></td>
+                        <td><?php echo esc_html($subs); ?></td>
+                        <td><?php echo esc_html($vendor['parent_category'] ?? ''); ?></td>
+                        <td><?php echo esc_html($capabilities); ?></td>
+                        <td><?php echo esc_url($vendor['logo_url'] ?? ''); ?></td>
+                        <td><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
+                        <td><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
+                        <td><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
