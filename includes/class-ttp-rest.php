@@ -35,6 +35,8 @@ class TTP_Rest {
         $category = $request->get_param('category');
         if (!empty($category)) {
             $args['category'] = array_map('sanitize_text_field', (array) $category);
+        } else {
+            $args['category'] = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
         }
 
         $search = $request->get_param('search');
