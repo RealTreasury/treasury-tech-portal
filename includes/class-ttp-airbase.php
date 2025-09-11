@@ -15,6 +15,14 @@ class TTP_Airbase {
     const DEFAULT_API_PATH = '';
 
     /**
+     * Maximum number of linked record IDs per API request.
+     *
+     * Airtable has practical URL and formula size limits, so IDs are
+     * requested in batches of this size and merged.
+     */
+    const RECORD_BATCH_SIZE = 50;
+
+    /**
      * Perform an HTTP request with basic exponential backoff on rate limits.
      *
      * Retries the request when a 429 status code is encountered, waiting
@@ -317,6 +325,10 @@ class TTP_Airbase {
     /**
      * Resolve linked record IDs to their name values.
      *
+     * IDs are queried in batches of {@see self::RECORD_BATCH_SIZE} to avoid
+     * exceeding Airtable's URL and formula limits. Results from each batch are
+     * merged and returned as a flat array.
+     *
      * @param string $table_id      Table name or ID to query.
      * @param array  $ids           Record IDs to resolve.
      * @param string $primary_field Primary field to return. Defaults to "Name".
@@ -359,14 +371,7 @@ class TTP_Airbase {
             return new WP_Error( 'invalid_api_url', __( 'Invalid Airbase API URL.', 'treasury-tech-portal' ) );
         }
 
-        $filter_parts = array();
-        foreach ( $ids as $id ) {
-            $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
-        }
-        $filter        = 'OR(' . implode( ',', $filter_parts ) . ')';
         $primary_field = sanitize_text_field( $primary_field );
-
-        $url = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
 
         $args = array(
             'headers' => array(
@@ -376,27 +381,39 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $response = self::request_with_backoff( $url, $args );
-        if ( is_wp_error( $response ) ) {
-            return $response;
-        }
-
-        $code = wp_remote_retrieve_response_code( $response );
-        if ( 200 !== $code ) {
-            return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
-        }
-
-        $body = wp_remote_retrieve_body( $response );
-        $data = json_decode( $body, true );
-        if ( JSON_ERROR_NONE !== json_last_error() ) {
-            return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
-        }
-
         $values = array();
-        if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
-            foreach ( $data['records'] as $record ) {
-                if ( isset( $record['fields'][ $primary_field ] ) ) {
-                    $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+        $chunks = array_chunk( $ids, self::RECORD_BATCH_SIZE );
+
+        foreach ( $chunks as $chunk ) {
+            $filter_parts = array();
+            foreach ( $chunk as $id ) {
+                $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
+            }
+            $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
+
+            $url      = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
+            $response = self::request_with_backoff( $url, $args );
+
+            if ( is_wp_error( $response ) ) {
+                return $response;
+            }
+
+            $code = wp_remote_retrieve_response_code( $response );
+            if ( 200 !== $code ) {
+                return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
+            }
+
+            $body = wp_remote_retrieve_body( $response );
+            $data = json_decode( $body, true );
+            if ( JSON_ERROR_NONE !== json_last_error() ) {
+                return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
+            }
+
+            if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
+                foreach ( $data['records'] as $record ) {
+                    if ( isset( $record['fields'][ $primary_field ] ) ) {
+                        $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                    }
                 }
             }
         }
