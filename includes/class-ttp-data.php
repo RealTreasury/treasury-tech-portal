@@ -406,7 +406,7 @@ class TTP_Data {
             }
 
             if ( function_exists( 'error_log' ) ) {
-                $message = 'TTP_Data: Missing expected fields: ' . implode( ', ', $missing );
+                $message = 'TTP_Data: Missing expected product fields: ' . implode( ', ', $missing );
                 if ( ! empty( $missing_ids ) ) {
                     $message .= ' (requested IDs: ' . implode( ', ', $missing_ids ) . ')';
                 }
@@ -427,7 +427,7 @@ class TTP_Data {
 
             return new WP_Error(
                 'ttp_missing_fields',
-                'Missing expected vendor fields.',
+                'Missing expected product fields.',
                 array(
                     'fields' => $missing,
                     'ids'    => $missing_ids,
