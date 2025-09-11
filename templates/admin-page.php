@@ -103,4 +103,27 @@
     <?php else : ?>
         <p><?php esc_html_e('No vendors found.', 'treasury-tech-portal'); ?></p>
     <?php endif; ?>
+    <?php if (!empty($unresolved_fields)) : ?>
+        <div class="treasury-portal-admin-unresolved">
+            <h2><?php esc_html_e('Unresolved Region IDs', 'treasury-tech-portal'); ?></h2>
+            <ul>
+                <?php foreach ($unresolved_fields as $notice) : ?>
+                    <?php if (strpos($notice, 'Regions unresolved IDs:') === 0) : ?>
+                        <?php
+                        $ids_str = trim(str_replace('Regions unresolved IDs:', '', $notice));
+                        $ids     = array_map('trim', explode(',', $ids_str));
+                        ?>
+                        <li>
+                            <?php esc_html_e('Region IDs:', 'treasury-tech-portal'); ?>
+                            <?php foreach ($ids as $index => $id) : ?>
+                                <code><?php echo esc_html($id); ?></code><?php echo $index < count($ids) - 1 ? ', ' : ''; ?>
+                            <?php endforeach; ?>
+                        </li>
+                    <?php else : ?>
+                        <li><?php echo esc_html($notice); ?></li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
 </div>

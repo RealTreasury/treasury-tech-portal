@@ -125,15 +125,12 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             return;
         }
-        $notices = array();
+        $unresolved_fields = array();
         if ( function_exists( 'get_option' ) ) {
-            $notices = (array) get_option( 'ttp_unresolved_fields', array() );
-            if ( ! empty( $notices ) && function_exists( 'delete_option' ) ) {
+            $unresolved_fields = (array) get_option( 'ttp_unresolved_fields', array() );
+            if ( ! empty( $unresolved_fields ) && function_exists( 'delete_option' ) ) {
                 delete_option( 'ttp_unresolved_fields' );
             }
-        }
-        foreach ( $notices as $notice ) {
-            echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html( $notice ) . '</p></div>';
         }
 
         $vendors = TTP_Data::get_all_vendors();
