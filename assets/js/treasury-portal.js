@@ -219,6 +219,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.enabledCategories = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : this.availableCategories;
                 this.categoryLabels = (window.TTP_DATA && TTP_DATA.category_labels) || {};
                 this.categoryIcons = (window.TTP_DATA && TTP_DATA.category_icons) || {};
+                this.availableDomains = Array.isArray(window.TTP_DATA && TTP_DATA.available_domains) && TTP_DATA.available_domains.length ? TTP_DATA.available_domains : [];
+                this.enabledDomains = Array.isArray(window.TTP_DATA && TTP_DATA.enabled_domains) && TTP_DATA.enabled_domains.length ? TTP_DATA.enabled_domains : this.availableDomains;
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
                 this.filteredTools = [];
@@ -352,6 +354,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     subcategories.forEach(s => url.searchParams.append('sub_category', s));
                     const response = await fetch(url.toString());
                     const data = await response.json();
+                    if (data && Array.isArray(data.enabled_domains)) {
+                        this.enabledDomains = data.enabled_domains;
+                    }
+                    const vendors = Array.isArray(data) ? data : (data.vendors || []);
                     const allRegions = new Set();
                     const allCategories = new Set();
                     const allSubcategories = new Set();
@@ -362,7 +368,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             set.add(trimmed);
                         }
                     };
-                    this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
+                    const allowed = Array.isArray(this.enabledDomains) ? this.enabledDomains : [];
+                    this.TREASURY_TOOLS = vendors.filter(vendor => {
+                        const vendorDomains = Array.isArray(vendor.domain) ? vendor.domain : [];
+                        return !allowed.length || vendorDomains.some(d => allowed.includes(d));
+                    }).map(vendor => {
                         if (!Array.isArray(vendor.regions) || vendor.regions.length === 0) {
                             console.warn('Vendor missing regions:', vendor);
                         }

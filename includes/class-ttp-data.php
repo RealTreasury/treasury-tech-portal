@@ -158,6 +158,31 @@ class TTP_Data {
     }
 
     /**
+     * Retrieve list of unique domains from vendor records.
+     *
+     * @return array List of domain names.
+     */
+    public static function get_domains() {
+        $vendors = self::get_all_vendors();
+        $domains = array();
+
+        foreach ( (array) $vendors as $vendor ) {
+            foreach ( (array) ( $vendor['domain'] ?? array() ) as $domain ) {
+                $domain = sanitize_text_field( $domain );
+                if ( $domain !== '' && ! in_array( $domain, $domains, true ) ) {
+                    $domains[] = $domain;
+                }
+            }
+        }
+
+        if ( ! empty( $domains ) ) {
+            sort( $domains );
+        }
+
+        return $domains;
+    }
+
+    /**
      * Migration: normalise semicolon-delimited values stored in the vendor cache.
      *
      * Older caches may contain strings with semicolon separators where arrays of
@@ -960,6 +985,16 @@ class TTP_Data {
      */
     public static function get_tools($args = []) {
         $tools = self::get_all_tools();
+        $enabled_domains = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array() );
+        if ( ! empty( $enabled_domains ) ) {
+            $tools = array_filter(
+                $tools,
+                function ( $tool ) use ( $enabled_domains ) {
+                    $tool_domains = (array) ( $tool['domain'] ?? array() );
+                    return empty( $tool_domains ) || ! empty( array_intersect( $tool_domains, $enabled_domains ) );
+                }
+            );
+        }
 
         if (!empty($args['search'])) {
             $search = strtolower($args['search']);

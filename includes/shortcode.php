@@ -15,6 +15,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
 }
 $categories         = TTP_Data::get_categories();
 $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
+$domains            = TTP_Data::get_domains();
+$enabled_domains    = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, $domains );
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->

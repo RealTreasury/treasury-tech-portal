@@ -866,6 +866,7 @@ class TTP_Data_Test extends TestCase {
                 'Product Name'    => 'Sample Product',
                 'LinkedVendor'    => [ 'recven1' ],
                 'Product Website' => 'example.com',
+                'Full Website URL' => 'https://example.com',
                 'Demo Video URL'  => 'example.com/video',
                 'Logo URL'        => 'example.com/logo.png',
                 'Status'          => 'Active',
@@ -919,7 +920,7 @@ class TTP_Data_Test extends TestCase {
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
                 'vendor'          => 'Acme Corp',
-                'full_website_url' => '',
+                'full_website_url' => 'https://example.com',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
@@ -947,6 +948,7 @@ class TTP_Data_Test extends TestCase {
             'Product Name'  => 'Sample Product',
             'LinkedVendor'  => [ 'recven1' ],
             'Product Website' => 'example.com',
+            'Full Website URL' => 'https://example.com',
             'Demo Video URL' => 'example.com/video',
             'Logo URL'      => 'example.com/logo.png',
             'Status'        => 'Active',
@@ -999,7 +1001,7 @@ class TTP_Data_Test extends TestCase {
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
                 'vendor'          => 'Acme Corp',
-                'full_website_url' => '',
+                'full_website_url' => 'https://example.com',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
@@ -2082,5 +2084,38 @@ class TTP_Data_Test extends TestCase {
             'Category' => array( 'recA' ),
         );
         $this->assertSame( $expected, $stored );
+    }
+
+    public function test_get_domains_returns_unique_list() {
+        \Patchwork\replace( 'TTP_Data::get_all_vendors', function () {
+            return array(
+                array( 'domain' => array( 'Banking' ) ),
+                array( 'domain' => array( 'Treasury', 'Banking' ) ),
+            );
+        } );
+
+        $this->assertSame( array( 'Banking', 'Treasury' ), TTP_Data::get_domains() );
+    }
+
+    public function test_get_tools_filters_by_domains_option() {
+        $tools = array(
+            array( 'name' => 'Tool A', 'domain' => array( 'Banking' ) ),
+            array( 'name' => 'Tool B', 'domain' => array( 'Treasury' ) ),
+        );
+
+        \Patchwork\replace( 'TTP_Data::get_all_tools', function () use ( $tools ) {
+            return $tools;
+        } );
+
+        \Patchwork\replace( 'get_option', function ( $name, $default = array() ) {
+            if ( TTP_Admin::OPTION_ENABLED_DOMAINS === $name ) {
+                return array( 'Banking' );
+            }
+            return $default;
+        } );
+
+        $filtered = TTP_Data::get_tools();
+        $this->assertCount( 1, $filtered );
+        $this->assertSame( 'Tool A', $filtered[0]['name'] );
     }
 }

@@ -170,11 +170,13 @@ class TTP_Rest_Test extends TestCase {
             return [ $vendor ];
         });
 
-        $request = new class {};
+        $request  = new class {};
         $response = TTP_Rest::get_vendors( $request );
+        $vendors  = $response['vendors'];
 
-        $this->assertSame( ['North America'], $response[0]['regions'] );
-        $this->assertSame( ['Finance'], $response[0]['categories'] );
+        $this->assertSame( ['North America'], $vendors[0]['regions'] );
+        $this->assertSame( ['Finance'], $vendors[0]['categories'] );
+        $this->assertIsArray( $response['enabled_domains'] );
     }
 
     public function test_vendors_endpoint_strips_unresolved_ids_and_refreshes_cache() {
@@ -206,10 +208,11 @@ class TTP_Rest_Test extends TestCase {
 
         $request  = new class {};
         $response = TTP_Rest::get_vendors( $request );
+        $vendors  = $response['vendors'];
 
         $this->assertTrue( $refresh_called );
-        $this->assertSame( [ 'North America' ], $response[0]['regions'] );
-        $this->assertArrayNotHasKey( 'categories', $response[0] );
+        $this->assertSame( [ 'North America' ], $vendors[0]['regions'] );
+        $this->assertArrayNotHasKey( 'categories', $vendors[0] );
     }
 
     public function test_vendors_endpoint_marks_incomplete_vendors() {
@@ -237,8 +240,9 @@ class TTP_Rest_Test extends TestCase {
 
         $request  = new class {};
         $response = TTP_Rest::get_vendors( $request );
+        $vendors  = $response['vendors'];
 
-        $this->assertTrue( $response[0]['incomplete'] );
+        $this->assertTrue( $vendors[0]['incomplete'] );
     }
 
     public function test_refresh_endpoint_triggers_cache_refresh() {

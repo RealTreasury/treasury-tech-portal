@@ -122,7 +122,11 @@ class TTP_Rest {
             TTP_Data::refresh_vendor_cache();
         }
 
-        return rest_ensure_response( $vendors );
+        $response = array(
+            'vendors'         => $vendors,
+            'enabled_domains' => (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, TTP_Data::get_domains() ),
+        );
+        return rest_ensure_response( $response );
     }
 
     public static function refresh_data( $request ) {

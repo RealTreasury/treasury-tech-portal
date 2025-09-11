@@ -41,9 +41,4 @@ if (!defined('DAY_IN_SECONDS')) {
     define('DAY_IN_SECONDS', 86400);
 }
 
-// Minimal TTP_Admin stub for constant references in tests.
-if (!class_exists('TTP_Admin')) {
-    class TTP_Admin {
-        const OPTION_ENABLED_CATEGORIES = 'ttp_enabled_categories';
-    }
-}
+require_once __DIR__ . '/../includes/class-ttp-admin.php';
