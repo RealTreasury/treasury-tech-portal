@@ -1,7 +1,11 @@
 <?php
 // Exit if accessed directly
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
     exit;
+}
+
+if ( ! defined( 'TTP_CATEGORIES' ) ) {
+    require_once __DIR__ . '/categories.php';
 }
 
 class TTP_Rest {
