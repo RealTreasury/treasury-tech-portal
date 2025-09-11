@@ -65,6 +65,11 @@ class TTP_Data {
     }
 
     public static function get_all_vendors() {
+        // Ensure legacy caches with semicolon-delimited values are normalised
+        // before attempting to read from the transient cache. This migration is
+        // lightweight and will no-op once data is updated.
+        self::migrate_semicolon_cache();
+
         $vendors = get_transient( self::get_vendor_cache_key() );
         if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
             return $vendors;
@@ -78,6 +83,72 @@ class TTP_Data {
 
         set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
         return $vendors;
+    }
+
+    /**
+     * Migration: normalise semicolon-delimited values stored in the vendor cache.
+     *
+     * Older caches may contain strings with semicolon separators where arrays of
+     * values were expected. Scan the cached vendors and split any such strings
+     * into arrays so downstream logic receives the canonical format.
+     */
+    private static function migrate_semicolon_cache() {
+        $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        $updated = false;
+
+        foreach ( $vendors as &$vendor ) {
+            $fields = array( 'regions', 'hosted_type', 'domain', 'categories', 'sub_categories', 'capabilities' );
+
+            foreach ( $fields as $field ) {
+                if ( ! isset( $vendor[ $field ] ) ) {
+                    continue;
+                }
+
+                $original   = $vendor[ $field ];
+                $values     = is_array( $original ) ? $original : array( $original );
+                $normalized = array();
+
+                foreach ( $values as $value ) {
+                    if ( is_string( $value ) && strpos( $value, ';' ) !== false ) {
+                        $normalized = array_merge( $normalized, self::parse_record_ids( $value ) );
+                    } else {
+                        $normalized[] = $value;
+                    }
+                }
+
+                $normalized = array_values( array_filter( array_map( 'trim', $normalized ) ) );
+
+                if ( $normalized !== $values ) {
+                    $vendor[ $field ] = $normalized;
+                    $updated          = true;
+                }
+            }
+
+            if ( isset( $vendor['categories'] ) || isset( $vendor['sub_categories'] ) ) {
+                $categories     = isset( $vendor['categories'] ) ? (array) $vendor['categories'] : array();
+                $sub_categories = isset( $vendor['sub_categories'] ) ? (array) $vendor['sub_categories'] : array();
+
+                $category       = $categories ? reset( $categories ) : '';
+                $category_names = array_filter( array_merge( $categories, $sub_categories ) );
+
+                if ( ! isset( $vendor['category'] ) || $vendor['category'] !== $category ) {
+                    $vendor['category'] = $category;
+                    $updated            = true;
+                }
+
+                if ( ! isset( $vendor['category_names'] ) || $vendor['category_names'] !== $category_names ) {
+                    $vendor['category_names'] = $category_names;
+                    $updated                  = true;
+                }
+            }
+        }
+        unset( $vendor );
+
+        if ( $updated ) {
+            update_option( self::VENDOR_OPTION_KEY, $vendors );
+            delete_transient( self::get_vendor_cache_key() );
+            set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
+        }
     }
 
     /**
@@ -445,11 +516,24 @@ class TTP_Data {
                     continue;
                 }
 
-                $fields = str_getcsv( $line );
-                if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
-                    $fields = str_getcsv( $line, ';' );
+                // Replace semicolons with commas when outside of quoted sections so
+                // both delimiters are treated equally while preserving literal
+                // semicolons within quoted names.
+                $normalized = '';
+                $in_quotes  = false;
+                $length     = strlen( $line );
+                for ( $i = 0; $i < $length; $i++ ) {
+                    $char = $line[ $i ];
+                    if ( '"' === $char ) {
+                        $in_quotes = ! $in_quotes;
+                    }
+                    if ( ! $in_quotes && ';' === $char ) {
+                        $char = ',';
+                    }
+                    $normalized .= $char;
                 }
 
+                $fields = str_getcsv( $normalized );
                 $parsed = array_merge( $parsed, $fields );
             }
 

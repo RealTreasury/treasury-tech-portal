@@ -1117,7 +1117,7 @@ class TTP_Data_Test extends TestCase {
         $option_calls = 0;
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
             $option_calls++;
-            if ( 1 === $option_calls ) {
+            if ( $option_calls <= 2 ) {
                 return $vendors_with_ids;
             }
             return $vendors_clean;
@@ -1155,7 +1155,10 @@ class TTP_Data_Test extends TestCase {
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
             if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
                 $option_calls++;
-                return 1 === $option_calls ? $vendors_with_ids : $vendors_clean;
+                if ( $option_calls <= 2 ) {
+                    return $vendors_with_ids;
+                }
+                return $vendors_clean;
             }
             return $default;
         } );
@@ -1358,6 +1361,22 @@ class TTP_Data_Test extends TestCase {
         return array(
             'comma_inside_name'     => array( '"Foo, Inc",Bar', array( 'Foo, Inc', 'Bar' ) ),
             'semicolon_inside_name' => array( '"Foo; Inc";Bar', array( 'Foo; Inc', 'Bar' ) ),
+        );
+    }
+
+    /**
+     * @dataProvider parse_record_ids_mixed_delimiters_provider
+     */
+    public function test_parse_record_ids_handles_mixed_delimiters( $input, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_mixed_delimiters_provider() {
+        return array(
+            'comma_then_semicolon' => array( 'A,B;C', array( 'A', 'B', 'C' ) ),
+            'semicolon_then_comma' => array( 'A;B,C', array( 'A', 'B', 'C' ) ),
         );
     }
 
@@ -1583,6 +1602,71 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
         $this->assertSame( 1, $calls );
+    }
+
+    public function test_migrate_semicolon_cache_normalises_values() {
+        $stored_option = array(
+            array(
+                'regions'        => array( 'North;South' ),
+                'categories'     => array( 'Cash;TRMS' ),
+                'sub_categories' => array(),
+                'category'       => 'Cash;TRMS',
+                'category_names' => array( 'Cash;TRMS' ),
+                'capabilities'   => array( 'Payables;Receivables' ),
+                'hosted_type'    => array( 'Cloud;On-Prem' ),
+                'domain'         => array( 'Treasury;Payments' ),
+            ),
+        );
+
+        $transients = array();
+        when( 'get_transient' )->alias( function ( $name ) use ( &$transients ) {
+            return $transients[ $name ] ?? false;
+        } );
+        when( 'set_transient' )->alias( function ( $name, $value, $ttl ) use ( &$transients ) {
+            $transients[ $name ] = $value;
+            return true;
+        } );
+        when( 'delete_transient' )->alias( function ( $name ) use ( &$transients ) {
+            unset( $transients[ $name ] );
+            return true;
+        } );
+
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                return $stored_option;
+            }
+            return $default;
+        } );
+        when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored_option ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                $stored_option = $value;
+            }
+            return true;
+        } );
+
+        $result = TTP_Data::get_all_vendors();
+
+        $expected = array(
+            'regions'        => array( 'North', 'South' ),
+            'categories'     => array( 'Cash', 'TRMS' ),
+            'sub_categories' => array(),
+            'category'       => 'Cash',
+            'category_names' => array( 'Cash', 'TRMS' ),
+            'capabilities'   => array( 'Payables', 'Receivables' ),
+            'hosted_type'    => array( 'Cloud', 'On-Prem' ),
+            'domain'         => array( 'Treasury', 'Payments' ),
+        );
+
+        $this->assertSame( $expected['regions'], $result[0]['regions'] );
+        $this->assertSame( $expected['categories'], $result[0]['categories'] );
+        $this->assertSame( $expected['category'], $result[0]['category'] );
+        $this->assertSame( $expected['category_names'], $result[0]['category_names'] );
+        $this->assertSame( $expected['capabilities'], $result[0]['capabilities'] );
+        $this->assertSame( $expected['hosted_type'], $result[0]['hosted_type'] );
+        $this->assertSame( $expected['domain'], $result[0]['domain'] );
+
+        // Ensure the option was updated with normalised values.
+        $this->assertSame( $expected, $stored_option[0] );
     }
 
     public function test_log_unresolved_field_groups_ids_by_field() {
