@@ -12,7 +12,12 @@
     <?php if (!empty($vendors)) : ?>
         <ul>
             <?php foreach ($vendors as $vendor) : ?>
-                <li><?php echo esc_html($vendor['id'] ?? ''); ?> - <?php echo esc_html($vendor['name'] ?? ''); ?></li>
+                <li>
+                    <?php echo esc_html($vendor['name'] ?? ''); ?>
+                    <?php if (!empty($vendor['id'])) : ?>
+                        (<?php echo esc_html__('ID:', 'treasury-tech-portal'); ?> <?php echo esc_html($vendor['id']); ?>)
+                    <?php endif; ?>
+                </li>
             <?php endforeach; ?>
         </ul>
     <?php else : ?>

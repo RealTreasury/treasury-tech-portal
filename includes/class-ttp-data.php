@@ -122,7 +122,13 @@ class TTP_Data {
         foreach ($records as $record) {
             $fields = isset($record['fields']) && is_array($record['fields']) ? $record['fields'] : $record;
 
+            $id = isset($record['id']) ? $record['id'] : '';
+            if (function_exists('sanitize_text_field')) {
+                $id = sanitize_text_field($id);
+            }
+
             $vendors[] = array(
+                'id'              => $id,
                 'name'            => $fields['Product Name'] ?? '',
                 'vendor'          => $fields['Linked Vendor'] ?? '',
                 'website'         => self::normalize_url($fields['Product Website'] ?? ''),
