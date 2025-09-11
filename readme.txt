@@ -27,6 +27,7 @@ Add the portal to any page or post using the shortcode:
    - **Base ID**
    - **Products Table ID**
    These three fields are **mandatory**—the plugin will not query Airbase until they are provided.
+   The API Token is masked in the interface; use the **Reveal** button to view or hide it when editing.
 2. Save the settings.
 3. To fetch vendors immediately visit **Treasury Tools → Vendors** and click **Refresh Vendors**;
    otherwise a scheduled event updates the cache twice daily.

@@ -34,7 +34,7 @@ class TTP_Admin {
     }
 
     public static function enqueue_assets($hook) {
-        if ($hook !== 'toplevel_page_treasury-tools') {
+        if ($hook !== 'toplevel_page_treasury-tools' && $hook !== 'treasury-tools_page_treasury-airbase-settings') {
             return;
         }
         $css_file = TTP_DIR . 'assets/css/treasury-portal.css';
@@ -115,7 +115,10 @@ class TTP_Admin {
                 <table class="form-table" role="presentation">
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>"><?php esc_html_e('API Token', 'treasury-tech-portal'); ?></label></th>
-                        <td><input name="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" type="text" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" value="<?php echo esc_attr($api_token); ?>" class="regular-text" /></td>
+                        <td>
+                            <input name="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" type="password" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" value="<?php echo esc_attr($api_token); ?>" class="regular-text" />
+                            <button type="button" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>_toggle" class="button"><?php esc_html_e('Reveal', 'treasury-tech-portal'); ?></button>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_BASE_URL); ?>"><?php esc_html_e('Base URL', 'treasury-tech-portal'); ?></label></th>
