@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         return slug;
                     }
                 }
-                return '';
+                return upper;
             }
 
             async fetchTools() {

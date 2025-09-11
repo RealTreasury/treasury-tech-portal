@@ -130,34 +130,6 @@ class TTP_Data {
     }
 
     /**
-     * Retrieve icon mapping for categories.
-     *
-     * @return array Mapping of category slug => icon string.
-     */
-    public static function get_category_icons() {
-        $cats  = self::get_categories();
-        $icons = array();
-
-        foreach ( $cats as $slug => $label ) {
-            switch ( $slug ) {
-                case 'CASH':
-                    $icons[ $slug ] = '💰';
-                    break;
-                case 'LITE':
-                    $icons[ $slug ] = '⚡';
-                    break;
-                case 'TRMS':
-                    $icons[ $slug ] = '🏢';
-                    break;
-                default:
-                    $icons[ $slug ] = '💼';
-            }
-        }
-
-        return $icons;
-    }
-
-    /**
      * Migration: normalise semicolon-delimited values stored in the vendor cache.
      *
      * Older caches may contain strings with semicolon separators where arrays of
