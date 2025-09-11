@@ -341,10 +341,12 @@ class TTP_Airbase {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
         }
 
-        $ids = array_filter( (array) $ids );
+        $ids = array_values( array_filter( (array) $ids ) );
         if ( empty( $ids ) ) {
             return array();
         }
+
+        static $cache = array();
 
         $base_url = get_option( self::OPTION_BASE_URL, self::DEFAULT_BASE_URL );
         if ( empty( $base_url ) ) {
@@ -381,43 +383,68 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $values = array();
-        $chunks = array_chunk( $ids, self::RECORD_BATCH_SIZE );
+        if ( ! isset( $cache[ $table_id ] ) ) {
+            $cache[ $table_id ] = array();
+        }
 
-        foreach ( $chunks as $chunk ) {
-            $filter_parts = array();
-            foreach ( $chunk as $id ) {
-                $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
+        $values    = array();
+        $to_fetch  = array();
+        $index_map = array();
+
+        foreach ( $ids as $index => $id ) {
+            if ( isset( $cache[ $table_id ][ $id ] ) ) {
+                $values[ $index ] = $cache[ $table_id ][ $id ];
+            } else {
+                $to_fetch[]       = $id;
+                $index_map[ $id ] = $index;
             }
-            $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
+        }
 
-            $url      = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
-            $response = self::request_with_backoff( $url, $args );
+        if ( ! empty( $to_fetch ) ) {
+            $chunks = array_chunk( $to_fetch, self::RECORD_BATCH_SIZE );
 
-            if ( is_wp_error( $response ) ) {
-                return $response;
-            }
+            foreach ( $chunks as $chunk ) {
+                $filter_parts = array();
+                foreach ( $chunk as $id ) {
+                    $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\'", $id ) . "'";
+                }
+                $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $code = wp_remote_retrieve_response_code( $response );
-            if ( 200 !== $code ) {
-                return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
-            }
+                $url      = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
+                $response = self::request_with_backoff( $url, $args );
 
-            $body = wp_remote_retrieve_body( $response );
-            $data = json_decode( $body, true );
-            if ( JSON_ERROR_NONE !== json_last_error() ) {
-                return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
-            }
+                if ( is_wp_error( $response ) ) {
+                    return $response;
+                }
 
-            if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
-                foreach ( $data['records'] as $record ) {
-                    if ( isset( $record['fields'][ $primary_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                $code = wp_remote_retrieve_response_code( $response );
+                if ( 200 !== $code ) {
+                    return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
+                }
+
+                $body = wp_remote_retrieve_body( $response );
+                $data = json_decode( $body, true );
+                if ( JSON_ERROR_NONE !== json_last_error() ) {
+                    return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
+                }
+
+                if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
+                    foreach ( $data['records'] as $record ) {
+                        if ( isset( $record['id'], $record['fields'][ $primary_field ] ) ) {
+                            $value                               = sanitize_text_field( $record['fields'][ $primary_field ] );
+                            $cache[ $table_id ][ $record['id'] ] = $value;
+                            if ( isset( $index_map[ $record['id'] ] ) ) {
+                                $values[ $index_map[ $record['id'] ] ] = $value;
+                            } else {
+                                $values[] = $value;
+                            }
+                        }
                     }
                 }
             }
         }
 
-        return $values;
+        ksort( $values );
+        return array_values( $values );
     }
 }
