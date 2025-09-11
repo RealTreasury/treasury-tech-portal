@@ -53,6 +53,17 @@ class TTP_Rest_Test extends TestCase {
             'category_names' => ['Finance', 'Cash', 'Payments'],
             'regions'        => ['North America'],
         ];
+        \Patchwork\replace('TTP_Data::get_categories', function () {
+            return array( 'Cash' => 'Cash' );
+        } );
+
+        \Patchwork\replace('get_option', function ( $name, $default = array() ) {
+            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
+                return array( 'Finance' );
+            }
+            return $default;
+        } );
+
         \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($vendor) {
             return [ $vendor ];
         });
@@ -109,11 +120,52 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame(['Payments'], $captured['sub_category']);
     }
 
+    public function test_tools_endpoint_limits_to_enabled_categories_by_default() {
+        $captured = null;
+
+        \Patchwork\replace('TTP_Data::get_categories', function () {
+            return array( 'Cash' => 'Cash', 'Lite' => 'Lite' );
+        } );
+
+        \Patchwork\replace('get_option', function ( $name, $default = array() ) {
+            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
+                return array( 'Cash', 'Lite' );
+            }
+            return $default;
+        } );
+
+        \Patchwork\replace('TTP_Data::get_tools', function ( $args = array() ) use ( &$captured ) {
+            $captured = $args;
+            return array();
+        } );
+
+        $request = new class {
+            public function get_param( $key ) {
+                return null;
+            }
+        };
+
+        TTP_Rest::get_tools( $request );
+
+        $this->assertSame( array( 'Cash', 'Lite' ), $captured['category'] );
+    }
+
     public function test_vendors_endpoint_returns_resolved_names() {
         $vendor = [
             'regions'    => ['North America'],
             'categories' => ['Finance'],
         ];
+        \Patchwork\replace('TTP_Data::get_categories', function () {
+            return array( 'Cash' => 'Cash' );
+        } );
+
+        \Patchwork\replace('get_option', function ( $name, $default = array() ) {
+            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
+                return array( 'Finance' );
+            }
+            return $default;
+        } );
+
         \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
             return [ $vendor ];
         });
@@ -132,6 +184,17 @@ class TTP_Rest_Test extends TestCase {
         ];
 
         $refresh_called = false;
+
+        \Patchwork\replace('TTP_Data::get_categories', function () {
+            return array( 'Cash' => 'Cash' );
+        } );
+
+        \Patchwork\replace('get_option', function ( $name, $default = array() ) {
+            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
+                return array( 'rec456' );
+            }
+            return $default;
+        } );
 
         \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
             return [ $vendor ];
@@ -154,6 +217,17 @@ class TTP_Rest_Test extends TestCase {
             'regions'    => ['rec123', 'North America'],
             'categories' => ['Finance'],
         ];
+
+        \Patchwork\replace('TTP_Data::get_categories', function () {
+            return array( 'Cash' => 'Cash' );
+        } );
+
+        \Patchwork\replace('get_option', function ( $name, $default = array() ) {
+            if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
+                return array( 'Finance' );
+            }
+            return $default;
+        } );
 
         \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
             return [ $vendor ];

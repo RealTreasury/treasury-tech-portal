@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vendor cache refresh now relies solely on `resolve_linked_field()` and
   `TTP_Airbase::resolve_linked_records()` for ID resolution, deprecating
   `rt_airtable_map_ids_to_names()`
+- `TTP_Data::get_tools()` no longer applies enabled category limits by default
+- REST tools endpoint now explicitly limits results to enabled categories
 
 ### Removed
 - Slick carousel assets and jQuery dependency for a cleaner front-end
