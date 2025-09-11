@@ -43,7 +43,7 @@
                     $capabilities = implode(', ', array_map('sanitize_text_field', (array) ($vendor['capabilities'] ?? array())));
                     ?>
                     <tr>
-                        <td>
+                        <td data-label="<?php echo esc_attr__('Name', 'treasury-tech-portal'); ?>">
                             <?php
                             echo esc_html($vendor['name'] ?? '');
                             if (!empty($vendor['id'])) {
@@ -51,21 +51,21 @@
                             }
                             ?>
                         </td>
-                        <td><?php echo esc_html($cats); ?></td>
-                        <td><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
-                        <td><?php echo esc_url($vendor['website'] ?? ''); ?></td>
-                        <td><?php echo esc_url($vendor['video_url'] ?? ''); ?></td>
-                        <td><?php echo esc_html($vendor['status'] ?? ''); ?></td>
-                        <td><?php echo esc_html($hosted); ?></td>
-                        <td><?php echo esc_html($domain); ?></td>
-                        <td><?php echo esc_html($regions); ?></td>
-                        <td><?php echo esc_html($subs); ?></td>
-                        <td><?php echo esc_html($vendor['parent_category'] ?? ''); ?></td>
-                        <td><?php echo esc_html($capabilities); ?></td>
-                        <td><?php echo esc_url($vendor['logo_url'] ?? ''); ?></td>
-                        <td><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
-                        <td><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
-                        <td><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>"><?php echo esc_html($cats); ?></td>
+                        <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>"><?php echo esc_url($vendor['website'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>"><?php echo esc_url($vendor['video_url'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['status'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"><?php echo esc_html($hosted); ?></td>
+                        <td data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>"><?php echo esc_html($domain); ?></td>
+                        <td data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>"><?php echo esc_html($regions); ?></td>
+                        <td data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"><?php echo esc_html($subs); ?></td>
+                        <td data-label="<?php echo esc_attr__('Parent Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['parent_category'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($capabilities); ?></td>
+                        <td data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>"><?php echo esc_url($vendor['logo_url'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
