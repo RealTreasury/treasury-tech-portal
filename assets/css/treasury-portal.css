@@ -1614,7 +1614,7 @@
 
         .treasury-portal #regionFilters,
         .treasury-portal #categoryFilters,
-        .treasury-portal #subCategoryFilters {
+        .treasury-portal #subcategoryFilters {
             max-height: 150px;
             overflow-y: auto;
         }
