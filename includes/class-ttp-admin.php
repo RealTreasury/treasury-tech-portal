@@ -45,6 +45,16 @@ class TTP_Admin {
             array(),
             $css_ver
         );
+
+        $js_file = TTP_DIR . 'assets/js/treasury-portal-admin.js';
+        $js_ver  = file_exists($js_file) ? filemtime($js_file) : '1.0';
+        wp_enqueue_script(
+            'treasury-tech-portal-admin-js',
+            TTP_URL . 'assets/js/treasury-portal-admin.js',
+            array(),
+            $js_ver,
+            true
+        );
     }
 
     public static function render_airbase_settings() {

@@ -2499,6 +2499,27 @@
             text-align: left;
         }
 
+        .treasury-portal-admin .treasury-portal-admin-search {
+            margin-bottom: 12px;
+        }
+
+        .treasury-portal-admin .treasury-portal-admin-search input[type="search"] {
+            max-width: 300px;
+            width: 100%;
+            padding: 6px 8px;
+        }
+
+        .treasury-portal-admin .treasury-portal-admin-table th {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+
+        .treasury-portal-admin .treasury-portal-admin-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
         @media (max-width: 768px) {
             .treasury-portal-admin .treasury-portal-admin-table-wrapper {
                 overflow-x: auto;
