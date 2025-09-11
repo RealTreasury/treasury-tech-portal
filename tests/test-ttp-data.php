@@ -838,10 +838,10 @@ class TTP_Data_Test extends TestCase {
 
     public function parse_record_ids_string_provider() {
         return array(
-            array( '["A","B"]' ),
-            array( 'A, B' ),
-            array( 'A;B' ),
-            array( 'A' . PHP_EOL . 'B' ),
+            'json_string'     => array( '["A","B"]' ),
+            'comma_separated' => array( 'A, B' ),
+            'semicolon'       => array( 'A;B' ),
+            'newline'         => array( "A\nB" ),
         );
     }
 }
