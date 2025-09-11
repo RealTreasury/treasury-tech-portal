@@ -6,12 +6,36 @@ require_once __DIR__ . '/../includes/class-ttp-data.php';
 require_once __DIR__ . '/../includes/class-ttp-airbase.php';
 
 class TTP_Data_Test extends TestCase {
+    protected $schema_map;
     protected function setUp(): void {
         \Brain\Monkey\setUp();
         when('is_wp_error')->alias(function ($thing) {
             return $thing instanceof WP_Error;
         });
         when('sanitize_text_field')->returnArg();
+
+        $this->schema_map = [
+            'Product Name'    => 'fld_name',
+            'Linked Vendor'   => 'fld_vendor',
+            'Product Website' => 'fld_website',
+            'Product Video'   => 'fld_video',
+            'Logo URL'        => 'fld_logo',
+            'Status'          => 'fld_status',
+            'Hosted Type'     => 'fld_hosted',
+            'Domain'          => 'fld_domain',
+            'Regions'         => 'fld_regions',
+            'Sub Categories'  => 'fld_sub',
+            'Parent Category' => 'fld_parent',
+            'Capabilities'    => 'fld_caps',
+            'HQ Location'     => 'fld_hq',
+            'Founded Year'    => 'fld_year',
+            'Founders'        => 'fld_founders',
+        ];
+
+        $schema =& $this->schema_map;
+        \Patchwork\replace('TTP_Airbase::get_table_schema', function () use (&$schema) {
+            return $schema;
+        });
     }
 
     protected function tearDown(): void {
@@ -76,7 +100,7 @@ class TTP_Data_Test extends TestCase {
 
         TTP_Data::refresh_vendor_cache();
 
-        $this->assertContains('fldznljEJpn4lv79r', $requested_fields);
+        $this->assertContains($this->schema_map['Product Website'], $requested_fields);
         $this->assertSame(
             ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Sub Categories', 'Capabilities'],
             $tables

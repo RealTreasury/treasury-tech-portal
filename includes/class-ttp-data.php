@@ -146,25 +146,36 @@ class TTP_Data {
      * Refresh vendor cache from Airbase.
      */
     public static function refresh_vendor_cache() {
-        $field_map = array(
-            'Product Name'    => 'fld2hocSMtPQYWfPa',
-            'Linked Vendor'   => 'fldsrlwpO9AfkmjcH',
-            'Product Website' => 'fldznljEJpn4lv79r',
-            'Product Video'   => 'fld9Kd3xN2hPQYF7W', // placeholder ID
-            'Logo URL'        => 'fldfZPuRMjQKCv3U6',
-            'Status'          => 'fldFsaznNFvfh3x7k',
-            'Hosted Type'     => 'fldGyZDaIUFFidaXA',
-            'Domain'          => 'fldU53MVlWgkPbPDw',
-            'Regions'         => 'fldE8buvdk7TDG1ex',
-            'Sub Categories'  => 'fldl2g5bYDq9TibuF',
-            'Parent Category' => 'fldXqnpKe8ioYOYhP',
-            'Capabilities'    => 'fldvvv8jnCKoJSI7x',
-            'HQ Location'     => 'fldTIplvUIwNH7C4X',
-            'Founded Year'    => 'fldwsUY6nSqxBk62J',
-            'Founders'        => 'fldoTMkJIl1i8oo0r',
+        $field_names = array(
+            'Product Name',
+            'Linked Vendor',
+            'Product Website',
+            'Product Video',
+            'Logo URL',
+            'Status',
+            'Hosted Type',
+            'Domain',
+            'Regions',
+            'Sub Categories',
+            'Parent Category',
+            'Capabilities',
+            'HQ Location',
+            'Founded Year',
+            'Founders',
         );
 
-        $data = TTP_Airbase::get_vendors(array_values($field_map));
+        $schema    = TTP_Airbase::get_table_schema();
+        $field_ids = array();
+
+        if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
+            foreach ( $field_names as $name ) {
+                $field_ids[] = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+            }
+        } else {
+            $field_ids = $field_names;
+        }
+
+        $data = TTP_Airbase::get_vendors( $field_ids );
         if (is_wp_error($data)) {
             return;
         }
@@ -178,7 +189,7 @@ class TTP_Data {
             }
         }
 
-        $missing = array_diff(array_keys($field_map), $present_keys);
+        $missing = array_diff( $field_names, $present_keys );
         if (!empty($missing) && function_exists('error_log')) {
             error_log('TTP_Data: Missing expected fields: ' . implode(', ', $missing));
         }
