@@ -9,6 +9,7 @@ class TTP_Data_Test extends TestCase {
     protected $schema_map;
     protected function setUp(): void {
         \Brain\Monkey\setUp();
+        TTP_Airbase::clear_resolved_cache();
         when('is_wp_error')->alias(function ($thing) {
             return $thing instanceof WP_Error;
         });

@@ -23,6 +23,22 @@ class TTP_Airbase {
     const RECORD_BATCH_SIZE = 50;
 
     /**
+     * In-memory cache for resolved linked record values.
+     *
+     * @var array
+     */
+    private static $linked_records_cache = array();
+
+    /**
+     * Clear the linked records cache.
+     *
+     * @return void
+     */
+    public static function clear_resolved_cache() {
+        self::$linked_records_cache = array();
+    }
+
+    /**
      * Perform an HTTP request with basic exponential backoff on rate limits.
      *
      * Retries the request when a 429 status code is encountered, waiting
@@ -444,6 +460,17 @@ class TTP_Airbase {
             return array();
         }
 
+        if ( ! isset( self::$linked_records_cache[ $table_id ] ) ) {
+            self::$linked_records_cache[ $table_id ] = array();
+        }
+
+        $uncached = array();
+        foreach ( $ids as $id ) {
+            if ( ! isset( self::$linked_records_cache[ $table_id ][ $id ] ) ) {
+                $uncached[] = $id;
+            }
+        }
+
         $base_url = get_option( self::OPTION_BASE_URL, self::DEFAULT_BASE_URL );
         if ( empty( $base_url ) ) {
             $base_url = self::DEFAULT_BASE_URL;
@@ -489,45 +516,57 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $values = array();
-        $chunks = array_chunk( $ids, self::RECORD_BATCH_SIZE );
+        if ( ! empty( $uncached ) ) {
+            $chunks = array_chunk( $uncached, self::RECORD_BATCH_SIZE );
 
-        foreach ( $chunks as $chunk ) {
-            $filter_parts = array();
-            foreach ( $chunk as $id ) {
-                $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
-            }
-            $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
+            foreach ( $chunks as $chunk ) {
+                $filter_parts = array();
+                foreach ( $chunk as $id ) {
+                    $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
+                }
+                $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $url      = $endpoint . '?fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
-            $response = self::request_with_backoff( $url, $args );
+                $url      = $endpoint . '?fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
+                $response = self::request_with_backoff( $url, $args );
 
-            if ( is_wp_error( $response ) ) {
-                return $response;
-            }
+                if ( is_wp_error( $response ) ) {
+                    return $response;
+                }
 
-            $code = wp_remote_retrieve_response_code( $response );
-            if ( 200 !== $code ) {
-                return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
-            }
+                $code = wp_remote_retrieve_response_code( $response );
+                if ( 200 !== $code ) {
+                    return new WP_Error( 'api_error', sprintf( 'Airbase API returned status %d', $code ) );
+                }
 
-            $body = wp_remote_retrieve_body( $response );
-            $data = json_decode( $body, true );
-            if ( JSON_ERROR_NONE !== json_last_error() ) {
-                return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
-            }
+                $body = wp_remote_retrieve_body( $response );
+                $data = json_decode( $body, true );
+                if ( JSON_ERROR_NONE !== json_last_error() ) {
+                    return new WP_Error( 'invalid_json', __( 'Unable to parse Airbase API response.', 'treasury-tech-portal' ) );
+                }
 
-            if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
-                foreach ( $data['records'] as $record ) {
-                    if ( isset( $record['fields'][ $result_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $result_field ] );
-                    } elseif ( isset( $record['fields'][ $query_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $query_field ] );
+                if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
+                    foreach ( $data['records'] as $record ) {
+                        if ( isset( $record['fields'][ $result_field ] ) ) {
+                            $value = sanitize_text_field( $record['fields'][ $result_field ] );
+                        } elseif ( isset( $record['fields'][ $query_field ] ) ) {
+                            $value = sanitize_text_field( $record['fields'][ $query_field ] );
+                        } else {
+                            continue;
+                        }
+
+                        self::$linked_records_cache[ $table_id ][ $record['id'] ] = $value;
                     }
                 }
             }
         }
 
-        return $values;
+        $results = array();
+        foreach ( $ids as $id ) {
+            if ( isset( self::$linked_records_cache[ $table_id ][ $id ] ) ) {
+                $results[] = self::$linked_records_cache[ $table_id ][ $id ];
+            }
+        }
+
+        return $results;
     }
 }
