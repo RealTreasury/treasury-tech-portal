@@ -140,23 +140,34 @@ class TTP_Data {
             'linked_vendor' => 'vendor',
         );
 
-        foreach ( (array) $vendors as $vendor ) {
-            $normalized = array();
+        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
 
-            foreach ( (array) $vendor as $key => $value ) {
+        $walker = function ( $data ) use ( &$walker, $aliases, $fields ) {
+            foreach ( (array) $data as $key => $value ) {
                 $normalized_key = strtolower( str_replace( ' ', '_', $key ) );
                 $normalized_key = preg_replace( '/_ids?$/', '', $normalized_key );
                 if ( isset( $aliases[ $normalized_key ] ) ) {
                     $normalized_key = $aliases[ $normalized_key ];
                 }
-                $normalized[ $normalized_key ] = $value;
-            }
 
-            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category' );
-            foreach ( $fields as $field ) {
-                if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
-                    return true;
+                if ( in_array( $normalized_key, $fields, true ) ) {
+                    if ( ! empty( $value ) && self::contains_record_ids( (array) $value ) ) {
+                        return true;
+                    }
                 }
+
+                if ( is_array( $value ) || is_object( $value ) ) {
+                    if ( $walker( $value ) ) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
+
+        foreach ( (array) $vendors as $vendor ) {
+            if ( $walker( $vendor ) ) {
+                return true;
             }
         }
         return false;
@@ -449,8 +460,11 @@ class TTP_Data {
      */
     private static function contains_record_ids( $values ) {
         foreach ( (array) $values as $value ) {
-            if ( is_array( $value ) && self::contains_record_ids( $value ) ) {
-                return true;
+            if ( is_array( $value ) || is_object( $value ) ) {
+                if ( self::contains_record_ids( (array) $value ) ) {
+                    return true;
+                }
+                continue;
             }
 
             $candidate = preg_replace( '/[^A-Za-z0-9]/', '', (string) $value );
