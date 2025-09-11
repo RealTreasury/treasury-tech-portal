@@ -74,6 +74,19 @@ following field names are accepted (including their common synonyms):
 
 These variations are normalised before attempting to resolve linked records.
 
+## Troubleshooting Unresolved Regions
+
+If region identifiers returned from Airtable do not match any entry in the
+**Regions** table, the plugin logs the unresolved IDs. The IDs are saved in the
+`ttp_unresolved_fields` option and displayed beneath the vendor table in the
+WordPress admin interface.
+
+To resolve these warnings:
+
+1. Confirm each ID exists in the Airtable **Regions** table.
+2. Ensure vendor records reference the correct region IDs.
+3. Refresh vendors from the admin page after correcting any data issues.
+
 ## Listing Products
 Retrieve records from the Products table. Only non-empty fields are returned.
 

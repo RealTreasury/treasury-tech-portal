@@ -2559,8 +2559,27 @@
                 font-weight: 600;
             }
 
-            .is-mobile-hidden {
-                display: none;
-            }
+        .is-mobile-hidden {
+            display: none;
         }
+    }
+
+    /* Unresolved region IDs notice */
+    .treasury-portal-admin .treasury-portal-admin-unresolved {
+        margin-top: 20px;
+        padding: 16px;
+        border-left: 4px solid #dba617;
+        background: #fff8e5;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-unresolved ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-unresolved code {
+        background: #ffe9b3;
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
 
