@@ -1741,7 +1741,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             dragPreview.style.left = `${touch.clientX}px`;
                             dragPreview.style.top = `${touch.clientY}px`;
                         }
-                    });
+                    }, { passive: true });
                     container.addEventListener('touchmove', e => {
                         if (!touchDraggedCard) return;
                         const touch = e.touches[0];
