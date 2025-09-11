@@ -96,7 +96,7 @@ class TTP_Data {
                 $normalized[ strtolower( str_replace( ' ', '_', $key ) ) ] = $value;
             }
 
-            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type' );
+            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category' );
             foreach ( $fields as $field ) {
                 if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
                     return true;
@@ -153,6 +153,7 @@ class TTP_Data {
             'Hosted Type'    => array( 'table' => 'Hosted Type',    'primary_field' => 'Name' ),
             'Domain'         => array( 'table' => 'Domain',         'primary_field' => 'Domain' ),
             'Sub Categories' => array( 'table' => 'Sub Categories', 'primary_field' => 'Name' ),
+            'Parent Category' => array( 'table' => 'Category',      'primary_field' => 'Name' ),
             'Capabilities'   => array( 'table' => 'Capabilities',   'primary_field' => 'Name' ),
         );
 
@@ -262,8 +263,24 @@ class TTP_Data {
                 $capabilities = array_map( 'sanitize_text_field', $cap_field );
             }
 
-            $parent_category = sanitize_text_field( $fields['Parent Category'] ?? '' );
-            $category_names  = array_filter( array_merge( $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
+            $parent_field    = self::parse_record_ids( $fields['Parent Category'] ?? array() );
+            $parent_category = '';
+            if ( self::contains_record_ids( $parent_field ) ) {
+                $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Parent Category']['table'], $parent_field, $linked_tables['Parent Category']['primary_field'] );
+                if ( is_wp_error( $resolved ) ) {
+                    if ( function_exists( 'error_log' ) ) {
+                        error_log( 'TTP_Data: Failed resolving Parent Category: ' . $resolved->get_error_message() );
+                    }
+                } else {
+                    $parent_field    = array_map( 'sanitize_text_field', (array) $resolved );
+                    $parent_category = $parent_field ? reset( $parent_field ) : '';
+                }
+            } else {
+                $parent_field    = array_map( 'sanitize_text_field', (array) $parent_field );
+                $parent_category = $parent_field ? reset( $parent_field ) : '';
+            }
+
+            $category_names = array_filter( array_merge( $parent_category ? array( $parent_category ) : array(), $sub_categories ) );
 
             $vendors[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
