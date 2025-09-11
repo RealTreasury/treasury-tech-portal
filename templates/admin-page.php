@@ -10,8 +10,12 @@
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Vendor cache refreshed.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
+        <div class="treasury-portal-admin-search">
+            <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>
+            <input type="search" id="treasury-portal-admin-search-input" placeholder="<?php esc_attr_e('Search vendors...', 'treasury-tech-portal'); ?>" />
+        </div>
         <div class="treasury-portal-admin-table-wrapper">
-            <table class="widefat fixed striped">
+            <table class="widefat fixed striped treasury-portal-admin-table">
                 <thead>
                     <tr>
                         <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
