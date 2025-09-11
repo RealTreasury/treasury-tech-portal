@@ -604,7 +604,7 @@ class TTP_Airbase_Test extends TestCase {
         $self = $this;
         expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self) {
             $self->assertStringContainsString('returnFieldsByFieldId=true', $url);
-            $self->assertStringContainsString('fields%5B%5D=fldName', $url);
+            $self->assertStringContainsString('fields[]=fldName', $url);
 
             $body = json_encode([
                 'records' => [
