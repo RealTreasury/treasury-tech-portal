@@ -277,7 +277,7 @@ exportShortlist() {
         name: item.tool.name,
         category: item.tool.category,
         description: item.tool.desc,
-        website: item.tool.websiteUrl ? item.tool.websiteUrl.split('?')[0] : '',
+        website: item.tool.websiteUrl || '',
         features: (item.tool.features || []).join('; '),
         target: item.tool.target || '',
         notes: item.notes || '',

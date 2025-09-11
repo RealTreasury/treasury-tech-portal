@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             subCategories,
                             regions,
                             videoUrl: vendor.video_url || '',
-                            websiteUrl: vendor.website || '',
+                            websiteUrl: vendor.full_website_url || vendor.website || '',
                             logoUrl: vendor.logo_url || '',
                             features: vendor.capabilities || [],
                             target: ''
@@ -2090,7 +2090,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const data = this.shortlist.map(item => ({
                     name: item.tool.name,
                     category: item.tool.category,
-                    website: item.tool.websiteUrl ? item.tool.websiteUrl.split('?')[0] : '',
+                    website: item.tool.websiteUrl || '',
                     notes: item.notes || ''
                 }));
                 const csv = this.convertToCSV(data);

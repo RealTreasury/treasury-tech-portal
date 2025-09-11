@@ -11,7 +11,7 @@
   "features": ["array", "of", "strings"],
   "target": "string",
   "videoUrl": "string (YouTube or direct video)",
-  "websiteUrl": "string", 
+  "websiteUrl": "string (full URL with UTM parameters)",
   "logoUrl": "string"
 }
 ```
@@ -60,7 +60,7 @@ GET /wp-json/ttp/v1/tools
     "features": ["AI-driven cash forecasting", "Real-time risk analytics"],
     "target": "Large enterprises and multinational corporations",
     "videoUrl": "https://realtreasury.com/kyriba-06-2025/?embed=1",
-    "websiteUrl": "https://www.kyriba.com/...",
+    "websiteUrl": "https://www.kyriba.com/?utm_source=treasuryportal",
     "logoUrl": "https://realtreasury.com/wp-content/uploads/2025/06/Kyriba.png"
   }
 ]
