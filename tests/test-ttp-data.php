@@ -302,7 +302,9 @@ class TTP_Data_Test extends TestCase {
             return ['records' => [ $record ]];
         });
 
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') {
+        $attempts = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') use (&$attempts) {
+            $attempts[ $table_id ] = ($attempts[ $table_id ] ?? 0) + 1;
             return new WP_Error('err', 'fail');
         });
 
@@ -321,7 +323,61 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame([], $captured[0]['regions']);
         $this->assertSame('', $captured[0]['vendor']);
         $this->assertNotEmpty($logged);
-        $this->assertStringContainsString('recreg1', implode(' ', $logged));
+        $log_str = implode(' ', $logged);
+        $this->assertStringContainsString('table Regions', $log_str);
+        $this->assertStringContainsString('recreg1', $log_str);
+        $this->assertSame(3, $attempts['Regions']);
+    }
+
+    public function test_refresh_vendor_cache_retries_then_resolves_ids() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => 'Cloud',
+                'Category'        => 'Cash',
+                'Sub Categories'  => 'Payments',
+                'Regions'         => ['recreg1'],
+                'Domain'          => 'Banking',
+                'Capabilities'    => 'API',
+                'HQ Location'     => 'London',
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $attempts = 0;
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') use (&$attempts) {
+            if ('Regions' === $table_id) {
+                $attempts++;
+                if ($attempts < 3) {
+                    return new WP_Error('err', 'fail');
+                }
+                return ['North America'];
+            }
+            return [];
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        $logged = [];
+        \Patchwork\replace('error_log', function ($msg) use (&$logged) {
+            $logged[] = $msg;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame(['North America'], $captured[0]['regions']);
+        $this->assertEmpty($logged);
+        $this->assertSame(3, $attempts);
     }
 
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {

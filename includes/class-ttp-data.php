@@ -552,11 +552,26 @@ class TTP_Data {
         if ( ! empty( $ids ) && isset( $linked_tables[ $field ] ) ) {
             $table   = $linked_tables[ $field ]['table'];
             $primary = $linked_tables[ $field ]['primary_field'];
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
+
+            $resolved     = null;
+            $max_attempts = 3;
+            for ( $attempt = 0; $attempt < $max_attempts; $attempt++ ) {
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary );
+                if ( ! is_wp_error( $resolved ) ) {
+                    break;
+                }
+            }
+
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
-                    error_log( sprintf( 'TTP_Data: Failed resolving %s for record IDs %s: %s', $field, $ids_str, $resolved->get_error_message() ) );
+                    error_log( sprintf(
+                        'TTP_Data: Failed resolving %s for table %s with IDs %s: %s',
+                        $field,
+                        sanitize_text_field( $table ),
+                        $ids_str,
+                        $resolved->get_error_message()
+                    ) );
                 }
                 self::log_unresolved_field( $field, $ids );
                 foreach ( $placeholders as $idx => $id ) {
