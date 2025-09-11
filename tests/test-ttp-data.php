@@ -152,6 +152,46 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame('Acme Corp', $captured[0]['vendor']);
     }
 
+    public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Parent Category' => 'Cash',
+                'Sub Categories'  => ['Payments'],
+                'Regions'         => ['North America'],
+                'Domain'          => [
+                    [ 'id' => 'recdom1', 'name' => 'Banking' ],
+                ],
+                'Capabilities'    => ['API'],
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function () use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $called = false;
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function () use (&$called) {
+            $called = true;
+            return [];
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertFalse($called);
+        $this->assertSame(['Banking'], $captured[0]['domain']);
+    }
+
     public function test_refresh_vendor_cache_stores_empty_on_error() {
         $record = [
             'id' => 'rec1',
