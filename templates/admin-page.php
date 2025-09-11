@@ -10,12 +10,13 @@
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Vendor cache refreshed.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
-        <table class="widefat fixed striped">
-            <thead>
-                <tr>
-                    <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?></th>
+        <div class="treasury-portal-admin-table-wrapper">
+            <table class="widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
+                        <th><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
+                        <th><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Website', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Status', 'treasury-tech-portal'); ?></th>
@@ -30,8 +31,8 @@
                     <th><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
                     <th><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <?php foreach ($vendors as $vendor) : ?>
                     <?php
                     $cats         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['category_names'] ?? array())));
@@ -67,8 +68,9 @@
                         <td><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
                     </tr>
                 <?php endforeach; ?>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     <?php else : ?>
         <p><?php esc_html_e('No vendors found.', 'treasury-tech-portal'); ?></p>
     <?php endif; ?>
