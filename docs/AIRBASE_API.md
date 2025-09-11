@@ -29,6 +29,11 @@ curl https://api.airtable.com/v0/BASE_ID/Products \
 - Maximum of **5 requests per second** per base.
 - Exceeding the limit returns HTTP `429`. The plugin automatically retries up to three times using an exponential backoff (1s, 2s, 4s) before surfacing an error. If the limit continues to be exceeded, wait ~30 seconds before manual retries.
 
+## Linked Record Resolution
+Linked record IDs are fetched in batches of **50**. Larger ID sets trigger multiple
+requests which are merged on completion. This prevents exceeding Airtable's URL
+and formula length limits.
+
 ## JavaScript Integration
 For build scripts or other Node-based tooling you can use the official [airtable.js library](https://github.com/Airtable/airtable.js).
 

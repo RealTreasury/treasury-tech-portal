@@ -558,6 +558,70 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame(['First', 'Second'], $values);
     }
 
+    public function test_resolve_linked_records_batches_requests_when_ids_exceed_limit() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $ids = array();
+        for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
+            $ids[] = 'rec' . $i;
+        }
+
+        $self  = $this;
+        $call  = 0;
+        expect('wp_remote_get')->twice()->andReturnUsing(function ($url, $args) use ($self, &$call) {
+            $call++;
+            if ( 1 === $call ) {
+                $self->assertStringContainsString('rec1', $url);
+                $self->assertStringContainsString('rec50', $url);
+                $self->assertStringNotContainsString('rec51', $url);
+
+                $records = array();
+                for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE; $i++ ) {
+                    $records[] = array( 'fields' => array( 'Name' => 'Name' . $i ) );
+                }
+            } else {
+                $self->assertStringContainsString('rec51', $url);
+
+                $records = array();
+                for ( $i = TTP_Airbase::RECORD_BATCH_SIZE + 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
+                    $records[] = array( 'fields' => array( 'Name' => 'Name' . $i ) );
+                }
+            }
+
+            return array(
+                'response' => array( 'code' => 200 ),
+                'body'     => json_encode( array( 'records' => $records ) ),
+            );
+        });
+
+        $values   = TTP_Airbase::resolve_linked_records( 'Vendors', $ids );
+        $expected = array();
+        for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
+            $expected[] = 'Name' . $i;
+        }
+        $this->assertSame( $expected, $values );
+    }
+
     public function test_resolve_linked_records_returns_empty_array_when_ids_empty() {
         when('get_option')->alias(function ($option, $default = false) {
             return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
