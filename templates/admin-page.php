@@ -3,7 +3,7 @@
     <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
     <?php if (!empty($unresolved_fields)) : ?>
         <div class="notice notice-warning">
-            <p><?php esc_html_e('Some vendor fields could not be resolved.', 'treasury-tech-portal'); ?></p>
+            <p><?php esc_html_e('Some product fields could not be resolved.', 'treasury-tech-portal'); ?></p>
             <ul>
                 <?php foreach ($unresolved_fields as $field => $ids) : ?>
                     <li><?php echo esc_html(sprintf('%s unresolved IDs: %s', $field, implode(', ', $ids))); ?></li>
