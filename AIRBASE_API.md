@@ -91,13 +91,17 @@ Any of these structures will be cached as a plain array of vendors.
 | `Product Website` (`fldznljEJpn4lv79r`) | text URL |
 | `Regions` (`fldE8buvdk7TDG1ex`) | linked records to **Regions** table |
 | `Sub Categories` (`fldl2g5bYDq9TibuF`) | linked records to **Sub Categories** table |
-| `Parent Category` (`fldXqnpKe8ioYOYhP`) | lookup of parent category |
+| `Category` (`fldXqnpKe8ioYOYhP`) | lookup of category from Sub Categories |
 | `Status` (`fldFsaznNFvfh3x7k`) | single select (`Active`, `Inactive`, `Discontinued`) |
 | `HQ Location` (`fldTIplvUIwNH7C4X`) | text |
 | `Founded Year` (`fldwsUY6nSqxBk62J`) | text |
 | `Founders` (`fldoTMkJIl1i8oo0r`) | text |
+| `Product Summary` (`fldwBi5oBw6BwZiqV`) | long text summary |
+| `Market Fit Analysis` (`fldJTDlDcvNn0MVJX`) | long text analysis |
 | `Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
 | `Logo URL` (`fldfZPuRMjQKCv3U6`) | text URL |
+| `Demo Video URL` (`fldHyVJRr3O5rkgd7`) | text URL |
+| `Full Website URL` (`fldpyWsRTiDiLX6nm`) | formula (appends UTM parameters) |
 
 ## Linked Record Field Names
 
@@ -112,8 +116,8 @@ following field names are accepted (including their common synonyms):
   `capability_ids`
 - **Hosted Type** – `hosted_type`, `hosted_types`, `hosted_type_id`,
   `hosted_type_ids`
-- **Parent Category** – `parent_category`, `parent_categories`,
-  `parent_category_id`, `parent_category_ids`
+- **Category** – `category`, `categories`, `category_id`, `category_ids`,
+  `parent_category`, `parent_categories`, `parent_category_id`, `parent_category_ids`
 
 These variations are normalised before attempting to resolve linked records.
 
