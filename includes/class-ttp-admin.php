@@ -63,7 +63,7 @@ class TTP_Admin {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            check_admin_referer('ttp_airbase_settings');
+            check_admin_referer('ttp_airbase_settings', 'ttp_airbase_settings_nonce');
             update_option(TTP_Airbase::OPTION_TOKEN, sanitize_text_field($_POST[TTP_Airbase::OPTION_TOKEN] ?? ''));
             update_option(TTP_Airbase::OPTION_BASE_URL, esc_url_raw($_POST[TTP_Airbase::OPTION_BASE_URL] ?? ''));
             update_option(TTP_Airbase::OPTION_BASE_ID, sanitize_text_field($_POST[TTP_Airbase::OPTION_BASE_ID] ?? ''));
@@ -111,7 +111,7 @@ class TTP_Admin {
         <div class="wrap">
             <h1><?php esc_html_e('Airbase Settings', 'treasury-tech-portal'); ?></h1>
             <form method="post">
-                <?php wp_nonce_field('ttp_airbase_settings'); ?>
+                <?php wp_nonce_field('ttp_airbase_settings', 'ttp_airbase_settings_nonce'); ?>
                 <table class="form-table" role="presentation">
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>"><?php esc_html_e('API Token', 'treasury-tech-portal'); ?></label></th>
@@ -155,7 +155,7 @@ class TTP_Admin {
                 <?php submit_button(); ?>
             </form>
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                <?php wp_nonce_field('ttp_test_airbase'); ?>
+                <?php wp_nonce_field('ttp_test_airbase', 'ttp_test_airbase_nonce'); ?>
                 <input type="hidden" name="action" value="ttp_test_airbase" />
                 <?php submit_button(__('Test Connection', 'treasury-tech-portal'), 'secondary'); ?>
             </form>
@@ -183,7 +183,7 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             wp_die('Unauthorized');
         }
-        check_admin_referer('ttp_refresh_vendors');
+        check_admin_referer('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce');
         TTP_Data::refresh_vendor_cache();
         wp_redirect(admin_url('admin.php?page=treasury-tools&refreshed=1'));
         exit;
@@ -193,7 +193,7 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             wp_die('Unauthorized');
         }
-        check_admin_referer('ttp_test_airbase');
+        check_admin_referer('ttp_test_airbase', 'ttp_test_airbase_nonce');
         $result = TTP_Airbase::get_vendors();
         $url    = admin_url('admin.php?page=treasury-airbase-settings');
         if (is_wp_error($result)) {
