@@ -35,18 +35,22 @@ Add the portal to any page or post using the shortcode:
    - `Product Name` → `name`
    - `Linked Vendor` → `vendor`
    - `Product Website` → `website`
+   - `Demo Video URL` → `video_url`
    - `Status` → `status`
    - `Hosted Type` → `hosted_type`
    - `Domain` → `domain`
    - `Regions` → `regions`
    - `Sub Categories` → `sub_categories`
-   - `Parent Category` → `parent_category`
+   - `Category` → `parent_category`
    - `category_names` (computed) → `category_names`
    - `Capabilities` → `capabilities`
    - `Logo URL` → `logo_url`
    - `HQ Location` → `hq_location`
    - `Founded Year` → `founded_year`
    - `Founders` → `founders`
+   - `Product Summary` → `product_summary`
+   - `Market Fit Analysis` → `market_fit_analysis`
+   - `Full Website URL` → `full_website_url`
    The refresh stores a normalized array accessible via `TTP_Data::get_all_vendors()`.
 
 See [AIRBASE_API.md](AIRBASE_API.md) for detailed API reference.
