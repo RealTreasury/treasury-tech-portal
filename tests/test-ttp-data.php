@@ -1136,9 +1136,12 @@ class TTP_Data_Test extends TestCase {
 
     public function vendors_need_resolution_region_provider() {
         return array(
-            'region'     => array( 'region' ),
-            'region_ids' => array( 'region_ids' ),
-            'regions_id' => array( 'regions_id' ),
+            'region'             => array( 'region' ),
+            'region_ids'         => array( 'region_ids' ),
+            'regions_id'         => array( 'regions_id' ),
+            'Region_caps'        => array( 'Region' ),
+            'region_ids_spaced'  => array( 'Region IDs' ),
+            'region_camel'       => array( 'regionIds' ),
         );
     }
 
@@ -1163,6 +1166,30 @@ class TTP_Data_Test extends TestCase {
                 $key => array( 'resABC123' ),
             ),
         );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
+    public function vendors_need_resolution_mixed_case_provider() {
+        return array(
+            'linked_vendor_camel' => array( 'LinkedVendor' ),
+            'domain_camel'        => array( 'DomainIDs' ),
+        );
+    }
+
+    /**
+     * @dataProvider vendors_need_resolution_mixed_case_provider
+     */
+    public function test_vendors_need_resolution_detects_mixed_case_keys( $key ) {
+        $vendors = array(
+            array(
+                $key => array( 'recABC123' ),
+            ),
+        );
+
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
