@@ -382,6 +382,44 @@ class TTP_Data_Test extends TestCase {
         $this->assertStringContainsString('recreg1', implode(' ', $logged));
     }
 
+    public function test_refresh_vendor_cache_removes_ids_on_empty_resolution() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => ['recven1'],
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Regions'         => ['recreg1'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id = null, $ids = null, $primary_field = 'Name') {
+            return array();
+        });
+
+        $logged = [];
+        \Patchwork\replace('TTP_Data::log_unresolved_field', function ($field, $ids) use (&$logged) {
+            $logged[ $field ] = $ids;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
+            $captured = $vendors;
+        });
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame([], $captured[0]['regions']);
+        $this->assertSame('', $captured[0]['vendor']);
+        $this->assertSame(['recreg1'], $logged['Regions']);
+        $this->assertSame(['recven1'], $logged['Linked Vendor']);
+    }
+
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
         $record = [
             'id'     => 'rec1',
