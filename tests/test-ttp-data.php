@@ -773,6 +773,43 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( $vendors_clean, $result );
     }
 
+    public function test_get_all_vendors_refreshes_when_vendor_ids_present() {
+        $vendors_with_ids = array(
+            array(
+                'Linked Vendor' => array( 'rec123' ),
+                'regions'       => array( 'EMEA' ),
+            ),
+        );
+        $vendors_clean = array(
+            array(
+                'vendor'  => 'Acme Corp',
+                'regions' => array( 'EMEA' ),
+            ),
+        );
+
+        when( 'get_transient' )->justReturn( false );
+        when( 'set_transient' )->returnArg();
+
+        $option_calls = 0;
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
+            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+                $option_calls++;
+                return 1 === $option_calls ? $vendors_with_ids : $vendors_clean;
+            }
+            return $default;
+        } );
+
+        $refreshed = false;
+        \Patchwork\replace( 'TTP_Data::refresh_vendor_cache', function () use ( &$refreshed ) {
+            $refreshed = true;
+        } );
+
+        $result = TTP_Data::get_all_vendors();
+
+        $this->assertTrue( $refreshed );
+        $this->assertSame( $vendors_clean, $result );
+    }
+
     public function test_get_all_vendors_handles_mixed_case_keys() {
         $stored_option = array(
             array(

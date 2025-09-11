@@ -118,6 +118,7 @@ class TTP_Data {
             'hosted_types'      => 'hosted_type',
             'domains'           => 'domain',
             'parent_categories' => 'parent_category',
+            'linked_vendor'     => 'vendor',
         );
 
         foreach ( (array) $vendors as $vendor ) {
@@ -132,7 +133,7 @@ class TTP_Data {
                 $normalized[ $normalized_key ] = $value;
             }
 
-            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category' );
+            $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'parent_category', 'vendor' );
             foreach ( $fields as $field ) {
                 if ( ! empty( $normalized[ $field ] ) && self::contains_record_ids( (array) $normalized[ $field ] ) ) {
                     return true;
