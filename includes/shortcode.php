@@ -15,6 +15,31 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
 }
 $categories         = TTP_Data::get_categories();
 $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
+$category_icons     = TTP_Data::get_category_icons();
+
+$category_meta = array(
+    'CASH' => array(
+        'title'       => 'Cash Tools',
+        'badge'       => 'Essential',
+        'description' => 'Built in the cloud for modern finance, these cash visibility and forecasting platforms combine real-time connectivity, intelligent analytics, and automation to elevate liquidity and cash flow planning.',
+        'video'       => 'https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.mp4',
+        'poster'      => 'https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.png',
+    ),
+    'LITE' => array(
+        'title'       => 'Treasury Management System Lite (TMS-Lite)',
+        'badge'       => 'Scalable',
+        'description' => 'Built for more than visibility, these treasury platforms support treasury payments, detailed cash positioning, and growing complexity—without jumping to a full enterprise solution.',
+        'video'       => 'https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.mp4',
+        'poster'      => 'https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.png',
+    ),
+    'TRMS' => array(
+        'title'       => 'Treasury & Risk Management Systems (TRMS)',
+        'badge'       => 'Advanced',
+        'description' => 'Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.',
+        'video'       => 'https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.mp4',
+        'poster'      => 'https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.png',
+    ),
+);
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->
@@ -192,81 +217,37 @@ $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, 
             </div>
             <div class="tools-grid" id="listViewContainer" style="display:none;"></div>
 
-            <?php if ( in_array( 'CASH', $enabled_categories, true ) ) : ?>
-            <!-- Cash Tools Section -->
-            <div class="category-section category-cash" data-category="CASH" style="display: block;">
-                <div class="category-header" data-category="CASH">
+            <?php foreach ( $enabled_categories as $slug ) :
+                $label      = isset( $categories[ $slug ] ) ? $categories[ $slug ] : $slug;
+                $icon       = isset( $category_icons[ $slug ] ) ? $category_icons[ $slug ] : '💼';
+                $meta       = isset( $category_meta[ $slug ] ) ? $category_meta[ $slug ] : array();
+                $class_slug = sanitize_html_class( strtolower( $slug ) );
+            ?>
+            <div class="category-section category-<?php echo esc_attr( $class_slug ); ?>" data-category="<?php echo esc_attr( $slug ); ?>" style="display: block;">
+                <div class="category-header" data-category="<?php echo esc_attr( $slug ); ?>">
                     <div class="category-info">
                         <h2 class="category-title">
-                            💰 <span>Cash Tools</span>
-                            <span class="category-badge">Essential</span>
+                            <?php echo esc_html( $icon ); ?> <span><?php echo esc_html( isset( $meta['title'] ) ? $meta['title'] : $label ); ?></span>
+                            <?php if ( ! empty( $meta['badge'] ) ) : ?>
+                                <span class="category-badge"><?php echo esc_html( $meta['badge'] ); ?></span>
+                            <?php endif; ?>
                         </h2>
-                        <p class="category-description">
-                            Built in the cloud for modern finance, these cash visibility and forecasting platforms combine real-time connectivity, intelligent analytics, and automation to elevate liquidity and cash flow planning.
-                        </p>
-                        <div class="category-tags" id="category-tags-CASH"></div>
+                        <?php if ( ! empty( $meta['description'] ) ) : ?>
+                            <p class="category-description"><?php echo esc_html( $meta['description'] ); ?></p>
+                        <?php endif; ?>
+                        <div class="category-tags" id="category-tags-<?php echo esc_attr( $slug ); ?>"></div>
                     </div>
-                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/Cash-Tools-Intro.png"></div>
+                    <div class="category-video-target" data-video-src="<?php echo esc_url( $meta['video'] ?? '' ); ?>" data-poster="<?php echo esc_url( $meta['poster'] ?? '' ); ?>"></div>
                     <div class="category-count">
-                        <span class="count-number" id="count-CASH">10</span>
+                        <span class="count-number" id="count-<?php echo esc_attr( $slug ); ?>">0</span>
                         <span class="count-label">Solutions</span>
                     </div>
                 </div>
-                <div class="tools-grid" id="tools-CASH">
+                <div class="tools-grid" id="tools-<?php echo esc_attr( $slug ); ?>">
                     <!-- Tools will be populated by JavaScript -->
                 </div>
             </div>
-            <?php endif; ?>
-            <?php if ( in_array( 'LITE', $enabled_categories, true ) ) : ?>
-            <!-- TMS-Lite Section -->
-            <div class="category-section category-lite" data-category="LITE" style="display: block;">
-                <div class="category-header" data-category="LITE">
-                    <div class="category-info">
-                        <h2 class="category-title">
-                            ⚡ <span>Treasury Management System Lite (TMS-Lite)</span>
-                            <span class="category-badge">Scalable</span>
-                        </h2>
-                        <p class="category-description">
-                            Built for more than visibility, these treasury platforms support treasury payments, detailed cash positioning, and growing complexity—without jumping to a full enterprise solution.
-                        </p>
-                        <div class="category-tags" id="category-tags-LITE"></div>
-                    </div>
-                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TMS-Lite-Intro.png"></div>
-                    <div class="category-count">
-                        <span class="count-number" id="count-LITE">6</span>
-                        <span class="count-label">Solutions</span>
-                    </div>
-                </div>
-                <div class="tools-grid" id="tools-LITE">
-                    <!-- Tools will be populated by JavaScript -->
-                </div>
-            </div>
-            <?php endif; ?>
-            <?php if ( in_array( 'TRMS', $enabled_categories, true ) ) : ?>
-            <!-- Enterprise Section -->
-            <div class="category-section category-enterprise" data-category="TRMS" style="display: block;">
-                <div class="category-header" data-category="TRMS">
-                    <div class="category-info">
-                        <h2 class="category-title">
-                            🏢 <span>Treasury & Risk Management Systems (TRMS)</span>
-                            <span class="category-badge">Advanced</span>
-                        </h2>
-                        <p class="category-description">
-                            Full-scale treasury management platforms for complex treasury operations. These solutions handle complex derivatives, multi-entity consolidation, advanced risk analytics, and comprehensive regulatory compliance. Built for organizations managing billions in assets with sophisticated financial operations.
-                        </p>
-                        <div class="category-tags" id="category-tags-TRMS"></div>
-                    </div>
-                    <div class="category-video-target" data-video-src="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.mp4" data-poster="https://realtreasury.com/wp-content/uploads/2025/08/TRMS-Intro.png"></div>
-                    <div class="category-count">
-                        <span class="count-number" id="count-TRMS">11</span>
-                        <span class="count-label">Solutions</span>
-                    </div>
-                </div>
-                <div class="tools-grid" id="tools-TRMS">
-                    <!-- Tools will be populated by JavaScript -->
-                </div>
-            </div>
-            <?php endif; ?>
+            <?php endforeach; ?>
     </div>
 
     <!-- Tool Details Modal -->
