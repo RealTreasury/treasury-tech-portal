@@ -314,6 +314,47 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $captured[0]['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_resolves_mixed_region_values() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Parent Category' => 'Cash',
+                'Sub Categories'  => ['Payments'],
+                'Regions'         => ['recreg1', 'APAC'],
+                'Domain'          => ['Banking'],
+                'Capabilities'    => ['API'],
+            ],
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        $ids_used = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) use ( &$ids_used ) {
+            $ids_used[ $table_id ] = (array) $ids;
+            if ( 'Regions' === $table_id ) {
+                return array( 'NORAM' );
+            }
+            return array();
+        } );
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( array( 'recreg1' ), $ids_used['Regions'] );
+        $this->assertSame( array( 'NORAM', 'APAC' ), $captured[0]['regions'] );
+    }
+
     public function test_refresh_vendor_cache_resolves_comma_separated_record_ids() {
         $record = [
             'id' => 'rec1',
