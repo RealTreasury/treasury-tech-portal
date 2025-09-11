@@ -544,8 +544,8 @@ class TTP_Airbase_Test extends TestCase {
 
         $body = json_encode([
             'records' => [
-                [ 'fields' => [ 'Name' => 'First' ] ],
-                [ 'fields' => [ 'Name' => 'Second' ] ],
+                [ 'id' => 'rec1', 'fields' => [ 'Name' => 'First' ] ],
+                [ 'id' => 'rec2', 'fields' => [ 'Name' => 'Second' ] ],
             ],
         ]);
 
@@ -554,7 +554,7 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => $body,
         ]);
 
-        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2']);
+        $values = TTP_Airbase::resolve_linked_records('Vendors1', ['rec1', 'rec2']);
         $this->assertSame(['First', 'Second'], $values);
     }
 
@@ -597,14 +597,14 @@ class TTP_Airbase_Test extends TestCase {
 
                 $records = array();
                 for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE; $i++ ) {
-                    $records[] = array( 'fields' => array( 'Name' => 'Name' . $i ) );
+                    $records[] = array( 'id' => 'rec' . $i, 'fields' => array( 'Name' => 'Name' . $i ) );
                 }
             } else {
                 $self->assertStringContainsString('rec51', $url);
 
                 $records = array();
                 for ( $i = TTP_Airbase::RECORD_BATCH_SIZE + 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
-                    $records[] = array( 'fields' => array( 'Name' => 'Name' . $i ) );
+                    $records[] = array( 'id' => 'rec' . $i, 'fields' => array( 'Name' => 'Name' . $i ) );
                 }
             }
 
@@ -614,7 +614,7 @@ class TTP_Airbase_Test extends TestCase {
             );
         });
 
-        $values   = TTP_Airbase::resolve_linked_records( 'Vendors', $ids );
+        $values   = TTP_Airbase::resolve_linked_records( 'Vendors2', $ids );
         $expected = array();
         for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
             $expected[] = 'Name' . $i;
@@ -627,7 +627,7 @@ class TTP_Airbase_Test extends TestCase {
             return TTP_Airbase::OPTION_TOKEN === $option ? 'abc123' : $default;
         });
 
-        $result = TTP_Airbase::resolve_linked_records('Vendors', []);
+        $result = TTP_Airbase::resolve_linked_records('Vendors3', []);
         $this->assertSame([], $result);
     }
 
@@ -656,9 +656,101 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => '',
         ]);
 
-        $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1']);
+        $result = TTP_Airbase::resolve_linked_records('Vendors4', ['rec1']);
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('api_error', $result->get_error_code());
+    }
+
+    public function test_resolve_linked_records_uses_cache_on_subsequent_calls() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([
+            'records' => [ [ 'id' => 'rec1', 'fields' => [ 'Name' => 'First' ] ] ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $values  = TTP_Airbase::resolve_linked_records('Vendors5', ['rec1']);
+        $values2 = TTP_Airbase::resolve_linked_records('Vendors5', ['rec1']);
+
+        $this->assertSame(['First'], $values);
+        $this->assertSame(['First'], $values2);
+    }
+
+    public function test_resolve_linked_records_requests_only_uncached_ids() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $call = 0;
+        expect('wp_remote_get')->twice()->andReturnUsing(function ($url, $args) use (&$call) {
+            $call++;
+            if ( 1 === $call ) {
+                return [
+                    'response' => [ 'code' => 200 ],
+                    'body'     => json_encode([
+                        'records' => [ [ 'id' => 'rec1', 'fields' => [ 'Name' => 'First' ] ] ],
+                    ]),
+                ];
+            }
+
+            \PHPUnit\Framework\Assert::assertStringContainsString('rec2', $url);
+            \PHPUnit\Framework\Assert::assertStringNotContainsString('rec1', $url);
+
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => json_encode([
+                    'records' => [ [ 'id' => 'rec2', 'fields' => [ 'Name' => 'Second' ] ] ],
+                ]),
+            ];
+        });
+
+        $first  = TTP_Airbase::resolve_linked_records('Vendors6', ['rec1']);
+        $second = TTP_Airbase::resolve_linked_records('Vendors6', ['rec1', 'rec2']);
+
+        $this->assertSame(['First'], $first);
+        $this->assertSame(['First', 'Second'], $second);
     }
 
     public function test_get_table_schema_fetches_and_caches_when_missing() {

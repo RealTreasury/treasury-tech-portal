@@ -336,14 +336,37 @@ class TTP_Airbase {
      * @return array|WP_Error Array of record field values or WP_Error on failure.
      */
     public static function resolve_linked_records( $table_id, $ids, $primary_field = 'Name' ) {
-        $token = get_option( self::OPTION_TOKEN );
-        if ( empty( $token ) ) {
-            return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
-        }
+        static $cache = array();
 
         $ids = array_filter( (array) $ids );
         if ( empty( $ids ) ) {
             return array();
+        }
+
+        $values  = array();
+        $missing = array();
+
+        foreach ( $ids as $id ) {
+            if ( isset( $cache[ $table_id ][ $id ] ) ) {
+                $values[ $id ] = $cache[ $table_id ][ $id ];
+            } else {
+                $missing[] = $id;
+            }
+        }
+
+        if ( empty( $missing ) ) {
+            $ordered = array();
+            foreach ( $ids as $id ) {
+                if ( isset( $values[ $id ] ) ) {
+                    $ordered[] = $values[ $id ];
+                }
+            }
+            return $ordered;
+        }
+
+        $token = get_option( self::OPTION_TOKEN );
+        if ( empty( $token ) ) {
+            return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
         }
 
         $base_url = get_option( self::OPTION_BASE_URL, self::DEFAULT_BASE_URL );
@@ -381,13 +404,12 @@ class TTP_Airbase {
             'timeout' => 20,
         );
 
-        $values = array();
-        $chunks = array_chunk( $ids, self::RECORD_BATCH_SIZE );
+        $chunks = array_chunk( $missing, self::RECORD_BATCH_SIZE );
 
         foreach ( $chunks as $chunk ) {
             $filter_parts = array();
             foreach ( $chunk as $id ) {
-                $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\\'", $id ) . "'";
+                $filter_parts[] = "RECORD_ID()='" . str_replace( "'", "\'", $id ) . "'";
             }
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
@@ -411,13 +433,22 @@ class TTP_Airbase {
 
             if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
                 foreach ( $data['records'] as $record ) {
-                    if ( isset( $record['fields'][ $primary_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                    if ( isset( $record['id'] ) && isset( $record['fields'][ $primary_field ] ) ) {
+                        $value = sanitize_text_field( $record['fields'][ $primary_field ] );
+                        $cache[ $table_id ][ $record['id'] ] = $value;
+                        $values[ $record['id'] ]            = $value;
                     }
                 }
             }
         }
 
-        return $values;
+        $ordered = array();
+        foreach ( $ids as $id ) {
+            if ( isset( $values[ $id ] ) ) {
+                $ordered[] = $values[ $id ];
+            }
+        }
+
+        return $ordered;
     }
 }
