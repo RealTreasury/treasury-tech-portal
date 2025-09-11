@@ -499,7 +499,7 @@ class TTP_Airbase {
             }
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $url      = $endpoint . '?fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
+            $url      = $endpoint . '?cellFormat=json&fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
             $response = self::request_with_backoff( $url, $args );
 
             if ( is_wp_error( $response ) ) {
@@ -519,10 +519,23 @@ class TTP_Airbase {
 
             if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
                 foreach ( $data['records'] as $record ) {
+                    $value = null;
                     if ( isset( $record['fields'][ $result_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $result_field ] );
+                        $value = $record['fields'][ $result_field ];
                     } elseif ( isset( $record['fields'][ $query_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $query_field ] );
+                        $value = $record['fields'][ $query_field ];
+                    }
+
+                    if ( is_array( $value ) ) {
+                        if ( isset( $value['name'] ) ) {
+                            $values[] = sanitize_text_field( $value['name'] );
+                        } elseif ( isset( $value['text'] ) ) {
+                            $values[] = sanitize_text_field( $value['text'] );
+                        } elseif ( isset( $value['id'] ) ) {
+                            $values[] = sanitize_text_field( $value['id'] );
+                        }
+                    } elseif ( null !== $value ) {
+                        $values[] = sanitize_text_field( $value );
                     }
                 }
             }

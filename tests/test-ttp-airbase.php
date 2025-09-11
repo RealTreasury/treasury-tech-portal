@@ -597,6 +597,7 @@ class TTP_Airbase_Test extends TestCase {
         $call  = 0;
         expect('wp_remote_get')->twice()->andReturnUsing(function ($url, $args) use ($self, &$call) {
             $call++;
+            $self->assertStringContainsString('cellFormat=json', $url);
             if ( 1 === $call ) {
                 $self->assertStringContainsString('rec1', $url);
                 $self->assertStringContainsString('rec50', $url);
@@ -668,6 +669,44 @@ class TTP_Airbase_Test extends TestCase {
         $this->assertSame('api_error', $result->get_error_code());
     }
 
+    public function test_resolve_linked_records_handles_array_field_values() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([
+            'records' => [
+                [ 'fields' => [ 'Name' => [ 'id' => 'rec1', 'name' => 'Vendor A' ] ] ],
+            ],
+        ]);
+
+        expect('wp_remote_get')->once()->andReturn([
+            'response' => [ 'code' => 200 ],
+            'body'     => $body,
+        ]);
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Name');
+        $this->assertSame(['Vendor A'], $values);
+    }
+
     public function test_resolve_linked_records_uses_schema_primary_when_missing() {
         when('get_option')->alias(function ($option, $default = false) {
             switch ( $option ) {
@@ -702,6 +741,7 @@ class TTP_Airbase_Test extends TestCase {
 
         $self = $this;
         expect('wp_remote_get')->once()->andReturnUsing(function ( $url ) use ( $self ) {
+            $self->assertStringContainsString('cellFormat=json', $url);
             $self->assertStringContainsString('fields[]=fld123', $url);
             return [
                 'response' => [ 'code' => 200 ],
