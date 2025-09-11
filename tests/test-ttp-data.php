@@ -24,6 +24,7 @@ class TTP_Data_Test extends TestCase {
             'Hosted Type'     => 'fld_hosted',
             'Domain'          => 'fld_domain',
             'Regions'         => 'fld_regions',
+            'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
             'Parent Category' => 'fld_parent',
             'Capabilities'    => 'fld_caps',
@@ -69,6 +70,7 @@ class TTP_Data_Test extends TestCase {
                 'Logo URL'        => 'example.com/logo.png',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
+                'Category'        => ['reccat1'],
                 'Parent Category' => 'Cash',
                 'Sub Categories'  => ['recsc1'],
                 'Regions'         => ['recreg1', 'recreg2'],
@@ -101,6 +103,7 @@ class TTP_Data_Test extends TestCase {
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
+                'Category'       => [ 'reccat1' => 'Finance' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
             ];
@@ -120,7 +123,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
         $this->assertTrue($return_fields_by_id);
         $this->assertSame(
-            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Sub Categories', 'Capabilities'],
+            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Category', 'Sub Categories', 'Capabilities'],
             $tables
         );
 
@@ -135,9 +138,10 @@ class TTP_Data_Test extends TestCase {
                 'hosted_type'     => ['Cloud'],
                 'domain'          => ['Banking'],
                 'regions'         => ['North America', 'Europe'],
+                'categories'      => ['Finance'],
                 'sub_categories'  => ['Payments'],
                 'parent_category' => 'Cash',
-                'category_names'  => ['Cash', 'Payments'],
+                'category_names'  => ['Finance', 'Cash', 'Payments'],
                 'capabilities'    => ['API'],
                 'logo_url'        => 'https://example.com/logo.png',
                 'hq_location'     => '',
@@ -151,8 +155,9 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame('https://example.com/logo.png', $captured[0]['logo_url']);
         $this->assertSame('Cash', $captured[0]['parent_category']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
-        $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
+        $this->assertSame(['Finance', 'Cash', 'Payments'], $captured[0]['category_names']);
         $this->assertSame(['Banking'], $captured[0]['domain']);
+        $this->assertSame(['Finance'], $captured[0]['categories']);
     }
 
     public function test_refresh_vendor_cache_skips_resolution_for_names() {
@@ -164,6 +169,7 @@ class TTP_Data_Test extends TestCase {
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
+                'Category'        => ['Finance'],
                 'Parent Category' => 'Cash',
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['North America'],
@@ -192,6 +198,8 @@ class TTP_Data_Test extends TestCase {
         $this->assertFalse($called);
         $this->assertSame(['North America'], $captured[0]['regions']);
         $this->assertSame('Acme Corp', $captured[0]['vendor']);
+        $this->assertSame(['Finance'], $captured[0]['categories']);
+        $this->assertSame(['Finance', 'Cash', 'Payments'], $captured[0]['category_names']);
     }
 
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
@@ -634,6 +642,12 @@ class TTP_Data_Test extends TestCase {
                 'capabilities',
                 [ 'reccap1' => 'API' ],
             ],
+            'categories' => [
+                'Category',
+                'Category',
+                'categories',
+                [ 'reccat1' => 'Finance' ],
+            ],
             'parent_category' => [
                 'Parent Category',
                 'Category',
@@ -743,6 +757,15 @@ class TTP_Data_Test extends TestCase {
                 [
                     'recsc1' => 'Payments',
                     'recsc2' => 'Treasury',
+                ],
+            ],
+            'categories' => [
+                'Category',
+                'Category',
+                'categories',
+                [
+                    'reccat1' => 'Finance',
+                    'reccat2' => 'Tax',
                 ],
             ],
             'capabilities' => [
