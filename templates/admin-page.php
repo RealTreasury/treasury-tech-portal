@@ -30,7 +30,14 @@
                     $sub_cats = implode(', ', array_map('sanitize_text_field', (array) ($vendor['sub_categories'] ?? array())));
                     ?>
                     <tr>
-                        <td><?php echo esc_html($vendor['name'] ?? ''); ?></td>
+                        <td>
+                            <?php
+                            echo esc_html($vendor['name'] ?? '');
+                            if (!empty($vendor['id'])) {
+                                echo ' (' . esc_html($vendor['id']) . ')';
+                            }
+                            ?>
+                        </td>
                         <td><?php echo esc_html($parent); ?></td>
                         <td><?php echo esc_html($sub_cats); ?></td>
                     </tr>
