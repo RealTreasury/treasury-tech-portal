@@ -41,6 +41,18 @@
                     $regions      = implode(', ', array_map('sanitize_text_field', (array) ($vendor['regions'] ?? array())));
                     $subs         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['sub_categories'] ?? array())));
                     $capabilities = implode(', ', array_map('sanitize_text_field', (array) ($vendor['capabilities'] ?? array())));
+
+                    $website   = $vendor['website'] ?? '';
+                    $video_url = $vendor['video_url'] ?? '';
+                    $logo_url  = $vendor['logo_url'] ?? '';
+
+                    $website_href   = esc_url($website);
+                    $video_href     = esc_url($video_url);
+                    $logo_href      = esc_url($logo_url);
+
+                    $website_text   = strlen($website) > 30 ? esc_html__('Visit', 'treasury-tech-portal') : esc_html($website);
+                    $video_text     = strlen($video_url) > 30 ? esc_html__('Visit', 'treasury-tech-portal') : esc_html($video_url);
+                    $logo_text      = strlen($logo_url) > 30 ? esc_html__('Visit', 'treasury-tech-portal') : esc_html($logo_url);
                     ?>
                     <tr>
                         <td data-label="<?php echo esc_attr__('Name', 'treasury-tech-portal'); ?>">
@@ -53,8 +65,16 @@
                         </td>
                         <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>"><?php echo esc_html($cats); ?></td>
                         <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>"><?php echo esc_url($vendor['website'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>"><?php echo esc_url($vendor['video_url'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>">
+                            <?php if (!empty($website_href)) : ?>
+                                <a href="<?php echo $website_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $website_text; ?></a>
+                            <?php endif; ?>
+                        </td>
+                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>">
+                            <?php if (!empty($video_href)) : ?>
+                                <a href="<?php echo $video_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $video_text; ?></a>
+                            <?php endif; ?>
+                        </td>
                         <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['status'] ?? ''); ?></td>
                         <td data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"><?php echo esc_html($hosted); ?></td>
                         <td data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>"><?php echo esc_html($domain); ?></td>
@@ -62,7 +82,11 @@
                         <td data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"><?php echo esc_html($subs); ?></td>
                         <td data-label="<?php echo esc_attr__('Parent Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['parent_category'] ?? ''); ?></td>
                         <td data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($capabilities); ?></td>
-                        <td data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>"><?php echo esc_url($vendor['logo_url'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>">
+                            <?php if (!empty($logo_href)) : ?>
+                                <a href="<?php echo $logo_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $logo_text; ?></a>
+                            <?php endif; ?>
+                        </td>
                         <td data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
                         <td data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
                         <td data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
