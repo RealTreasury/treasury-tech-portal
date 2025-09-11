@@ -1,6 +1,30 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 <div class="wrap treasury-portal-admin">
     <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
+    <?php if (!empty($unresolved_fields)) : ?>
+        <div class="notice notice-warning">
+            <p><?php esc_html_e('Some vendor fields could not be resolved. Check server logs for the IDs below.', 'treasury-tech-portal'); ?></p>
+            <ul>
+                <?php foreach ($unresolved_fields as $notice) : ?>
+                    <?php
+                    $message = is_array($notice) ? ($notice['message'] ?? '') : $notice;
+                    $log_id  = is_array($notice) ? ($notice['id'] ?? '') : '';
+                    ?>
+                    <li>
+                        <?php echo esc_html($message); ?>
+                        <?php if (!empty($log_id)) : ?>
+                            <?php echo esc_html(sprintf('(Log ID: %s)', $log_id)); ?>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                <?php wp_nonce_field('ttp_retry_resolution', 'ttp_retry_resolution_nonce'); ?>
+                <input type="hidden" name="action" value="ttp_retry_resolution" />
+                <?php submit_button(__('Retry Resolution', 'treasury-tech-portal'), 'secondary', 'retry-resolution', false); ?>
+            </form>
+        </div>
+    <?php endif; ?>
     <p><?php esc_html_e('Use the button below to manually refresh the vendor cache after changing Airbase settings or when vendor data appears outdated.', 'treasury-tech-portal'); ?></p>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <?php wp_nonce_field('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce'); ?>
@@ -108,9 +132,13 @@
             <h2><?php esc_html_e('Unresolved Region IDs', 'treasury-tech-portal'); ?></h2>
             <ul>
                 <?php foreach ($unresolved_fields as $notice) : ?>
-                    <?php if (strpos($notice, 'Regions unresolved IDs:') === 0) : ?>
+                    <?php
+                    $message = is_array($notice) ? ($notice['message'] ?? '') : $notice;
+                    $log_id  = is_array($notice) ? ($notice['id'] ?? '') : '';
+                    ?>
+                    <?php if (strpos($message, 'Regions unresolved IDs:') === 0) : ?>
                         <?php
-                        $ids_str = trim(str_replace('Regions unresolved IDs:', '', $notice));
+                        $ids_str = trim(str_replace('Regions unresolved IDs:', '', $message));
                         $ids     = array_map('trim', explode(',', $ids_str));
                         ?>
                         <li>
@@ -118,9 +146,17 @@
                             <?php foreach ($ids as $index => $id) : ?>
                                 <code><?php echo esc_html($id); ?></code><?php echo $index < count($ids) - 1 ? ', ' : ''; ?>
                             <?php endforeach; ?>
+                            <?php if (!empty($log_id)) : ?>
+                                <br /><small><?php echo esc_html(sprintf('Log ID: %s', $log_id)); ?></small>
+                            <?php endif; ?>
                         </li>
                     <?php else : ?>
-                        <li><?php echo esc_html($notice); ?></li>
+                        <li>
+                            <?php echo esc_html($message); ?>
+                            <?php if (!empty($log_id)) : ?>
+                                <br /><small><?php echo esc_html(sprintf('Log ID: %s', $log_id)); ?></small>
+                            <?php endif; ?>
+                        </li>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </ul>

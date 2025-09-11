@@ -642,13 +642,18 @@ class TTP_Data {
             $ids = array_map( 'sanitize_text_field', $ids );
         }
 
+        $log_id = uniqid( 'ttp_', true );
+
         if ( function_exists( 'error_log' ) ) {
-            error_log( sprintf( 'TTP_Data: Unresolved %s IDs: %s', $field, implode( ', ', $ids ) ) );
+            error_log( sprintf( 'TTP_Data [%s]: Unresolved %s IDs: %s', $log_id, $field, implode( ', ', $ids ) ) );
         }
 
         if ( function_exists( 'get_option' ) && function_exists( 'update_option' ) ) {
             $existing   = (array) get_option( 'ttp_unresolved_fields', array() );
-            $existing[] = sprintf( '%s unresolved IDs: %s', $field, implode( ', ', $ids ) );
+            $existing[] = array(
+                'id'      => $log_id,
+                'message' => sprintf( '%s unresolved IDs: %s', $field, implode( ', ', $ids ) ),
+            );
             update_option( 'ttp_unresolved_fields', $existing );
         }
     }
