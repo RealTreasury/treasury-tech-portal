@@ -68,8 +68,22 @@ new MutationObserver(() => {
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const containerEl = document.querySelector('.treasury-portal .container');
+    if (!window.TTP_DATA) {
+        if (portalRoot) {
+            const banner = document.createElement('div');
+            banner.className = 'error-banner';
+            banner.textContent = 'Configuration data is unavailable.';
+            banner.style.cssText = 'padding:1rem;margin:1rem 0;background:#f8d7da;color:#721c24;border:1px solid #f5c2c7;border-radius:4px;';
+            portalRoot.prepend(banner);
+        }
+        if (containerEl) containerEl.classList.add('loaded');
+        console.warn('TreasuryTechPortal: window.TTP_DATA is missing');
+        return;
+    }
+
     treasuryTechPortal = new TreasuryTechPortal();
-    
+
     // Ensure iframe height is set after content loads
     setTimeout(() => {
         if (typeof postHeight === 'function') {
