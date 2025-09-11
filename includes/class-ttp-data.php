@@ -165,34 +165,51 @@ class TTP_Data {
             'Founders',
         );
 
-        $schema    = TTP_Airbase::get_table_schema();
-        $field_ids = array();
+        $schema     = TTP_Airbase::get_table_schema();
+        $schema_map = array();
+        $field_ids  = array();
 
         if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
             foreach ( $field_names as $name ) {
-                $field_ids[] = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $id               = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $schema_map[ $name ] = $id;
+                $field_ids[]        = $id;
             }
         } else {
-            $field_ids = $field_names;
+            $schema_map = array_combine( $field_names, $field_names );
+            $field_ids  = $field_names;
         }
 
+        $id_to_name = array_flip( $schema_map );
+
         $data = TTP_Airbase::get_vendors( $field_ids, true );
-        if (is_wp_error($data)) {
+        if ( is_wp_error( $data ) ) {
             return;
         }
 
-        $records = self::normalize_vendor_response($data);
+        $records = self::normalize_vendor_response( $data );
+
+        foreach ( $records as &$record ) {
+            if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
+                $mapped = array();
+                foreach ( $record['fields'] as $key => $value ) {
+                    $mapped[ isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key ] = $value;
+                }
+                $record['fields'] = $mapped;
+            }
+        }
+        unset( $record );
 
         $present_keys = array();
-        foreach ($records as $record) {
-            if (isset($record['fields']) && is_array($record['fields'])) {
-                $present_keys = array_unique(array_merge($present_keys, array_keys($record['fields'])));
+        foreach ( $records as $record ) {
+            if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
+                $present_keys = array_unique( array_merge( $present_keys, array_keys( $record['fields'] ) ) );
             }
         }
 
         $missing = array_diff( $field_names, $present_keys );
         if ( ! empty( $missing ) ) {
-            $field_map   = array_combine( $field_names, $field_ids );
+            $field_map   = $schema_map;
             $missing_ids = array();
             foreach ( $missing as $field ) {
                 if ( isset( $field_map[ $field ] ) ) {

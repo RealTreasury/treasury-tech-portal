@@ -213,25 +213,71 @@ class TTP_Admin {
             'Founders',
         );
 
-        $schema    = TTP_Airbase::get_table_schema();
-        $field_ids = array();
+        $schema     = TTP_Airbase::get_table_schema();
+        $schema_map = array();
+        $field_ids  = array();
 
         if ( ! is_wp_error( $schema ) && is_array( $schema ) ) {
             foreach ( $field_names as $name ) {
-                $field_ids[] = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $id               = isset( $schema[ $name ] ) ? $schema[ $name ] : $name;
+                $schema_map[ $name ] = $id;
+                $field_ids[]        = $id;
             }
         } else {
-            $field_ids = $field_names;
+            $schema_map = array_combine( $field_names, $field_names );
+            $field_ids  = $field_names;
         }
+
+        $id_to_name = array_flip( $schema_map );
 
         $result = TTP_Airbase::get_vendors( $field_ids, true );
         $url    = admin_url('admin.php?page=treasury-airbase-settings');
-        if (is_wp_error($result)) {
-            $url = add_query_arg('test_error', rawurlencode($result->get_error_message()), $url);
+        if ( is_wp_error( $result ) ) {
+            $url = add_query_arg( 'test_error', rawurlencode( $result->get_error_message() ), $url );
         } else {
-            $url = add_query_arg('test_success', 1, $url);
+            $data = $result;
+            if ( is_array( $data ) ) {
+                $known = array( 'products', 'records', 'vendors' );
+                foreach ( $known as $key ) {
+                    if ( isset( $data[ $key ] ) && is_array( $data[ $key ] ) ) {
+                        $data = $data[ $key ];
+                        break;
+                    }
+                }
+                if ( isset( $data['data'] ) && is_array( $data['data'] ) ) {
+                    $data = $data['data'];
+                }
+            } else {
+                $data = array();
+            }
+
+            foreach ( $data as &$record ) {
+                if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
+                    $mapped = array();
+                    foreach ( $record['fields'] as $key => $value ) {
+                        $mapped[ isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key ] = $value;
+                    }
+                    $record['fields'] = $mapped;
+                }
+            }
+            unset( $record );
+
+            $present = array();
+            foreach ( $data as $record ) {
+                if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
+                    $present = array_unique( array_merge( $present, array_keys( $record['fields'] ) ) );
+                }
+            }
+
+            $missing = array_diff( $field_names, $present );
+            if ( ! empty( $missing ) ) {
+                $url = add_query_arg( 'test_error', rawurlencode( 'Missing fields: ' . implode( ', ', $missing ) ), $url );
+            } else {
+                $url = add_query_arg( 'test_success', 1, $url );
+            }
         }
-        wp_redirect($url);
+
+        wp_redirect( $url );
         exit;
     }
 }

@@ -43,10 +43,25 @@ class TTP_Data_Test extends TestCase {
         \Brain\Monkey\tearDown();
     }
 
+    private function id_fields( array $fields, $fill_missing = true ) {
+        $mapped = [];
+        if ( $fill_missing ) {
+            foreach ( $this->schema_map as $name => $id ) {
+                $mapped[ $id ] = array_key_exists( $name, $fields ) ? $fields[ $name ] : '';
+            }
+        } else {
+            foreach ( $fields as $name => $value ) {
+                $key          = $this->schema_map[ $name ] ?? $name;
+                $mapped[ $key ] = $value;
+            }
+        }
+        return $mapped;
+    }
+
     public function test_refresh_vendor_cache_maps_fields() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
@@ -59,7 +74,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['recreg1', 'recreg2'],
                 'Domain'          => ['recdom1'],
                 'Capabilities'    => ['reccap1'],
-            ],
+            ]),
         ];
 
         $requested_fields    = null;
@@ -142,8 +157,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_skips_resolution_for_names() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
@@ -154,7 +169,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -181,8 +196,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
@@ -195,7 +210,7 @@ class TTP_Data_Test extends TestCase {
                     [ 'id' => 'recdom1', 'name' => 'Banking' ],
                 ],
                 'Capabilities'    => ['API'],
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -221,8 +236,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_stores_empty_on_error() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
@@ -233,7 +248,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['recreg1'],
                 'Domain'          => ['recdom1'],
                 'Capabilities'    => ['reccap1'],
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -264,10 +279,10 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name' => 'Sample Product',
-            ],
+            ], false),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -305,8 +320,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_resolves_string_record_ids() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'recven1',
                 'Product Website' => 'example.com',
@@ -317,7 +332,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => 'recreg1',
                 'Domain'          => 'recdom1',
                 'Capabilities'    => 'reccap1',
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -359,8 +374,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_resolves_mixed_region_values() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
@@ -371,7 +386,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['recreg1', 'APAC'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
@@ -400,8 +415,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_resolves_comma_separated_record_ids() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'recven1, recven2',
                 'Product Website' => 'example.com',
@@ -412,7 +427,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => 'recreg1, recreg2',
                 'Domain'          => 'recdom1, recdom2',
                 'Capabilities'    => 'reccap1, reccap2',
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -483,8 +498,8 @@ class TTP_Data_Test extends TestCase {
 
     public function test_refresh_vendor_cache_resolves_parent_category_record_ids() {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
@@ -495,7 +510,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => 'North America',
                 'Domain'          => 'Banking',
                 'Capabilities'    => 'API',
-            ],
+            ]),
         ];
 
         \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array(), $return_fields_by_id = false) use ($record) {
@@ -528,8 +543,8 @@ class TTP_Data_Test extends TestCase {
      */
     public function test_refresh_vendor_cache_resolves_id_arrays_for_field( $field, $table, $output_key, $mapping ) {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
@@ -540,9 +555,10 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
-            ],
+            ]),
         ];
 
+        $field = $this->schema_map[ $field ];
         $record['fields'][ $field ] = array_keys( $mapping );
 
         \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
@@ -632,8 +648,8 @@ class TTP_Data_Test extends TestCase {
      */
     public function test_refresh_vendor_cache_resolves_comma_separated_ids_for_field( $field, $table, $output_key, $mapping ) {
         $record = [
-            'id' => 'rec1',
-            'fields' => [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
@@ -644,9 +660,10 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
-            ],
+            ]),
         ];
 
+        $field = $this->schema_map[ $field ];
         $record['fields'][ $field ] = implode( ', ', array_keys( $mapping ) );
 
         \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
@@ -840,18 +857,17 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $airbase_called = false;
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( &$airbase_called ) {
+        $record        = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name' => 'Sample Product',
+                'Regions'      => array( 'recreg1' ),
+            ]),
+        ];
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( &$airbase_called, $record ) {
             $airbase_called = true;
             return array(
-                'records' => array(
-                    array(
-                        'id'     => 'rec1',
-                        'fields' => array(
-                            'Product Name' => 'Sample Product',
-                            'Regions'      => array( 'recreg1' ),
-                        ),
-                    ),
-                ),
+                'records' => array( $record ),
             );
         } );
 
@@ -902,17 +918,16 @@ class TTP_Data_Test extends TestCase {
             }
         } );
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name' => 'Sample Product',
+                'Regions'      => array( 'recreg1' ),
+            ]),
+        ];
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
             return array(
-                'records' => array(
-                    array(
-                        'id'     => 'rec1',
-                        'fields' => array(
-                            'Product Name' => 'Sample Product',
-                            'Regions'      => array( 'recreg1' ),
-                        ),
-                    ),
-                ),
+                'records' => array( $record ),
             );
         } );
 
