@@ -198,6 +198,77 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
+## Domain Table
+
+Table ID: `tbli7l5i5QxQzbpNV`
+
+### Fields
+| Field | Type | Notes |
+|-------|------|-------|
+| `Domain Name` (`fldoGBU2lWXKoFoAM`) | text | single line of text |
+| `Linked Vendors` (`fldAWqHU9rv7oX6MT`) | text | comma separated vendor names |
+| `Vendor Count` (`fldlcq0OMqFUEJMla`) | count | number of linked vendor records |
+| `Domain Summary` (`fldaMrJFqT5nkaa2L`) | rich text | AI-generated summary object |
+| `Categories` (`fldFAUQgi8WT1hdlA`) | linked records to **Categories** table | array of record IDs |
+| `Products` (`fldbhTNGdTp006wPd`) | linked records to **Products** table | array of record IDs |
+
+### Listing Domains
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV?maxRecords=3&view=Grid%20view" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Retrieving a Domain
+```bash
+curl https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV/RECORD_ID \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Domains
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+  "records": [
+    {
+      "fields": {
+        "Domain Name": "Treasury",
+        "Linked Vendors": "Alpha Group, Atlar",
+        "Categories": ["reckz5jhQb2CBocKR"],
+        "Products": ["recOwgOvbUhsD8e30"]
+      }
+    }
+  ]
+}'
+```
+
+### Updating Domains
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+  "records": [
+    {
+      "id": "RECORD_ID",
+      "fields": {
+        "Domain Name": "Treasury"
+      }
+    }
+  ]
+}'
+```
+
+### Deleting Domains
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV?records[]=RECORD_ID" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Notes
+- Values for `Vendor Count` are computed by Airtable and cannot be set or updated directly.
+
 ## Categories Table
 
 Table ID: `tblzGvVxiuzvf55a1`
