@@ -345,9 +345,7 @@ class TTP_Data {
             }
         }
 
-        $id_to_name = array_flip( $schema_map );
-
-        $data = TTP_Airbase::get_vendors( $field_ids, true );
+        $data = TTP_Airbase::get_vendors( $field_ids );
         if ( is_wp_error( $data ) ) {
             return;
         }
@@ -356,12 +354,7 @@ class TTP_Data {
 
         foreach ( $records as &$record ) {
             if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
-                $mapped = array();
-                foreach ( $record['fields'] as $key => $value ) {
-                    $mapped_name = isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key;
-                    $mapped[ $mapped_name ] = $value;
-                }
-                $record['fields'] = self::normalize_keys( $mapped );
+                $record['fields'] = self::normalize_keys( $record['fields'] );
             } else {
                 $record = self::normalize_keys( $record );
             }
@@ -776,12 +769,11 @@ class TTP_Data {
              * TTP_Airbase::resolve_linked_records(). See self::resolve_linked_field()
              * for the full placeholder-replacement strategy.
              */
-            $attempt       = 0;
-            $max_attempts  = 3;
-            $use_field_ids = empty( $primary_field );
+            $attempt      = 0;
+            $max_attempts = 3;
 
             do {
-                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field, $use_field_ids );
+                $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
                 $attempt++;
                 if ( ! is_wp_error( $resolved ) ) {
                     break;

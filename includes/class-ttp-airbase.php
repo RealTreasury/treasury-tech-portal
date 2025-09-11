@@ -72,12 +72,11 @@ class TTP_Airbase {
     /**
      * Retrieve vendors from Airbase API.
      *
-     * @param array $fields              Optional list of field IDs or names to request.
-     * @param bool  $return_fields_by_id Whether to request and return fields by ID.
+     * @param array $fields Optional list of field IDs or names to request.
      *
      * @return array|WP_Error Array of vendor records or WP_Error on failure.
      */
-    public static function get_vendors( $fields = array(), $return_fields_by_id = false ) {
+    public static function get_vendors( $fields = array() ) {
         $token = get_option( self::OPTION_TOKEN );
         if ( empty( $token ) ) {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
@@ -125,7 +124,6 @@ class TTP_Airbase {
         $records  = array();
         $offset   = '';
 
-        // Normalize fields to names or IDs based on returnFieldsByFieldId.
         if ( ! empty( $fields ) ) {
             $schema         = self::get_table_schema();
             $name_to_id_map = array();
@@ -139,25 +137,14 @@ class TTP_Airbase {
             $normalized = array();
             foreach ( $fields as $field ) {
                 $field = sanitize_text_field( $field );
-                if ( $return_fields_by_id ) {
-                    if ( isset( $name_to_id_map[ $field ] ) ) {
-                        $normalized[] = $name_to_id_map[ $field ];
-                    } elseif ( isset( $id_to_name_map[ $field ] ) ) {
-                        $normalized[] = $field; // Already an ID.
-                    } else {
-                        $normalized[] = $field;
-                        if ( function_exists( 'error_log' ) ) {
-                            error_log( 'TTP_Airbase: Unknown requested field ' . $field );
-                        }
-                    }
+                if ( isset( $name_to_id_map[ $field ] ) ) {
+                    $normalized[] = $name_to_id_map[ $field ];
+                } elseif ( isset( $id_to_name_map[ $field ] ) ) {
+                    $normalized[] = $field; // Already an ID.
                 } else {
-                    if ( isset( $id_to_name_map[ $field ] ) ) {
-                        $normalized[] = $id_to_name_map[ $field ];
-                    } else {
-                        $normalized[] = $field;
-                        if ( ! isset( $name_to_id_map[ $field ] ) && function_exists( 'error_log' ) ) {
-                            error_log( 'TTP_Airbase: Unknown requested field ' . $field );
-                        }
+                    $normalized[] = $field;
+                    if ( function_exists( 'error_log' ) ) {
+                        error_log( 'TTP_Airbase: Unknown requested field ' . $field );
                     }
                 }
             }
@@ -170,7 +157,7 @@ class TTP_Airbase {
             $query = array(
                 'pageSize=100',
                 'cellFormat=string',
-                'returnFieldsByFieldId=' . ( $return_fields_by_id ? 'true' : 'false' ),
+                'returnFieldsByFieldId=false',
                 'userLocale=en-US',
                 'timeZone=UTC',
             );
@@ -452,11 +439,10 @@ class TTP_Airbase {
      * @param string $table_id      Table name or ID to query.
      * @param array  $ids           Record IDs to resolve.
      * @param string $primary_field Primary field to return. Defaults to "Name".
-     * @param bool   $use_field_ids Whether to request and return values using field IDs.
      *
      * @return array|WP_Error Array of record field values or WP_Error on failure.
      */
-    public static function resolve_linked_records( $table_id, $ids, $primary_field = '', $use_field_ids = false ) {
+    public static function resolve_linked_records( $table_id, $ids, $primary_field = '' ) {
         $ids = array_filter( (array) $ids );
         if ( empty( $ids ) ) {
             return array();
@@ -521,13 +507,8 @@ class TTP_Airbase {
                 return $primary;
             }
 
-            if ( $use_field_ids && ! empty( $primary['id'] ) ) {
-                $query_field  = sanitize_text_field( $primary['id'] );
-                $result_field = $query_field;
-            } else {
-                $query_field  = sanitize_text_field( $primary['id'] ? $primary['id'] : $primary['name'] );
-                $result_field = $primary['name'] ? $primary['name'] : $primary['id'];
-            }
+            $query_field  = sanitize_text_field( $primary['id'] ? $primary['id'] : $primary['name'] );
+            $result_field = $primary['name'] ? $primary['name'] : $primary['id'];
         } else {
             $query_field  = sanitize_text_field( $primary_field );
             $result_field = $query_field;
@@ -560,7 +541,7 @@ class TTP_Airbase {
             }
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $url      = $endpoint . '?pageSize=100&cellFormat=string&returnFieldsByFieldId=' . ( $use_field_ids ? 'true' : 'false' ) . '&fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter ) . '&userLocale=en-US&timeZone=UTC';
+            $url      = $endpoint . '?pageSize=100&cellFormat=string&returnFieldsByFieldId=false&fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter ) . '&userLocale=en-US&timeZone=UTC';
             $response = self::request_with_backoff( $url, $args );
 
             if ( is_wp_error( $response ) ) {
@@ -584,7 +565,7 @@ class TTP_Airbase {
                     $value     = null;
                     if ( isset( $record['fields'][ $result_field ] ) ) {
                         $value = $record['fields'][ $result_field ];
-                    } elseif ( ! $use_field_ids && isset( $record['fields'][ $query_field ] ) ) {
+                    } elseif ( isset( $record['fields'][ $query_field ] ) ) {
                         $value = $record['fields'][ $query_field ];
                     }
 

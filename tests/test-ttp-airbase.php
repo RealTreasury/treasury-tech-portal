@@ -363,19 +363,19 @@ class TTP_Airbase_Test extends TestCase {
             return ['Name' => 'fldName', 'Email' => 'fldEmail'];
         });
 
-        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?pageSize=100&cellFormat=string&returnFieldsByFieldId=true&userLocale=en-US&timeZone=UTC&fields[]=fldName&fields[]=fldEmail';
+        $expected_url = TTP_Airbase::DEFAULT_BASE_URL . '/base123/tblXYZ?pageSize=100&cellFormat=string&returnFieldsByFieldId=false&userLocale=en-US&timeZone=UTC&fields[]=fldName&fields[]=fldEmail';
         expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($expected_url) {
             $this->assertSame($expected_url, $url);
             return [
                 'response' => ['code' => 200],
                 'body'     => json_encode([
-                    'records' => [ [ 'fields' => [ 'fldName' => 'Acme', 'fldEmail' => 'a@b.com' ] ] ],
+                    'records' => [ [ 'fields' => [ 'Name' => 'Acme', 'Email' => 'a@b.com' ] ] ],
                 ]),
             ];
         });
 
-        $records = TTP_Airbase::get_vendors(['Name', 'Email'], true);
-        $this->assertIsArray($records);
+        $records = TTP_Airbase::get_vendors(['Name', 'Email']);
+        $this->assertSame('Acme', $records[0]['fields']['Name']);
     }
 
     public function test_get_table_schema_returns_cached_value() {
@@ -576,50 +576,6 @@ class TTP_Airbase_Test extends TestCase {
          */
         $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2'], 'Name');
         $this->assertSame(['First', 'Second'], $values);
-    }
-
-    public function test_resolve_linked_records_accepts_field_ids() {
-        when('get_option')->alias(function ($option, $default = false) {
-            switch ($option) {
-                case TTP_Airbase::OPTION_TOKEN:
-                    return 'abc123';
-                case TTP_Airbase::OPTION_BASE_URL:
-                    return TTP_Airbase::DEFAULT_BASE_URL;
-                case TTP_Airbase::OPTION_BASE_ID:
-                    return 'base123';
-                default:
-                    return $default;
-            }
-        });
-        when('is_wp_error')->alias(function ($thing) {
-            return $thing instanceof WP_Error;
-        });
-        when('wp_remote_retrieve_response_code')->alias(function ($response) {
-            return $response['response']['code'];
-        });
-        when('wp_remote_retrieve_body')->alias(function ($response) {
-            return $response['body'];
-        });
-
-        $self = $this;
-        expect('wp_remote_get')->once()->andReturnUsing(function ($url, $args) use ($self) {
-            $self->assertStringContainsString('returnFieldsByFieldId=true', $url);
-            $self->assertStringContainsString('fields[]=fldName', $url);
-
-            $body = json_encode([
-                'records' => [
-                    [ 'id' => 'rec1', 'fields' => [ 'fldName' => 'First' ] ],
-                ],
-            ]);
-
-            return [
-                'response' => [ 'code' => 200 ],
-                'body'     => $body,
-            ];
-        });
-
-        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'fldName', true);
-        $this->assertSame(['First'], $values);
     }
 
     public function test_resolve_linked_records_batches_requests_when_ids_exceed_limit() {

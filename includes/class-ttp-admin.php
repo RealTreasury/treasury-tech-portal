@@ -266,9 +266,7 @@ class TTP_Admin {
         $schema_map = $mapping['schema_map'];
         $field_ids  = $mapping['field_ids'];
 
-        $id_to_name = array_flip( $schema_map );
-
-        $result = TTP_Airbase::get_vendors( $field_ids, true );
+        $result = TTP_Airbase::get_vendors( $field_ids );
         $url    = admin_url('admin.php?page=treasury-airbase-settings');
         if ( is_wp_error( $result ) ) {
             $url = add_query_arg( 'test_error', rawurlencode( $result->get_error_message() ), $url );
@@ -288,17 +286,6 @@ class TTP_Admin {
             } else {
                 $data = array();
             }
-
-            foreach ( $data as &$record ) {
-                if ( isset( $record['fields'] ) && is_array( $record['fields'] ) ) {
-                    $mapped = array();
-                    foreach ( $record['fields'] as $key => $value ) {
-                        $mapped[ isset( $id_to_name[ $key ] ) ? $id_to_name[ $key ] : $key ] = $value;
-                    }
-                    $record['fields'] = $mapped;
-                }
-            }
-            unset( $record );
 
             $present = array();
             foreach ( $data as $record ) {
