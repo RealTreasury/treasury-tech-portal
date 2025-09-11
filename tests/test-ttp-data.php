@@ -1255,6 +1255,44 @@ class TTP_Data_Test extends TestCase {
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
 
+    public function vendors_need_resolution_nested_provider() {
+        return array(
+            'nested_arrays'  => array(
+                array(
+                    array(
+                        'details' => array(
+                            'location' => array(
+                                'region_ids' => array( 'recABC123' ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            'nested_objects' => array(
+                array(
+                    array(
+                        'details' => (object) array(
+                            'meta' => (object) array(
+                                'Sub Categories' => array( '123' ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider vendors_need_resolution_nested_provider
+     */
+    public function test_vendors_need_resolution_detects_nested_structures( $vendors ) {
+        $class  = new \ReflectionClass( TTP_Data::class );
+        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method->setAccessible( true );
+
+        $this->assertTrue( $method->invoke( null, $vendors ) );
+    }
+
     public function test_log_unresolved_field_stores_id_and_message() {
         $stored = array();
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored ) {
