@@ -2481,12 +2481,20 @@
         .treasury-portal-admin .treasury-portal-admin-table th {
             position: sticky;
             top: 0;
-            background: #fff;
+            background: #e5e7eb;
             z-index: 1;
         }
 
+        .treasury-portal-admin .treasury-portal-admin-table tbody tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        .treasury-portal-admin .treasury-portal-admin-table tbody tr:nth-child(even) {
+            background: #f3f4f6;
+        }
+
         .treasury-portal-admin .treasury-portal-admin-table tbody tr:hover {
-            background: #f9f9f9;
+            background: #e2e8f0;
         }
 
         @media (max-width: 768px) {
