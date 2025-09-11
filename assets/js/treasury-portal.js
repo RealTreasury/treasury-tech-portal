@@ -301,6 +301,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.applyViewStyles();
             }
 
+            normalizeCategory(category) {
+                const upper = (category || '').toString().toUpperCase();
+                if (upper.includes('CASH')) return 'CASH';
+                if (upper.includes('LITE')) return 'LITE';
+                if (upper.includes('TRMS') || upper.includes('TMS')) return 'TRMS';
+                return '';
+            }
+
             async fetchTools() {
                 const loading = document.getElementById('loadingScreen');
                 if (loading) loading.style.display = 'block';
@@ -309,12 +317,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const response = await fetch(TTP_DATA.rest_url);
                     const data = await response.json();
                     this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
-                        const categoryField = vendor.parent_category || vendor.category || '';
-                        const category = Array.isArray(categoryField) ? categoryField[0] : categoryField;
+                        const parentCategory = Array.isArray(vendor.parent_category) ? vendor.parent_category[0] : (vendor.parent_category || '');
+                        const category = this.normalizeCategory(parentCategory || vendor.category);
+                        const subCategories = Array.isArray(vendor.sub_categories) ? vendor.sub_categories : [];
+                        const regions = Array.isArray(vendor.regions) ? vendor.regions : [];
                         return {
                             name: vendor.name || '',
                             desc: vendor.status || '',
-                            category: (category || '').toUpperCase(),
+                            category,
+                            parentCategory,
+                            subCategories,
+                            regions,
                             videoUrl: vendor.video_url || '',
                             websiteUrl: vendor.website || '',
                             logoUrl: vendor.logo_url || '',
