@@ -2036,7 +2036,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     };
 
-                    search.addEventListener('touchstart', (e) => e.preventDefault());
                     search.addEventListener('click', handleSearch);
                     search.addEventListener('touchend', (e) => {
                         e.preventDefault();
