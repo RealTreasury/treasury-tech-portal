@@ -168,7 +168,7 @@ class TTP_Data_Test extends TestCase {
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
                 'Category'       => ['Finance'],
-                'Sub Categories' => ['Payments'],
+                'Sub Categories' => ['Cash', 'Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'Capabilities'    => ['API'],
@@ -435,7 +435,7 @@ class TTP_Data_Test extends TestCase {
                 'sub_categories'  => [ 'Payments' ],
                 'capabilities'    => [ 'API' ],
                 'categories'      => [ 'Finance' ],
-                'category'        => 'Cash',
+                'category'        => 'Finance',
             ],
         ];
 

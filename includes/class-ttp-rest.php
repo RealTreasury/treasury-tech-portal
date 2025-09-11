@@ -27,8 +27,8 @@ class TTP_Rest {
         $args = array();
 
         $category = $request->get_param('category');
-        if (is_string($category) && $category !== '') {
-            $args['category'] = sanitize_text_field($category);
+        if (!empty($category)) {
+            $args['category'] = array_map('sanitize_text_field', (array) $category);
         }
 
         $search = $request->get_param('search');
