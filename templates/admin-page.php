@@ -3,21 +3,13 @@
     <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
     <?php if (!empty($unresolved_fields)) : ?>
         <div class="notice notice-warning">
-            <p><?php esc_html_e('Some vendor fields could not be resolved. Check server logs for the IDs below.', 'treasury-tech-portal'); ?></p>
+            <p><?php esc_html_e('Some vendor fields could not be resolved.', 'treasury-tech-portal'); ?></p>
             <ul>
-                <?php foreach ($unresolved_fields as $notice) : ?>
-                    <?php
-                    $message = is_array($notice) ? ($notice['message'] ?? '') : $notice;
-                    $log_id  = is_array($notice) ? ($notice['id'] ?? '') : '';
-                    ?>
-                    <li>
-                        <?php echo esc_html($message); ?>
-                        <?php if (!empty($log_id)) : ?>
-                            <?php echo esc_html(sprintf('(Log ID: %s)', $log_id)); ?>
-                        <?php endif; ?>
-                    </li>
+                <?php foreach ($unresolved_fields as $field => $ids) : ?>
+                    <li><?php echo esc_html(sprintf('%s unresolved IDs: %s', $field, implode(', ', $ids))); ?></li>
                 <?php endforeach; ?>
             </ul>
+            <p><a href="<?php echo esc_url(admin_url('admin.php?page=treasury-unresolved-report')); ?>"><?php esc_html_e('View full report', 'treasury-tech-portal'); ?></a></p>
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <?php wp_nonce_field('ttp_retry_resolution', 'ttp_retry_resolution_nonce'); ?>
                 <input type="hidden" name="action" value="ttp_retry_resolution" />
@@ -130,37 +122,15 @@
     <?php endif; ?>
     <?php if (!empty($unresolved_fields)) : ?>
         <div class="treasury-portal-admin-unresolved">
-            <h2><?php esc_html_e('Unresolved Region IDs', 'treasury-tech-portal'); ?></h2>
-            <ul>
-                <?php foreach ($unresolved_fields as $notice) : ?>
-                    <?php
-                    $message = is_array($notice) ? ($notice['message'] ?? '') : $notice;
-                    $log_id  = is_array($notice) ? ($notice['id'] ?? '') : '';
-                    ?>
-                    <?php if (strpos($message, 'Regions unresolved IDs:') === 0) : ?>
-                        <?php
-                        $ids_str = trim(str_replace('Regions unresolved IDs:', '', $message));
-                        $ids     = array_map('trim', explode(',', $ids_str));
-                        ?>
-                        <li>
-                            <?php esc_html_e('Region IDs:', 'treasury-tech-portal'); ?>
-                            <?php foreach ($ids as $index => $id) : ?>
-                                <code><?php echo esc_html($id); ?></code><?php echo $index < count($ids) - 1 ? ', ' : ''; ?>
-                            <?php endforeach; ?>
-                            <?php if (!empty($log_id)) : ?>
-                                <br /><small><?php echo esc_html(sprintf('Log ID: %s', $log_id)); ?></small>
-                            <?php endif; ?>
-                        </li>
-                    <?php else : ?>
-                        <li>
-                            <?php echo esc_html($message); ?>
-                            <?php if (!empty($log_id)) : ?>
-                                <br /><small><?php echo esc_html(sprintf('Log ID: %s', $log_id)); ?></small>
-                            <?php endif; ?>
-                        </li>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            </ul>
+            <h2><?php esc_html_e('Unresolved IDs', 'treasury-tech-portal'); ?></h2>
+            <?php foreach ($unresolved_fields as $field => $ids) : ?>
+                <h3><?php echo esc_html($field); ?></h3>
+                <ul>
+                    <?php foreach ($ids as $id) : ?>
+                        <li><code><?php echo esc_html($id); ?></code></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
 </div>

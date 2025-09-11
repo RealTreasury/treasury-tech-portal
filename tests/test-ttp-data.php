@@ -1387,16 +1387,16 @@ class TTP_Data_Test extends TestCase {
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
 
-    public function test_log_unresolved_field_stores_id_and_message() {
+    public function test_log_unresolved_field_groups_ids_by_field() {
         $stored = array();
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored ) {
-            if ( 'ttp_unresolved_fields' === $name ) {
+            if ( 'ttp_unresolved_report' === $name ) {
                 return $stored;
             }
             return $default;
         } );
         when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored ) {
-            if ( 'ttp_unresolved_fields' === $name ) {
+            if ( 'ttp_unresolved_report' === $name ) {
                 $stored = $value;
             }
             return true;
@@ -1405,12 +1405,15 @@ class TTP_Data_Test extends TestCase {
         $class  = new \ReflectionClass( TTP_Data::class );
         $method = $class->getMethod( 'log_unresolved_field' );
         $method->setAccessible( true );
-        $method->invoke( null, 'Regions', array( 'rec1', 'rec2' ) );
 
-        $this->assertNotEmpty( $stored );
-        $this->assertArrayHasKey( 'id', $stored[0] );
-        $this->assertArrayHasKey( 'message', $stored[0] );
-        $this->assertSame( 'Regions unresolved IDs: rec1, rec2', $stored[0]['message'] );
-        $this->assertNotEmpty( $stored[0]['id'] );
+        $method->invoke( null, 'Regions', array( 'rec1', 'rec2' ) );
+        $method->invoke( null, 'Regions', array( 'rec2', 'rec3' ) );
+        $method->invoke( null, 'Category', array( 'recA' ) );
+
+        $expected = array(
+            'Regions'  => array( 'rec1', 'rec2', 'rec3' ),
+            'Category' => array( 'recA' ),
+        );
+        $this->assertSame( $expected, $stored );
     }
 }

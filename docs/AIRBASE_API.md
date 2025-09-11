@@ -129,8 +129,8 @@ These variations are normalised before attempting to resolve linked records.
 
 If region identifiers returned from Airtable do not match any entry in the
 **Regions** table, the plugin logs the unresolved IDs. The IDs are saved in the
-`ttp_unresolved_fields` option and displayed beneath the vendor table in the
-WordPress admin interface.
+`ttp_unresolved_report` option, grouped by field, and viewable from the
+Unresolved Report page in the WordPress admin interface.
 
 To resolve these warnings:
 
