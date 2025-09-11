@@ -5,6 +5,7 @@ use function Brain\Monkey\Functions\when;
 require_once __DIR__ . '/../includes/class-ttp-record-utils.php';
 require_once __DIR__ . '/../includes/class-ttp-rest.php';
 require_once __DIR__ . '/../includes/class-ttp-data.php';
+require_once __DIR__ . '/../includes/class-ttp-admin.php';
 
 class TTP_Rest_Test extends TestCase {
     protected function setUp(): void {
@@ -18,6 +19,12 @@ class TTP_Rest_Test extends TestCase {
         when('absint')->alias(function ($v) {
             return (int) $v;
         });
+        when( 'get_option' )->alias( function ( $key, $default = null ) {
+            return $default;
+        } );
+        \Patchwork\replace( 'TTP_Data::get_domains', function () {
+            return array();
+        } );
     }
 
     protected function tearDown(): void {
@@ -65,20 +72,22 @@ class TTP_Rest_Test extends TestCase {
 
         $response = TTP_Rest::get_tools($request);
         $this->assertIsArray($response);
-        $this->assertArrayHasKey('video_url', $response[0]);
-        $this->assertArrayHasKey('logo_url', $response[0]);
-        $this->assertArrayHasKey('category', $response[0]);
-        $this->assertArrayHasKey('sub_categories', $response[0]);
-        $this->assertArrayHasKey('categories', $response[0]);
-        $this->assertArrayHasKey('category_names', $response[0]);
-        $this->assertArrayHasKey('regions', $response[0]);
-        $this->assertSame('https://example.com/video', $response[0]['video_url']);
-        $this->assertSame('https://example.com/logo.png', $response[0]['logo_url']);
-        $this->assertSame('Cash', $response[0]['category']);
-        $this->assertSame(['Payments'], $response[0]['sub_categories']);
-        $this->assertSame(['Finance'], $response[0]['categories']);
-        $this->assertSame(['Finance', 'Cash', 'Payments'], $response[0]['category_names']);
-        $this->assertSame(['North America'], $response[0]['regions']);
+        $this->assertArrayHasKey('tools', $response);
+        $tool = $response['tools'][0];
+        $this->assertArrayHasKey('video_url', $tool);
+        $this->assertArrayHasKey('logo_url', $tool);
+        $this->assertArrayHasKey('category', $tool);
+        $this->assertArrayHasKey('sub_categories', $tool);
+        $this->assertArrayHasKey('categories', $tool);
+        $this->assertArrayHasKey('category_names', $tool);
+        $this->assertArrayHasKey('regions', $tool);
+        $this->assertSame('https://example.com/video', $tool['video_url']);
+        $this->assertSame('https://example.com/logo.png', $tool['logo_url']);
+        $this->assertSame('Cash', $tool['category']);
+        $this->assertSame(['Payments'], $tool['sub_categories']);
+        $this->assertSame(['Finance'], $tool['categories']);
+        $this->assertSame(['Finance', 'Cash', 'Payments'], $tool['category_names']);
+        $this->assertSame(['North America'], $tool['regions']);
     }
 
     public function test_tools_endpoint_passes_filter_params() {
@@ -113,6 +122,7 @@ class TTP_Rest_Test extends TestCase {
         $vendor = [
             'regions'    => ['North America'],
             'categories' => ['Finance'],
+            'category'   => 'CASH',
         ];
         \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
             return [ $vendor ];
@@ -121,14 +131,15 @@ class TTP_Rest_Test extends TestCase {
         $request = new class {};
         $response = TTP_Rest::get_vendors( $request );
 
-        $this->assertSame( ['North America'], $response[0]['regions'] );
-        $this->assertSame( ['Finance'], $response[0]['categories'] );
+        $this->assertSame( ['North America'], $response['vendors'][0]['regions'] );
+        $this->assertSame( ['Finance'], $response['vendors'][0]['categories'] );
     }
 
     public function test_vendors_endpoint_strips_unresolved_ids_and_refreshes_cache() {
         $vendor = [
             'regions'    => ['rec123', 'North America'],
             'categories' => ['rec456'],
+            'category'   => 'CASH',
         ];
 
         $refresh_called = false;
@@ -145,14 +156,14 @@ class TTP_Rest_Test extends TestCase {
         $response = TTP_Rest::get_vendors( $request );
 
         $this->assertTrue( $refresh_called );
-        $this->assertSame( [ 'North America' ], $response[0]['regions'] );
-        $this->assertArrayNotHasKey( 'categories', $response[0] );
+        $this->assertSame( [ 'North America' ], $response['vendors'][0]['regions'] );
+        $this->assertArrayNotHasKey( 'categories', $response['vendors'][0] );
     }
 
     public function test_vendors_endpoint_marks_incomplete_vendors() {
         $vendor = [
             'regions'    => ['rec123', 'North America'],
-            'categories' => ['Finance'],
+            'category'   => 'CASH',
         ];
 
         \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
@@ -164,7 +175,7 @@ class TTP_Rest_Test extends TestCase {
         $request  = new class {};
         $response = TTP_Rest::get_vendors( $request );
 
-        $this->assertTrue( $response[0]['incomplete'] );
+        $this->assertTrue( $response['vendors'][0]['incomplete'] );
     }
 
     public function test_refresh_endpoint_triggers_cache_refresh() {

@@ -67,18 +67,35 @@ class TTP_Rest {
         }
 
         $tools = TTP_Data::get_tools($args);
+        $enabled_domains = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, TTP_Data::get_domains() );
 
-        return rest_ensure_response($tools);
+        return rest_ensure_response(
+            array(
+                'tools' => $tools,
+                'enabled_domains' => $enabled_domains,
+            )
+        );
     }
 
     public static function get_vendors($request) {
-        $vendors = TTP_Data::get_all_vendors();
-        $enabled = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
-        $vendors = array_filter( (array) $vendors, function ( $vendor ) use ( $enabled ) {
-            $vendor = (array) $vendor;
-            $cat    = $vendor['category'] ?? ( $vendor['categories'][0] ?? '' );
-            return in_array( $cat, $enabled, true );
-        } );
+        $vendors         = TTP_Data::get_all_vendors();
+        $enabled         = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
+        $enabled_domains = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, TTP_Data::get_domains() );
+        $vendors         = array_filter(
+            (array) $vendors,
+            function ( $vendor ) use ( $enabled, $enabled_domains ) {
+                $vendor = (array) $vendor;
+                $cat    = $vendor['category'] ?? ( $vendor['categories'][0] ?? '' );
+                if ( ! in_array( $cat, $enabled, true ) ) {
+                    return false;
+                }
+                $doms = (array) ( $vendor['domain'] ?? array() );
+                if ( empty( $enabled_domains ) || empty( $doms ) ) {
+                    return true;
+                }
+                return ! empty( array_intersect( $doms, $enabled_domains ) );
+            }
+        );
         $needs_refresh = false;
 
         $vendors = array_values( $vendors );
@@ -120,7 +137,12 @@ class TTP_Rest {
             TTP_Data::refresh_vendor_cache();
         }
 
-        return rest_ensure_response( $vendors );
+        return rest_ensure_response(
+            array(
+                'vendors'         => $vendors,
+                'enabled_domains' => $enabled_domains,
+            )
+        );
     }
 
     public static function refresh_data( $request ) {

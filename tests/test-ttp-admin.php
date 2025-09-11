@@ -4,6 +4,7 @@ use function Brain\Monkey\Functions\when;
 
 require_once __DIR__ . '/../includes/class-ttp-airbase.php';
 require_once __DIR__ . '/../includes/class-ttp-data.php';
+require_once __DIR__ . '/../includes/class-ttp-admin.php';
 
 if ( ! function_exists( 'run_api_test' ) ) {
     $script = file_get_contents( __DIR__ . '/../scripts/run-api-test.php' );
@@ -189,6 +190,36 @@ class TTP_Admin_Test extends TestCase {
         $this->assertStringNotContainsString( 'North America', $output );
         $this->assertNotEmpty( $logged );
         $this->assertStringContainsString( 'recreg1', implode( ' ', $logged ) );
+    }
+
+    public function test_save_domains_persists_option() {
+        $_POST['enabled_domains']        = array( 'Treasury', 'Payments' );
+        $_POST['ttp_save_domains_nonce'] = 'nonce';
+        when( 'current_user_can' )->justReturn( true );
+        when( 'check_admin_referer' )->justReturn( true );
+        when( 'admin_url' )->alias( function ( $url ) { return $url; } );
+        when( 'add_query_arg' )->alias( function ( $key, $value, $url ) {
+            return $url . '?' . $key . '=' . $value;
+        } );
+
+        $updated = array();
+        when( 'update_option' )->alias( function ( $key, $value ) use ( &$updated ) {
+            $updated = array( $key, $value );
+            return true;
+        } );
+        when( 'wp_redirect' )->alias( function ( $url ) {
+            throw new \Exception( $url );
+        } );
+
+        try {
+            TTP_Admin::save_domains();
+        } catch ( \Exception $e ) {
+            $this->assertStringContainsString( 'domains_updated=1', $e->getMessage() );
+        }
+
+        $this->assertSame( TTP_Admin::OPTION_ENABLED_DOMAINS, $updated[0] );
+        $this->assertSame( array( 'Treasury', 'Payments' ), $updated[1] );
+        $_POST = array();
     }
 }
 

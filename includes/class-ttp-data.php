@@ -130,6 +130,32 @@ class TTP_Data {
     }
 
     /**
+     * Retrieve list of unique domains derived from vendor records.
+     *
+     * @return array List of domain names.
+     */
+    public static function get_domains() {
+        $vendors = self::get_all_vendors();
+        $domains = array();
+
+        foreach ( (array) $vendors as $vendor ) {
+            $values = (array) ( $vendor['domain'] ?? array() );
+            foreach ( $values as $value ) {
+                $value = sanitize_text_field( $value );
+                if ( '' !== $value ) {
+                    $domains[ $value ] = $value;
+                }
+            }
+        }
+
+        if ( ! empty( $domains ) ) {
+            ksort( $domains, SORT_NATURAL | SORT_FLAG_CASE );
+        }
+
+        return array_values( $domains );
+    }
+
+    /**
      * Retrieve icon mapping for categories.
      *
      * @return array Mapping of category slug => icon string.
@@ -963,6 +989,9 @@ class TTP_Data {
         if ( empty( $args['category'] ) ) {
             $args['category'] = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( self::get_categories() ) );
         }
+        if ( empty( $args['domains'] ) ) {
+            $args['domains'] = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, self::get_domains() );
+        }
 
         if (!empty($args['search'])) {
             $search = strtolower($args['search']);
@@ -984,6 +1013,17 @@ class TTP_Data {
                 $tool_regions = $tool['regions'] ?? array();
                 return !empty(array_intersect($regions, $tool_regions));
             });
+        }
+
+        if ( ! empty( $args['domains'] ) ) {
+            $domains = (array) $args['domains'];
+            $tools   = array_filter(
+                $tools,
+                function ( $tool ) use ( $domains ) {
+                    $tool_domains = (array) ( $tool['domain'] ?? array() );
+                    return empty( $tool_domains ) || ! empty( array_intersect( $domains, $tool_domains ) );
+                }
+            );
         }
 
         if (!empty($args['category'])) {

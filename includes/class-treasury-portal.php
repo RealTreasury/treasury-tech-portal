@@ -67,6 +67,7 @@ class Treasury_Tech_Portal {
         );
 
         $categories = TTP_Data::get_categories();
+        $domains    = TTP_Data::get_domains();
         wp_localize_script(
             'treasury-tech-portal-js',
             'TTP_DATA',
@@ -75,6 +76,8 @@ class Treasury_Tech_Portal {
                 'plugin_url'          => esc_url_raw( $plugin_url ),
                 'enabled_categories'  => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) ),
                 'available_categories' => array_keys( $categories ),
+                'enabled_domains'     => (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, $domains ),
+                'available_domains'   => $domains,
                 'category_labels'     => $categories,
                 'category_icons'      => TTP_Data::get_category_icons(),
             ]

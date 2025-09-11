@@ -141,6 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         class TreasuryTechPortal {
             constructor() {
                 this.TREASURY_TOOLS = [];
+                this.enabledDomains = Array.isArray(TTP_DATA.enabled_domains) ? TTP_DATA.enabled_domains : [];
                 this.toolsLoaded = this.fetchTools();
 
                 // Category information with videos
@@ -352,6 +353,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     subcategories.forEach(s => url.searchParams.append('sub_category', s));
                     const response = await fetch(url.toString());
                     const data = await response.json();
+                    const vendors = Array.isArray(data) ? data : (data.vendors || []);
+                    if (Array.isArray(data.enabled_domains)) {
+                        this.enabledDomains = data.enabled_domains;
+                    }
                     const allRegions = new Set();
                     const allCategories = new Set();
                     const allSubcategories = new Set();
@@ -362,7 +367,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             set.add(trimmed);
                         }
                     };
-                    this.TREASURY_TOOLS = (Array.isArray(data) ? data : []).map(vendor => {
+                    this.TREASURY_TOOLS = vendors.map(vendor => {
                         if (!Array.isArray(vendor.regions) || vendor.regions.length === 0) {
                             console.warn('Vendor missing regions:', vendor);
                         }
@@ -1080,6 +1085,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             filterAndDisplayTools() {
                 let tools = [...this.TREASURY_TOOLS];
+
+                if (Array.isArray(this.enabledDomains) && this.enabledDomains.length) {
+                    tools = tools.filter(t => {
+                        const doms = Array.isArray(t.domain) ? t.domain : (t.domain ? [t.domain] : []);
+                        return doms.length === 0 || doms.some(d => this.enabledDomains.includes(d));
+                    });
+                }
 
                 if (this.searchTerm) {
                     const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
