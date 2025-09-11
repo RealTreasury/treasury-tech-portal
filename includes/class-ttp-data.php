@@ -512,6 +512,33 @@ class TTP_Data {
     }
 
     /**
+     * Resolve linked records with simple retry logic.
+     *
+     * Attempts to resolve IDs multiple times before giving up.
+     *
+     * @param string $table         Airtable table name.
+     * @param array  $ids           Record IDs to resolve.
+     * @param string $primary_field Primary field to retrieve.
+     * @param int    $retries       Number of attempts.
+     * @return array|WP_Error Array of resolved values or WP_Error on failure.
+     */
+    private static function resolve_linked_records_with_retry( $table, $ids, $primary_field, $retries = 3 ) {
+        $attempt = 0;
+        do {
+            $result = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+            if ( ! is_wp_error( $result ) ) {
+                return $result;
+            }
+            $attempt++;
+            if ( function_exists( 'wp_sleep' ) && $attempt < $retries ) {
+                wp_sleep( 1 );
+            }
+        } while ( $attempt < $retries );
+
+        return $result;
+    }
+
+    /**
      * Resolve linked record IDs to their corresponding names.
      *
      * Parses the raw value, replaces any Airtable record IDs with the
@@ -542,11 +569,12 @@ class TTP_Data {
         }
 
         if ( ! empty( $ids ) ) {
-            $resolved = TTP_Airbase::resolve_linked_records( $table, $ids, $primary_field );
+            $resolved = self::resolve_linked_records_with_retry( $table, $ids, $primary_field );
             if ( is_wp_error( $resolved ) ) {
                 if ( function_exists( 'error_log' ) ) {
-                    $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
-                    error_log( sprintf( 'TTP_Data: Failed resolving %s for record IDs %s: %s', $field, $ids_str, $resolved->get_error_message() ) );
+                    $ids_str   = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
+                    $table_str = sanitize_text_field( $table );
+                    error_log( sprintf( 'TTP_Data: Failed resolving %s from table %s for record IDs %s: %s', $field, $table_str, $ids_str, $resolved->get_error_message() ) );
                 }
                 self::log_unresolved_field( $field, $ids );
                 foreach ( $placeholders as $idx => $id ) {

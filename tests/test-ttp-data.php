@@ -1340,6 +1340,37 @@ class TTP_Data_Test extends TestCase {
         $this->assertFalse( $called );
     }
 
+    public function test_resolve_linked_field_purges_ids_after_failed_retries() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+
+        $record = array( 'Regions' => array( 'recreg1', 'recreg2' ) );
+
+        $calls = 0;
+        \Patchwork\replace(
+            'TTP_Airbase::resolve_linked_records',
+            function ( $table, $ids, $primary = 'Name' ) use ( &$calls ) {
+                $calls++;
+                return new WP_Error( 'err', 'fail' );
+            }
+        );
+
+        \Patchwork\replace( 'wp_sleep', function ( $seconds ) {} );
+
+        $logged = array();
+        \Patchwork\replace( 'error_log', function ( $msg ) use ( &$logged ) {
+            $logged[] = $msg;
+        } );
+
+        $result = $method->invoke( null, $record, 'Regions', 'RegionsTable', 'Name' );
+
+        $this->assertSame( array(), $result );
+        $this->assertSame( 3, $calls );
+        $this->assertNotEmpty( $logged );
+        $this->assertStringContainsString( 'RegionsTable', $logged[0] );
+        $this->assertStringContainsString( 'recreg1, recreg2', $logged[0] );
+    }
+
     public function vendors_need_resolution_region_provider() {
         return array(
             'region'     => array( 'region' ),
