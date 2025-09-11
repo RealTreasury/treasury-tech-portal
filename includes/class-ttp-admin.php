@@ -116,7 +116,7 @@ class TTP_Admin {
                     <tr>
                         <th scope="row"><label for="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>"><?php esc_html_e('API Token', 'treasury-tech-portal'); ?></label></th>
                         <td>
-                            <input name="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" type="password" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" value="<?php echo esc_attr($api_token); ?>" class="regular-text" />
+                            <input name="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" type="password" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>" value="<?php echo esc_attr($api_token); ?>" class="regular-text" autocomplete="current-password" />
                             <button type="button" id="<?php echo esc_attr(TTP_Airbase::OPTION_TOKEN); ?>_toggle" class="button"><?php esc_html_e('Reveal', 'treasury-tech-portal'); ?></button>
                         </td>
                     </tr>
