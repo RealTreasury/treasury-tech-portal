@@ -1180,4 +1180,43 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertTrue( $method->invoke( null, $vendors ) );
     }
+
+    public function test_resolve_linked_field_resolves_ids_and_names() {
+        $fields = array(
+            'Regions' => array( 'rec123', 'APAC' ),
+        );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary_field = 'Name' ) {
+            $this->assertSame( array( 'rec123' ), $ids );
+            return array( 'North America' );
+        } );
+
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+        $result = $method->invokeArgs( null, array( $fields, 'Regions', 'Regions', 'Name' ) );
+
+        $this->assertSame( array( 'North America', 'APAC' ), $result );
+    }
+
+    public function test_resolve_linked_field_handles_errors() {
+        $fields = array(
+            'Regions' => array( 'rec999' ),
+        );
+
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function () {
+            return new WP_Error( 'err', 'fail' );
+        } );
+
+        $logged = '';
+        \Patchwork\replace( 'error_log', function ( $msg ) use ( &$logged ) {
+            $logged = $msg;
+        } );
+
+        $method = new \ReflectionMethod( TTP_Data::class, 'resolve_linked_field' );
+        $method->setAccessible( true );
+        $result = $method->invokeArgs( null, array( $fields, 'Regions', 'Regions', 'Name' ) );
+
+        $this->assertSame( array(), $result );
+        $this->assertStringContainsString( 'rec999', $logged );
+    }
 }
