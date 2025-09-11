@@ -1394,6 +1394,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 container.innerHTML = '';
                 container.style.display = 'none';
                 this.advancedFilters.subcategories = [];
+                const subcategoryCheckboxes = document.querySelectorAll('#subcategoryFilters input[type="checkbox"]');
+                subcategoryCheckboxes.forEach(cb => (cb.checked = false));
                 if (!category || !this.subcategoriesByCategory[category]) {
                     return;
                 }
