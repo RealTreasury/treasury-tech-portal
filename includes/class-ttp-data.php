@@ -122,6 +122,14 @@ class TTP_Data {
         foreach ($records as $record) {
             $fields = isset($record['fields']) && is_array($record['fields']) ? $record['fields'] : $record;
 
+            $regions_field = $fields['Regions'] ?? array();
+            $regions       = array();
+            if ( is_string( $regions_field ) ) {
+                $regions = array_filter( array_map( 'trim', explode( ',', $regions_field ) ) );
+            } elseif ( is_array( $regions_field ) ) {
+                $regions = array_map( 'sanitize_text_field', $regions_field );
+            }
+
             $vendors[] = array(
                 'id'              => sanitize_text_field($record['id'] ?? ''),
                 'name'            => $fields['Product Name'] ?? '',
@@ -131,7 +139,7 @@ class TTP_Data {
                 'status'          => $fields['Status'] ?? '',
                 'hosted_type'     => $fields['Hosted Type'] ?? array(),
                 'domain'          => $fields['Domain'] ?? array(),
-                'regions'         => $fields['Regions'] ?? array(),
+                'regions'         => $regions,
                 'sub_categories'  => $fields['Sub Categories'] ?? array(),
                 'parent_category' => $fields['Parent Category'] ?? '',
                 'capabilities'    => $fields['Capabilities'] ?? array(),

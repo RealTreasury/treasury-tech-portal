@@ -69,8 +69,8 @@ class TTP_Airbase {
         $offset  = '';
 
         do {
-            $url = $base_endpoint;
-            $query = array();
+            $url   = $base_endpoint;
+            $query = array( 'cellFormat=string' );
 
             if ( $offset ) {
                 $query[] = 'offset=' . rawurlencode( $offset );

@@ -32,6 +32,7 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'     => ['Cloud'],
                 'Parent Category' => 'Cash',
                 'Sub Categories'  => ['Payments'],
+                'Regions'         => 'North America, Europe',
             ],
         ];
 
@@ -60,7 +61,7 @@ class TTP_Data_Test extends TestCase {
                 'status'          => 'Active',
                 'hosted_type'     => ['Cloud'],
                 'domain'          => [],
-                'regions'         => [],
+                'regions'         => ['North America', 'Europe'],
                 'sub_categories'  => ['Payments'],
                 'parent_category' => 'Cash',
                 'capabilities'    => [],
@@ -108,14 +109,14 @@ class TTP_Data_Test extends TestCase {
             [
                 'name'            => 'Tool A',
                 'category'        => 'CASH',
-                'regions'         => ['EMEA'],
+                'regions'         => ['Europe'],
                 'parent_category' => 'Cash',
                 'sub_categories'  => ['Payments'],
             ],
             [
                 'name'            => 'Tool B',
                 'category'        => 'LITE',
-                'regions'         => ['NA'],
+                'regions'         => ['North America'],
                 'parent_category' => 'Lite',
                 'sub_categories'  => ['FX'],
             ],
@@ -126,7 +127,7 @@ class TTP_Data_Test extends TestCase {
         });
 
         $filtered = TTP_Data::get_tools([
-            'region'          => 'EMEA',
+            'region'          => 'Europe',
             'parent_category' => 'Cash',
             'sub_category'    => 'Payments',
         ]);
