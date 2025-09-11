@@ -1412,6 +1412,22 @@ class TTP_Data_Test extends TestCase {
         );
     }
 
+    public function test_parse_record_ids_preserves_numeric_values() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( array( 123 ), $method->invoke( null, 123 ) );
+    }
+
+    public function test_parse_record_ids_handles_select_field_arrays() {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $input = array(
+            array( 'id' => 'sel1', 'text' => 'Alpha' ),
+            array( 'id' => 'sel2', 'name' => 'Beta' ),
+        );
+        $this->assertSame( array( 'Alpha', 'Beta' ), $method->invoke( null, $input ) );
+    }
+
     /**
      * @dataProvider contains_record_ids_provider
      */

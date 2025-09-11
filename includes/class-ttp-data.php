@@ -503,7 +503,7 @@ class TTP_Data {
     private static function parse_record_ids( $value ) {
         if ( is_string( $value ) ) {
             $maybe_json = json_decode( $value, true );
-            if ( json_last_error() === JSON_ERROR_NONE ) {
+            if ( json_last_error() === JSON_ERROR_NONE && ( is_array( $maybe_json ) || is_object( $maybe_json ) ) ) {
                 return self::parse_record_ids( $maybe_json );
             }
 
@@ -546,22 +546,31 @@ class TTP_Data {
             if ( is_array( $item ) ) {
                 if ( isset( $item['name'] ) ) {
                     $results[] = trim( $item['name'] );
+                } elseif ( isset( $item['text'] ) ) {
+                    $results[] = trim( $item['text'] );
                 } elseif ( isset( $item['id'] ) ) {
                     $results[] = trim( $item['id'] );
                 }
 
-                $nested = array_diff_key( $item, array_flip( array( 'name', 'id' ) ) );
+                $nested = array_diff_key( $item, array_flip( array( 'name', 'id', 'text' ) ) );
                 if ( ! empty( $nested ) ) {
                     $results = array_merge( $results, self::parse_record_ids( $nested ) );
                 }
             } elseif ( is_string( $item ) ) {
                 $results = array_merge( $results, self::parse_record_ids( $item ) );
+            } elseif ( is_numeric( $item ) ) {
+                $results[] = $item + 0;
             } else {
                 $results[] = trim( (string) $item );
             }
         }
 
-        return array_filter( $results );
+        return array_filter(
+            $results,
+            function ( $v ) {
+                return '' !== $v && null !== $v;
+            }
+        );
     }
 
     /**
@@ -663,13 +672,16 @@ class TTP_Data {
         $ids          = array();
 
         foreach ( $values as $idx => $item ) {
-            $item = (string) $item;
-            if ( self::contains_record_ids( array( $item ) ) ) {
+            if ( is_string( $item ) && self::contains_record_ids( array( $item ) ) ) {
                 $clean               = preg_replace( '/[^A-Za-z0-9]/', '', $item );
                 $placeholders[ $idx ] = $clean;
                 $ids[]               = $clean;
             } else {
-                $values[ $idx ] = sanitize_text_field( $item );
+                if ( is_string( $item ) ) {
+                    $values[ $idx ] = sanitize_text_field( $item );
+                } elseif ( is_numeric( $item ) ) {
+                    $values[ $idx ] = $item + 0;
+                }
             }
         }
 
@@ -700,23 +712,30 @@ class TTP_Data {
                     unset( $values[ $idx ] );
                 }
             } else {
-                $resolved = array_map( 'sanitize_text_field', (array) $resolved );
+                $sanitized = array();
+                foreach ( (array) $resolved as $val ) {
+                    if ( is_string( $val ) ) {
+                        $sanitized[] = sanitize_text_field( $val );
+                    } elseif ( is_numeric( $val ) ) {
+                        $sanitized[] = $val + 0;
+                    }
+                }
 
-                if ( empty( $resolved ) ) {
+                if ( empty( $sanitized ) ) {
                     self::log_unresolved_field( $field, $ids );
                     foreach ( $placeholders as $idx => $id ) {
                         unset( $values[ $idx ] );
                     }
                 } else {
-                    if ( count( $resolved ) < count( $ids ) ) {
-                        $missing = array_slice( $ids, count( $resolved ) );
+                    if ( count( $sanitized ) < count( $ids ) ) {
+                        $missing = array_slice( $ids, count( $sanitized ) );
                         self::log_unresolved_field( $field, $missing );
                     }
 
                     $i = 0;
                     foreach ( $placeholders as $idx => $id ) {
-                        if ( isset( $resolved[ $i ] ) ) {
-                            $values[ $idx ] = $resolved[ $i ];
+                        if ( isset( $sanitized[ $i ] ) ) {
+                            $values[ $idx ] = $sanitized[ $i ];
                         } else {
                             unset( $values[ $idx ] );
                         }
@@ -726,7 +745,14 @@ class TTP_Data {
             }
         }
 
-        return array_values( array_filter( $values ) );
+        return array_values(
+            array_filter(
+                $values,
+                function ( $v ) {
+                    return $v !== null && $v !== '' && $v !== false;
+                }
+            )
+        );
     }
 
 /**
