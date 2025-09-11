@@ -66,6 +66,15 @@ class TTP_Rest {
             $args['sub_category'] = array_map('sanitize_text_field', (array) $sub_category);
         }
 
+        $enabled = array_map('sanitize_text_field', (array) get_option('ttp_enabled_categories', array()));
+        if (!empty($enabled)) {
+            if (isset($args['category'])) {
+                $args['category'] = array_values(array_intersect($args['category'], $enabled));
+            } else {
+                $args['category'] = $enabled;
+            }
+        }
+
         $tools = TTP_Data::get_tools($args);
 
         return rest_ensure_response($tools);
@@ -73,6 +82,19 @@ class TTP_Rest {
 
     public static function get_vendors($request) {
         $vendors = TTP_Data::get_all_vendors();
+        $enabled = array_map('sanitize_text_field', (array) get_option('ttp_enabled_categories', array()));
+        if (!empty($enabled)) {
+            $vendors = array_filter($vendors, function ($vendor) use ($enabled) {
+                $cat = '';
+                if (!empty($vendor['category'])) {
+                    $cat = $vendor['category'];
+                } elseif (!empty($vendor['categories']) && is_array($vendor['categories'])) {
+                    $cat = $vendor['categories'][0];
+                }
+                return in_array($cat, $enabled, true);
+            });
+            $vendors = array_values($vendors);
+        }
         $needs_refresh = false;
 
         $vendors = (array) $vendors;

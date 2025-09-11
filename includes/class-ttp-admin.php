@@ -11,6 +11,7 @@ class TTP_Admin {
         add_action('admin_post_ttp_retry_resolution', [__CLASS__, 'retry_resolution']);
         add_action('admin_post_ttp_test_airbase', [__CLASS__, 'test_airbase_connection']);
         add_action('admin_post_ttp_download_unresolved', [__CLASS__, 'download_unresolved_report']);
+        add_action('admin_post_ttp_update_categories', [__CLASS__, 'update_categories']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
     }
 
@@ -184,6 +185,21 @@ class TTP_Admin {
         }
 
         $vendors = TTP_Data::get_all_vendors();
+        $all_categories = array();
+        foreach ($vendors as $vendor) {
+            $cat = '';
+            if (!empty($vendor['category'])) {
+                $cat = $vendor['category'];
+            } elseif (!empty($vendor['categories']) && is_array($vendor['categories'])) {
+                $cat = $vendor['categories'][0];
+            }
+            $cat = sanitize_text_field($cat);
+            if ($cat !== '') {
+                $all_categories[$cat] = $cat;
+            }
+        }
+        $all_categories     = array_values($all_categories);
+        $enabled_categories = (array) get_option('ttp_enabled_categories', $all_categories);
         include dirname(__DIR__) . '/templates/admin-page.php';
     }
 
@@ -304,6 +320,25 @@ class TTP_Admin {
         }
 
         wp_redirect( $url );
+        exit;
+    }
+
+    public static function update_categories() {
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
+        }
+        check_admin_referer('ttp_update_categories', 'ttp_update_categories_nonce');
+        $categories = array();
+        if (!empty($_POST['categories']) && is_array($_POST['categories'])) {
+            foreach ($_POST['categories'] as $cat) {
+                $cat = sanitize_text_field($cat);
+                if ($cat !== '') {
+                    $categories[$cat] = $cat;
+                }
+            }
+        }
+        update_option('ttp_enabled_categories', array_values($categories));
+        wp_redirect(admin_url('admin.php?page=treasury-tools&categories_updated=1'));
         exit;
     }
 }

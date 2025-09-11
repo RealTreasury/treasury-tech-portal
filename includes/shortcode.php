@@ -13,6 +13,7 @@ if ($video_url && !wp_http_validate_url($video_url)) {
 if ($poster_url && !wp_http_validate_url($poster_url)) {
     $poster_url = '';
 }
+$enabled_categories = array_map('sanitize_text_field', (array) get_option('ttp_enabled_categories', array('CASH', 'LITE', 'TRMS')));
 ?>
 <div class="treasury-portal">
     <!-- Loading Screen -->
@@ -190,7 +191,7 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
             </div>
             <div class="tools-grid" id="listViewContainer" style="display:none;"></div>
 
-            <!-- Cash Tools Section -->
+            <?php if (in_array('CASH', $enabled_categories, true)) : ?>
             <div class="category-section category-cash" data-category="CASH" style="display: block;">
                 <div class="category-header" data-category="CASH">
                     <div class="category-info">
@@ -213,8 +214,9 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                     <!-- Tools will be populated by JavaScript -->
                 </div>
             </div>
+            <?php endif; ?>
 
-            <!-- TMS-Lite Section -->
+            <?php if (in_array('LITE', $enabled_categories, true)) : ?>
             <div class="category-section category-lite" data-category="LITE" style="display: block;">
                 <div class="category-header" data-category="LITE">
                     <div class="category-info">
@@ -237,8 +239,9 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                     <!-- Tools will be populated by JavaScript -->
                 </div>
             </div>
+            <?php endif; ?>
 
-            <!-- Enterprise Section -->
+            <?php if (in_array('TRMS', $enabled_categories, true)) : ?>
             <div class="category-section category-enterprise" data-category="TRMS" style="display: block;">
                 <div class="category-header" data-category="TRMS">
                     <div class="category-info">
@@ -260,7 +263,8 @@ if ($poster_url && !wp_http_validate_url($poster_url)) {
                 <div class="tools-grid" id="tools-TRMS">
                     <!-- Tools will be populated by JavaScript -->
                 </div>
-        </div>
+            </div>
+            <?php endif; ?>
     </div>
 
     <!-- Tool Details Modal -->

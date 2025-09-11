@@ -24,8 +24,22 @@
         <input type="hidden" name="action" value="ttp_refresh_vendors" />
         <?php submit_button(__('Refresh Products', 'treasury-tech-portal'), 'primary', 'refresh-vendors'); ?>
     </form>
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin-top:1em;">
+        <?php wp_nonce_field('ttp_update_categories', 'ttp_update_categories_nonce'); ?>
+        <input type="hidden" name="action" value="ttp_update_categories" />
+        <h2><?php esc_html_e('Enabled Categories', 'treasury-tech-portal'); ?></h2>
+        <fieldset>
+            <?php foreach ($all_categories as $cat) : ?>
+                <label><input type="checkbox" name="categories[]" value="<?php echo esc_attr($cat); ?>" <?php checked(in_array($cat, $enabled_categories, true)); ?> /> <?php echo esc_html($cat); ?></label><br />
+            <?php endforeach; ?>
+        </fieldset>
+        <?php submit_button(__('Save Categories', 'treasury-tech-portal')); ?>
+    </form>
     <?php if (isset($_GET['refreshed'])) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Product cache refreshed.', 'treasury-tech-portal'); ?></p></div>
+    <?php endif; ?>
+    <?php if (isset($_GET['categories_updated'])) : ?>
+        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Categories updated.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
         <div class="treasury-portal-admin-search">

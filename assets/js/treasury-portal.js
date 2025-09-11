@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         class TreasuryTechPortal {
             constructor() {
                 this.TREASURY_TOOLS = [];
-                this.toolsLoaded = this.fetchTools();
 
                 // Category information with videos
                 this.CATEGORY_INFO = {
@@ -215,6 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     LITE: liteTags,
                     TRMS: trmsTags
                 };
+                this.enabledCategories = Array.isArray(TTP_DATA.enabled_categories) && TTP_DATA.enabled_categories.length ? TTP_DATA.enabled_categories : Object.keys(this.CATEGORY_INFO);
 
                 this.currentFilter = 'ALL';
                 this.searchTerm = '';
@@ -278,7 +278,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         } catch (_) {}
                     }
                 });
-           }
+                this.toolsLoaded = this.fetchTools();
+            }
 
             isMobile() {
                 return window.matchMedia('(max-width: 768px)').matches;
@@ -400,7 +401,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         };
                     });
                     this.allRegions = Array.from(allRegions).sort((a, b) => a.localeCompare(b));
-                    this.allCategories = Array.from(allCategories).sort((a, b) => a.localeCompare(b));
+                    const categoriesFromData = Array.from(allCategories).sort((a, b) => a.localeCompare(b));
+                    this.allCategories = Array.from(new Set([...this.enabledCategories, ...categoriesFromData])).sort((a, b) => a.localeCompare(b));
                     this.allSubcategories = Array.from(allSubcategories).sort((a, b) => a.localeCompare(b));
                     this.subcategoriesByCategory = {};
                     Object.keys(subcategoriesByCategory).forEach(cat => {
@@ -1121,7 +1123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             displayFilteredTools() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 const hasResults = this.filteredTools.length > 0;
 
                 const noResults = document.getElementById('noResults');
@@ -1296,7 +1298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             populateCategoryTags() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 categories.forEach(category => {
                     const container = document.getElementById(`category-tags-${category}`);
                     if (container) {
@@ -1451,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             updateVisibleCounts() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 const categoryCounts = categories.map(category => {
                     const count = this.filteredTools.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);
@@ -1491,7 +1493,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             updateCounts() {
-                const categories = ['CASH', 'LITE', 'TRMS'];
+                const categories = this.enabledCategories;
                 categories.forEach(category => {
                     const count = this.TREASURY_TOOLS.filter(tool => tool.category === category).length;
                     const countElement = document.getElementById(`count-${category}`);

@@ -66,12 +66,14 @@ class Treasury_Tech_Portal {
             true
         );
 
+        $enabled_cats = array_map('sanitize_text_field', (array) get_option('ttp_enabled_categories', array('CASH', 'LITE', 'TRMS')));
         wp_localize_script(
             'treasury-tech-portal-js',
             'TTP_DATA',
             [
-                'rest_url'  => esc_url_raw(rest_url('ttp/v1/vendors')),
-                'plugin_url' => esc_url_raw($plugin_url)
+                'rest_url'          => esc_url_raw(rest_url('ttp/v1/vendors')),
+                'plugin_url'        => esc_url_raw($plugin_url),
+                'enabled_categories' => array_values($enabled_cats),
             ]
         );
     }
