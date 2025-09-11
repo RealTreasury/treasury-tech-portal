@@ -284,6 +284,8 @@ class TTP_Data {
      * Refresh vendor cache from Airbase.
      */
     public static function refresh_vendor_cache() {
+        do_action( 'rt_refresh_vendors' );
+
         $field_names = array(
             'Product Name',
             'Linked Vendor',
@@ -365,6 +367,30 @@ class TTP_Data {
             }
         }
         unset( $record );
+
+        $field_to_linked = array(
+            'regions'        => 'Regions',
+            'category'       => 'Categories',
+            'sub_categories' => 'Sub Categories',
+            'capabilities'   => 'Capabilities',
+        );
+        $needs_map       = false;
+        foreach ( $records as $r ) {
+            foreach ( array_keys( $field_to_linked ) as $fname ) {
+                $v = $r['fields'][ $fname ] ?? null;
+                if ( ( is_string( $v ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $v ) ) || ( is_array( $v ) && array_filter( $v, function ( $x ) {
+                    return is_string( $x ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $x );
+                } ) ) ) {
+                    $needs_map = true;
+                    break 2;
+                }
+            }
+        }
+        if ( $needs_map ) {
+            $base_id = get_option( TTP_Airbase::OPTION_BASE_ID, TTP_Airbase::DEFAULT_BASE_ID );
+            $token   = get_option( TTP_Airbase::OPTION_TOKEN );
+            $records = rt_airtable_map_ids_to_names( $records, $field_to_linked, $base_id, $token );
+        }
 
         $present_keys = array();
         foreach ( $records as $record ) {

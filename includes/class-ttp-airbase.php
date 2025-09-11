@@ -167,7 +167,13 @@ class TTP_Airbase {
 
         do {
             $url   = $base_endpoint;
-            $query = array( 'cellFormat=json' );
+            $query = array(
+                'pageSize=100',
+                'cellFormat=string',
+                'returnFieldsByFieldId=' . ( $return_fields_by_id ? 'true' : 'false' ),
+                'userLocale=en-US',
+                'timeZone=UTC',
+            );
 
             if ( $offset ) {
                 $query[] = 'offset=' . rawurlencode( $offset );
@@ -176,9 +182,6 @@ class TTP_Airbase {
             if ( ! empty( $fields ) ) {
                 foreach ( $fields as $field ) {
                     $query[] = 'fields[]=' . rawurlencode( $field );
-                }
-                if ( $return_fields_by_id ) {
-                    $query[] = 'returnFieldsByFieldId=true';
                 }
             }
 
@@ -557,10 +560,7 @@ class TTP_Airbase {
             }
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $url      = $endpoint . '?cellFormat=json&fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
-            if ( $use_field_ids ) {
-                $url .= '&returnFieldsByFieldId=true';
-            }
+            $url      = $endpoint . '?pageSize=100&cellFormat=string&returnFieldsByFieldId=' . ( $use_field_ids ? 'true' : 'false' ) . '&fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter ) . '&userLocale=en-US&timeZone=UTC';
             $response = self::request_with_backoff( $url, $args );
 
             if ( is_wp_error( $response ) ) {
@@ -633,4 +633,72 @@ class TTP_Airbase {
 
         return $ordered;
     }
+}
+
+/**
+ * Replace Airtable record IDs with their primary field names.
+ *
+ * @param array  $records             Airtable records.
+ * @param array  $field_to_linked     Map of field name => linked table name.
+ * @param string $base_id             Airtable base ID.
+ * @param string $token               API token.
+ * @return array                      Records with IDs replaced by names.
+ */
+function rt_airtable_map_ids_to_names( array $records, array $field_to_linked, $base_id, $token ) {
+    foreach ( $field_to_linked as $field_name => $linked_table ) {
+        $map_key = 'rt_airtable_map_' . $base_id . '_' . $linked_table . '_v1';
+        $map     = get_transient( $map_key );
+        if ( false === $map ) {
+            $map    = array();
+            $link   = add_query_arg(
+                array(
+                    'pageSize'               => 100,
+                    'cellFormat'             => 'string',
+                    'returnFieldsByFieldId'  => false,
+                    'userLocale'             => 'en-US',
+                    'timeZone'               => 'UTC',
+                ),
+                'https://api.airtable.com/v0/' . $base_id . '/' . $linked_table
+            );
+            $resp   = wp_remote_get(
+                $link,
+                array(
+                    'headers' => array( 'Authorization' => 'Bearer ' . $token ),
+                    'timeout' => 15,
+                )
+            );
+            if ( ! is_wp_error( $resp ) ) {
+                $data = json_decode( wp_remote_retrieve_body( $resp ), true );
+                foreach ( ( $data['records'] ?? array() ) as $r ) {
+                    $primary          = $r['fields'][ array_key_first( $r['fields'] ) ] ?? $r['id'];
+                    $map[ $r['id'] ] = is_string( $primary ) ? $primary : ( is_array( $primary ) ? reset( $primary ) : $r['id'] );
+                }
+                set_transient( $map_key, $map, DAY_IN_SECONDS );
+            }
+        }
+
+        foreach ( $records as &$rec ) {
+            if ( ! isset( $rec['fields'][ $field_name ] ) ) {
+                continue;
+            }
+            $value    = $rec['fields'][ $field_name ];
+            $is_recid = static function ( $v ) {
+                return is_string( $v ) && preg_match( '/^rec[a-zA-Z0-9]{10,}$/', $v );
+            };
+            if ( is_array( $value ) ) {
+                $rec['fields'][ $field_name ] = array_values( array_filter( array_map(
+                    function ( $id ) use ( $is_recid, $map ) {
+                        return $is_recid( $id ) ? ( $map[ $id ] ?? null ) : $id;
+                    },
+                    $value
+                ), function ( $v ) {
+                    return null !== $v && '' !== $v;
+                } ) );
+            } elseif ( $is_recid( $value ) && isset( $map[ $value ] ) ) {
+                $rec['fields'][ $field_name ] = $map[ $value ];
+            }
+        }
+        unset( $rec );
+    }
+    return $records;
 }
