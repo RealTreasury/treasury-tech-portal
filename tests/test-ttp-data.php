@@ -727,6 +727,66 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
+     * @dataProvider linked_fields_provider
+     */
+    public function test_refresh_vendor_cache_resolves_id_objects_for_field( $field, $table, $output_key, $mapping ) {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Linked Vendor'   => 'Acme Corp',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Hosted Type'     => ['Cloud'],
+                'Category'        => 'Cash',
+                'Sub Categories'  => ['Payments'],
+                'Regions'         => ['North America'],
+                'Domain'          => ['Banking'],
+                'Capabilities'    => ['API'],
+            ]),
+        ];
+
+        $field_id = $this->schema_map[ $field ];
+        $record['fields'][ $field_id ] = array_map(
+            function ( $id ) {
+                return [ 'id' => $id ];
+            },
+            array_keys( $mapping )
+        );
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        $tables_called = [];
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids ) use ( $table, $mapping, &$tables_called ) {
+            $tables_called[] = $table_id;
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $mapping[ $id ] ) ) {
+                    $out[] = $mapping[ $id ];
+                }
+            }
+            return $out;
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( [ $table ], $tables_called );
+        $expected = array_values( $mapping );
+        if ( 'vendor' === $output_key || 'category' === $output_key ) {
+            $this->assertSame( reset( $expected ), $captured[0][ $output_key ] );
+        } else {
+            $this->assertSame( $expected, $captured[0][ $output_key ] );
+        }
+    }
+
+    /**
      * @dataProvider comma_separated_fields_provider
      */
     public function test_refresh_vendor_cache_resolves_comma_separated_ids_for_field( $field, $table, $output_key, $mapping ) {

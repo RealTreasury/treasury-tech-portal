@@ -549,6 +549,55 @@ class TTP_Airbase_Test extends TestCase {
             ],
         ]);
 
+        expect('wp_remote_get')->once()->andReturnUsing(function ($url) use ($body) {
+            $parts = parse_url($url);
+            TestCase::assertSame(TTP_Airbase::DEFAULT_BASE_URL . '/base123/Vendors', $parts['scheme'] . '://' . $parts['host'] . $parts['path']);
+            parse_str($parts['query'], $query);
+            TestCase::assertSame('json', $query['cellFormat']);
+            TestCase::assertSame(['Name'], $query['fields']);
+            TestCase::assertStringContainsString('rec1', $query['filterByFormula']);
+            TestCase::assertStringContainsString('rec2', $query['filterByFormula']);
+
+            return [
+                'response' => [ 'code' => 200 ],
+                'body'     => $body,
+            ];
+        });
+
+        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2']);
+        $this->assertSame(['First', 'Second'], $values);
+    }
+
+    public function test_resolve_linked_records_parses_json_cell_values() {
+        when('get_option')->alias(function ($option, $default = false) {
+            switch ($option) {
+                case TTP_Airbase::OPTION_TOKEN:
+                    return 'abc123';
+                case TTP_Airbase::OPTION_BASE_URL:
+                    return TTP_Airbase::DEFAULT_BASE_URL;
+                case TTP_Airbase::OPTION_BASE_ID:
+                    return 'base123';
+                default:
+                    return $default;
+            }
+        });
+        when('is_wp_error')->alias(function ($thing) {
+            return $thing instanceof WP_Error;
+        });
+        when('wp_remote_retrieve_response_code')->alias(function ($response) {
+            return $response['response']['code'];
+        });
+        when('wp_remote_retrieve_body')->alias(function ($response) {
+            return $response['body'];
+        });
+
+        $body = json_encode([
+            'records' => [
+                [ 'fields' => [ 'Name' => [ 'text' => 'First' ] ] ],
+                [ 'fields' => [ 'Name' => [ 'text' => 'Second' ] ] ],
+            ],
+        ]);
+
         expect('wp_remote_get')->once()->andReturn([
             'response' => [ 'code' => 200 ],
             'body'     => $body,
@@ -588,19 +637,24 @@ class TTP_Airbase_Test extends TestCase {
 
         $self  = $this;
         $call  = 0;
-        expect('wp_remote_get')->twice()->andReturnUsing(function ($url, $args) use ($self, &$call) {
+        expect('wp_remote_get')->twice()->andReturnUsing(function ($url) use ($self, &$call) {
             $call++;
+            $parts = parse_url($url);
+            parse_str($parts['query'], $query);
+            TestCase::assertSame('json', $query['cellFormat']);
+            TestCase::assertSame(['Name'], $query['fields']);
+
             if ( 1 === $call ) {
-                $self->assertStringContainsString('rec1', $url);
-                $self->assertStringContainsString('rec50', $url);
-                $self->assertStringNotContainsString('rec51', $url);
+                TestCase::assertStringContainsString('rec1', $query['filterByFormula']);
+                TestCase::assertStringContainsString('rec50', $query['filterByFormula']);
+                TestCase::assertStringNotContainsString('rec51', $query['filterByFormula']);
 
                 $records = array();
                 for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE; $i++ ) {
                     $records[] = array( 'fields' => array( 'Name' => 'Name' . $i ) );
                 }
             } else {
-                $self->assertStringContainsString('rec51', $url);
+                TestCase::assertStringContainsString('rec51', $query['filterByFormula']);
 
                 $records = array();
                 for ( $i = TTP_Airbase::RECORD_BATCH_SIZE + 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {

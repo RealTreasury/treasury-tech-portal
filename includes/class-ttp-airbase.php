@@ -391,7 +391,7 @@ class TTP_Airbase {
             }
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
-            $url      = $endpoint . '?fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
+            $url  = $endpoint . '?cellFormat=json&fields[]=' . rawurlencode( $primary_field ) . '&filterByFormula=' . rawurlencode( $filter );
             $response = self::request_with_backoff( $url, $args );
 
             if ( is_wp_error( $response ) ) {
@@ -412,7 +412,38 @@ class TTP_Airbase {
             if ( isset( $data['records'] ) && is_array( $data['records'] ) ) {
                 foreach ( $data['records'] as $record ) {
                     if ( isset( $record['fields'][ $primary_field ] ) ) {
-                        $values[] = sanitize_text_field( $record['fields'][ $primary_field ] );
+                        $value = $record['fields'][ $primary_field ];
+
+                        if ( is_array( $value ) ) {
+                            if ( isset( $value['text'] ) ) {
+                                $value = $value['text'];
+                            } elseif ( isset( $value['name'] ) ) {
+                                $value = $value['name'];
+                            } elseif ( isset( $value['value'] ) ) {
+                                $value = $value['value'];
+                            } elseif ( isset( $value[0] ) ) {
+                                $first = $value[0];
+                                if ( is_array( $first ) ) {
+                                    if ( isset( $first['text'] ) ) {
+                                        $value = $first['text'];
+                                    } elseif ( isset( $first['name'] ) ) {
+                                        $value = $first['name'];
+                                    } elseif ( isset( $first['value'] ) ) {
+                                        $value = $first['value'];
+                                    } else {
+                                        $value = '';
+                                    }
+                                } else {
+                                    $value = $first;
+                                }
+                            } else {
+                                $value = '';
+                            }
+                        }
+
+                        if ( '' !== $value ) {
+                            $values[] = sanitize_text_field( $value );
+                        }
                     }
                 }
             }
