@@ -148,7 +148,20 @@ class TTP_Data {
                     $regions = array_map( 'sanitize_text_field', $regions_field );
                 }
             } elseif ( is_string( $regions_field ) ) {
-                $regions = array_filter( array_map( 'trim', explode( ',', $regions_field ) ) );
+                $parts = array_filter( array_map( 'trim', explode( ',', $regions_field ) ) );
+                if ( self::contains_record_ids( $parts ) ) {
+                    $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Regions'], $parts );
+                    if ( is_wp_error( $resolved ) ) {
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Data: Failed resolving Regions: ' . $resolved->get_error_message() );
+                        }
+                        $regions = array();
+                    } else {
+                        $regions = array_map( 'sanitize_text_field', (array) $resolved );
+                    }
+                } else {
+                    $regions = $parts;
+                }
             }
 
             $vendor_field = $fields['Linked Vendor'] ?? array();
@@ -167,8 +180,21 @@ class TTP_Data {
                 } else {
                     $vendor_name = sanitize_text_field( reset( $vendor_field ) );
                 }
-            } elseif ( ! empty( $vendor_field ) ) {
-                $vendor_name = sanitize_text_field( $vendor_field );
+            } elseif ( is_string( $vendor_field ) && $vendor_field !== '' ) {
+                $parts = array_filter( array_map( 'trim', explode( ',', $vendor_field ) ) );
+                if ( self::contains_record_ids( $parts ) ) {
+                    $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Linked Vendor'], $parts );
+                    if ( is_wp_error( $resolved ) ) {
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Data: Failed resolving Linked Vendor: ' . $resolved->get_error_message() );
+                        }
+                        $vendor_name = '';
+                    } elseif ( ! empty( $resolved ) ) {
+                        $vendor_name = sanitize_text_field( reset( $resolved ) );
+                    }
+                } else {
+                    $vendor_name = sanitize_text_field( reset( $parts ) );
+                }
             }
 
             $hosted_field = $fields['Hosted Type'] ?? array();
@@ -188,7 +214,20 @@ class TTP_Data {
                     $hosted_type = array_map( 'sanitize_text_field', $hosted_field );
                 }
             } elseif ( is_string( $hosted_field ) ) {
-                $hosted_type = array_filter( array_map( 'trim', explode( ',', $hosted_field ) ) );
+                $parts = array_filter( array_map( 'trim', explode( ',', $hosted_field ) ) );
+                if ( self::contains_record_ids( $parts ) ) {
+                    $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Hosted Type'], $parts );
+                    if ( is_wp_error( $resolved ) ) {
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Data: Failed resolving Hosted Type: ' . $resolved->get_error_message() );
+                        }
+                        $hosted_type = array();
+                    } else {
+                        $hosted_type = array_map( 'sanitize_text_field', (array) $resolved );
+                    }
+                } else {
+                    $hosted_type = $parts;
+                }
             }
 
             $domain_field = $fields['Domain'] ?? array();
@@ -238,7 +277,20 @@ class TTP_Data {
                     $domain = array_map( 'sanitize_text_field', $domain_field );
                 }
             } elseif ( is_string( $domain_field ) ) {
-                $domain = array_filter( array_map( 'trim', explode( ',', $domain_field ) ) );
+                $parts = array_filter( array_map( 'trim', explode( ',', $domain_field ) ) );
+                if ( self::contains_record_ids( $parts ) ) {
+                    $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Domain'], $parts );
+                    if ( is_wp_error( $resolved ) ) {
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Data: Failed resolving Domain: ' . $resolved->get_error_message() );
+                        }
+                        $domain = array();
+                    } else {
+                        $domain = array_map( 'sanitize_text_field', (array) $resolved );
+                    }
+                } else {
+                    $domain = $parts;
+                }
             }
 
             $sub_field     = $fields['Sub Categories'] ?? array();
@@ -258,7 +310,20 @@ class TTP_Data {
                     $sub_categories = array_map( 'sanitize_text_field', $sub_field );
                 }
             } elseif ( is_string( $sub_field ) ) {
-                $sub_categories = array_filter( array_map( 'trim', explode( ',', $sub_field ) ) );
+                $parts = array_filter( array_map( 'trim', explode( ',', $sub_field ) ) );
+                if ( self::contains_record_ids( $parts ) ) {
+                    $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Sub Categories'], $parts );
+                    if ( is_wp_error( $resolved ) ) {
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Data: Failed resolving Sub Categories: ' . $resolved->get_error_message() );
+                        }
+                        $sub_categories = array();
+                    } else {
+                        $sub_categories = array_map( 'sanitize_text_field', (array) $resolved );
+                    }
+                } else {
+                    $sub_categories = $parts;
+                }
             }
 
             $cap_field   = $fields['Capabilities'] ?? array();
@@ -278,7 +343,20 @@ class TTP_Data {
                     $capabilities = array_map( 'sanitize_text_field', $cap_field );
                 }
             } elseif ( is_string( $cap_field ) ) {
-                $capabilities = array_filter( array_map( 'trim', explode( ',', $cap_field ) ) );
+                $parts = array_filter( array_map( 'trim', explode( ',', $cap_field ) ) );
+                if ( self::contains_record_ids( $parts ) ) {
+                    $resolved = TTP_Airbase::resolve_linked_records( $linked_tables['Capabilities'], $parts );
+                    if ( is_wp_error( $resolved ) ) {
+                        if ( function_exists( 'error_log' ) ) {
+                            error_log( 'TTP_Data: Failed resolving Capabilities: ' . $resolved->get_error_message() );
+                        }
+                        $capabilities = array();
+                    } else {
+                        $capabilities = array_map( 'sanitize_text_field', (array) $resolved );
+                    }
+                } else {
+                    $capabilities = $parts;
+                }
             }
 
             $parent_category = sanitize_text_field( $fields['Parent Category'] ?? '' );
