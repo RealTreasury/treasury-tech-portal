@@ -449,10 +449,11 @@ class TTP_Airbase {
      * @param string $table_id      Table name or ID to query.
      * @param array  $ids           Record IDs to resolve.
      * @param string $primary_field Primary field to return. Defaults to "Name".
+     * @param bool   $use_field_ids Whether to request and return values using field IDs.
      *
      * @return array|WP_Error Array of record field values or WP_Error on failure.
      */
-    public static function resolve_linked_records( $table_id, $ids, $primary_field = '' ) {
+    public static function resolve_linked_records( $table_id, $ids, $primary_field = '', $use_field_ids = false ) {
         $ids = array_filter( (array) $ids );
         if ( empty( $ids ) ) {
             return array();
@@ -516,8 +517,14 @@ class TTP_Airbase {
             if ( is_wp_error( $primary ) ) {
                 return $primary;
             }
-            $query_field  = sanitize_text_field( $primary['id'] ? $primary['id'] : $primary['name'] );
-            $result_field = $primary['name'] ? $primary['name'] : $primary['id'];
+
+            if ( $use_field_ids && ! empty( $primary['id'] ) ) {
+                $query_field  = sanitize_text_field( $primary['id'] );
+                $result_field = $query_field;
+            } else {
+                $query_field  = sanitize_text_field( $primary['id'] ? $primary['id'] : $primary['name'] );
+                $result_field = $primary['name'] ? $primary['name'] : $primary['id'];
+            }
         } else {
             $query_field  = sanitize_text_field( $primary_field );
             $result_field = $query_field;
@@ -551,6 +558,9 @@ class TTP_Airbase {
             $filter = 'OR(' . implode( ',', $filter_parts ) . ')';
 
             $url      = $endpoint . '?cellFormat=json&fields[]=' . rawurlencode( $query_field ) . '&filterByFormula=' . rawurlencode( $filter );
+            if ( $use_field_ids ) {
+                $url .= '&returnFieldsByFieldId=true';
+            }
             $response = self::request_with_backoff( $url, $args );
 
             if ( is_wp_error( $response ) ) {
@@ -574,7 +584,7 @@ class TTP_Airbase {
                     $value     = null;
                     if ( isset( $record['fields'][ $result_field ] ) ) {
                         $value = $record['fields'][ $result_field ];
-                    } elseif ( isset( $record['fields'][ $query_field ] ) ) {
+                    } elseif ( ! $use_field_ids && isset( $record['fields'][ $query_field ] ) ) {
                         $value = $record['fields'][ $query_field ];
                     }
 
