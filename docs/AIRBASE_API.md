@@ -110,7 +110,7 @@ Any of these structures will be cached as a plain array of vendors.
 
 ## Linked Record Field Names
 
-The plugin resolves linked record identifiers for several vendor fields. The
+The plugin resolves linked record identifiers for several product fields. The
 following field names are accepted (including their common synonyms):
 
 - **Domain** – `domain`, `domains`, `domain_id`, `domain_ids`
