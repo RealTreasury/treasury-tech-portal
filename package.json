@@ -1,0 +1,20 @@
+{
+  "name": "treasury-tech-portal",
+  "version": "1.0.0",
+  "description": "A WordPress plugin that provides an interactive interface for discovering and comparing treasury technology solutions across Cash Tools, TMS-Lite platforms, and Enterprise TRMS suites.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node --test tests/js-warning.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}
