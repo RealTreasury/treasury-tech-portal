@@ -10,9 +10,7 @@ class TTP_Admin {
     public static function init() {
         add_action('admin_menu', [__CLASS__, 'register_menu']);
         add_action('admin_post_ttp_refresh_vendors', [__CLASS__, 'refresh_vendors']);
-        add_action('admin_post_ttp_retry_resolution', [__CLASS__, 'retry_resolution']);
         add_action('admin_post_ttp_test_airbase', [__CLASS__, 'test_airbase_connection']);
-        add_action('admin_post_ttp_download_unresolved', [__CLASS__, 'download_unresolved_report']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
         add_action('admin_post_ttp_save_categories', [__CLASS__, 'save_categories']);
     }
@@ -37,14 +35,6 @@ class TTP_Admin {
             [__CLASS__, 'render_airbase_settings']
         );
 
-        add_submenu_page(
-            'treasury-tools',
-            'Unresolved Report',
-            'Unresolved Report',
-            'manage_options',
-            'treasury-unresolved-report',
-            [__CLASS__, 'render_unresolved_report']
-        );
     }
 
     public static function enqueue_assets($hook) {
@@ -181,43 +171,10 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             return;
         }
-        $unresolved_fields = array();
-        if ( function_exists( 'get_option' ) ) {
-            $unresolved_fields = (array) get_option( 'ttp_unresolved_report', array() );
-        }
-
         $vendors            = TTP_Data::get_all_vendors();
         $categories         = TTP_Data::get_categories();
         $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
         include dirname( __DIR__ ) . '/templates/admin-page.php';
-    }
-
-    public static function render_unresolved_report() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            return;
-        }
-
-        $report = array();
-        if ( function_exists( 'get_option' ) ) {
-            $report = (array) get_option( 'ttp_unresolved_report', array() );
-        }
-
-        include dirname( __DIR__ ) . '/templates/unresolved-report.php';
-    }
-
-    public static function download_unresolved_report() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( 'Unauthorized' );
-        }
-        check_admin_referer( 'ttp_download_unresolved', 'ttp_download_unresolved_nonce' );
-        $report = array();
-        if ( function_exists( 'get_option' ) ) {
-            $report = (array) get_option( 'ttp_unresolved_report', array() );
-        }
-        header( 'Content-Type: application/json' );
-        header( 'Content-Disposition: attachment; filename="unresolved-report.json"' );
-        echo wp_json_encode( $report );
-        exit;
     }
 
     public static function save_categories() {
@@ -241,18 +198,6 @@ class TTP_Admin {
         exit;
     }
 
-    public static function retry_resolution() {
-        if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( 'Unauthorized' );
-        }
-        check_admin_referer( 'ttp_retry_resolution', 'ttp_retry_resolution_nonce' );
-        if ( function_exists( 'error_log' ) ) {
-            error_log( 'TTP_Admin: Retry resolution triggered' );
-        }
-        TTP_Data::refresh_vendor_cache();
-        wp_redirect( admin_url( 'admin.php?page=treasury-tools&retry=1' ) );
-        exit;
-    }
 
     public static function test_airbase_connection() {
         if (!current_user_can('manage_options')) {

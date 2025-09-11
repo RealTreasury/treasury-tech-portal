@@ -528,17 +528,6 @@ class TTP_Data {
                 $raw_values = self::parse_record_ids( $fields[ $field_key ] ?? array() );
                 $raw_values = array_map( 'sanitize_text_field', $raw_values );
 
-                $ids_to_log = array();
-                foreach ( $raw_values as $val ) {
-                    if ( TTP_Record_Utils::contains_record_ids( array( $val ) ) ) {
-                        $ids_to_log[] = preg_replace( '/[^A-Za-z0-9]/', '', (string) $val );
-                    }
-                }
-
-                if ( ! empty( $ids_to_log ) ) {
-                    self::log_unresolved_field( $label, $ids_to_log );
-                }
-
                 if ( ! empty( $info['single'] ) ) {
                     $resolved[ $info['key'] ] = $raw_values ? reset( $raw_values ) : '';
                 } else {
@@ -553,17 +542,6 @@ class TTP_Data {
 
             $category_names = array_map( 'sanitize_text_field', $category_names );
             if ( TTP_Record_Utils::contains_record_ids( $category_names ) ) {
-                $ids_to_log = array();
-                foreach ( $category_names as $val ) {
-                    if ( TTP_Record_Utils::contains_record_ids( array( $val ) ) ) {
-                        $ids_to_log[] = preg_replace( '/[^A-Za-z0-9]/', '', (string) $val );
-                    }
-                }
-
-                if ( ! empty( $ids_to_log ) ) {
-                    self::log_unresolved_field( 'Category Names', $ids_to_log );
-                }
-
                 $category_names = array_values(
                     array_filter(
                         $category_names,
@@ -750,47 +728,11 @@ class TTP_Data {
     }
 
     /**
-     * Log unresolved Airtable record IDs for visibility in logs and admin.
-     *
-     * Records unresolved IDs grouped by field in the `ttp_unresolved_report`
-     * option and always writes to `error_log` when that function exists.
-     *
-     * @param string $field Field label.
-     * @param array  $ids   IDs that failed to resolve.
-     */
-    private static function log_unresolved_field( $field, $ids ) {
-        $ids = array_filter( (array) $ids );
-        if ( empty( $ids ) ) {
-            return;
-        }
-
-        if ( function_exists( 'sanitize_text_field' ) ) {
-            $ids  = array_map( 'sanitize_text_field', $ids );
-            $field = sanitize_text_field( $field );
-        }
-
-        $log_id = uniqid( 'ttp_', true );
-
-        if ( function_exists( 'error_log' ) ) {
-            error_log( sprintf( 'TTP_Data [%s]: Unresolved %s IDs: %s', $log_id, $field, implode( ', ', $ids ) ) );
-        }
-
-        if ( function_exists( 'get_option' ) && function_exists( 'update_option' ) ) {
-            $report = (array) get_option( 'ttp_unresolved_report', array() );
-            if ( ! isset( $report[ $field ] ) ) {
-                $report[ $field ] = array();
-            }
-            $report[ $field ] = array_values( array_unique( array_merge( $report[ $field ], $ids ) ) );
-            update_option( 'ttp_unresolved_report', $report );
-        }
-    }
-
-    /**
      * Resolve linked record IDs to their corresponding names.
      *
      * Parses the raw value, replaces any Airtable record IDs with the
      * primary-field names retrieved via the API, and sanitizes the final
-     * values. Unresolved IDs are logged and removed from the result.
+     * values. Unresolved IDs are removed from the result.
      *
      * @param array  $record        Source record.
      * @param string $field         Field label for logging and lookup.
@@ -845,7 +787,6 @@ class TTP_Data {
                     $ids_str = implode( ', ', array_map( 'sanitize_text_field', $ids ) );
                     error_log( sprintf( 'TTP_Data: Failed resolving %s in %s for record IDs %s: %s', $field, $table, $ids_str, $resolved->get_error_message() ) );
                 }
-                self::log_unresolved_field( $field, $ids );
                 foreach ( $placeholders as $idx => $id ) {
                     unset( $values[ $idx ] );
                 }
@@ -860,16 +801,10 @@ class TTP_Data {
                 }
 
                 if ( empty( $sanitized ) ) {
-                    self::log_unresolved_field( $field, $ids );
                     foreach ( $placeholders as $idx => $id ) {
                         unset( $values[ $idx ] );
                     }
                 } else {
-                    if ( count( $sanitized ) < count( $ids ) ) {
-                        $missing = array_slice( $ids, count( $sanitized ) );
-                        self::log_unresolved_field( $field, $missing );
-                    }
-
                     $i = 0;
                     foreach ( $placeholders as $idx => $id ) {
                         if ( isset( $sanitized[ $i ] ) ) {
@@ -908,7 +843,6 @@ class TTP_Data {
                 }
 
                 if ( is_wp_error( $fallback ) || empty( $fallback ) ) {
-                    self::log_unresolved_field( $field, array_values( $remaining ) );
                     foreach ( array_keys( $remaining ) as $idx ) {
                         unset( $values[ $idx ] );
                     }

@@ -68,7 +68,11 @@ test('fetchTools expands enabledCategories with API data', async () => {
       origWinAdd2(type, listener, options);
     }
   };
-  window.TTP_DATA = { rest_url: 'https://example.test/api' };
+  window.TTP_DATA = {
+    rest_url: 'https://example.test/api',
+    category_labels: { CASH: 'Cash Tools', LITE: 'TMS-Lite', TRMS: 'TRMS' },
+    category_icons: { CASH: '💰', LITE: '⚡', TRMS: '🏢' }
+  };
 
   window.fetch = async () => ({
     json: async () => ([
@@ -84,6 +88,8 @@ test('fetchTools expands enabledCategories with API data', async () => {
   portal.enabledCategories = ['CASH'];
   portal.availableCategories = [];
   portal.CATEGORY_TAGS = {};
+  portal.categoryIcons = window.TTP_DATA.category_icons;
+  portal.categoryLabels = window.TTP_DATA.category_labels;
   portal.advancedFilters = { regions: [], categories: [], subcategories: [], features: [], hasVideo: false };
   portal.currentFilter = 'ALL';
   portal.updateCounts = () => {};
