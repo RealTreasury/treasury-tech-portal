@@ -1114,6 +1114,38 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
+     * @dataProvider parse_record_ids_nested_provider
+     */
+    public function test_parse_record_ids_recursively_searches_nested_structures( $input, $expected ) {
+        $method = new \ReflectionMethod( TTP_Data::class, 'parse_record_ids' );
+        $method->setAccessible( true );
+        $this->assertSame( $expected, $method->invoke( null, $input ) );
+    }
+
+    public function parse_record_ids_nested_provider() {
+        return array(
+            'nested_arrays' => array(
+                array(
+                    array(
+                        'level1' => array(
+                            'level2' => array(
+                                array( 'name' => 'Alpha' ),
+                                array( 'id' => 'rec123' ),
+                                array( 'deep' => array( 'name' => 'Beta' ) ),
+                            ),
+                        ),
+                    ),
+                ),
+                array( 'Alpha', 'rec123', 'Beta' ),
+            ),
+            'nested_json_string' => array(
+                '{"outer":{"inner":{"records":[{"name":"Gamma"},{"info":{"id":"rec456"}}]}}}',
+                array( 'Gamma', 'rec456' ),
+            ),
+        );
+    }
+
+    /**
      * @dataProvider contains_record_ids_provider
      */
     public function test_contains_record_ids_respects_known_prefixes( $values, $expected ) {

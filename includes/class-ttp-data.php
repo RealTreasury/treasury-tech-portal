@@ -529,9 +529,18 @@ class TTP_Data {
     /**
      * Parse a raw field value into an array of IDs or names.
      *
-     * Handles comma-separated strings, JSON strings and nested arrays. When
-     * encountering array items, extracts the `id` or `name` properties when
-     * present.
+     * Recursively searches strings and arrays for `name` or `id` keys at any
+     * depth. Strings are treated as JSON when possible or split on common
+     * delimiters. When both `name` and `id` exist in the same structure the
+     * `name` is preferred.
+     *
+     * Example:
+     * `parse_record_ids( '{"wrapper":{"item":{"name":"A"}}}' )` returns
+     * `array( 'A' )`.
+     *
+     * Limitations:
+     * - Returned values are not deduplicated.
+     * - Only simple string delimiters (comma, semicolon, newline) are parsed.
      *
      * @param mixed $value Raw value to parse.
      * @return array Array of trimmed values.
@@ -540,27 +549,27 @@ class TTP_Data {
         if ( is_string( $value ) ) {
             $maybe_json = json_decode( $value, true );
             if ( json_last_error() === JSON_ERROR_NONE ) {
-                $value = $maybe_json;
-            } else {
-                $lines  = preg_split( '/\r\n|\n|\r/', $value );
-                $parsed = array();
+                return self::parse_record_ids( $maybe_json );
+            }
 
-                foreach ( $lines as $line ) {
-                    $line = trim( $line );
-                    if ( $line === '' ) {
-                        continue;
-                    }
+            $lines  = preg_split( '/\r\n|\n|\r/', $value );
+            $parsed = array();
 
-                    $fields = str_getcsv( $line );
-                    if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
-                        $fields = str_getcsv( $line, ';' );
-                    }
-
-                    $parsed = array_merge( $parsed, $fields );
+            foreach ( $lines as $line ) {
+                $line = trim( $line );
+                if ( $line === '' ) {
+                    continue;
                 }
 
-                $value = $parsed;
+                $fields = str_getcsv( $line );
+                if ( count( $fields ) <= 1 && strpos( $line, ';' ) !== false ) {
+                    $fields = str_getcsv( $line, ';' );
+                }
+
+                $parsed = array_merge( $parsed, $fields );
             }
+
+            return array_map( 'trim', $parsed );
         }
 
         $results = array();
@@ -571,9 +580,14 @@ class TTP_Data {
                     $results[] = trim( $item['name'] );
                 } elseif ( isset( $item['id'] ) ) {
                     $results[] = trim( $item['id'] );
-                } else {
-                    $results = array_merge( $results, self::parse_record_ids( $item ) );
                 }
+
+                $nested = array_diff_key( $item, array_flip( array( 'name', 'id' ) ) );
+                if ( ! empty( $nested ) ) {
+                    $results = array_merge( $results, self::parse_record_ids( $nested ) );
+                }
+            } elseif ( is_string( $item ) ) {
+                $results = array_merge( $results, self::parse_record_ids( $item ) );
             } else {
                 $results[] = trim( (string) $item );
             }
