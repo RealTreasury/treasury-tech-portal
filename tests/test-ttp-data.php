@@ -396,6 +396,37 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API', 'Analytics'], $captured[0]['capabilities']);
     }
 
+    public function test_refresh_vendor_cache_resolves_parent_category_record_ids() {
+        $record = [
+            'id' => 'rec1',
+            'fields' => [
+                'Product Name'    => 'Sample Product',
+                'Parent Category' => [ 'reccat1' ],
+            ],
+        ];
+
+        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+            return [ 'records' => [ $record ] ];
+        } );
+
+        $tables = array();
+        \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' ) use ( &$tables ) {
+            $tables[] = $table_id;
+            return array( 'Cash' );
+        } );
+
+        $captured = null;
+        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
+            $captured = $vendors;
+        } );
+
+        TTP_Data::refresh_vendor_cache();
+
+        $this->assertSame( array( 'Category' ), $tables );
+        $this->assertSame( 'Cash', $captured[0]['parent_category'] );
+        $this->assertSame( array( 'Cash' ), $captured[0]['category_names'] );
+    }
+
     /**
      * @dataProvider comma_separated_fields_provider
      */
@@ -514,12 +545,14 @@ class TTP_Data_Test extends TestCase {
             array(
                 'domain' => array( 'rec123' ),
                 'regions' => array( 'EMEA' ),
+                'parent_category' => 'reccat1',
             ),
         );
         $vendors_clean = array(
             array(
                 'domain' => array( 'Banking' ),
                 'regions' => array( 'EMEA' ),
+                'parent_category' => 'Cash',
             ),
         );
 

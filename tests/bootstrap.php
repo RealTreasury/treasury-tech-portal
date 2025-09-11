@@ -28,3 +28,7 @@ if (!function_exists('__')) {
 if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__ . '/../');
 }
+
+if (!defined('HOUR_IN_SECONDS')) {
+    define('HOUR_IN_SECONDS', 3600);
+}
