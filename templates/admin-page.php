@@ -10,11 +10,33 @@
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Vendor cache refreshed.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
-        <ul>
-            <?php foreach ($vendors as $vendor) : ?>
-                <li><?php echo esc_html($vendor['id'] ?? ''); ?> - <?php echo esc_html($vendor['name'] ?? ''); ?></li>
-            <?php endforeach; ?>
-        </ul>
+        <table class="widefat fixed striped">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Parent Category', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Subcategories', 'treasury-tech-portal'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($vendors as $vendor) : ?>
+                    <?php
+                    $parent = $vendor['parent_category'] ?? '';
+                    if (is_array($parent)) {
+                        $parent = implode(', ', array_map('sanitize_text_field', $parent));
+                    } else {
+                        $parent = sanitize_text_field($parent);
+                    }
+                    $sub_cats = implode(', ', array_map('sanitize_text_field', (array) ($vendor['sub_categories'] ?? array())));
+                    ?>
+                    <tr>
+                        <td><?php echo esc_html($vendor['name'] ?? ''); ?></td>
+                        <td><?php echo esc_html($parent); ?></td>
+                        <td><?php echo esc_html($sub_cats); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     <?php else : ?>
         <p><?php esc_html_e('No vendors found.', 'treasury-tech-portal'); ?></p>
     <?php endif; ?>
