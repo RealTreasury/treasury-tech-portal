@@ -194,6 +194,80 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
+## Categories Table
+
+Table ID: `tblzGvVxiuzvf55a1`
+
+### Fields
+| Field | Type | Notes |
+|-------|------|-------|
+| `Category Name` (`fldEMQ4pAppOLeWNv`) | text | category label |
+| `Description` (`fldK1McXCzKRt7vNS`) | long text | may include mention tokens |
+| `Domain` (`fldoOnZ4sEyOtfwB6`) | linked records to **Domain** table | array of record IDs |
+| `Sub Categories` (`fldAexZDE9t3I2KOC`) | linked records to **Sub Categories** table | array of record IDs |
+| `Product Count (from Sub Categories)` (`fldNRKbve8To8z0Oi`) | lookup | counts from linked sub categories |
+| `Linked Products (from Sub Categories)` (`fldTYdVWjYyQJXPS4`) | lookup | product IDs from linked sub categories |
+| `Count (Domain)` (`fldviPn2IFlVTpzg2`) | count | number of linked domain records |
+| `Linked Capabilities` (`fldMzl6st07X985kr`) | lookup | capability IDs from linked sub categories |
+| `Sub Category Count` (`fldQX6bLq9mTLFxwk`) | count | number of linked sub categories |
+| `Linked Product Count` (`fldmZLfQZKQCCbCGr`) | formula | sum of Product Count (from Sub Categories) |
+
+### Listing Categories
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?maxRecords=3&view=Grid%20view" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Retrieving a Category
+```bash
+curl https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1/RECORD_ID \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Categories
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1 \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+  "records": [
+    {
+      "fields": {
+        "Category Name": "Example",
+        "Domain": ["rec123"],
+        "Sub Categories": ["rec456"]
+      }
+    }
+  ]
+}'
+```
+
+### Updating Categories
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1 \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+  "records": [
+    {
+      "id": "RECORD_ID",
+      "fields": {
+        "Description": "Updated info"
+      }
+    }
+  ]
+}'
+```
+
+### Deleting Categories
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?records[]=RECORD_ID" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Notes
+- Values for `Product Count (from Sub Categories)`, `Linked Products (from Sub Categories)`, `Count (Domain)`, `Linked Capabilities`, `Sub Category Count` and `Linked Product Count` are computed by Airtable and cannot be set or updated directly.
+
 ## Additional Notes
 - Use `typecast=true` to let Airtable create new select options automatically.
 - The API only accepts URLs shorter than 16,000 characters.
