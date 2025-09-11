@@ -83,10 +83,10 @@ class TTP_Admin {
         }
 
         if (isset($_GET['test_success'])) {
-            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Airbase vendor fetch successful.', 'treasury-tech-portal') . '</p></div>';
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Airbase product fetch successful.', 'treasury-tech-portal') . '</p></div>';
         } elseif (isset($_GET['test_error'])) {
             $message = sanitize_text_field(wp_unslash($_GET['test_error']));
-            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(sprintf(__('Airbase vendor fetch failed: %s', 'treasury-tech-portal'), $message)) . '</p></div>';
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(sprintf(__('Airbase product fetch failed: %s', 'treasury-tech-portal'), $message)) . '</p></div>';
         }
 
         $missing_fields = array();
@@ -100,7 +100,7 @@ class TTP_Admin {
         if ( ! empty( $missing_fields ) ) {
             $names = array_map( 'sanitize_text_field', (array) ( $missing_fields['fields'] ?? array() ) );
             $ids   = array_map( 'sanitize_text_field', (array) ( $missing_fields['ids'] ?? array() ) );
-            $message = sprintf( __( 'Missing expected fields from Airtable: %s', 'treasury-tech-portal' ), implode( ', ', $names ) );
+            $message = sprintf( __( 'Missing expected product fields from Airtable: %s', 'treasury-tech-portal' ), implode( ', ', $names ) );
             if ( ! empty( $ids ) ) {
                 $message .= ' ' . sprintf( __( '(Requested field IDs: %s)', 'treasury-tech-portal' ), implode( ', ', $ids ) );
             }
@@ -113,10 +113,10 @@ class TTP_Admin {
         $api_path  = get_option(TTP_Airbase::OPTION_API_PATH, '');
 
         if (empty($base_id)) {
-            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Base ID is required to fetch Airbase data.', 'treasury-tech-portal') . '</p></div>';
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Base ID is required to fetch Airbase product data.', 'treasury-tech-portal') . '</p></div>';
         }
         if (empty($api_path)) {
-            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Products table ID is required to fetch Airbase data.', 'treasury-tech-portal') . '</p></div>';
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Products table ID is required to fetch Airbase product data.', 'treasury-tech-portal') . '</p></div>';
         }
         ?>
         <div class="wrap">

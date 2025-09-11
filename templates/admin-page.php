@@ -3,7 +3,7 @@
     <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
     <?php if (!empty($unresolved_fields)) : ?>
         <div class="notice notice-warning">
-            <p><?php esc_html_e('Some vendor fields could not be resolved.', 'treasury-tech-portal'); ?></p>
+            <p><?php esc_html_e('Some product fields could not be resolved.', 'treasury-tech-portal'); ?></p>
             <ul>
                 <?php foreach ($unresolved_fields as $field => $ids) : ?>
                     <li><?php echo esc_html(sprintf('%s unresolved IDs: %s', $field, implode(', ', $ids))); ?></li>
@@ -17,15 +17,15 @@
             </form>
         </div>
     <?php endif; ?>
-    <p><?php esc_html_e('Use the button below to manually refresh the vendor cache after changing Airbase settings or when vendor data appears outdated.', 'treasury-tech-portal'); ?></p>
+    <p><?php esc_html_e('Use the button below to manually refresh the product cache after changing Airbase settings or when product data appears outdated.', 'treasury-tech-portal'); ?></p>
     <p><?php esc_html_e('Linked field IDs such as regions or categories are automatically converted to names for easier reading.', 'treasury-tech-portal'); ?></p>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <?php wp_nonce_field('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce'); ?>
         <input type="hidden" name="action" value="ttp_refresh_vendors" />
-        <?php submit_button(__('Refresh Vendors', 'treasury-tech-portal'), 'primary', 'refresh-vendors'); ?>
+        <?php submit_button(__('Refresh Products', 'treasury-tech-portal'), 'primary', 'refresh-vendors'); ?>
     </form>
     <?php if (isset($_GET['refreshed'])) : ?>
-        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Vendor cache refreshed.', 'treasury-tech-portal'); ?></p></div>
+        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Product cache refreshed.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
         <div class="treasury-portal-admin-search">
