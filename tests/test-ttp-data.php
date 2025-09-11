@@ -61,7 +61,7 @@ class TTP_Data_Test extends TestCase {
     public function test_refresh_vendor_cache_maps_fields() {
         $record = [
             'id'     => 'rec1',
-            'fields' => $this->id_fields([
+            'fields' => [
                 'Product Name'    => 'Sample Product',
                 'Linked Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
@@ -69,12 +69,15 @@ class TTP_Data_Test extends TestCase {
                 'Logo URL'        => 'example.com/logo.png',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
-                'Category'       => ['reccat1'],
-                'Sub Categories' => ['recsc1'],
+                'Category'        => ['reccat1'],
+                'Sub Categories'  => ['recsc1'],
                 'Regions'         => ['recreg1', 'recreg2'],
                 'Domain'          => ['recdom1'],
                 'Capabilities'    => ['reccap1'],
-            ]),
+                'HQ Location'     => '',
+                'Founded Year'    => '',
+                'Founders'        => '',
+            ],
         ];
 
         $requested_fields = null;
@@ -88,11 +91,13 @@ class TTP_Data_Test extends TestCase {
             $captured = $vendors;
         });
 
-        $tables  = [];
-        $use_ids = null;
-        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$tables, &$use_ids) {
-            $tables[] = $table_id;
-            $use_ids  = $use_field_ids;
+        $tables         = [];
+        $use_ids        = null;
+        $primary_fields = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$tables, &$use_ids, &$primary_fields) {
+            $tables[]                     = $table_id;
+            $use_ids                      = $use_field_ids;
+            $primary_fields[ $table_id ]  = $primary_field;
             $maps = [
                 'Regions'        => [
                     'recreg1' => 'North America',
@@ -100,8 +105,8 @@ class TTP_Data_Test extends TestCase {
                 ],
                 'Vendors'        => [ 'recven1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
-                'Domain'         => [ 'recdom1' => 'Banking' ],
-                'Category'       => [ 'reccat1' => 'Cash' ],
+                'Domain'         => [ 'recdom1' => 'Treasury' ],
+                'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
                 'Capabilities'   => [ 'reccap1' => 'API' ],
             ];
@@ -121,9 +126,10 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
         $this->assertFalse($use_ids);
         $this->assertSame(
-            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Category', 'Sub Categories', 'Capabilities'],
+            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Capabilities'],
             $tables
         );
+        $this->assertSame('Domain Name', $primary_fields['Domain']);
 
         $expected = [
             [
@@ -134,7 +140,7 @@ class TTP_Data_Test extends TestCase {
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
                 'hosted_type'     => ['Cloud'],
-                'domain'          => ['Banking'],
+                'domain'          => ['Treasury'],
                 'regions'         => ['North America', 'Europe'],
                 'categories'      => ['Cash'],
                 'sub_categories'  => ['Payments'],
@@ -154,7 +160,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame('Cash', $captured[0]['category']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
         $this->assertSame(['Cash', 'Payments'], $captured[0]['category_names']);
-        $this->assertSame(['Banking'], $captured[0]['domain']);
+        $this->assertSame(['Treasury'], $captured[0]['domain']);
         $this->assertSame(['Cash'], $captured[0]['categories']);
     }
 
