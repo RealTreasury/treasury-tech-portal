@@ -160,6 +160,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .treasury-portal .logo-section {
@@ -372,6 +373,8 @@
             display: flex;
             gap: 4px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            flex-basis: 100%;
+            order: 1;
         }
 
         .treasury-portal .header-filters {
@@ -379,7 +382,9 @@
             gap: 10px;
             align-items: center;
             margin-top: 10px;
-            margin-left: auto;
+            order: 2;
+            width: 100%;
+            justify-content: flex-end;
         }
 
         .treasury-portal .header-filters select {
