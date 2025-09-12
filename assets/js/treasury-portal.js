@@ -426,8 +426,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                             videoUrl: product.video_url || '',
                             websiteUrl: product.full_website_url || product.website || '',
                             logoUrl: product.logo_url || '',
-                            core_capabilities: product.core_capabilities || [],
-                            capabilities: product.capabilities || [],
+                            core_capabilities: Array.isArray(product.core_capabilities) ? product.core_capabilities : [],
+                            capabilities: Array.isArray(product.capabilities) ? product.capabilities : [],
                             target: ''
                         };
                     });
@@ -581,7 +581,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
                             if (tool) {
                                 const capContainer = e.target.parentElement;
-                                const sortedCaps = [...(tool.core_capabilities || [])].sort((a, b) => a.localeCompare(b));
+                                const allCaps = [
+                                    ...(tool.core_capabilities || []),
+                                    ...(tool.capabilities || [])
+                                ];
+                                const sortedCaps = [...new Set(allCaps)].sort((a, b) => a.localeCompare(b));
                                 capContainer.innerHTML = sortedCaps.map(cap => `<span class="tool-capability">${cap}</span>`).join('');
                                 capContainer.innerHTML += `<button class="show-less-capabilities-btn" data-tool-name="${tool.name}">Show less</button>`;
                             }
@@ -591,7 +595,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                             const tool = this.TREASURY_TOOLS.find(t => t.name === toolName);
                             if (tool) {
                                 const capContainer = e.target.parentElement;
-                                const sortedCaps = [...(tool.core_capabilities || [])].sort((a, b) => a.localeCompare(b));
+                                const allCaps = [
+                                    ...(tool.core_capabilities || []),
+                                    ...(tool.capabilities || [])
+                                ];
+                                const sortedCaps = [...new Set(allCaps)].sort((a, b) => a.localeCompare(b));
                                 const displayCaps = sortedCaps.slice(0, 3);
                                 const hasMore = sortedCaps.length > 3;
                                 capContainer.innerHTML = displayCaps.map(cap => `<span class="tool-capability">${cap}</span>`).join('');
@@ -1292,8 +1300,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const incomplete = containsRecordIds(tool) || tool.incomplete;
                 const warningIcon = incomplete ? '<span class="ttp-warning" title="Some data may be incomplete">⚠️</span>' : '';
 
-                const capabilities = tool.core_capabilities || [];
-                const sortedCaps = [...capabilities].sort((a, b) => a.localeCompare(b));
+                const capabilities = [
+                    ...(tool.core_capabilities || []),
+                    ...(tool.capabilities || [])
+                ];
+                const sortedCaps = [...new Set(capabilities)].sort((a, b) => a.localeCompare(b));
                 const displayCaps = sortedCaps.slice(0, 3);
                 const hasMoreCaps = sortedCaps.length > 3;
 
