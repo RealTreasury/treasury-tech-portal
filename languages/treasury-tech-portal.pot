@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-12T04:10:38+00:00\n"
+"POT-Creation-Date: 2025-09-12T05:04:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: treasury-tech-portal\n"
@@ -161,6 +161,20 @@ msgstr ""
 msgid "Primary field not found for table."
 msgstr ""
 
+#: includes/shortcode.php:276
+#: templates/admin-page.php:83
+#: templates/admin-page.php:142
+#: templates/admin-page.php:232
+msgid "Core Capabilities"
+msgstr ""
+
+#: includes/shortcode.php:280
+#: templates/admin-page.php:84
+#: templates/admin-page.php:146
+#: templates/admin-page.php:233
+msgid "Additional Capabilities"
+msgstr ""
+
 #: templates/admin-page.php:3
 msgid "Products"
 msgstr ""
@@ -218,193 +232,180 @@ msgid "Filter"
 msgstr ""
 
 #: templates/admin-page.php:72
-#: templates/admin-page.php:92
-#: templates/admin-page.php:184
+#: templates/admin-page.php:93
+#: templates/admin-page.php:206
 msgid "Name"
 msgstr ""
 
 #: templates/admin-page.php:73
-#: templates/admin-page.php:96
-#: templates/admin-page.php:192
+#: templates/admin-page.php:97
+#: templates/admin-page.php:214
 msgid "Category Names"
 msgstr ""
 
 #: templates/admin-page.php:74
-#: templates/admin-page.php:100
-#: templates/admin-page.php:193
+#: templates/admin-page.php:101
+#: templates/admin-page.php:215
 msgid "Product"
 msgstr ""
 
 #: templates/admin-page.php:75
-#: templates/admin-page.php:104
-#: templates/admin-page.php:194
+#: templates/admin-page.php:105
+#: templates/admin-page.php:216
 msgid "Website"
 msgstr ""
 
 #: templates/admin-page.php:76
-#: templates/admin-page.php:108
-#: templates/admin-page.php:199
+#: templates/admin-page.php:109
+#: templates/admin-page.php:221
 msgid "Video URL"
 msgstr ""
 
 #: templates/admin-page.php:77
-#: templates/admin-page.php:112
-#: templates/admin-page.php:204
+#: templates/admin-page.php:113
+#: templates/admin-page.php:226
 msgid "Status"
 msgstr ""
 
 #: templates/admin-page.php:78
-#: templates/admin-page.php:121
-#: templates/admin-page.php:205
+#: templates/admin-page.php:122
+#: templates/admin-page.php:227
 msgid "Hosted Type"
 msgstr ""
 
 #: templates/admin-page.php:79
-#: templates/admin-page.php:125
-#: templates/admin-page.php:206
+#: templates/admin-page.php:126
+#: templates/admin-page.php:228
 msgid "Domain"
 msgstr ""
 
 #: templates/admin-page.php:80
-#: templates/admin-page.php:129
-#: templates/admin-page.php:207
+#: templates/admin-page.php:130
+#: templates/admin-page.php:229
 msgid "Regions"
 msgstr ""
 
 #: templates/admin-page.php:81
-#: templates/admin-page.php:133
-#: templates/admin-page.php:208
+#: templates/admin-page.php:134
+#: templates/admin-page.php:230
 msgid "Sub Categories"
 msgstr ""
 
 #: templates/admin-page.php:82
-#: templates/admin-page.php:137
-#: templates/admin-page.php:209
+#: templates/admin-page.php:138
+#: templates/admin-page.php:231
 msgid "Category"
 msgstr ""
 
-#: templates/admin-page.php:83
-#: templates/admin-page.php:141
-#: templates/admin-page.php:210
-msgid "Additional Capabilities"
-msgstr ""
-
-#: templates/admin-page.php:83
-#: templates/admin-page.php:144
-#: templates/admin-page.php:210
-#: includes/shortcode.php:266
-msgid "Core Capabilities"
-msgstr ""
-
-#: templates/admin-page.php:84
-#: templates/admin-page.php:145
-#: templates/admin-page.php:211
+#: templates/admin-page.php:85
+#: templates/admin-page.php:150
+#: templates/admin-page.php:234
 msgid "Logo URL"
 msgstr ""
 
-#: templates/admin-page.php:85
-#: templates/admin-page.php:149
-#: templates/admin-page.php:216
+#: templates/admin-page.php:86
+#: templates/admin-page.php:154
+#: templates/admin-page.php:239
 msgid "HQ Location"
 msgstr ""
 
-#: templates/admin-page.php:86
-#: templates/admin-page.php:153
-#: templates/admin-page.php:217
+#: templates/admin-page.php:87
+#: templates/admin-page.php:158
+#: templates/admin-page.php:240
 msgid "Founded Year"
 msgstr ""
 
-#: templates/admin-page.php:87
-#: templates/admin-page.php:157
-#: templates/admin-page.php:218
+#: templates/admin-page.php:88
+#: templates/admin-page.php:162
+#: templates/admin-page.php:241
 msgid "Founders"
 msgstr ""
 
-#: templates/admin-page.php:93
+#: templates/admin-page.php:94
 msgid "Filter by name"
 msgstr ""
 
-#: templates/admin-page.php:94
+#: templates/admin-page.php:95
 msgid "Filter name"
 msgstr ""
 
-#: templates/admin-page.php:97
+#: templates/admin-page.php:98
 msgid "Filter by category names"
 msgstr ""
 
-#: templates/admin-page.php:98
+#: templates/admin-page.php:99
 msgid "Filter categories"
 msgstr ""
 
-#: templates/admin-page.php:101
+#: templates/admin-page.php:102
 msgid "Filter by product"
 msgstr ""
 
-#: templates/admin-page.php:102
+#: templates/admin-page.php:103
 msgid "Filter product"
 msgstr ""
 
-#: templates/admin-page.php:105
+#: templates/admin-page.php:106
 msgid "Filter by website"
 msgstr ""
 
-#: templates/admin-page.php:106
+#: templates/admin-page.php:107
 msgid "Filter website"
 msgstr ""
 
-#: templates/admin-page.php:109
+#: templates/admin-page.php:110
 msgid "Filter by video URL"
 msgstr ""
 
-#: templates/admin-page.php:110
+#: templates/admin-page.php:111
 msgid "Filter video URL"
 msgstr ""
 
-#: templates/admin-page.php:113
+#: templates/admin-page.php:114
 msgid "Filter by status"
 msgstr ""
 
-#: templates/admin-page.php:115
+#: templates/admin-page.php:116
 msgid "All"
 msgstr ""
 
-#: templates/admin-page.php:122
+#: templates/admin-page.php:123
 msgid "Filter by hosted type"
 msgstr ""
 
-#: templates/admin-page.php:123
+#: templates/admin-page.php:124
 msgid "Filter hosted type"
 msgstr ""
 
-#: templates/admin-page.php:126
+#: templates/admin-page.php:127
 msgid "Filter by domain"
 msgstr ""
 
-#: templates/admin-page.php:127
+#: templates/admin-page.php:128
 msgid "Filter domain"
 msgstr ""
 
-#: templates/admin-page.php:130
+#: templates/admin-page.php:131
 msgid "Filter by regions"
 msgstr ""
 
-#: templates/admin-page.php:131
+#: templates/admin-page.php:132
 msgid "Filter regions"
 msgstr ""
 
-#: templates/admin-page.php:134
+#: templates/admin-page.php:135
 msgid "Filter by sub categories"
 msgstr ""
 
-#: templates/admin-page.php:135
+#: templates/admin-page.php:136
 msgid "Filter sub categories"
 msgstr ""
 
-#: templates/admin-page.php:138
+#: templates/admin-page.php:139
 msgid "Filter by category"
 msgstr ""
 
-#: templates/admin-page.php:139
+#: templates/admin-page.php:140
 msgid "Filter category"
 msgstr ""
 
@@ -424,44 +425,44 @@ msgstr ""
 msgid "Filter additional capabilities"
 msgstr ""
 
-#: templates/admin-page.php:146
+#: templates/admin-page.php:151
 msgid "Filter by logo URL"
 msgstr ""
 
-#: templates/admin-page.php:147
+#: templates/admin-page.php:152
 msgid "Filter logo URL"
 msgstr ""
 
-#: templates/admin-page.php:150
+#: templates/admin-page.php:155
 msgid "Filter by HQ location"
 msgstr ""
 
-#: templates/admin-page.php:151
+#: templates/admin-page.php:156
 msgid "Filter HQ location"
 msgstr ""
 
-#: templates/admin-page.php:154
+#: templates/admin-page.php:159
 msgid "Filter by founded year"
 msgstr ""
 
-#: templates/admin-page.php:155
+#: templates/admin-page.php:160
 msgid "Filter founded year"
 msgstr ""
 
-#: templates/admin-page.php:158
+#: templates/admin-page.php:163
 msgid "Filter by founders"
 msgstr ""
 
-#: templates/admin-page.php:159
+#: templates/admin-page.php:164
 msgid "Filter founders"
 msgstr ""
 
-#: templates/admin-page.php:179
-#: templates/admin-page.php:180
-#: templates/admin-page.php:181
+#: templates/admin-page.php:201
+#: templates/admin-page.php:202
+#: templates/admin-page.php:203
 msgid "Visit"
 msgstr ""
 
-#: templates/admin-page.php:225
+#: templates/admin-page.php:248
 msgid "No products found."
 msgstr ""
