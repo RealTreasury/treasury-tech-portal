@@ -869,6 +869,7 @@
             color: #7e7e7e;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             margin-top: 0.25rem;
+            letter-spacing: 0.5px;
         }
 
         .treasury-portal .tool-description {
