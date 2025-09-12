@@ -1162,6 +1162,14 @@
             gap: 6px; /* Reduced gap */
         }
 
+        .treasury-portal .modal-summary {
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
         /* Video container - maintain 16:9 aspect ratio */
         .treasury-portal .video-container {
             width: 100%;

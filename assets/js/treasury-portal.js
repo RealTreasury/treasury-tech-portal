@@ -861,6 +861,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const modal = document.getElementById('toolModal');
                 const modalTitle = document.getElementById('modalTitle');
                 const modalDescription = document.getElementById('modalDescription');
+                const modalSummary = document.getElementById('modalSummary');
                 const modalWebsiteLink = document.getElementById('modalWebsiteLink');
                 const modalBody = modal?.querySelector('.modal-body');
                 const modalLogo = document.getElementById('modalToolLogo');
@@ -878,6 +879,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // 1. Update the static content first
                 if (modalTitle) modalTitle.textContent = tool.name;
+                if (modalSummary) {
+                    if (tool.product_summary) {
+                        modalSummary.textContent = tool.product_summary;
+                        modalSummary.style.display = 'block';
+                    } else {
+                        modalSummary.style.display = 'none';
+                    }
+                }
                 if (modalDescription) modalDescription.textContent = (tool.subCategories || []).join(', ');
 
                 if (modalWebsiteLink) {

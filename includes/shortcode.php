@@ -272,6 +272,7 @@ $category_meta = array(
                 <div class="modal-body">
                     <div class="feature-section">
                         <h4>🎯 Overview</h4>
+                        <p id="modalSummary" class="tool-summary modal-summary"></p>
                         <p id="modalDescription"></p>
                     </div>
                     <div class="feature-section">
