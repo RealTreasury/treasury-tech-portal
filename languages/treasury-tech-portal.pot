@@ -289,6 +289,13 @@ msgstr ""
 msgid "Additional Capabilities"
 msgstr ""
 
+#: templates/admin-page.php:83
+#: templates/admin-page.php:144
+#: templates/admin-page.php:210
+#: includes/shortcode.php:266
+msgid "Core Capabilities"
+msgstr ""
+
 #: templates/admin-page.php:84
 #: templates/admin-page.php:145
 #: templates/admin-page.php:211
