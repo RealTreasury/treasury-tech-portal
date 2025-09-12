@@ -40,23 +40,29 @@ class TTP_Admin {
 
     }
 
-    public static function enqueue_assets($hook) {
-        if ($hook !== 'toplevel_page_treasury-tools' && $hook !== 'treasury-tools_page_treasury-airbase-settings') {
+    public static function enqueue_assets( $hook ) {
+        $allowed_hooks = array(
+            'toplevel_page_treasury-tools',
+            'treasury-tools_page_treasury-airbase-settings',
+        );
+
+        if ( ! in_array( $hook, $allowed_hooks, true ) ) {
             return;
         }
-        $css_file = TTP_DIR . 'assets/css/treasury-portal.css';
-        $css_ver  = file_exists($css_file) ? filemtime($css_file) : '1.0';
+
+        $css_file = TTP_DIR . 'assets/css/treasury-portal-admin.css';
+        $css_ver  = file_exists( $css_file ) ? filemtime( $css_file ) : '1.0';
         wp_enqueue_style(
-            'treasury-tech-portal-admin-css',
-            TTP_URL . 'assets/css/treasury-portal.css',
+            'treasury-portal-admin-css',
+            TTP_URL . 'assets/css/treasury-portal-admin.css',
             array(),
             $css_ver
         );
 
         $js_file = TTP_DIR . 'assets/js/treasury-portal-admin.js';
-        $js_ver  = file_exists($js_file) ? filemtime($js_file) : '1.0';
+        $js_ver  = file_exists( $js_file ) ? filemtime( $js_file ) : '1.0';
         wp_enqueue_script(
-            'treasury-tech-portal-admin-js',
+            'treasury-portal-admin-js',
             TTP_URL . 'assets/js/treasury-portal-admin.js',
             array(),
             $js_ver,
