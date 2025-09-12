@@ -273,11 +273,11 @@ $category_meta = array(
                         <p id="modalDescription"></p>
                     </div>
                     <div class="feature-section">
-                        <h4>🛠️ Core Capabilities</h4>
+                        <h4>🛠️ <?php esc_html_e( 'Core Capabilities', 'treasury-tech-portal' ); ?></h4>
                         <div id="modalCoreCapabilities" class="tool-capabilities"></div>
                     </div>
                     <div class="feature-section">
-                        <h4>🛠️ Additional Capabilities</h4>
+                        <h4>🛠️ <?php esc_html_e( 'Additional Capabilities', 'treasury-tech-portal' ); ?></h4>
                         <div id="modalCapabilities" class="tool-capabilities"></div>
                     </div>
                 </div>
