@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Treasury Portal Embed</title>
+  <style>
+    body { margin: 0; }
+    #treasury-portal { width: 100%; border: 0; }
+  </style>
+</head>
+<body>
+  <iframe id="treasury-portal" src="https://example.com/treasury-portal" scrolling="no"></iframe>
+  <script>
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'treasury-height') {
+        var iframe = document.getElementById('treasury-portal');
+        var h = parseInt(event.data.height, 10);
+        if (!isNaN(h)) {
+          iframe.style.height = h + 'px';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
