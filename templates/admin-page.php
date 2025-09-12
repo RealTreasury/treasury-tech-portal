@@ -89,13 +89,23 @@
                 </thead>
                 <tbody>
                     <tr class="tp-filter-row">
-                        <td data-label="<?php echo esc_attr__('Name', 'treasury-tech-portal'); ?>"><input type="text" class="tp-filter-control" data-filter-key="name" placeholder="<?php esc_attr_e('Filter name', 'treasury-tech-portal'); ?>" /></td>
-                        <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>"><input type="text" class="tp-filter-control" data-filter-key="category_names" placeholder="<?php esc_attr_e('Filter categories', 'treasury-tech-portal'); ?>" /></td>
-                        <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>"><input type="text" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter vendor', 'treasury-tech-portal'); ?>" /></td>
+                        <td data-label="<?php echo esc_attr__('Name', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-name"><?php esc_html_e('Filter by name', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-name" class="tp-filter-control" data-filter-key="name" placeholder="<?php esc_attr_e('Filter name', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-category-names"><?php esc_html_e('Filter by category names', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-category-names" class="tp-filter-control" data-filter-key="category_names" placeholder="<?php esc_attr_e('Filter categories', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-vendor"><?php esc_html_e('Filter by vendor', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-vendor" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter vendor', 'treasury-tech-portal'); ?>" />
+                        </td>
                         <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>"></td>
                         <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>"></td>
                         <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>">
-                            <select class="tp-filter-control" data-filter-key="status" data-match="exact">
+                            <label class="screen-reader-text" for="tp-filter-status"><?php esc_html_e('Filter by status', 'treasury-tech-portal'); ?></label>
+                            <select id="tp-filter-status" class="tp-filter-control" data-filter-key="status" data-match="exact">
                                 <option value=""><?php esc_html_e('All', 'treasury-tech-portal'); ?></option>
                                 <?php foreach ($statuses as $status) : ?>
                                     <option value="<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status); ?></option>
@@ -103,7 +113,10 @@
                             </select>
                         </td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>"><input type="text" class="tp-filter-control" data-filter-key="domain" placeholder="<?php esc_attr_e('Filter domain', 'treasury-tech-portal'); ?>" /></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-domain"><?php esc_html_e('Filter by domain', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-domain" class="tp-filter-control" data-filter-key="domain" placeholder="<?php esc_attr_e('Filter domain', 'treasury-tech-portal'); ?>" />
+                        </td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>"></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Category', 'treasury-tech-portal'); ?>"></td>
