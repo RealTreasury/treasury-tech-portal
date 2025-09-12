@@ -1,6 +1,6 @@
 # Translator Notes
 
-The translation template has been regenerated.
+The translation template was regenerated on September 12, 2025.
 
 Please update translations for the following strings:
 
