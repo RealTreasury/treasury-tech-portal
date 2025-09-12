@@ -38,7 +38,7 @@ if ( ! TTP_IS_WPCOM && function_exists( 'register_activation_hook' ) ) {
 Treasury_Tech_Portal::instance();
 
 /**
- * Flush cached Airtable product-field ID\u2192name maps and vendor caches.
+ * Flush cached Airtable product-field ID\u2192name maps and product caches.
  */
 function rt_airtable_flush_maps() {
     global $wpdb;
@@ -48,7 +48,7 @@ function rt_airtable_flush_maps() {
     $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_rt_airtable_map_%'" );
     $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_rt_airtable_map_%'" );
     delete_transient( TTP_Data::CACHE_KEY );
-    delete_transient( TTP_Data::VENDOR_CACHE_KEY . '_v' . TTP_Data::VENDOR_CACHE_VERSION );
+    delete_transient( TTP_Data::PRODUCT_CACHE_KEY . '_v' . TTP_Data::PRODUCT_CACHE_VERSION );
     delete_transient( 'ttp_airbase_schema' );
 }
-add_action( 'rt_refresh_vendors', 'rt_airtable_flush_maps' );
+add_action( 'rt_refresh_products', 'rt_airtable_flush_maps' );

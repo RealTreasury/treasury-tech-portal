@@ -76,7 +76,7 @@ The schema cache is refreshed automatically when missing or expired. To manually
 - Or programmatically: `delete_transient('ttp_airbase_schema');`
 
 ## Response Formats
-`TTP_Data::refresh_vendor_cache()` accepts multiple response shapes and
+`TTP_Data::refresh_product_cache()` accepts multiple response shapes and
 normalizes them into a single array of records built from product fields. The following formats are supported:
 
 - `{ "records": [...] }`

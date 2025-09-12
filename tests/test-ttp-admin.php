@@ -81,7 +81,7 @@ class TTP_Admin_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_products', function( $fields = array() ) use ( $record ) {
             return array( 'records' => array( $record ) );
         } );
 
@@ -105,12 +105,12 @@ class TTP_Admin_Test extends TestCase {
         } );
 
         $stored = array();
-        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$stored ) {
-            $stored = $vendors;
+        \Patchwork\replace( 'TTP_Data::save_products', function ( $products ) use ( &$stored ) {
+            $stored = $products;
         } );
 
         when( 'get_option' )->alias( function ( $key, $default = null ) use ( &$stored ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $key ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $key ) {
                 return $stored;
             }
             return $default;
@@ -143,7 +143,7 @@ class TTP_Admin_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_products', function( $fields = array() ) use ( $record ) {
             return array( 'records' => array( $record ) );
         } );
 
@@ -170,7 +170,7 @@ class TTP_Admin_Test extends TestCase {
         } );
 
         when( 'get_option' )->alias( function ( $key, $default = null ) use ( &$stored ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $key ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $key ) {
                 return $stored;
             }
             return $default;
@@ -238,7 +238,7 @@ class TTP_Admin_Test extends TestCase {
         when( 'esc_url_raw' )->alias( fn( $url = '' ) => $url );
         when( 'admin_url' )->alias( fn( $url = '' ) => $url );
 
-        \Patchwork\replace( 'TTP_Data::get_all_vendors', function () {
+        \Patchwork\replace( 'TTP_Data::get_all_products', function () {
             return [ [
                 'name'            => 'Vendor1',
                 'category_names'  => [ 'Cat' ],

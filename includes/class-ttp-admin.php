@@ -10,7 +10,7 @@ class TTP_Admin {
 
     public static function init() {
         add_action('admin_menu', [__CLASS__, 'register_menu']);
-        add_action('admin_post_ttp_refresh_vendors', [__CLASS__, 'refresh_vendors']);
+        add_action('admin_post_ttp_refresh_products', [__CLASS__, 'refresh_products']);
         add_action('admin_post_ttp_retry_resolution', [__CLASS__, 'retry_resolution']);
         add_action('admin_post_ttp_test_airbase', [__CLASS__, 'test_airbase_connection']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
@@ -175,7 +175,7 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             return;
         }
-        $vendors            = TTP_Data::get_all_vendors();
+        $vendors            = TTP_Data::get_all_products();
         $categories         = TTP_Data::get_categories();
         $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
         $domains            = TTP_Data::get_domains();
@@ -205,12 +205,12 @@ class TTP_Admin {
         exit;
     }
 
-    public static function refresh_vendors() {
+    public static function refresh_products() {
         if (!current_user_can('manage_options')) {
             wp_die('Unauthorized');
         }
-        check_admin_referer('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce');
-        TTP_Data::refresh_vendor_cache();
+        check_admin_referer('ttp_refresh_products', 'ttp_refresh_products_nonce');
+        TTP_Data::refresh_product_cache();
         wp_redirect(admin_url('admin.php?page=treasury-tools&refreshed=1'));
         exit;
     }
@@ -223,7 +223,7 @@ class TTP_Admin {
         if ( function_exists( 'error_log' ) ) {
             error_log( 'TTP_Admin: Retry resolution triggered' );
         }
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
         wp_redirect( admin_url( 'admin.php?page=treasury-tools&retry=1' ) );
         exit;
     }
@@ -257,7 +257,7 @@ class TTP_Admin {
         $schema_map = $mapping['schema_map'];
         $field_ids  = $mapping['field_ids'];
 
-        $result = TTP_Airbase::get_vendors( $field_ids );
+        $result = TTP_Airbase::get_products( $field_ids );
         $url    = admin_url('admin.php?page=treasury-airbase-settings');
         if ( is_wp_error( $result ) ) {
             $url = add_query_arg( 'test_error', rawurlencode( $result->get_error_message() ), $url );

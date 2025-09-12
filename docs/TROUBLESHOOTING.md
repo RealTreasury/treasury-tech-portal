@@ -337,7 +337,7 @@ delete_transient('ttp_vendors_cache');
 wp_cache_flush();
 
 // 4. Refresh from API
-TTP_Data::refresh_vendor_cache();
+TTP_Data::refresh_product_cache();
 ```
 
 ### Rollback Deployment

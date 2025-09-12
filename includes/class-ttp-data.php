@@ -8,18 +8,18 @@ class TTP_Data {
     const OPTION_KEY = 'ttp_tools';
     const CACHE_KEY  = 'ttp_tools_cache';
     const CACHE_TTL  = HOUR_IN_SECONDS;
-    const VENDOR_OPTION_KEY = 'ttp_vendors';
-    const VENDOR_CACHE_KEY  = 'ttp_vendors_cache';
-    const VENDOR_CACHE_VERSION = 1;
+    const PRODUCT_OPTION_KEY = 'ttp_products';
+    const PRODUCT_CACHE_KEY  = 'ttp_products_cache';
+    const PRODUCT_CACHE_VERSION = 1;
 
     /**
-     * Indicates when the vendor cache is actively being refreshed.
+     * Indicates when the product cache is actively being refreshed.
      * Prevents recursive refresh calls when saving inside the refresh
      * routine itself.
      *
      * @var bool
      */
-    private static $refreshing_vendors = false;
+    private static $refreshing_products = false;
 
     /**
      * Retrieve all tools with caching.
@@ -32,7 +32,7 @@ class TTP_Data {
             return $tools;
         }
 
-        $tools = self::get_all_vendors();
+        $tools = self::get_all_products();
 
         set_transient(self::CACHE_KEY, $tools, self::CACHE_TTL);
         return $tools;
@@ -56,52 +56,52 @@ class TTP_Data {
 
     
     /**
-     * Retrieve all vendors with caching.
+     * Retrieve all products with caching.
      *
      * @return array
-    */
-    private static function get_vendor_cache_key() {
-        return self::VENDOR_CACHE_KEY . '_v' . self::VENDOR_CACHE_VERSION;
+     */
+    private static function get_product_cache_key() {
+        return self::PRODUCT_CACHE_KEY . '_v' . self::PRODUCT_CACHE_VERSION;
     }
 
-    public static function get_all_vendors() {
+    public static function get_all_products() {
         // Ensure legacy caches with semicolon-delimited values are normalised
         // before attempting to read from the transient cache. This migration is
         // lightweight and will no-op once data is updated.
         self::migrate_semicolon_cache();
 
-        $vendors = get_transient( self::get_vendor_cache_key() );
-        if ( $vendors !== false && ! self::vendors_need_resolution( $vendors ) ) {
-            return $vendors;
+        $products = get_transient( self::get_product_cache_key() );
+        if ( $products !== false && ! self::products_need_resolution( $products ) ) {
+            return $products;
         }
 
-        $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
-        if ( self::vendors_need_resolution( $vendors ) ) {
-            self::refresh_vendor_cache();
-            $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
+        $products = get_option( self::PRODUCT_OPTION_KEY, array() );
+        if ( self::products_need_resolution( $products ) ) {
+            self::refresh_product_cache();
+            $products = get_option( self::PRODUCT_OPTION_KEY, array() );
         }
 
-        set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
-        return $vendors;
+        set_transient( self::get_product_cache_key(), $products, self::CACHE_TTL );
+        return $products;
     }
 
     /**
-     * Retrieve list of categories derived from vendor records.
+     * Retrieve list of categories derived from product records.
      *
      * @return array Mapping of category slug => label.
      */
     public static function get_categories() {
-        $vendors    = self::get_all_vendors();
+        $products   = self::get_all_products();
         $categories = array();
 
-        foreach ( (array) $vendors as $vendor ) {
-            $vendor = (array) $vendor;
+        foreach ( (array) $products as $product ) {
+            $product = (array) $product;
 
             $slug = '';
-            if ( ! empty( $vendor['category'] ) ) {
-                $slug = strtoupper( $vendor['category'] );
-            } elseif ( ! empty( $vendor['categories'][0] ) ) {
-                $slug = strtoupper( $vendor['categories'][0] );
+            if ( ! empty( $product['category'] ) ) {
+                $slug = strtoupper( $product['category'] );
+            } elseif ( ! empty( $product['categories'][0] ) ) {
+                $slug = strtoupper( $product['categories'][0] );
             }
 
             if ( empty( $slug ) ) {
@@ -109,10 +109,10 @@ class TTP_Data {
             }
 
             $label = '';
-            if ( ! empty( $vendor['category_names'][0] ) ) {
-                $label = $vendor['category_names'][0];
-            } elseif ( ! empty( $vendor['category'] ) ) {
-                $label = $vendor['category'];
+            if ( ! empty( $product['category_names'][0] ) ) {
+                $label = $product['category_names'][0];
+            } elseif ( ! empty( $product['category'] ) ) {
+                $label = $product['category'];
             } else {
                 $label = $slug;
             }
@@ -130,17 +130,17 @@ class TTP_Data {
     }
 
     /**
-     * Retrieve list of unique domains derived from vendor records.
+     * Retrieve list of unique domains derived from product records.
      *
      * @return array Mapping of domain name => label.
      */
     public static function get_domains() {
-        $vendors = self::get_all_vendors();
-        $domains = array();
+        $products = self::get_all_products();
+        $domains  = array();
 
-        foreach ( (array) $vendors as $vendor ) {
-            $vendor = (array) $vendor;
-            foreach ( (array) ( $vendor['domain'] ?? array() ) as $domain ) {
+        foreach ( (array) $products as $product ) {
+            $product = (array) $product;
+            foreach ( (array) ( $product['domain'] ?? array() ) as $domain ) {
                 $domain = sanitize_text_field( $domain );
                 if ( $domain === '' ) {
                     continue;
@@ -159,25 +159,25 @@ class TTP_Data {
     }
 
     /**
-     * Migration: normalise semicolon-delimited values stored in the vendor cache.
+     * Migration: normalise semicolon-delimited values stored in the product cache.
      *
      * Older caches may contain strings with semicolon separators where arrays of
-     * values were expected. Scan the cached vendors and split any such strings
+     * values were expected. Scan the cached products and split any such strings
      * into arrays so downstream logic receives the canonical format.
      */
     private static function migrate_semicolon_cache() {
-        $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
-        $updated = false;
+        $products = get_option( self::PRODUCT_OPTION_KEY, array() );
+        $updated  = false;
 
-        foreach ( $vendors as &$vendor ) {
+        foreach ( $products as &$product ) {
             $fields = array( 'regions', 'hosted_type', 'domain', 'categories', 'sub_categories', 'capabilities' );
 
             foreach ( $fields as $field ) {
-                if ( ! isset( $vendor[ $field ] ) ) {
+                if ( ! isset( $product[ $field ] ) ) {
                     continue;
                 }
 
-                $original   = $vendor[ $field ];
+                $original   = $product[ $field ];
                 $values     = is_array( $original ) ? $original : array( $original );
                 $normalized = array();
 
@@ -192,75 +192,75 @@ class TTP_Data {
                 $normalized = array_values( array_filter( array_map( 'trim', $normalized ) ) );
 
                 if ( $normalized !== $values ) {
-                    $vendor[ $field ] = $normalized;
-                    $updated          = true;
+                    $product[ $field ] = $normalized;
+                    $updated           = true;
                 }
             }
 
-            if ( isset( $vendor['categories'] ) || isset( $vendor['sub_categories'] ) ) {
-                $categories     = isset( $vendor['categories'] ) ? (array) $vendor['categories'] : array();
-                $sub_categories = isset( $vendor['sub_categories'] ) ? (array) $vendor['sub_categories'] : array();
+            if ( isset( $product['categories'] ) || isset( $product['sub_categories'] ) ) {
+                $categories     = isset( $product['categories'] ) ? (array) $product['categories'] : array();
+                $sub_categories = isset( $product['sub_categories'] ) ? (array) $product['sub_categories'] : array();
 
                 $category       = $categories ? reset( $categories ) : '';
                 $category_names = array_filter( array_merge( $categories, $sub_categories ) );
 
-                if ( ! isset( $vendor['category'] ) || $vendor['category'] !== $category ) {
-                    $vendor['category'] = $category;
-                    $updated            = true;
+                if ( ! isset( $product['category'] ) || $product['category'] !== $category ) {
+                    $product['category'] = $category;
+                    $updated             = true;
                 }
 
-                if ( ! isset( $vendor['category_names'] ) || $vendor['category_names'] !== $category_names ) {
-                    $vendor['category_names'] = $category_names;
-                    $updated                  = true;
+                if ( ! isset( $product['category_names'] ) || $product['category_names'] !== $category_names ) {
+                    $product['category_names'] = $category_names;
+                    $updated                   = true;
                 }
             }
         }
-        unset( $vendor );
+        unset( $product );
 
         if ( $updated ) {
-            update_option( self::VENDOR_OPTION_KEY, $vendors );
-            delete_transient( self::get_vendor_cache_key() );
-            set_transient( self::get_vendor_cache_key(), $vendors, self::CACHE_TTL );
+            update_option( self::PRODUCT_OPTION_KEY, $products );
+            delete_transient( self::get_product_cache_key() );
+            set_transient( self::get_product_cache_key(), $products, self::CACHE_TTL );
         }
     }
 
     /**
-     * Save the given vendors and clear plugin cache when data changes.
+     * Save the given products and clear plugin cache when data changes.
      *
-     * @param array $vendors
+     * @param array $products
      */
-    public static function save_vendors($vendors) {
-        $current = get_option( self::VENDOR_OPTION_KEY, array() );
+    public static function save_products($products) {
+        $current = get_option( self::PRODUCT_OPTION_KEY, array() );
 
-        // Ensure required fields exist on each vendor record.
-        foreach ( $vendors as &$vendor ) {
-            if ( ! isset( $vendor['regions'] ) ) {
-                $vendor['regions'] = array();
+        // Ensure required fields exist on each product record.
+        foreach ( $products as &$product ) {
+            if ( ! isset( $product['regions'] ) ) {
+                $product['regions'] = array();
             }
-            if ( ! isset( $vendor['category'] ) ) {
-                $vendor['category'] = '';
+            if ( ! isset( $product['category'] ) ) {
+                $product['category'] = '';
             }
         }
-        unset( $vendor );
+        unset( $product );
 
-        if ( wp_json_encode( $vendors ) === wp_json_encode( $current ) ) {
+        if ( wp_json_encode( $products ) === wp_json_encode( $current ) ) {
             return;
         }
 
-        update_option( self::VENDOR_OPTION_KEY, $vendors );
-        delete_transient( self::get_vendor_cache_key() );
+        update_option( self::PRODUCT_OPTION_KEY, $products );
+        delete_transient( self::get_product_cache_key() );
 
-        // Immediately refresh the vendor cache so stored data is normalised
+        // Immediately refresh the product cache so stored data is normalised
         // before any subsequent access. Use a guard to avoid recursive calls
         // when this method is invoked from within the refresh routine itself.
-        if ( ! self::$refreshing_vendors ) {
-            self::$refreshing_vendors = true;
+        if ( ! self::$refreshing_products ) {
+            self::$refreshing_products = true;
 
             // Trigger the refresh through the existing action hook to ensure
             // consistent behaviour with scheduled events.
-            do_action( 'ttp_refresh_vendor_cache' );
+            do_action( 'ttp_refresh_product_cache' );
 
-            self::$refreshing_vendors = false;
+            self::$refreshing_products = false;
         }
     }
 
@@ -273,9 +273,9 @@ class TTP_Data {
     }
 
     public static function cli_refresh_cache() {
-        self::refresh_vendor_cache();
+        self::refresh_product_cache();
         if ( class_exists( 'WP_CLI' ) ) {
-            \WP_CLI::success( 'Vendor cache refreshed.' );
+            \WP_CLI::success( 'Product cache refreshed.' );
         }
     }
 
@@ -315,12 +315,12 @@ class TTP_Data {
     }
 
     /**
-     * Determine if vendor data contains unresolved record IDs.
+     * Determine if product data contains unresolved record IDs.
      *
-     * @param array $vendors Vendor records to inspect.
+     * @param array $products Product records to inspect.
      * @return bool
      */
-    private static function vendors_need_resolution( $vendors ) {
+    private static function products_need_resolution( $products ) {
         $aliases = array(
             'region'        => 'regions',
             'sub_category'  => 'sub_categories',
@@ -332,7 +332,7 @@ class TTP_Data {
 
         $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category', 'category_names' );
 
-        $vendors = array_map( array( __CLASS__, 'normalize_keys' ), (array) $vendors );
+        $products = array_map( array( __CLASS__, 'normalize_keys' ), (array) $products );
 
         $walker = function ( $data ) use ( &$walker, $aliases, $fields ) {
             foreach ( (array) $data as $key => $value ) {
@@ -356,8 +356,8 @@ class TTP_Data {
             return false;
         };
 
-        foreach ( (array) $vendors as $vendor ) {
-            if ( $walker( $vendor ) ) {
+        foreach ( (array) $products as $product ) {
+            if ( $walker( $product ) ) {
                 return true;
             }
         }
@@ -365,13 +365,13 @@ class TTP_Data {
     }
 
     /**
-     * Refresh vendor cache from Airbase.
+     * Refresh product cache from Airbase.
      *
      * Uses the "Demo Video URL" field (ID: fldHyVJRr3O5rkgd7) instead of the legacy
-     * "Product Video" field when syncing vendor records.
+     * "Product Video" field when syncing product records.
      */
-    public static function refresh_vendor_cache() {
-        do_action( 'rt_refresh_vendors' );
+    public static function refresh_product_cache() {
+        do_action( 'rt_refresh_products' );
 
         $field_names = array(
             'Product Name',
@@ -433,12 +433,12 @@ class TTP_Data {
             }
         }
 
-        $data = TTP_Airbase::get_vendors( $field_ids );
+        $data = TTP_Airbase::get_products( $field_ids );
         if ( is_wp_error( $data ) ) {
             return;
         }
 
-        $records     = self::normalize_vendor_response( $data );
+        $records     = self::normalize_product_response( $data );
         $id_to_label = array_flip( $schema_map );
 
         foreach ( $records as &$record ) {
@@ -510,7 +510,7 @@ class TTP_Data {
             );
         }
 
-        $vendors = array();
+        $products = array();
         foreach ( $records as $record ) {
             $fields   = isset( $record['fields'] ) && is_array( $record['fields'] ) ? $record['fields'] : $record;
             $resolved = array();
@@ -553,7 +553,7 @@ class TTP_Data {
                 );
             }
 
-            $vendors[] = array(
+            $products[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
                 'name'            => $fields['product_name'] ?? '',
                 'vendor'          => $resolved['vendor'],
@@ -576,16 +576,16 @@ class TTP_Data {
             );
         }
 
-        self::save_vendors($vendors);
+        self::save_products($products);
     }
 
     /**
-     * Normalize Airbase responses into a vendor array.
+     * Normalize Airbase responses into a product array.
      *
      * @param mixed $data Raw API response.
      * @return array
      */
-    private static function normalize_vendor_response($data) {
+    private static function normalize_product_response($data) {
         if (!is_array($data)) {
             return [];
         }
@@ -599,7 +599,7 @@ class TTP_Data {
         }
 
         if (isset($data['data']) && is_array($data['data'])) {
-            return self::normalize_vendor_response($data['data']);
+            return self::normalize_product_response($data['data']);
         }
 
         return $data;
