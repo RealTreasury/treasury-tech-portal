@@ -86,9 +86,14 @@
 
         setupColumnResizers();
         setupSorting();
+        handleResponsive();
+        window.addEventListener('resize', handleResponsive);
     }
 
     function setupColumnResizers() {
+        if (window.innerWidth <= 768) {
+            return;
+        }
         const table = document.querySelector('.treasury-portal-admin-table');
         if (!table) {
             return;
@@ -125,6 +130,19 @@
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('mouseup', onMouseUp);
             });
+        });
+    }
+
+    function handleResponsive() {
+        if (window.innerWidth > 768) {
+            return;
+        }
+        const table = document.querySelector('.treasury-portal-admin-table');
+        if (!table) {
+            return;
+        }
+        table.querySelectorAll('th, td').forEach(function(cell) {
+            cell.style.width = '';
         });
     }
 
