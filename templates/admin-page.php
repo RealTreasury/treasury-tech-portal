@@ -101,8 +101,14 @@
                             <label class="screen-reader-text" for="tp-filter-vendor"><?php esc_html_e('Filter by vendor', 'treasury-tech-portal'); ?></label>
                             <input type="text" id="tp-filter-vendor" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter vendor', 'treasury-tech-portal'); ?>" />
                         </td>
-                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>"></td>
-                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>"></td>
+                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-website"><?php esc_html_e('Filter by website', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-website" class="tp-filter-control" data-filter-key="website" placeholder="<?php esc_attr_e('Filter website', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-video-url"><?php esc_html_e('Filter by video URL', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-video-url" class="tp-filter-control" data-filter-key="video_url" placeholder="<?php esc_attr_e('Filter video URL', 'treasury-tech-portal'); ?>" />
+                        </td>
                         <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>">
                             <label class="screen-reader-text" for="tp-filter-status"><?php esc_html_e('Filter by status', 'treasury-tech-portal'); ?></label>
                             <select id="tp-filter-status" class="tp-filter-control" data-filter-key="status" data-match="exact">
@@ -112,19 +118,46 @@
                                 <?php endforeach; ?>
                             </select>
                         </td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-hosted-type"><?php esc_html_e('Filter by hosted type', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-hosted-type" class="tp-filter-control" data-filter-key="hosted_type" placeholder="<?php esc_attr_e('Filter hosted type', 'treasury-tech-portal'); ?>" />
+                        </td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>">
                             <label class="screen-reader-text" for="tp-filter-domain"><?php esc_html_e('Filter by domain', 'treasury-tech-portal'); ?></label>
                             <input type="text" id="tp-filter-domain" class="tp-filter-control" data-filter-key="domain" placeholder="<?php esc_attr_e('Filter domain', 'treasury-tech-portal'); ?>" />
                         </td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Category', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-regions"><?php esc_html_e('Filter by regions', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-regions" class="tp-filter-control" data-filter-key="regions" placeholder="<?php esc_attr_e('Filter regions', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-sub-categories"><?php esc_html_e('Filter by sub categories', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-sub-categories" class="tp-filter-control" data-filter-key="sub_categories" placeholder="<?php esc_attr_e('Filter sub categories', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Category', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-category"><?php esc_html_e('Filter by category', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-category" class="tp-filter-control" data-filter-key="category" placeholder="<?php esc_attr_e('Filter category', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-capabilities"><?php esc_html_e('Filter by capabilities', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-capabilities" class="tp-filter-control" data-filter-key="capabilities" placeholder="<?php esc_attr_e('Filter capabilities', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-logo-url"><?php esc_html_e('Filter by logo URL', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-logo-url" class="tp-filter-control" data-filter-key="logo_url" placeholder="<?php esc_attr_e('Filter logo URL', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-hq-location"><?php esc_html_e('Filter by HQ location', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-hq-location" class="tp-filter-control" data-filter-key="hq_location" placeholder="<?php esc_attr_e('Filter HQ location', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-founded-year"><?php esc_html_e('Filter by founded year', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-founded-year" class="tp-filter-control" data-filter-key="founded_year" placeholder="<?php esc_attr_e('Filter founded year', 'treasury-tech-portal'); ?>" />
+                        </td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-founders"><?php esc_html_e('Filter by founders', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-founders" class="tp-filter-control" data-filter-key="founders" placeholder="<?php esc_attr_e('Filter founders', 'treasury-tech-portal'); ?>" />
+                        </td>
                     </tr>
                 <?php foreach ($vendors as $vendor) : ?>
                     <?php
