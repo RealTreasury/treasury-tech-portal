@@ -12,7 +12,11 @@ A comprehensive WordPress plugin for discovering and comparing treasury technolo
 
 == Description ==
 
-The Treasury Tech Portal provides an interactive interface for exploring Cash Tools, TMS-Lite solutions, and Enterprise TRMS platforms. Features include advanced filtering, video demonstrations, and shortlist functionality.
+The Treasury Tech Portal provides an interactive interface for exploring Cash Tools, TMS-Lite solutions, and Enterprise TRMS platforms. Features include advanced filtering, video demonstrations, product summaries, and shortlist functionality.
+
+== Product Summaries ==
+
+Each tool may include a short plain-text summary that appears on the product card and again in the detail modal. Summaries should stay under 280 characters; longer text is truncated on cards.
 
 == Usage ==
 
