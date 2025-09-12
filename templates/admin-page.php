@@ -191,12 +191,12 @@
                         </td>
                         <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>"><?php echo esc_html($cats); ?></td>
                         <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
-                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>">
+                        <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>" data-filter-value="<?php echo esc_url($website); ?>">
                             <?php if (!empty($website_href)) : ?>
                                 <a href="<?php echo $website_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $website_text; ?></a>
                             <?php endif; ?>
                         </td>
-                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>">
+                        <td data-label="<?php echo esc_attr__('Video URL', 'treasury-tech-portal'); ?>" data-filter-value="<?php echo esc_url($video_url); ?>">
                             <?php if (!empty($video_href)) : ?>
                                 <a href="<?php echo $video_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $video_text; ?></a>
                             <?php endif; ?>
@@ -208,7 +208,7 @@
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"><?php echo esc_html($subs); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['category'] ?? ($vendor['categories'][0] ?? '')); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($capabilities); ?></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>">
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>" data-filter-value="<?php echo esc_url($logo_url); ?>">
                             <?php if (!empty($logo_href)) : ?>
                                 <a href="<?php echo $logo_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $logo_text; ?></a>
                             <?php endif; ?>
