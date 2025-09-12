@@ -201,6 +201,23 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+        .treasury-portal .business-case-builder__link {
+            display: inline-block;
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #7216f4, #8f47f6);
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .treasury-portal .business-case-builder__link:hover {
+            background: linear-gradient(135deg, #8f47f6, #7216f4);
+            transform: translateY(-1px);
+        }
+
         /* Reduce portal intro video size within header */
         .treasury-portal .intro-video-target {
             flex: 0 1 400px;

@@ -63,7 +63,7 @@ $category_meta = array(
                 </div>
 
                 <div class="business-case-builder">
-                    <?php echo do_shortcode('[rt_business_case_builder]'); ?>
+                    <a class="business-case-builder__link" href="/business-case-builder/" target="_blank" rel="noopener noreferrer">Business Case Builder</a>
                 </div>
 
                 <div class="intro-video-target" data-video-src="<?php echo esc_url($video_url); ?>" data-poster="<?php echo esc_url($poster_url); ?>" style="display:none;"></div>
