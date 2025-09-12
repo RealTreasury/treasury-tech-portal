@@ -256,7 +256,7 @@ if (!wp_http_validate_url($url)) {
 ```php
 // In TTP_Admin class
 public static function export_vendors() {
-    $vendors = TTP_Data::get_all_vendors();
+    $vendors = TTP_Data::get_all_products();
     header('Content-Type: application/json');
     header('Content-Disposition: attachment; filename="vendors.json"');
     echo wp_json_encode($vendors);

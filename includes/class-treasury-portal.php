@@ -28,14 +28,14 @@ class Treasury_Tech_Portal {
             add_action( 'cli_init', array( 'TTP_Data', 'register_cli_commands' ) );
         }
 
-        add_action('ttp_refresh_vendor_cache', ['TTP_Data', 'refresh_vendor_cache']);
-        if (!wp_next_scheduled('ttp_refresh_vendor_cache')) {
-            wp_schedule_event(time(), 'twicedaily', 'ttp_refresh_vendor_cache');
+        add_action('ttp_refresh_product_cache', ['TTP_Data', 'refresh_product_cache']);
+        if (!wp_next_scheduled('ttp_refresh_product_cache')) {
+            wp_schedule_event(time(), 'twicedaily', 'ttp_refresh_product_cache');
         }
 
-        add_filter('rt_portal_get_vendors', array($this, 'provide_vendors_to_bcb'));
+        add_filter('rt_portal_get_products', array($this, 'provide_products_to_bcb'));
         add_filter('rt_portal_get_sectors', array($this, 'provide_sectors_to_bcb'));
-        add_filter('rt_portal_get_vendor_notes', array($this, 'provide_vendor_notes_to_bcb'));
+        add_filter('rt_portal_get_product_notes', array($this, 'provide_product_notes_to_bcb'));
         add_action('rt_portal_new_lead', array($this, 'handle_bcb_lead'));
         add_action('rt_portal_data_changed', array($this, 'notify_data_change'));
 
@@ -72,7 +72,7 @@ class Treasury_Tech_Portal {
             'treasury-tech-portal-js',
             'TTP_DATA',
             [
-                'rest_url'             => esc_url_raw( rest_url( 'ttp/v1' ) ),
+                'rest_url'             => esc_url_raw( rest_url( 'ttp/v1/products' ) ),
                 'plugin_url'           => esc_url_raw( $plugin_url ),
                 'enabled_categories'   => (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) ),
                 'available_categories' => array_keys( $categories ),
@@ -106,12 +106,12 @@ class Treasury_Tech_Portal {
         }
     }
 
-    public function provide_vendors_to_bcb($vendors = array()) {
-        $tools       = TTP_Data::get_all_tools();
-        $bcb_vendors = array();
+    public function provide_products_to_bcb($products = array()) {
+        $tools        = TTP_Data::get_all_tools();
+        $bcb_products = array();
 
         foreach ($tools as $tool) {
-            $bcb_vendors[] = array(
+            $bcb_products[] = array(
                 'vendor_id'      => sanitize_title($tool['name']),
                 'name'           => $tool['name'],
                 'category'       => $this->map_category_to_bcb($tool['category']),
@@ -130,7 +130,7 @@ class Treasury_Tech_Portal {
             );
         }
 
-        return $bcb_vendors;
+        return $bcb_products;
     }
 
     private function map_category_to_bcb($portal_category) {
@@ -151,9 +151,9 @@ class Treasury_Tech_Portal {
         return array_values($bcb_sectors);
     }
 
-    public function provide_vendor_notes_to_bcb($notes = array()) {
-        $tools      = TTP_Data::get_all_tools();
-        $bcb_notes  = array();
+    public function provide_product_notes_to_bcb($notes = array()) {
+        $tools     = TTP_Data::get_all_tools();
+        $bcb_notes = array();
 
         foreach ($tools as $tool) {
             $bcb_notes[sanitize_title($tool['name'])] = $tool['desc'] ?? '';

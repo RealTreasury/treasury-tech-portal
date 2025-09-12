@@ -99,7 +99,7 @@ class TTP_Airbase_Connection_Test extends TestCase {
             update_option( TTP_Airbase::OPTION_API_PATH, $api_path );
         }
 
-        $vendors = TTP_Airbase::get_vendors();
+        $vendors = TTP_Airbase::get_products();
 
         if ( is_wp_error( $vendors ) ) {
             $this->markTestSkipped( 'Airbase API request failed' );

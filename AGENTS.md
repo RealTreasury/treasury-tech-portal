@@ -8,7 +8,7 @@ A WordPress plugin that provides an interactive platform for discovering and com
 ## Quick Reference for Code Changes
 
 ### Most Common Modification Points
-1. **Vendor Data Source**: `includes/class-ttp-data.php::get_all_vendors()` - API-based tool data
+1. **Product Data Source**: `includes/class-ttp-data.php::get_all_products()` - API-based tool data
 2. **UI Components**: `assets/js/treasury-portal.js` - `TreasuryTechPortal` class methods
 3. **Styling**: `assets/css/treasury-portal.css` - `.treasury-portal` namespaced styles
 4. **Backend Logic**: `includes/class-ttp-data.php` - Data management and caching
@@ -36,7 +36,7 @@ A WordPress plugin that provides an interactive platform for discovering and com
 - **State Management**: All stored in class properties (no external state management)
 
 ### Data Source
-Tool information is fetched from external vendor APIs through `includes/class-ttp-data.php::get_all_vendors()`. When introducing new properties, ensure they are provided by the API, handled in `TTP_Admin::save_tool()` and rendered in frontend components like `createToolCard()`.
+Tool information is fetched from external vendor APIs through `includes/class-ttp-data.php::get_all_products()`. When introducing new properties, ensure they are provided by the API, handled in `TTP_Admin::save_tool()` and rendered in frontend components like `createToolCard()`.
 
 **Categories**: CASH, LITE, TRMS - defined in `CATEGORY_INFO` object in JavaScript
 

@@ -61,7 +61,7 @@ Updating linked‑field logic requires both testing and cache invalidation:
    ```
    Then regenerate data:
    ```php
-    TTP_Data::refresh_product_cache();
+   TTP_Data::refresh_product_cache();
    ```
 
 These steps ensure that changes to linked field handling are validated and reflected in the stored product cache.

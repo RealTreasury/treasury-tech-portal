@@ -16,9 +16,9 @@ class TTP_Rest {
             'permission_callback' => '__return_true'
         ]);
 
-        register_rest_route('ttp/v1', '/vendors', [
+        register_rest_route('ttp/v1', '/products', [
             'methods'  => 'GET',
-            'callback' => [__CLASS__, 'get_vendors'],
+            'callback' => [__CLASS__, 'get_products'],
             'permission_callback' => '__return_true'
         ]);
 
@@ -78,14 +78,14 @@ class TTP_Rest {
         return rest_ensure_response( $response );
     }
 
-    public static function get_vendors($request) {
-        $vendors = TTP_Data::get_all_vendors();
+    public static function get_products($request) {
+        $products = TTP_Data::get_all_products();
         $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( TTP_Data::get_categories() ) );
         $enabled_domains    = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( TTP_Data::get_domains() ) );
-        $vendors = array_filter( (array) $vendors, function ( $vendor ) use ( $enabled_categories, $enabled_domains ) {
-            $vendor = (array) $vendor;
-            $cat    = $vendor['category'] ?? ( $vendor['categories'][0] ?? '' );
-            $domains = (array) ( $vendor['domain'] ?? array() );
+        $products = array_filter( (array) $products, function ( $product ) use ( $enabled_categories, $enabled_domains ) {
+            $product = (array) $product;
+            $cat    = $product['category'] ?? ( $product['categories'][0] ?? '' );
+            $domains = (array) ( $product['domain'] ?? array() );
             if ( ! in_array( $cat, $enabled_categories, true ) ) {
                 return false;
             }
@@ -96,55 +96,55 @@ class TTP_Rest {
         } );
         $needs_refresh = false;
 
-        $vendors = array_values( $vendors );
-        foreach ( $vendors as &$vendor ) {
-            $vendor = (array) $vendor;
-            $vendor_needs_resolution = false;
-            foreach ( $vendor as $key => $value ) {
+        $products = array_values( $products );
+        foreach ( $products as &$product ) {
+            $product = (array) $product;
+            $product_needs_resolution = false;
+            foreach ( $product as $key => $value ) {
                 if ( is_array( $value ) ) {
-                    $filtered = array_values( array_filter( (array) $value, function ( $item ) use ( &$needs_refresh, &$vendor_needs_resolution ) {
+                    $filtered = array_values( array_filter( (array) $value, function ( $item ) use ( &$needs_refresh, &$product_needs_resolution ) {
                         if ( TTP_Record_Utils::contains_record_ids( $item ) ) {
-                            $needs_refresh        = true;
-                            $vendor_needs_resolution = true;
+                            $needs_refresh         = true;
+                            $product_needs_resolution = true;
                             return false;
                         }
                         return true;
                     } ) );
 
                     if ( empty( $filtered ) ) {
-                        unset( $vendor[ $key ] );
+                        unset( $product[ $key ] );
                     } else {
-                        $vendor[ $key ] = $filtered;
+                        $product[ $key ] = $filtered;
                     }
                 } else {
                     if ( TTP_Record_Utils::contains_record_ids( $value ) ) {
-                        $needs_refresh        = true;
-                        $vendor_needs_resolution = true;
-                        unset( $vendor[ $key ] );
+                        $needs_refresh         = true;
+                        $product_needs_resolution = true;
+                        unset( $product[ $key ] );
                     }
                 }
             }
 
-            if ( $vendor_needs_resolution ) {
-                $vendor['incomplete'] = true;
+            if ( $product_needs_resolution ) {
+                $product['incomplete'] = true;
             }
         }
-        unset( $vendor );
+        unset( $product );
 
         if ( $needs_refresh ) {
-            TTP_Data::refresh_vendor_cache();
+            TTP_Data::refresh_product_cache();
         }
 
         return rest_ensure_response(
             array(
-                'vendors'         => $vendors,
+                'products'        => $products,
                 'enabled_domains' => $enabled_domains,
             )
         );
     }
 
     public static function refresh_data( $request ) {
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
         return rest_ensure_response( array( 'status' => 'refreshed' ) );
     }
 

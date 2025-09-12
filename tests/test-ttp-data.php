@@ -21,7 +21,7 @@ class TTP_Data_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
-            'Vendor'   => 'fld_vendor',
+            'Vendor'   => 'fld_product',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
             'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
@@ -70,7 +70,7 @@ class TTP_Data_Test extends TestCase {
         return $mapped;
     }
 
-    public function test_refresh_vendor_cache_maps_fields() {
+    public function test_refresh_product_cache_maps_fields() {
         $record = [
             'id'     => 'rec1',
             'fields' => [
@@ -94,14 +94,14 @@ class TTP_Data_Test extends TestCase {
         ];
 
         $requested_fields = null;
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record, &$requested_fields) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record, &$requested_fields) {
             $requested_fields = $fields;
             return ['records' => [ $record ]];
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
         $tables         = [];
@@ -134,7 +134,7 @@ class TTP_Data_Test extends TestCase {
             return $out;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
         $this->assertContains($this->schema_map['Full Website URL'], $requested_fields);
@@ -149,7 +149,7 @@ class TTP_Data_Test extends TestCase {
             [
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
-                'vendor'          => 'Acme Corp',
+                'product'          => 'Acme Corp',
                 'full_website_url' => 'https://example.com?utm=1',
                 'website'         => 'https://example.com?utm=1',
                 'video_url'       => 'https://example.com/video',
@@ -179,7 +179,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['Cash'], $captured[0]['categories']);
     }
 
-    public function test_refresh_vendor_cache_skips_resolution_for_names() {
+    public function test_refresh_product_cache_skips_resolution_for_names() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -196,7 +196,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -207,20 +207,20 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertFalse($called);
         $this->assertSame(['North America'], $captured[0]['regions']);
-        $this->assertSame('Acme Corp', $captured[0]['vendor']);
+        $this->assertSame('Acme Corp', $captured[0]['product']);
         $this->assertSame(['Finance'], $captured[0]['categories']);
         $this->assertSame(['Finance', 'Cash', 'Payments'], $captured[0]['category_names']);
     }
 
-    public function test_refresh_vendor_cache_resolves_linked_field_ids() {
+    public function test_refresh_product_cache_resolves_linked_field_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -237,7 +237,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -262,23 +262,23 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
-        $vendor = $captured[0];
-        $this->assertSame(['North America'], $vendor['regions']);
-        $this->assertSame('Acme Corp', $vendor['vendor']);
-        $this->assertSame(['Cloud'], $vendor['hosted_type']);
-        $this->assertSame(['Banking'], $vendor['domain']);
-        $this->assertSame(['Cash'], $vendor['categories']);
-        $this->assertSame(['Payments'], $vendor['sub_categories']);
-        $this->assertSame(['API'], $vendor['capabilities']);
+        $product = $captured[0];
+        $this->assertSame(['North America'], $product['regions']);
+        $this->assertSame('Acme Corp', $product['product']);
+        $this->assertSame(['Cloud'], $product['hosted_type']);
+        $this->assertSame(['Banking'], $product['domain']);
+        $this->assertSame(['Cash'], $product['categories']);
+        $this->assertSame(['Payments'], $product['sub_categories']);
+        $this->assertSame(['API'], $product['capabilities']);
     }
 
-    public function test_refresh_vendor_cache_passes_primary_field_to_resolver() {
+    public function test_refresh_product_cache_passes_primary_field_to_resolver() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -288,7 +288,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -298,15 +298,15 @@ class TTP_Data_Test extends TestCase {
             return array_fill( 0, count( (array) $ids ), 'Resolved' );
         });
 
-        \Patchwork\replace('TTP_Data::save_vendors', function () {});
+        \Patchwork\replace('TTP_Data::save_products', function () {});
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame('Name', $captured['Vendors']);
         $this->assertSame('Domain Name', $captured['Domain']);
     }
 
-    public function test_refresh_vendor_cache_skips_missing_schema_fields() {
+    public function test_refresh_product_cache_skips_missing_schema_fields() {
         unset( $this->schema_map['Vendor'] );
 
         $fields = $this->id_fields([
@@ -327,7 +327,7 @@ class TTP_Data_Test extends TestCase {
             'fields' => $fields,
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -338,17 +338,17 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertNotContains('Vendors', $tables);
-        $this->assertSame('recven1', $captured[0]['vendor']);
+        $this->assertSame('recven1', $captured[0]['product']);
     }
 
-    public function test_refresh_vendor_cache_uses_domain_names_from_pairs() {
+    public function test_refresh_product_cache_uses_domain_names_from_pairs() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -367,7 +367,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -378,17 +378,17 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertFalse($called);
         $this->assertSame(['Banking'], $captured[0]['domain']);
     }
 
-    public function test_refresh_vendor_cache_resolves_hq_location() {
+    public function test_refresh_product_cache_resolves_hq_location() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -406,7 +406,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -420,17 +420,17 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame(['HQ Location'], $tables);
         $this->assertSame('London', $captured[0]['hq_location']);
     }
 
-    public function test_refresh_vendor_cache_stores_empty_on_error() {
+    public function test_refresh_product_cache_stores_empty_on_error() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -447,7 +447,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -461,19 +461,19 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame([], $captured[0]['regions']);
-        $this->assertSame('', $captured[0]['vendor']);
+        $this->assertSame('', $captured[0]['product']);
         $this->assertNotEmpty($logged);
         $this->assertStringContainsString('recreg1', implode(' ', $logged));
     }
 
-    public function test_refresh_vendor_cache_removes_ids_on_empty_resolution() {
+    public function test_refresh_product_cache_removes_ids_on_empty_resolution() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -485,7 +485,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -494,17 +494,17 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame([], $captured[0]['regions']);
-        $this->assertSame('', $captured[0]['vendor']);
+        $this->assertSame('', $captured[0]['product']);
     }
 
-    public function test_refresh_vendor_cache_handles_unresolved_category_ids() {
+    public function test_refresh_product_cache_handles_unresolved_category_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -520,7 +520,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -532,11 +532,11 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame([], $captured[0]['categories']);
         $this->assertSame([], $captured[0]['sub_categories']);
@@ -544,7 +544,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame([], $captured[0]['category_names']);
     }
 
-    public function test_refresh_vendor_cache_returns_error_on_missing_fields() {
+    public function test_refresh_product_cache_returns_error_on_missing_fields() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -552,12 +552,12 @@ class TTP_Data_Test extends TestCase {
             ], false),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
         $saved = false;
-        \Patchwork\replace('TTP_Data::save_vendors', function () use ( &$saved ) {
+        \Patchwork\replace('TTP_Data::save_products', function () use ( &$saved ) {
             $saved = true;
         });
 
@@ -574,7 +574,7 @@ class TTP_Data_Test extends TestCase {
             return true;
         } );
 
-        $result = TTP_Data::refresh_vendor_cache();
+        $result = TTP_Data::refresh_product_cache();
 
         $this->assertTrue( is_wp_error( $result ) );
         $this->assertFalse( $saved );
@@ -585,7 +585,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Product Website'], $stored['ids']);
     }
 
-    public function test_refresh_vendor_cache_resolves_string_record_ids() {
+    public function test_refresh_product_cache_resolves_string_record_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -602,7 +602,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -627,11 +627,11 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame(['NORAM'], $captured[0]['regions']);
         $this->assertSame(['Banking'], $captured[0]['domain']);
@@ -639,7 +639,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['API'], $captured[0]['capabilities']);
     }
 
-    public function test_refresh_vendor_cache_resolves_array_record_ids() {
+    public function test_refresh_product_cache_resolves_array_record_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -656,7 +656,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -681,21 +681,21 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame(['NORAM'], $captured[0]['regions']);
-        $this->assertSame('Acme Corp', $captured[0]['vendor']);
+        $this->assertSame('Acme Corp', $captured[0]['product']);
         $this->assertSame(['Cloud'], $captured[0]['hosted_type']);
         $this->assertSame(['Banking'], $captured[0]['domain']);
         $this->assertSame(['Payments'], $captured[0]['sub_categories']);
         $this->assertSame(['API'], $captured[0]['capabilities']);
     }
 
-    public function test_refresh_vendor_cache_resolves_numeric_ids() {
+    public function test_refresh_product_cache_resolves_numeric_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -712,7 +712,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         });
 
@@ -738,16 +738,16 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ( $products ) use ( &$captured ) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $expected = [
             [
                 'regions'         => [ 'North America' ],
-                'vendor'          => 'Acme Corp',
+                'product'          => 'Acme Corp',
                 'hosted_type'     => [ 'Cloud' ],
                 'domain'          => [ 'Banking' ],
                 'sub_categories'  => [ 'Payments' ],
@@ -758,7 +758,7 @@ class TTP_Data_Test extends TestCase {
         ];
 
         $this->assertSame( $expected[0]['regions'], $captured[0]['regions'] );
-        $this->assertSame( $expected[0]['vendor'], $captured[0]['vendor'] );
+        $this->assertSame( $expected[0]['product'], $captured[0]['product'] );
         $this->assertSame( $expected[0]['hosted_type'], $captured[0]['hosted_type'] );
         $this->assertSame( $expected[0]['domain'], $captured[0]['domain'] );
         $this->assertSame( $expected[0]['sub_categories'], $captured[0]['sub_categories'] );
@@ -767,7 +767,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( $expected[0]['category'], $captured[0]['category'] );
     }
 
-    public function test_refresh_vendor_cache_fallback_maps_remaining_ids() {
+    public function test_refresh_product_cache_fallback_maps_remaining_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -778,7 +778,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ( $fields = array(), $return_fields_by_id = false ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -792,17 +792,17 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ( $products ) use ( &$captured ) {
+            $captured = $products;
         } );
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame( array( false, true ), $calls );
         $this->assertSame( array( 'Europe' ), $captured[0]['regions'] );
     }
 
-    public function test_refresh_vendor_cache_resolves_mixed_region_values() {
+    public function test_refresh_product_cache_resolves_mixed_region_values() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -819,7 +819,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -833,17 +833,17 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ( $products ) use ( &$captured ) {
+            $captured = $products;
         } );
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame( array( 'recreg1' ), $ids_used['Regions'] );
         $this->assertSame( array( 'NORAM', 'APAC' ), $captured[0]['regions'] );
     }
 
-    public function test_refresh_vendor_cache_handles_mixed_case_fields() {
+    public function test_refresh_product_cache_handles_mixed_case_fields() {
         $record = [
             'id'     => 'rec1',
             'fields' => [
@@ -866,7 +866,7 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -897,7 +897,7 @@ class TTP_Data_Test extends TestCase {
             [
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
-                'vendor'          => 'Acme Corp',
+                'product'          => 'Acme Corp',
                 'full_website_url' => 'https://example.com',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
@@ -917,16 +917,16 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$captured, $expected ) {
+        \Patchwork\replace('TTP_Data::refresh_product_cache', function () use ( &$captured, $expected ) {
             $captured = $expected;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame( $expected, $captured );
     }
 
-    public function test_refresh_vendor_cache_handles_mixed_case_top_level_fields() {
+    public function test_refresh_product_cache_handles_mixed_case_top_level_fields() {
         $record = [
             'id'            => 'rec1',
             'Product Name'  => 'Sample Product',
@@ -947,7 +947,7 @@ class TTP_Data_Test extends TestCase {
             'Founders'      => '',
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -978,7 +978,7 @@ class TTP_Data_Test extends TestCase {
             [
                 'id'              => 'rec1',
                 'name'            => 'Sample Product',
-                'vendor'          => 'Acme Corp',
+                'product'          => 'Acme Corp',
                 'full_website_url' => 'https://example.com',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
@@ -998,16 +998,16 @@ class TTP_Data_Test extends TestCase {
             ],
         ];
 
-        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$captured, $expected ) {
+        \Patchwork\replace('TTP_Data::refresh_product_cache', function () use ( &$captured, $expected ) {
             $captured = $expected;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame( $expected, $captured );
     }
 
-    public function test_refresh_vendor_cache_resolves_comma_separated_record_ids() {
+    public function test_refresh_product_cache_resolves_comma_separated_record_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -1024,7 +1024,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -1069,11 +1069,11 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame(['recreg1', 'recreg2'], $ids_used['Regions']);
         $this->assertSame(['recven1', 'recven2'], $ids_used['Vendors']);
@@ -1083,14 +1083,14 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['reccap1', 'reccap2'], $ids_used['Additional Capabilities']);
 
         $this->assertSame(['North America', 'Europe'], $captured[0]['regions']);
-        $this->assertSame('Acme Corp', $captured[0]['vendor']);
+        $this->assertSame('Acme Corp', $captured[0]['product']);
         $this->assertSame(['Cloud', 'On-Prem'], $captured[0]['hosted_type']);
         $this->assertSame(['Banking', 'Investing'], $captured[0]['domain']);
         $this->assertSame(['Payments', 'Treasury'], $captured[0]['sub_categories']);
         $this->assertSame(['API', 'Analytics'], $captured[0]['capabilities']);
     }
 
-    public function test_refresh_vendor_cache_resolves_category_record_ids() {
+    public function test_refresh_product_cache_resolves_category_record_ids() {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -1107,7 +1107,7 @@ class TTP_Data_Test extends TestCase {
             ]),
         ];
 
-        \Patchwork\replace('TTP_Airbase::get_vendors', function ($fields = array()) use ($record) {
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
             return ['records' => [ $record ]];
         });
 
@@ -1121,11 +1121,11 @@ class TTP_Data_Test extends TestCase {
         });
 
         $captured = null;
-        \Patchwork\replace('TTP_Data::save_vendors', function ($vendors) use (&$captured) {
-            $captured = $vendors;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
         });
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame(['reccat1'], $ids_used['Categories']);
         $this->assertSame('Cash', $captured[0]['category']);
@@ -1135,7 +1135,7 @@ class TTP_Data_Test extends TestCase {
     /**
      * @dataProvider linked_fields_provider
      */
-    public function test_refresh_vendor_cache_resolves_id_arrays_for_field( $field, $table, $output_key, $mapping ) {
+    public function test_refresh_product_cache_resolves_id_arrays_for_field( $field, $table, $output_key, $mapping ) {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -1155,7 +1155,7 @@ class TTP_Data_Test extends TestCase {
         $field = $this->schema_map[ $field ];
         $record['fields'][ $field ] = array_keys( $mapping );
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -1175,15 +1175,15 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $captured = null;
-        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
+        \Patchwork\replace( 'TTP_Data::save_products', function ( $products ) use ( &$captured ) {
+            $captured = $products;
         } );
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $this->assertSame( [ $table ], $tables_called );
         $expected = array_values( $mapping );
-        if ( 'vendor' === $output_key || 'category' === $output_key ) {
+        if ( 'product' === $output_key || 'category' === $output_key ) {
             $this->assertSame( reset( $expected ), $captured[0][ $output_key ] );
         } else {
             $this->assertSame( $expected, $captured[0][ $output_key ] );
@@ -1198,10 +1198,10 @@ class TTP_Data_Test extends TestCase {
                 'regions',
                 [ 'recreg1' => 'North America' ],
             ],
-            'vendor' => [
+            'product' => [
                 'Vendor',
                 'Vendors',
-                'vendor',
+                'product',
                 [ 'recven1' => 'Acme Corp' ],
             ],
             'hosted_type' => [
@@ -1246,7 +1246,7 @@ class TTP_Data_Test extends TestCase {
     /**
      * @dataProvider comma_separated_fields_provider
      */
-    public function test_refresh_vendor_cache_resolves_comma_separated_ids_for_field( $field, $table, $output_key, $mapping ) {
+    public function test_refresh_product_cache_resolves_comma_separated_ids_for_field( $field, $table, $output_key, $mapping ) {
         $record = [
             'id'     => 'rec1',
             'fields' => $this->id_fields([
@@ -1266,7 +1266,7 @@ class TTP_Data_Test extends TestCase {
         $field = $this->schema_map[ $field ];
         $record['fields'][ $field ] = implode( ', ', array_keys( $mapping ) );
 
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return [ 'records' => [ $record ] ];
         } );
 
@@ -1284,14 +1284,14 @@ class TTP_Data_Test extends TestCase {
         } );
 
         $captured = null;
-        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$captured ) {
-            $captured = $vendors;
+        \Patchwork\replace( 'TTP_Data::save_products', function ( $products ) use ( &$captured ) {
+            $captured = $products;
         } );
 
-        TTP_Data::refresh_vendor_cache();
+        TTP_Data::refresh_product_cache();
 
         $expected = array_values( $mapping );
-        if ( 'vendor' === $output_key ) {
+        if ( 'product' === $output_key ) {
             $this->assertSame( reset( $expected ), $captured[0][ $output_key ] );
         } else {
             $this->assertSame( $expected, $captured[0][ $output_key ] );
@@ -1309,10 +1309,10 @@ class TTP_Data_Test extends TestCase {
                     'recreg2' => 'Europe',
                 ],
             ],
-            'vendor' => [
+            'product' => [
                 'Vendor',
                 'Vendors',
-                'vendor',
+                'product',
                 [
                     'recven1' => 'Acme Corp',
                     'recven2' => 'Globex',
@@ -1366,14 +1366,14 @@ class TTP_Data_Test extends TestCase {
         ];
     }
 
-    public function test_get_all_vendors_refreshes_when_record_ids_present() {
-        $vendors_with_ids = array(
+    public function test_get_all_products_refreshes_when_record_ids_present() {
+        $products_with_ids = array(
             array(
                 'domain' => array( 'rec123' ),
                 'regions' => array( 'EMEA' ),
             ),
         );
-        $vendors_clean = array(
+        $products_clean = array(
             array(
                 'domain' => array( 'Banking' ),
                 'regions' => array( 'EMEA' ),
@@ -1384,35 +1384,35 @@ class TTP_Data_Test extends TestCase {
         when( 'set_transient' )->returnArg();
 
         $option_calls = 0;
-        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $products_with_ids, $products_clean ) {
             $option_calls++;
             if ( $option_calls <= 2 ) {
-                return $vendors_with_ids;
+                return $products_with_ids;
             }
-            return $vendors_clean;
+            return $products_clean;
         } );
 
         $refreshed = false;
-        \Patchwork\replace( 'TTP_Data::refresh_vendor_cache', function () use ( &$refreshed ) {
+        \Patchwork\replace( 'TTP_Data::refresh_product_cache', function () use ( &$refreshed ) {
             $refreshed = true;
         } );
 
-        $result = TTP_Data::get_all_vendors();
+        $result = TTP_Data::get_all_products();
 
         $this->assertTrue( $refreshed );
-        $this->assertSame( $vendors_clean, $result );
+        $this->assertSame( $products_clean, $result );
     }
 
-    public function test_get_all_vendors_refreshes_when_vendor_ids_present() {
-        $vendors_with_ids = array(
+    public function test_get_all_products_refreshes_when_product_ids_present() {
+        $products_with_ids = array(
             array(
                 'Vendor' => array( 'rec123' ),
                 'regions'       => array( 'EMEA' ),
             ),
         );
-        $vendors_clean = array(
+        $products_clean = array(
             array(
-                'vendor'  => 'Acme Corp',
+                'product'  => 'Acme Corp',
                 'regions' => array( 'EMEA' ),
             ),
         );
@@ -1421,29 +1421,29 @@ class TTP_Data_Test extends TestCase {
         when( 'set_transient' )->returnArg();
 
         $option_calls = 0;
-        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $vendors_with_ids, $vendors_clean ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+        when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$option_calls, $products_with_ids, $products_clean ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 $option_calls++;
                 if ( $option_calls <= 2 ) {
-                    return $vendors_with_ids;
+                    return $products_with_ids;
                 }
-                return $vendors_clean;
+                return $products_clean;
             }
             return $default;
         } );
 
         $refreshed = false;
-        \Patchwork\replace( 'TTP_Data::refresh_vendor_cache', function () use ( &$refreshed ) {
+        \Patchwork\replace( 'TTP_Data::refresh_product_cache', function () use ( &$refreshed ) {
             $refreshed = true;
         } );
 
-        $result = TTP_Data::get_all_vendors();
+        $result = TTP_Data::get_all_products();
 
         $this->assertTrue( $refreshed );
-        $this->assertSame( $vendors_clean, $result );
+        $this->assertSame( $products_clean, $result );
     }
 
-    public function test_get_all_vendors_handles_mixed_case_keys() {
+    public function test_get_all_products_handles_mixed_case_keys() {
         $stored_option = array(
             array(
                 'Regions' => array( 'recreg1' ),
@@ -1455,14 +1455,14 @@ class TTP_Data_Test extends TestCase {
         when( 'delete_transient' )->returnArg();
 
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 return $stored_option;
             }
             return $default;
         } );
 
         when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored_option ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 $stored_option = $value;
             }
             return true;
@@ -1476,7 +1476,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'      => array( 'recreg1' ),
             ]),
         ];
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( &$airbase_called, $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_products', function ( $fields = array() ) use ( &$airbase_called, $record ) {
             $airbase_called = true;
             return array(
                 'records' => array( $record ),
@@ -1497,13 +1497,13 @@ class TTP_Data_Test extends TestCase {
             return array();
         } );
 
-        $result = TTP_Data::get_all_vendors();
+        $result = TTP_Data::get_all_products();
 
         $this->assertTrue( $airbase_called );
         $this->assertSame( array( 'EMEA' ), $result[0]['regions'] );
     }
 
-    public function test_save_vendors_triggers_refresh_and_normalises_regions() {
+    public function test_save_products_triggers_refresh_and_normalises_regions() {
         $stored_option = array();
 
         when( 'get_transient' )->justReturn( false );
@@ -1511,22 +1511,22 @@ class TTP_Data_Test extends TestCase {
         when( 'delete_transient' )->returnArg();
 
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 return $stored_option;
             }
             return $default;
         } );
 
         when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored_option ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 $stored_option = $value;
             }
             return true;
         } );
 
         when( 'do_action' )->alias( function ( $hook ) {
-            if ( 'ttp_refresh_vendor_cache' === $hook ) {
-                TTP_Data::refresh_vendor_cache();
+            if ( 'ttp_refresh_product_cache' === $hook ) {
+                TTP_Data::refresh_product_cache();
             }
         } );
 
@@ -1537,7 +1537,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'      => array( 'recreg1' ),
             ]),
         ];
-        \Patchwork\replace( 'TTP_Airbase::get_vendors', function ( $fields = array() ) use ( $record ) {
+        \Patchwork\replace( 'TTP_Airbase::get_products', function ( $fields = array() ) use ( $record ) {
             return array(
                 'records' => array( $record ),
             );
@@ -1563,9 +1563,9 @@ class TTP_Data_Test extends TestCase {
             ),
         );
 
-        TTP_Data::save_vendors( $raw );
+        TTP_Data::save_products( $raw );
 
-        $result = TTP_Data::get_all_vendors();
+        $result = TTP_Data::get_all_products();
         $this->assertSame( array( 'EMEA' ), $result[0]['regions'] );
     }
 
@@ -1604,13 +1604,13 @@ class TTP_Data_Test extends TestCase {
     }
 
     public function test_get_domains_returns_unique_names() {
-        $vendors = array(
+        $products = array(
             array( 'domain' => array( 'Treasury' ) ),
             array( 'domain' => array( 'Payments', 'Treasury' ) ),
         );
 
-        \Patchwork\replace( 'TTP_Data::get_all_vendors', function () use ( $vendors ) {
-            return $vendors;
+        \Patchwork\replace( 'TTP_Data::get_all_products', function () use ( $products ) {
+            return $products;
         } );
 
         $domains = TTP_Data::get_domains();
@@ -1874,7 +1874,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( 3, $calls );
     }
 
-    public function vendors_need_resolution_region_provider() {
+    public function products_need_resolution_region_provider() {
         return array(
             'region'     => array( 'region' ),
             'region_ids' => array( 'region_ids' ),
@@ -1883,74 +1883,74 @@ class TTP_Data_Test extends TestCase {
     }
 
     /**
-     * @dataProvider vendors_need_resolution_region_provider
+     * @dataProvider products_need_resolution_region_provider
      */
-    public function test_vendors_need_resolution_detects_region_aliases( $key ) {
-        $vendors = array(
+    public function test_products_need_resolution_detects_region_aliases( $key ) {
+        $products = array(
             array(
                 $key => array( 'recABC123' ),
             ),
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
 
-        $vendors = array(
+        $products = array(
             array(
                 $key => array( 'resABC123' ),
             ),
         );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_detects_numeric_ids() {
-        $vendors = array(
+    public function test_products_need_resolution_detects_numeric_ids() {
+        $products = array(
             array(
                 'regions' => array( '123' ),
             ),
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_detects_mixed_case_keys() {
-        $vendors = array(
+    public function test_products_need_resolution_detects_mixed_case_keys() {
+        $products = array(
             array(
                 'VendorIds' => array( 'recABC123' ),
             ),
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_detects_mixed_case_fields_with_spaces() {
-        $vendors = array(
+    public function test_products_need_resolution_detects_mixed_case_fields_with_spaces() {
+        $products = array(
             array(
                 'Vendor IDs' => array( 'recABC123' ),
             ),
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_detects_nested_structures() {
-        $vendors = array(
+    public function test_products_need_resolution_detects_nested_structures() {
+        $products = array(
             array(
                 'level1' => array(
                     'level2' => (object) array(
@@ -1963,42 +1963,42 @@ class TTP_Data_Test extends TestCase {
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_detects_category_ids() {
-        $vendors = array(
+    public function test_products_need_resolution_detects_category_ids() {
+        $products = array(
             array(
                 'categories' => array( 'recABC123' ),
             ),
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_detects_category_name_ids() {
-        $vendors = array(
+    public function test_products_need_resolution_detects_category_name_ids() {
+        $products = array(
             array(
                 'category_names' => array( 'recABC123' ),
             ),
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
     }
 
-    public function test_vendors_need_resolution_short_circuits_on_first_match() {
-        $vendors = array(
+    public function test_products_need_resolution_short_circuits_on_first_match() {
+        $products = array(
             array(
                 'regions' => array( 'recABC123' ),
                 'domains' => array( 'recDEF456' ),
@@ -2006,7 +2006,7 @@ class TTP_Data_Test extends TestCase {
         );
 
         $class  = new \ReflectionClass( TTP_Data::class );
-        $method = $class->getMethod( 'vendors_need_resolution' );
+        $method = $class->getMethod( 'products_need_resolution' );
         $method->setAccessible( true );
 
         $calls = 0;
@@ -2018,7 +2018,7 @@ class TTP_Data_Test extends TestCase {
             }
         );
 
-        $this->assertTrue( $method->invoke( null, $vendors ) );
+        $this->assertTrue( $method->invoke( null, $products ) );
         $this->assertSame( 1, $calls );
     }
 
@@ -2050,19 +2050,19 @@ class TTP_Data_Test extends TestCase {
         } );
 
         when( 'get_option' )->alias( function ( $name, $default = array() ) use ( &$stored_option ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 return $stored_option;
             }
             return $default;
         } );
         when( 'update_option' )->alias( function ( $name, $value ) use ( &$stored_option ) {
-            if ( TTP_Data::VENDOR_OPTION_KEY === $name ) {
+            if ( TTP_Data::PRODUCT_OPTION_KEY === $name ) {
                 $stored_option = $value;
             }
             return true;
         } );
 
-        $result = TTP_Data::get_all_vendors();
+        $result = TTP_Data::get_all_products();
 
         $expected = array(
             'regions'        => array( 'North', 'South' ),

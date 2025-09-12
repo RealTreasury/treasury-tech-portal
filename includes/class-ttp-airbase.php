@@ -70,13 +70,13 @@ class TTP_Airbase {
     }
 
     /**
-     * Retrieve vendors from Airbase API.
+     * Retrieve products from Airbase API.
      *
      * @param array $fields Optional list of field IDs or names to request.
      *
-     * @return array|WP_Error Array of vendor records or WP_Error on failure.
+     * @return array|WP_Error Array of product records or WP_Error on failure.
      */
-    public static function get_vendors( $fields = array() ) {
+    public static function get_products( $fields = array() ) {
         $token = get_option( self::OPTION_TOKEN );
         if ( empty( $token ) ) {
             return new WP_Error( 'missing_token', __( 'Airbase API token not configured.', 'treasury-tech-portal' ) );
@@ -265,7 +265,7 @@ class TTP_Airbase {
     }
 
     /**
-     * Retrieve field schema for the vendor table via the Airtable metadata API.
+     * Retrieve field schema for the product table via the Airtable metadata API.
      *
      * Returns a mapping of field names to their internal Airtable IDs so that
      * requests can use the correct identifiers without hard-coding them in the
