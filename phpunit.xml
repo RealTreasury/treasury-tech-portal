@@ -3,6 +3,7 @@
     <testsuites>
         <testsuite name="TTP Test Suite">
             <directory suffix=".php">tests</directory>
+            <exclude>tests/fixtures</exclude>
         </testsuite>
     </testsuites>
 </phpunit>
