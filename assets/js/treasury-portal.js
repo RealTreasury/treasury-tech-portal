@@ -1646,7 +1646,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const regionIsNoram = this.advancedFilters.regions.includes('NORAM');
 
-                if (regionIsNoram) {
+                if (regionIsNoram && this.groupByCategory) {
                     if (this.trmsVideoTarget) this.trmsVideoTarget.style.display = 'none';
                     introVideo.style.display = '';
                     if (introVideo.parentElement !== trmsHeader) {
@@ -1815,6 +1815,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     groupByFilter.addEventListener('change', (e) => {
                         this.groupByCategory = e.target.value === 'category';
                         this.filterAndDisplayTools();
+                        this.handleIntroVideoRegion();
                     });
                 }
             }
