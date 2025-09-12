@@ -52,7 +52,7 @@
                 if (matches) {
                     for (const key in columnFilters) {
                         const cell = row.children[keyToIndex[key]];
-                        const cellText = cell ? cell.textContent.toLowerCase().trim() : '';
+                        const cellText = cell ? (cell.dataset.filterValue || cell.textContent).toLowerCase().trim() : '';
                         const filter = columnFilters[key];
                         if (filter.exact) {
                             if (cellText !== filter.value) {
