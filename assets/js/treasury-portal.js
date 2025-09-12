@@ -167,6 +167,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.TREASURY_TOOLS = [];
                 this.toolsLoaded = this.fetchTools();
 
+                // Preserve original scroll-related styles for restoration
+                this._bodyOverflow = '';
+                this._bodyPosition = '';
+                this._bodyWidth = '';
+                this._portalOverflow = '';
+
                 // Category information with videos
                 this.CATEGORY_INFO = {
                     CASH: {
@@ -1928,10 +1934,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                     externalToggle.style.display = 'none';
                 }
                 if (this.isMobile()) {
+                    this._bodyOverflow = document.body.style.overflow;
+                    this._bodyPosition = document.body.style.position;
+                    this._bodyWidth = document.body.style.width;
                     document.body.style.overflow = 'hidden';
                     document.body.style.position = 'fixed';
                     document.body.style.width = '100%';
                 } else {
+                    this._portalOverflow = portalRoot.style.overflow;
                     portalRoot.style.overflow = 'hidden';
                 }
                 document.addEventListener('click', this.handleOutsideSideMenuClick, true);
@@ -1953,11 +1963,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 portalRoot.classList.remove('side-menu-open');
                 if (this.isMobile()) {
-                    document.body.style.overflow = '';
-                    document.body.style.position = '';
-                    document.body.style.width = '';
+                    document.body.style.overflow = this._bodyOverflow;
+                    document.body.style.position = this._bodyPosition;
+                    document.body.style.width = this._bodyWidth;
                 } else {
-                    portalRoot.style.overflow = '';
+                    portalRoot.style.overflow = this._portalOverflow;
                 }
                 document.removeEventListener('click', this.handleOutsideSideMenuClick, true);
                 this.sideMenuOpen = false;
@@ -2131,8 +2141,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.closeSideMenu();
                 const menu = document.getElementById('shortlistMenu');
                 const overlay = document.getElementById('shortlistMenuOverlay');
-                const toggle = document.getElementById('shortlistMenuToggle');
-                const externalToggle = document.getElementById('externalShortlistToggle');
+               const toggle = document.getElementById('shortlistMenuToggle');
+               const externalToggle = document.getElementById('externalShortlistToggle');
 
                menu?.classList.add('open');
                portalRoot.classList.add('shortlist-menu-open');
@@ -2141,10 +2151,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                toggle?.classList.add('active');
                externalToggle?.classList.add('active');
                if (this.isMobile()) {
+                   this._bodyOverflow = document.body.style.overflow;
+                   this._bodyPosition = document.body.style.position;
+                   this._bodyWidth = document.body.style.width;
                    document.body.style.overflow = 'hidden';
                    document.body.style.position = 'fixed';
                    document.body.style.width = '100%';
                } else {
+                   this._portalOverflow = portalRoot.style.overflow;
                    portalRoot.style.overflow = 'hidden';
                }
                this.shortlistMenuOpen = true;
@@ -2162,18 +2176,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 menu?.classList.remove('open');
                 portalRoot.classList.remove('shortlist-menu-open');
                 overlay?.classList.remove('show');
-                document.removeEventListener('click', this.handleOutsideShortlistMenuClick);
+               document.removeEventListener('click', this.handleOutsideShortlistMenuClick);
                toggle?.classList.remove('active');
                externalToggle?.classList.remove('active');
                if (this.isMobile()) {
-                   document.body.style.overflow = '';
-                   document.body.style.position = '';
-                   document.body.style.width = '';
+                   document.body.style.overflow = this._bodyOverflow;
+                   document.body.style.position = this._bodyPosition;
+                   document.body.style.width = this._bodyWidth;
                } else {
-                   portalRoot.style.overflow = '';
+                   portalRoot.style.overflow = this._portalOverflow;
                }
                this.shortlistMenuOpen = false;
-            }
+           }
 
             renderShortlist() {
                 const container = document.getElementById('shortlistContainer');
