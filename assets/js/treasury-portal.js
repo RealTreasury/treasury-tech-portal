@@ -1360,6 +1360,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sortedCaps = [...new Set(capabilities)].sort((a, b) => a.localeCompare(b));
                 const displayCaps = sortedCaps.slice(0, 3);
                 const hasMoreCaps = sortedCaps.length > 3;
+                const summary = tool.product_summary
+                    ? tool.product_summary.slice(0, 150) + (tool.product_summary.length > 150 ? '...' : '')
+                    : '';
 
                 card.innerHTML = `
                     <div class="tool-card-content">
@@ -1377,6 +1380,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             </div>
                         </div>
                         <div class="tool-description">${(tool.subCategories || []).join(', ')}</div>
+                        ${summary ? `<div class="tool-summary">${summary}</div>` : ''}
                     </div>
                         <div class="tool-card-actions">
                         <div class="tool-capabilities">
