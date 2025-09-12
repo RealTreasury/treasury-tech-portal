@@ -864,6 +864,13 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+        .treasury-portal .tool-region {
+            font-size: 0.8rem;
+            color: #7e7e7e;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin-top: 0.25rem;
+        }
+
         .treasury-portal .tool-description {
             color: #7e7e7e;
             font-size: 0.85rem;
