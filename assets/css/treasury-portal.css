@@ -957,6 +957,25 @@
             background: #f3f4f6;
         }
 
+        .treasury-portal .show-more-modal-core-capabilities-btn,
+        .treasury-portal .show-less-modal-core-capabilities-btn {
+            background: none;
+            border: none;
+            color: #6366f1;
+            cursor: pointer;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        .treasury-portal .show-more-modal-core-capabilities-btn:hover,
+        .treasury-portal .show-less-modal-core-capabilities-btn:hover {
+            background: #f3f4f6;
+        }
+
         /* Modal uses position: fixed to always be in the viewport */
         .treasury-portal .ttp-modal {
             position: fixed;
