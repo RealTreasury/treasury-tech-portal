@@ -5,6 +5,17 @@
     let tableBody;
     let filtersInPanel = false;
 
+    const multiValueColumns = new Set(['core_capabilities', 'capabilities']);
+
+    function normalizeMultiValue(text) {
+        return text
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b))
+            .join(', ');
+    }
+
     function debounce(fn, delay) {
         let timeout;
         return function(...args) {
@@ -52,7 +63,10 @@
                 if (matches) {
                     for (const key in columnFilters) {
                         const cell = row.children[keyToIndex[key]];
-                        const cellText = cell ? (cell.dataset.filterValue || cell.textContent).toLowerCase().trim() : '';
+                        let cellText = cell ? (cell.dataset.filterValue || cell.textContent).toLowerCase().trim() : '';
+                        if (multiValueColumns.has(key)) {
+                            cellText = normalizeMultiValue(cellText);
+                        }
                         const filter = columnFilters[key];
                         if (filter.exact) {
                             if (cellText !== filter.value) {
@@ -83,8 +97,11 @@
             const eventType = control.tagName === 'SELECT' ? 'change' : 'input';
             control.addEventListener(eventType, function() {
                 const key = control.dataset.filterKey;
-                const value = control.value.trim().toLowerCase();
+                let value = control.value.trim().toLowerCase();
                 if (value) {
+                    if (multiValueColumns.has(key)) {
+                        value = normalizeMultiValue(value);
+                    }
                     columnFilters[key] = { value: value, exact: control.dataset.match === 'exact' };
                 } else {
                     delete columnFilters[key];
@@ -227,15 +244,18 @@
                 th.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
                 const rows = Array.from(tbody.querySelectorAll('tr:not(.tp-filter-row)'));
                 const isNumeric = numericColumns.has(key);
+                const isMulti = multiValueColumns.has(key);
                 rows.sort(function(a, b) {
-                    const aText = a.children[index].textContent.trim();
-                    const bText = b.children[index].textContent.trim();
+                    const aText = a.children[index].textContent.trim().toLowerCase();
+                    const bText = b.children[index].textContent.trim().toLowerCase();
+                    const aVal = isMulti ? normalizeMultiValue(aText) : aText;
+                    const bVal = isMulti ? normalizeMultiValue(bText) : bText;
                     if (isNumeric) {
-                        const aNum = parseFloat(aText);
-                        const bNum = parseFloat(bText);
+                        const aNum = parseFloat(aVal);
+                        const bNum = parseFloat(bVal);
                         return (isNaN(aNum) ? 0 : aNum) - (isNaN(bNum) ? 0 : bNum);
                     }
-                    return aText.localeCompare(bText);
+                    return aVal.localeCompare(bVal);
                 });
                 if (direction === 'desc') {
                     rows.reverse();
