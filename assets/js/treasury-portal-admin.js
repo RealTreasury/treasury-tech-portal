@@ -42,9 +42,16 @@
                             matches = false;
                             break;
                         }
-                    } else if (!cellText.includes(filter.value)) {
-                        matches = false;
-                        break;
+                    } else {
+                        for (const token of filter.tokens) {
+                            if (!cellText.includes(token)) {
+                                matches = false;
+                                break;
+                            }
+                        }
+                        if (!matches) {
+                            break;
+                        }
                     }
                 }
                 row.style.display = matches ? '' : 'none';
@@ -64,7 +71,11 @@
                 const key = control.dataset.filterKey;
                 const value = control.value.trim().toLowerCase();
                 if (value) {
-                    columnFilters[key] = { value: value, exact: control.dataset.match === 'exact' };
+                    columnFilters[key] = {
+                        value: value,
+                        exact: control.dataset.match === 'exact',
+                        tokens: value.split(/[\s,]+/).filter(Boolean)
+                    };
                 } else {
                     delete columnFilters[key];
                 }
