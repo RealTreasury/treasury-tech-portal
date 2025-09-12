@@ -18,16 +18,14 @@
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            height: auto;
-            overflow-x: hidden;
-            overflow-y: visible;
+            min-height: 100%;
+            overflow: unset;
         }
 
         /* When embedded, rely on the parent page for scrolling */
     .treasury-portal.embedded {
-            overflow-x: hidden;
-            overflow-y: visible;
-            height: auto;
+            min-height: 100%;
+            overflow: unset;
         }
 
     .treasury-portal {
