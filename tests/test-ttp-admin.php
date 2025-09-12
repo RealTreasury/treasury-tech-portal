@@ -39,6 +39,7 @@ class TTP_Admin_Test extends TestCase {
             'Regions'         => 'fld_regions',
             'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
+            'Core Capabilities' => 'fld_core_caps',
             'Additional Capabilities'    => 'fld_caps',
             'HQ Location'     => 'fld_hq',
             'Founded Year'    => 'fld_year',

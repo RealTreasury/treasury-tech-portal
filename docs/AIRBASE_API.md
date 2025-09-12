@@ -103,6 +103,7 @@ Any of these structures will be cached as a plain array of records built from pr
 | `Founders` (`fldoTMkJIl1i8oo0r`) | text |
 | `Product Summary` (`fldwBi5oBw6BwZiqV`) | long text summary |
 | `Market Fit Analysis` (`fldJTDlDcvNn0MVJX`) | long text analysis |
+| `Core Capabilities` (`fldwzQG0IQ0dbVcwF`) | linked records to **Capabilities** table |
 | `Additional Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
 | `Logo URL` (`fldfZPuRMjQKCv3U6`) | text URL |
 | `Demo Video URL` (`fldHyVJRr3O5rkgd7`) | text URL |
@@ -117,6 +118,8 @@ following field names are accepted (including their common synonyms):
 - **Regions** – `regions`, `region`, `region_id`, `region_ids`, `regions_id`
 - **Sub Categories** – `sub_categories`, `sub_category`, `sub_category_id`,
   `sub_category_ids`
+- **Core Capabilities** – `core_capabilities`, `core_capability`, `core_capability_id`,
+  `core_capability_ids`
 - **Additional Capabilities** – `capabilities`, `capability`, `capability_id`,
   `capability_ids`
 - **Hosted Type** – `hosted_type`, `hosted_types`, `hosted_type_id`,

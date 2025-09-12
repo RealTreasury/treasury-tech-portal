@@ -32,6 +32,7 @@ class TTP_Data_Test extends TestCase {
             'Regions'         => 'fld_regions',
             'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
+            'Core Capabilities' => 'fld_core_caps',
             'Additional Capabilities'    => 'fld_caps',
             'HQ Location'     => 'fld_hq',
             'Founded Year'    => 'fld_year',
@@ -140,7 +141,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Full Website URL'], $requested_fields);
         $this->assertFalse($use_ids);
         $this->assertSame(
-            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Additional Capabilities'],
+            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Core Capabilities', 'Additional Capabilities'],
             $tables
         );
         $this->assertSame('Domain Name', $primary_fields['Domain']);
@@ -1221,6 +1222,12 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories',
                 'sub_categories',
                 [ 'recsc1' => 'Payments' ],
+            ],
+            'core_capabilities' => [
+                'Core Capabilities',
+                'Core Capabilities',
+                'core_capabilities',
+                [ 'reccore1' => 'Treasury' ],
             ],
             'capabilities' => [
                 'Additional Capabilities',

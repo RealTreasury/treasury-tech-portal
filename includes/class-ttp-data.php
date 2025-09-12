@@ -170,7 +170,7 @@ class TTP_Data {
         $updated = false;
 
         foreach ( $vendors as &$vendor ) {
-            $fields = array( 'regions', 'hosted_type', 'domain', 'categories', 'sub_categories', 'capabilities' );
+            $fields = array( 'regions', 'hosted_type', 'domain', 'categories', 'sub_categories', 'capabilities', 'core_capabilities' );
 
             foreach ( $fields as $field ) {
                 if ( ! isset( $vendor[ $field ] ) ) {
@@ -325,12 +325,13 @@ class TTP_Data {
             'region'        => 'regions',
             'sub_category'  => 'sub_categories',
             'capability'    => 'capabilities',
+            'core_capability' => 'core_capabilities',
             'hosted_types'  => 'hosted_type',
             'domains'       => 'domain',
             'linked_vendor' => 'vendor',
         );
 
-        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category', 'category_names' );
+        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'core_capabilities', 'hosted_type', 'vendor', 'categories', 'category', 'category_names' );
 
         $vendors = array_map( array( __CLASS__, 'normalize_keys' ), (array) $vendors );
 
@@ -386,6 +387,7 @@ class TTP_Data {
             'Regions',
             'Category',
             'Sub Categories',
+            'Core Capabilities',
             'Additional Capabilities',
             'HQ Location',
             'Founded Year',
@@ -406,6 +408,7 @@ class TTP_Data {
             'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
             'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
             'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Sub Category Name' ),
+            'Core Capabilities' => array( 'key' => 'core_capabilities', 'table' => 'Capabilities',   'primary_field' => '' ),
             'Additional Capabilities' => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
             'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
@@ -568,6 +571,7 @@ class TTP_Data {
                 'sub_categories'  => $sub_categories,
                 'category'        => $category,
                 'category_names'  => $category_names,
+                'core_capabilities' => $resolved['core_capabilities'],
                 'capabilities'    => $resolved['capabilities'],
                 'logo_url'        => self::normalize_url( $fields['logo_url'] ?? '' ),
                 'hq_location'     => $resolved['hq_location'],
