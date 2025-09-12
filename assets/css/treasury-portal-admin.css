@@ -21,3 +21,106 @@
     width: 100%;
     box-sizing: border-box;
 }
+
+.treasury-portal-admin .treasury-portal-admin-table-wrapper {
+    overflow-x: auto;
+}
+
+.treasury-portal-admin .treasury-portal-admin-table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+
+.treasury-portal-admin th,
+.treasury-portal-admin td {
+    padding: 8px;
+    text-align: left;
+}
+
+.treasury-portal-admin th {
+    white-space: nowrap;
+}
+
+.treasury-portal-admin td {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.treasury-portal-admin .treasury-portal-admin-search {
+    margin-bottom: 12px;
+}
+
+.treasury-portal-admin .treasury-portal-admin-search input[type="search"] {
+    width: 100%;
+    padding: 6px 8px;
+    box-sizing: border-box;
+}
+
+.treasury-portal-admin .treasury-portal-admin-table th {
+    position: sticky;
+    top: 0;
+    background: #e5e7eb;
+    z-index: 1;
+}
+
+.treasury-portal-admin .treasury-portal-admin-table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+.treasury-portal-admin .treasury-portal-admin-table tbody tr:nth-child(even) {
+    background: #f3f4f6;
+}
+
+.treasury-portal-admin .treasury-portal-admin-table tbody tr:hover {
+    background: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+    .treasury-portal-admin .treasury-portal-admin-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table-wrapper table {
+        font-size: 12px;
+        width: 100%;
+        min-width: unset;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table thead {
+        display: none;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table tbody tr {
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table tbody tr:first-child {
+        border-top: none;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table td {
+        display: block;
+        padding: 8px;
+        text-align: left;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table td::before {
+        content: attr(data-label) ": ";
+        font-weight: 600;
+    }
+
+    .treasury-portal-admin-table .tp-resizer {
+        display: none;
+    }
+
+    .treasury-portal-admin .is-mobile-hidden {
+        display: none;
+    }
+}
