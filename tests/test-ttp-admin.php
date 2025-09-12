@@ -221,5 +221,67 @@ class TTP_Admin_Test extends TestCase {
 
         unset( $_POST['enabled_domains'] );
     }
+
+    public function test_render_page_includes_filter_controls_for_all_columns() {
+        when( 'current_user_can' )->justReturn( true );
+        when( 'esc_html_e' )->alias( function( $text ) { echo $text; } );
+        when( 'esc_attr_e' )->alias( function( $text ) { echo $text; } );
+        when( 'esc_attr__' )->returnArg();
+        when( 'esc_html' )->returnArg();
+        when( 'esc_attr' )->returnArg();
+        when( 'esc_url' )->returnArg();
+        when( 'esc_url_raw' )->returnArg();
+        when( 'wp_nonce_field' )->justReturn( '' );
+        when( 'submit_button' )->justReturn( '' );
+        when( 'checked' )->justReturn( '' );
+        when( 'admin_url' )->alias( function( $url = '' ) { return $url; } );
+        when( 'add_query_arg' )->alias( function( $key, $value, $url ) { return $url; } );
+        when( 'get_option' )->alias( function ( $key, $default = array() ) {
+            return $default;
+        } );
+
+        \Patchwork\replace( 'TTP_Data::get_all_vendors', function () {
+            return array(
+                array(
+                    'name'           => 'Vendor One',
+                    'vendor'         => 'Acme',
+                    'website'        => 'https://example.com',
+                    'video_url'      => 'https://example.com/video',
+                    'status'         => 'Active',
+                    'hosted_type'    => array( 'Cloud' ),
+                    'domain'         => array( 'Payments' ),
+                    'regions'        => array( 'US' ),
+                    'sub_categories' => array( 'Sub1' ),
+                    'category'       => 'Cash',
+                    'category_names' => array( 'Cash' ),
+                    'capabilities'   => array( 'API' ),
+                    'logo_url'       => 'https://example.com/logo.png',
+                    'hq_location'    => 'NY',
+                    'founded_year'   => '2020',
+                    'founders'       => 'Alice',
+                ),
+            );
+        } );
+        \Patchwork\replace( 'TTP_Data::get_categories', function () {
+            return array();
+        } );
+        \Patchwork\replace( 'TTP_Data::get_domains', function () {
+            return array();
+        } );
+
+        ob_start();
+        TTP_Admin::render_page();
+        $html = ob_get_clean();
+
+        $dom   = new DOMDocument();
+        @$dom->loadHTML( $html );
+        $xpath = new DOMXPath( $dom );
+        $headers = $xpath->query( '//table[contains(@class, "treasury-portal-admin-table")]//th[@data-sort-key]' );
+        foreach ( $headers as $th ) {
+            $key   = $th->getAttribute( 'data-sort-key' );
+            $nodes = $xpath->query( "//tr[contains(@class,'tp-filter-row')]//*[@class='tp-filter-control' and @data-filter-key='$key']" );
+            $this->assertGreaterThan( 0, $nodes->length, 'Missing filter control for ' . $key );
+        }
+    }
 }
 

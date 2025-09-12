@@ -29,6 +29,8 @@ if (!function_exists('__')) {
     }
 }
 
+\Brain\Monkey\Functions\when( 'esc_url_raw' )->returnArg();
+
 if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__ . '/../');
 }
