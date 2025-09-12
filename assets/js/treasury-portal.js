@@ -1683,11 +1683,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const region = this.advancedFilters.regions[0] || '';
                 const category = this.advancedFilters.categories[0] ? this.normalizeCategory(this.advancedFilters.categories[0]) : '';
                 const sub = this.advancedFilters.subcategories[0] || '';
-                const match = this.introVideos.find(v =>
-                    (!v.region || v.region === region) &&
-                    (!v.category || v.category === category) &&
-                    (!v.sub_category || v.sub_category === sub)
+                // Look for intro videos in order of specificity
+                let match = this.introVideos.find(v =>
+                    v.region === region &&
+                    v.category === category &&
+                    v.sub_category === sub
                 );
+
+                if (!match) {
+                    match = this.introVideos.find(v =>
+                        v.region === region &&
+                        v.category === category &&
+                        !v.sub_category
+                    );
+                }
+
+                if (!match) {
+                    match = this.introVideos.find(v =>
+                        v.region === region &&
+                        !v.category &&
+                        !v.sub_category
+                    );
+                }
+
                 if (match) {
                     return { url: match.url || '', poster: this.defaultIntroVideo.poster };
                 }
