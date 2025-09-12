@@ -9,6 +9,11 @@ A WordPress plugin that provides an interactive interface for discovering and co
 - Advanced filtering and search
 - Video demonstrations
 - Shortlist and comparison tools
+- Product summaries displayed on tool cards and in detail modals
+
+### Product Summary Requirements
+- Summaries are plain text only
+- Limit summaries to roughly 280 characters; text beyond this is truncated on tool cards
 
 ## Quick Start
 1. Install and activate the plugin in WordPress.
