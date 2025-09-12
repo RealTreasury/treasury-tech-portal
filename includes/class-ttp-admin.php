@@ -236,7 +236,7 @@ class TTP_Admin {
 
         $field_names = array(
             'Product Name',
-            'Linked Vendor',
+            'Vendor',
             'Product Website',
             'Full Website URL',
             'Demo Video URL', // Airbase field ID fldHyVJRr3O5rkgd7

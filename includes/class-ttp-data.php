@@ -375,7 +375,7 @@ class TTP_Data {
 
         $field_names = array(
             'Product Name',
-            'Linked Vendor',
+            'Vendor',
             'Product Website',
             'Full Website URL',
             'Demo Video URL', // Airbase field ID fldHyVJRr3O5rkgd7
@@ -401,7 +401,7 @@ class TTP_Data {
 
         $linked_fields = array(
             'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Region' ),
-            'Linked Vendor'  => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'Vendor'         => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
             'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
             'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
             'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),

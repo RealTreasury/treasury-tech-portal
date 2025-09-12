@@ -28,7 +28,7 @@ class TTP_Admin_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
-            'Linked Vendor'   => 'fld_vendor',
+            'Vendor'          => 'fld_vendor',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
             'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
@@ -69,7 +69,7 @@ class TTP_Admin_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => ['recven1'],
+                'Vendor'          => ['recven1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
@@ -131,7 +131,7 @@ class TTP_Admin_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => ['recven1'],
+                'Vendor'          => ['recven1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
