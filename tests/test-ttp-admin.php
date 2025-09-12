@@ -221,5 +221,72 @@ class TTP_Admin_Test extends TestCase {
 
         unset( $_POST['enabled_domains'] );
     }
+
+    public function test_render_page_outputs_all_filter_controls() {
+        when( 'current_user_can' )->justReturn( true );
+        when( 'wp_nonce_field' )->justReturn( '' );
+        when( 'submit_button' )->justReturn( '' );
+        when( 'checked' )->justReturn( '' );
+        when( 'get_option' )->alias( function ( $key, $default = null ) { return $default; } );
+        when( 'esc_html_e' )->alias( fn( $text, $domain = 'default' ) => $text );
+        when( 'esc_html__' )->alias( fn( $text, $domain = 'default' ) => $text );
+        when( 'esc_html' )->alias( fn( $text = '' ) => $text );
+        when( 'esc_attr_e' )->alias( fn( $text, $domain = 'default' ) => $text );
+        when( 'esc_attr__' )->alias( fn( $text, $domain = 'default' ) => $text );
+        when( 'esc_attr' )->alias( fn( $text = '' ) => $text );
+        when( 'esc_url' )->alias( fn( $url = '' ) => $url );
+        when( 'esc_url_raw' )->alias( fn( $url = '' ) => $url );
+        when( 'admin_url' )->alias( fn( $url = '' ) => $url );
+
+        \Patchwork\replace( 'TTP_Data::get_all_vendors', function () {
+            return [ [
+                'name'            => 'Vendor1',
+                'category_names'  => [ 'Cat' ],
+                'vendor'          => 'Vendor Co',
+                'website'         => 'https://example.com',
+                'video_url'       => 'https://example.com/video',
+                'status'          => 'Active',
+                'hosted_type'     => [ 'Cloud' ],
+                'domain'          => [ 'Finance' ],
+                'regions'         => [ 'US' ],
+                'sub_categories'  => [ 'Payments' ],
+                'category'        => 'Cash',
+                'capabilities'    => [ 'API' ],
+                'logo_url'        => 'https://example.com/logo.png',
+                'hq_location'     => 'NY',
+                'founded_year'    => '2020',
+                'founders'        => 'Jane Doe',
+            ] ];
+        } );
+        \Patchwork\replace( 'TTP_Data::get_categories', fn() => [ 'cash' => 'Cash' ] );
+        \Patchwork\replace( 'TTP_Data::get_domains', fn() => [ 'finance' => 'Finance' ] );
+
+        ob_start();
+        TTP_Admin::render_page();
+        $html = ob_get_clean();
+
+        $keys = [
+            'name',
+            'category_names',
+            'vendor',
+            'website',
+            'video_url',
+            'status',
+            'hosted_type',
+            'domain',
+            'regions',
+            'sub_categories',
+            'category',
+            'capabilities',
+            'logo_url',
+            'hq_location',
+            'founded_year',
+            'founders',
+        ];
+        foreach ( $keys as $key ) {
+            $pattern = '/<[^>]+class="tp-filter-control"[^>]+data-filter-key="' . preg_quote( $key, '/' ) . '"/';
+            $this->assertMatchesRegularExpression( $pattern, $html, "Missing filter control for $key" );
+        }
+    }
 }
 

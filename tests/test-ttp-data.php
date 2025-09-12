@@ -17,6 +17,7 @@ class TTP_Data_Test extends TestCase {
         when('get_transient')->justReturn(false);
         when('set_transient')->justReturn(true);
         when('delete_transient')->justReturn(true);
+        when('esc_url_raw')->alias(fn($url = '') => $url);
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
