@@ -45,15 +45,15 @@
     <?php if (isset($_GET['domains_updated'])) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Domains updated.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
-    <?php if (!empty($vendors)) : ?>
+    <?php if (!empty($products)) : ?>
         <?php
         $statuses = array_unique(
             array_filter(
                 array_map(
-                    function ($vendor) {
-                        return sanitize_text_field($vendor['status'] ?? '');
+                    function ($product) {
+                        return sanitize_text_field($product['status'] ?? '');
                     },
-                    $vendors
+                    $products
                 )
             )
         );
@@ -71,7 +71,7 @@
                     <tr>
                         <th data-sort-key="name"><div class="tp-header-cell"><?php esc_html_e('Name', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="category_names"><div class="tp-header-cell"><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th data-sort-key="vendor"><div class="tp-header-cell"><?php esc_html_e('Product', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="product"><div class="tp-header-cell"><?php esc_html_e('Product', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="website"><div class="tp-header-cell"><?php esc_html_e('Website', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="video_url"><div class="tp-header-cell"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="status"><div class="tp-header-cell"><?php esc_html_e('Status', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
@@ -99,8 +99,8 @@
                             <input type="text" id="tp-filter-category-names" class="tp-filter-control" data-filter-key="category_names" placeholder="<?php esc_attr_e('Filter categories', 'treasury-tech-portal'); ?>" />
                         </td>
                         <td data-label="<?php echo esc_attr__('Product', 'treasury-tech-portal'); ?>">
-                            <label class="screen-reader-text" for="tp-filter-vendor"><?php esc_html_e('Filter by product', 'treasury-tech-portal'); ?></label>
-                            <input type="text" id="tp-filter-vendor" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter product', 'treasury-tech-portal'); ?>" />
+                            <label class="screen-reader-text" for="tp-filter-product"><?php esc_html_e('Filter by product', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-product" class="tp-filter-control" data-filter-key="product" placeholder="<?php esc_attr_e('Filter product', 'treasury-tech-portal'); ?>" />
                         </td>
                         <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>">
                             <label class="screen-reader-text" for="tp-filter-website"><?php esc_html_e('Filter by website', 'treasury-tech-portal'); ?></label>
@@ -164,19 +164,19 @@
                             <input type="text" id="tp-filter-founders" class="tp-filter-control" data-filter-key="founders" placeholder="<?php esc_attr_e('Filter founders', 'treasury-tech-portal'); ?>" />
                         </td>
                     </tr>
-                <?php foreach ($vendors as $vendor) : ?>
+                <?php foreach ($products as $product) : ?>
                     <?php
-                    $cats         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['category_names'] ?? array())));
-                    $hosted       = implode(', ', array_map('sanitize_text_field', (array) ($vendor['hosted_type'] ?? array())));
-                    $domain       = implode(', ', array_map('sanitize_text_field', (array) ($vendor['domain'] ?? array())));
-                    $regions      = implode(', ', array_map('sanitize_text_field', (array) ($vendor['regions'] ?? array())));
-                    $subs         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['sub_categories'] ?? array())));
-                    $core_caps    = implode(', ', array_map('sanitize_text_field', (array) ($vendor['core_capabilities'] ?? array())));
-                    $capabilities = implode(', ', array_map('sanitize_text_field', (array) ($vendor['capabilities'] ?? array())));
+                    $cats         = implode(', ', array_map('sanitize_text_field', (array) ($product['category_names'] ?? array())));
+                    $hosted       = implode(', ', array_map('sanitize_text_field', (array) ($product['hosted_type'] ?? array())));
+                    $domain       = implode(', ', array_map('sanitize_text_field', (array) ($product['domain'] ?? array())));
+                    $regions      = implode(', ', array_map('sanitize_text_field', (array) ($product['regions'] ?? array())));
+                    $subs         = implode(', ', array_map('sanitize_text_field', (array) ($product['sub_categories'] ?? array())));
+                    $core_caps    = implode(', ', array_map('sanitize_text_field', (array) ($product['core_capabilities'] ?? array())));
+                    $capabilities = implode(', ', array_map('sanitize_text_field', (array) ($product['capabilities'] ?? array())));
 
-                    $website   = $vendor['website'] ?? '';
-                    $video_url = $vendor['video_url'] ?? '';
-                    $logo_url  = $vendor['logo_url'] ?? '';
+                    $website   = $product['website'] ?? '';
+                    $video_url = $product['video_url'] ?? '';
+                    $logo_url  = $product['logo_url'] ?? '';
 
                     $website_href   = esc_url($website);
                     $video_href     = esc_url($video_url);
@@ -189,14 +189,14 @@
                     <tr>
                         <td data-label="<?php echo esc_attr__('Name', 'treasury-tech-portal'); ?>">
                             <?php
-                            echo esc_html($vendor['name'] ?? '');
-                            if (!empty($vendor['id'])) {
-                                echo ' (' . esc_html($vendor['id']) . ')';
+                            echo esc_html($product['name'] ?? '');
+                            if (!empty($product['id'])) {
+                                echo ' (' . esc_html($product['id']) . ')';
                             }
                             ?>
                         </td>
                         <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>"><?php echo esc_html($cats); ?></td>
-                        <td data-label="<?php echo esc_attr__('Product', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Product', 'treasury-tech-portal'); ?>"><?php echo esc_html($product['product'] ?? ''); ?></td>
                         <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>" data-filter-value="<?php echo esc_url($website); ?>">
                             <?php if (!empty($website_href)) : ?>
                                 <a href="<?php echo $website_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $website_text; ?></a>
@@ -207,12 +207,12 @@
                                 <a href="<?php echo $video_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $video_text; ?></a>
                             <?php endif; ?>
                         </td>
-                        <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['status'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Status', 'treasury-tech-portal'); ?>"><?php echo esc_html($product['status'] ?? ''); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Hosted Type', 'treasury-tech-portal'); ?>"><?php echo esc_html($hosted); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Domain', 'treasury-tech-portal'); ?>"><?php echo esc_html($domain); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Regions', 'treasury-tech-portal'); ?>"><?php echo esc_html($regions); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Sub Categories', 'treasury-tech-portal'); ?>"><?php echo esc_html($subs); ?></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['category'] ?? ($vendor['categories'][0] ?? '')); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Category', 'treasury-tech-portal'); ?>"><?php echo esc_html($product['category'] ?? ($product['categories'][0] ?? '')); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Core Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($core_caps); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Additional Capabilities', 'treasury-tech-portal'); ?>"><?php echo esc_html($capabilities); ?></td>
                         <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Logo URL', 'treasury-tech-portal'); ?>" data-filter-value="<?php echo esc_url($logo_url); ?>">
@@ -220,9 +220,9 @@
                                 <a href="<?php echo $logo_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $logo_text; ?></a>
                             <?php endif; ?>
                         </td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['hq_location'] ?? ''); ?></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founded_year'] ?? ''); ?></td>
-                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['founders'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('HQ Location', 'treasury-tech-portal'); ?>"><?php echo esc_html($product['hq_location'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founded Year', 'treasury-tech-portal'); ?>"><?php echo esc_html($product['founded_year'] ?? ''); ?></td>
+                        <td class="is-mobile-hidden" data-label="<?php echo esc_attr__('Founders', 'treasury-tech-portal'); ?>"><?php echo esc_html($product['founders'] ?? ''); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
