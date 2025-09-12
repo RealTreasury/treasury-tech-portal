@@ -184,6 +184,15 @@ class TTP_Admin {
         $domains            = TTP_Data::get_domains();
         $enabled_domains    = (array) get_option( self::OPTION_ENABLED_DOMAINS, array_keys( $domains ) );
         $intro_videos       = (array) get_option( self::OPTION_INTRO_VIDEOS, array() );
+        $category_videos    = array();
+        $subcategory_videos = array();
+        foreach ( $intro_videos as $i => $video ) {
+            if ( empty( $video['sub_category'] ) ) {
+                $category_videos[ $i ] = $video;
+            } else {
+                $subcategory_videos[ $i ] = $video;
+            }
+        }
 
         $regions = array();
         $sub_categories = array();
