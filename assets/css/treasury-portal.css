@@ -4,7 +4,7 @@
             box-sizing: border-box;
         }
 
-        /* Allow vertical scrolling inside the iframe */
+        /* Base portal styles */
     .treasury-portal {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: #f8f9fa;
@@ -15,10 +15,10 @@
             -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
             overflow-x: hidden;
-            overflow-y: auto;
         }
 
-    .treasury-portal {
+        /* Allow vertical scrolling when embedded in an iframe */
+    .treasury-portal.embedded {
             overflow-x: hidden;
             overflow-y: auto;
             height: 100%;
