@@ -46,6 +46,19 @@
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Domains updated.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
+        <?php
+        $statuses = array_unique(
+            array_filter(
+                array_map(
+                    function ($vendor) {
+                        return sanitize_text_field($vendor['status'] ?? '');
+                    },
+                    $vendors
+                )
+            )
+        );
+        sort($statuses);
+        ?>
         <div class="treasury-portal-admin-search">
             <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>
             <input type="search" id="treasury-portal-admin-search-input" placeholder="<?php esc_attr_e('Search vendors...', 'treasury-tech-portal'); ?>" />
@@ -73,6 +86,31 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr class="tp-filter-row">
+                        <td><input type="text" class="tp-filter-control" data-filter-key="name" placeholder="<?php esc_attr_e('Filter name', 'treasury-tech-portal'); ?>" /></td>
+                        <td><input type="text" class="tp-filter-control" data-filter-key="category_names" placeholder="<?php esc_attr_e('Filter categories', 'treasury-tech-portal'); ?>" /></td>
+                        <td><input type="text" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter vendor', 'treasury-tech-portal'); ?>" /></td>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <select class="tp-filter-control" data-filter-key="status" data-match="exact">
+                                <option value=""><?php esc_html_e('All', 'treasury-tech-portal'); ?></option>
+                                <?php foreach ($statuses as $status) : ?>
+                                    <option value="<?php echo esc_attr(strtolower($status)); ?>"><?php echo esc_html($status); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"><input type="text" class="tp-filter-control" data-filter-key="domain" placeholder="<?php esc_attr_e('Filter domain', 'treasury-tech-portal'); ?>" /></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                        <td class="is-mobile-hidden"></td>
+                    </tr>
                 <?php foreach ($vendors as $vendor) : ?>
                     <?php
                     $cats         = implode(', ', array_map('sanitize_text_field', (array) ($vendor['category_names'] ?? array())));

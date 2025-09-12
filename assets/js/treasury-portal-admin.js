@@ -1,16 +1,78 @@
 (function() {
+    function debounce(fn, delay) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn.apply(this, args), delay);
+        };
+    }
+
     function init() {
         const searchInput = document.getElementById('treasury-portal-admin-search-input');
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                const filter = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('.treasury-portal-admin-table-wrapper tbody tr');
-                rows.forEach(function(row) {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
-                });
+        const table = document.querySelector('.treasury-portal-admin-table');
+        const keyToIndex = {};
+        if (table) {
+            Array.from(table.querySelectorAll('th')).forEach(function(th, i) {
+                const key = th.dataset.sortKey;
+                if (key) {
+                    keyToIndex[key] = i;
+                }
             });
         }
+
+        const columnFilters = {};
+        let searchValue = '';
+
+        const applyFilters = debounce(function() {
+            if (!table) {
+                return;
+            }
+            const rows = table.querySelectorAll('tbody tr:not(.tp-filter-row)');
+            rows.forEach(function(row) {
+                let matches = true;
+                if (searchValue && !row.textContent.toLowerCase().includes(searchValue)) {
+                    matches = false;
+                }
+                for (const key in columnFilters) {
+                    const cell = row.children[keyToIndex[key]];
+                    const cellText = cell ? cell.textContent.toLowerCase().trim() : '';
+                    const filter = columnFilters[key];
+                    if (filter.exact) {
+                        if (cellText !== filter.value) {
+                            matches = false;
+                            break;
+                        }
+                    } else if (!cellText.includes(filter.value)) {
+                        matches = false;
+                        break;
+                    }
+                }
+                row.style.display = matches ? '' : 'none';
+            });
+        }, 200);
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                searchValue = searchInput.value.toLowerCase();
+                applyFilters();
+            });
+        }
+
+        document.querySelectorAll('.tp-filter-control').forEach(function(control) {
+            const eventType = control.tagName === 'SELECT' ? 'change' : 'input';
+            control.addEventListener(eventType, function() {
+                const key = control.dataset.filterKey;
+                const value = control.value.trim().toLowerCase();
+                if (value) {
+                    columnFilters[key] = { value: value, exact: control.dataset.match === 'exact' };
+                } else {
+                    delete columnFilters[key];
+                }
+                applyFilters();
+            });
+        });
+
+        applyFilters();
 
         const tokenField = document.getElementById('ttp_airbase_token');
         const toggleBtn = document.getElementById('ttp_airbase_token_toggle');
@@ -74,7 +136,8 @@
 
         const tbody = table.querySelector('tbody');
         const headers = table.querySelectorAll('th[data-sort-key]');
-        const originalRows = Array.from(tbody.querySelectorAll('tr'));
+        const filterRow = tbody.querySelector('.tp-filter-row');
+        const originalRows = Array.from(tbody.querySelectorAll('tr:not(.tp-filter-row)'));
         const numericColumns = new Set(['founded_year']);
         let currentSort = { key: null, direction: null };
 
@@ -99,11 +162,14 @@
                     originalRows.forEach(function(row) {
                         tbody.appendChild(row);
                     });
+                    if (filterRow) {
+                        tbody.insertBefore(filterRow, tbody.firstChild);
+                    }
                     return;
                 }
 
                 th.classList.add(direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
-                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const rows = Array.from(tbody.querySelectorAll('tr:not(.tp-filter-row)'));
                 const isNumeric = numericColumns.has(key);
                 rows.sort(function(a, b) {
                     const aText = a.children[index].textContent.trim();
@@ -121,6 +187,9 @@
                 rows.forEach(function(row) {
                     tbody.appendChild(row);
                 });
+                if (filterRow) {
+                    tbody.insertBefore(filterRow, tbody.firstChild);
+                }
             });
         });
     }
