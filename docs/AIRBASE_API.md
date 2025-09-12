@@ -278,6 +278,8 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV?records[]=
 ## Categories Table
 
 Table ID: `tblzGvVxiuzvf55a1`
+Table names and IDs are interchangeable in API requests; using the ID avoids
+breakage if the name changes.
 
 ### Fields
 | Field | Type | Notes |
@@ -289,14 +291,39 @@ Table ID: `tblzGvVxiuzvf55a1`
 | `Product Count (from Sub Categories)` (`fldNRKbve8To8z0Oi`) | lookup | counts from linked sub categories |
 | `Linked Products (from Sub Categories)` (`fldTYdVWjYyQJXPS4`) | lookup | product IDs from linked sub categories |
 | `Count (Domain)` (`fldviPn2IFlVTpzg2`) | count | number of linked domain records |
-| `Linked Additional Capabilities` (`fldMzl6st07X985kr`) | lookup | capability IDs from linked sub categories |
+| `Linked Capabilities` (`fldMzl6st07X985kr`) | lookup | capability IDs from linked sub categories |
 | `Sub Category Count` (`fldQX6bLq9mTLFxwk`) | count | number of linked sub categories |
 | `Linked Product Count` (`fldmZLfQZKQCCbCGr`) | formula | sum of Product Count (from Sub Categories) |
 
+Field names and field IDs are interchangeable in requests. Using IDs prevents
+future name changes from breaking integrations.
+
 ### Listing Categories
+Fetch up to three records from the Grid view:
 ```bash
 curl "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?maxRecords=3&view=Grid%20view" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+Returned records omit empty fields. Supported query parameters include
+`fields[]`, `filterByFormula`, `maxRecords`, `pageSize`, `sort[]`, `view`,
+`cellFormat`, `timeZone`, `userLocale`, `returnFieldsByFieldId`, and
+`recordMetadata`.
+
+Example response:
+```json
+{
+  "records": [
+    {
+      "id": "reckz5jhQb2CBocKR",
+      "fields": {
+        "Category Name": "TREASURY SYSTEMS",
+        "Sub Categories": ["recSuHsaI8E680bHJ"],
+        "Domain": ["rec3ffWVfNTT08Mu2"]
+      }
+    }
+  ]
+}
 ```
 
 ### Retrieving a Category
@@ -322,6 +349,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1 \
   ]
 }'
 ```
+Up to 10 records may be created per request.
 
 ### Updating Categories
 ```bash
@@ -339,6 +367,7 @@ curl -X PATCH https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1 \
   ]
 }'
 ```
+Patch only the fields that change. Up to 10 records per request.
 
 ### Deleting Categories
 ```bash
@@ -347,7 +376,7 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?records[]=
 ```
 
 ### Notes
-- Values for `Product Count (from Sub Categories)`, `Linked Products (from Sub Categories)`, `Count (Domain)`, `Linked Additional Capabilities`, `Sub Category Count` and `Linked Product Count` are computed by Airtable and cannot be set or updated directly.
+- Values for `Product Count (from Sub Categories)`, `Linked Products (from Sub Categories)`, `Count (Domain)`, `Linked Capabilities`, `Sub Category Count` and `Linked Product Count` are computed by Airtable and cannot be set or updated directly.
 
 ## Additional Notes
 - Use `typecast=true` to let Airtable create new select options automatically.
