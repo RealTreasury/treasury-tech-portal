@@ -922,7 +922,11 @@ class TTP_Data {
         if (!empty($args['search'])) {
             $search = strtolower($args['search']);
             $tools = array_filter($tools, function ($tool) use ($search) {
-                $haystack = strtolower($tool['name'] . ' ' . ($tool['desc'] ?? '') . ' ' . implode(' ', $tool['features'] ?? []));
+                $haystack = strtolower(
+                    $tool['name'] . ' ' .
+                    implode(' ', $tool['subCategories'] ?? []) . ' ' .
+                    implode(' ', $tool['features'] ?? [])
+                );
                 return strpos($haystack, $search) !== false;
             });
         }

@@ -10,7 +10,7 @@
 {
   "name": "Example Tool",
   "category": "CASH",
-  "desc": "Tool description",
+  "sub_categories": ["Tool subcategory"],
   "newProperty": "New value here", // ← ADD THIS
   // ... existing properties
 }
@@ -224,7 +224,7 @@ if (this.searchTerm) {
     tools = this.TREASURY_TOOLS.filter(tool => {
         const searchableText = [
             tool.name,
-            tool.desc,
+            ...(tool.subCategories || []),
             tool.target,
             ...(tool.tags || []),
             ...(tool.features || []),
@@ -273,7 +273,7 @@ exportShortlist() {
     const data = this.shortlist.map(item => ({
         name: item.tool.name,
         category: item.tool.category,
-        description: item.tool.desc,
+        description: (item.tool.subCategories || []).join(', '),
         website: item.tool.websiteUrl || '',
         features: (item.tool.features || []).join('; '),
         target: item.tool.target || '',

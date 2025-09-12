@@ -40,7 +40,7 @@ test('warning icon appears for unresolved ids', () => {
   portal.CATEGORY_TAGS = {};
   portal.categoryLabels = window.TTP_DATA.category_labels;
 
-  const tool = { name: 'Product', category: 'CASH', desc: '', regions: ['rec123'] };
+  const tool = { name: 'Product', category: 'CASH', subCategories: [], regions: ['rec123'] };
   const card = portal.createToolCard(tool, 'CASH');
 
   assert.ok(card.querySelector('.ttp-warning'));

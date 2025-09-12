@@ -156,7 +156,7 @@ class Treasury_Tech_Portal {
         $bcb_notes = array();
 
         foreach ($tools as $tool) {
-            $bcb_notes[sanitize_title($tool['name'])] = $tool['desc'] ?? '';
+            $bcb_notes[sanitize_title($tool['name'])] = implode(', ', $tool['subCategories'] ?? []);
         }
 
         return $bcb_notes;

@@ -6,8 +6,8 @@
 ```json
 {
   "name": "string (required)",
-  "category": "CASH|LITE|TRMS (required)", 
-  "desc": "string (required)",
+  "category": "CASH|LITE|TRMS (required)",
+  "sub_categories": ["array", "of", "strings"],
   "features": ["array", "of", "strings"],
   "target": "string",
   "videoUrl": "string (YouTube or direct video)",
@@ -42,7 +42,7 @@ GET /wp-json/ttp/v1/tools
 
 #### Parameters
 - `category` (string|string[]): Filter by category
-- `search` (string): Search term for name, description, features
+- `search` (string): Search term for name, sub categories, features
 - `has_video` (boolean): Filter tools that have video demonstrations
 - `per_page` (integer): Number of tools per page (default: all)
 - `page` (integer): Page number for pagination (default: 1)
@@ -56,7 +56,6 @@ GET /wp-json/ttp/v1/tools
     "name": "Kyriba",
     "category": "Cash",
     "sub_categories": ["Payments"],
-    "desc": "Market-leading cloud treasury platform...",
     "features": ["AI-driven cash forecasting", "Real-time risk analytics"],
     "target": "Large enterprises and multinational corporations",
     "videoUrl": "https://realtreasury.com/kyriba-06-2025/?embed=1",

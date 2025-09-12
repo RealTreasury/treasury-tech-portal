@@ -418,7 +418,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                         regions.forEach(r => addValue(allRegions, r));
                         return {
                             name: product.name || '',
-                            desc: product.status || '',
                             category,
                             categoryName: rawCategory,
                             subCategories,
@@ -856,7 +855,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // 1. Update the static content first
                 if (modalTitle) modalTitle.textContent = tool.name;
-                if (modalDescription) modalDescription.textContent = tool.desc;
+                if (modalDescription) modalDescription.textContent = (tool.subCategories || []).join(', ');
 
                 if (modalWebsiteLink) {
                     if (tool.websiteUrl) {
@@ -1160,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     tools = tools.filter(tool => {
                         const searchableText = [
                             tool.name,
-                            tool.desc,
+                            ...(tool.subCategories || []),
                             tool.target,
                             ...(tool.core_capabilities || []),
                             ...(tool.capabilities || [])
@@ -1325,7 +1324,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 ${Array.isArray(tool.regions) && tool.regions.length ? `<div class="tool-region">${tool.regions.join(', ')}</div>` : ''}
                             </div>
                         </div>
-                        <div class="tool-description">${tool.desc}</div>
+                        <div class="tool-description">${(tool.subCategories || []).join(', ')}</div>
                     </div>
                         <div class="tool-card-actions">
                         <div class="tool-capabilities">

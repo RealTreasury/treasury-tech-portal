@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const script = fs.readFileSync('assets/js/treasury-portal.js', 'utf8');
 
-test('tool regions render in card', () => {
+test('tool subcategories and regions render in card', () => {
   const dom = new JSDOM('<div class="treasury-portal"></div>', { runScripts: 'outside-only' });
   const { window } = dom;
   global.window = window;
@@ -40,8 +40,12 @@ test('tool regions render in card', () => {
   portal.CATEGORY_TAGS = {};
   portal.categoryLabels = window.TTP_DATA.category_labels;
 
-  const tool = { name: 'Product', category: 'CASH', desc: '', regions: ['North America', 'Europe'] };
+  const tool = { name: 'Product', category: 'CASH', subCategories: ['SubA', 'SubB'], regions: ['North America', 'Europe'] };
   const card = portal.createToolCard(tool, 'CASH');
+
+  const descEl = card.querySelector('.tool-description');
+  assert.ok(descEl);
+  assert.strictEqual(descEl.textContent, 'SubA, SubB');
 
   const regionEl = card.querySelector('.tool-region');
   assert.ok(regionEl);
