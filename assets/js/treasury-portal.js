@@ -1,11 +1,6 @@
         const EMBED_ORIGIN = 'https://realtreasury.com';
         let treasuryTechPortal;
-        // Root element for the portal; abort setup if not found.
-        const portalRoot = document.querySelector('.treasury-portal');
-
-        if (!portalRoot) {
-            console.warn('TreasuryTechPortal: .treasury-portal element not found. Aborting initialization.');
-        }
+        let portalRoot;
 
         function postHeight() {
             if (window.parent !== window) {
@@ -59,7 +54,13 @@ window.addEventListener('load', () => {
 });
 window.addEventListener('resize', debouncedPostHeight);
 
-if (portalRoot) {
+document.addEventListener('DOMContentLoaded', async () => {
+    portalRoot = document.querySelector('.treasury-portal');
+    if (!portalRoot) {
+        console.warn('TreasuryTechPortal: .treasury-portal element not found. Aborting initialization.');
+        return;
+    }
+
     new ResizeObserver(() => {
         debouncedPostHeight();
     }).observe(portalRoot);
@@ -72,22 +73,14 @@ if (portalRoot) {
         attributes: true,
         attributeFilter: ['style', 'class']
     });
-}
 
-document.addEventListener('DOMContentLoaded', async () => {
-    if (!portalRoot) {
-        // Skip initialization when portal root is absent.
-        return;
-    }
     const containerEl = document.querySelector('.treasury-portal .container');
     if (!window.TTP_DATA) {
-        if (portalRoot) {
-            const banner = document.createElement('div');
-            banner.className = 'error-banner';
-            banner.textContent = 'Configuration data is unavailable.';
-            banner.style.cssText = 'padding:1rem;margin:1rem 0;background:#f8d7da;color:#721c24;border:1px solid #f5c2c7;border-radius:4px;';
-            portalRoot.prepend(banner);
-        }
+        const banner = document.createElement('div');
+        banner.className = 'error-banner';
+        banner.textContent = 'Configuration data is unavailable.';
+        banner.style.cssText = 'padding:1rem;margin:1rem 0;background:#f8d7da;color:#721c24;border:1px solid #f5c2c7;border-radius:4px;';
+        portalRoot.prepend(banner);
         if (containerEl) containerEl.classList.add('loaded');
         console.warn('TreasuryTechPortal: window.TTP_DATA is missing');
         return;
