@@ -31,7 +31,7 @@ class TTP_Rest_Test extends TestCase {
         \Brain\Monkey\tearDown();
     }
 
-    public function test_registers_tools_endpoint() {
+    public function test_registers_products_endpoint() {
         $routes = [];
         when('register_rest_route')->alias(function ($namespace, $route, $args) use (&$routes) {
             $routes[] = [$namespace, $route, $args];
@@ -40,16 +40,16 @@ class TTP_Rest_Test extends TestCase {
         TTP_Rest::register_routes();
 
         $this->assertNotEmpty($routes);
-        $tools_route = array_filter($routes, function ($r) {
-            return $r[0] === 'ttp/v1' && $r[1] === '/tools';
+        $products_route = array_filter($routes, function ($r) {
+            return $r[0] === 'ttp/v1' && $r[1] === '/products';
         });
-        $this->assertNotEmpty($tools_route);
-        $route = array_values($tools_route)[0];
-        $this->assertSame([TTP_Rest::class, 'get_tools'], $route[2]['callback']);
+        $this->assertNotEmpty($products_route);
+        $route = array_values($products_route)[0];
+        $this->assertSame([TTP_Rest::class, 'get_products'], $route[2]['callback']);
     }
 
-    public function test_tools_endpoint_returns_vendor_with_new_fields() {
-        $vendor = [
+    public function test_products_endpoint_returns_product_with_new_fields() {
+        $product = [
             'name'           => 'Sample Product',
             'video_url'      => 'https://example.com/video',
             'logo_url'       => 'https://example.com/logo.png',
@@ -73,8 +73,8 @@ class TTP_Rest_Test extends TestCase {
             return $default;
         } );
 
-        \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($vendor) {
-            return [ $vendor ];
+        \Patchwork\replace('TTP_Data::get_all_products', function () use ($product) {
+            return [ $product ];
         });
 
         $request = new class {
@@ -83,9 +83,9 @@ class TTP_Rest_Test extends TestCase {
             }
         };
 
-        $response = TTP_Rest::get_tools($request);
-        $this->assertIsArray($response['tools']);
-        $tool = $response['tools'][0];
+        $response = TTP_Rest::get_products($request);
+        $this->assertIsArray($response['products']);
+        $tool = $response['products'][0];
         $this->assertArrayHasKey('video_url', $tool);
         $this->assertArrayHasKey('logo_url', $tool);
         $this->assertArrayHasKey('category', $tool);

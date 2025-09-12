@@ -21,7 +21,7 @@ class TTP_Data_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
-            'Vendor'   => 'fld_product',
+            'Product'   => 'fld_product',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
             'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
@@ -75,7 +75,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => ['recven1'],
+                'Product'   => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Full Website URL' => 'example.com?utm=1',
                 'Demo Video URL'  => 'example.com/video',
@@ -116,7 +116,7 @@ class TTP_Data_Test extends TestCase {
                     'recreg1' => 'North America',
                     'recreg2' => 'Europe',
                 ],
-                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Products'        => [ 'recprod1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Treasury' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
@@ -140,7 +140,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Full Website URL'], $requested_fields);
         $this->assertFalse($use_ids);
         $this->assertSame(
-            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Additional Capabilities'],
+            ['Regions', 'Products', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Additional Capabilities'],
             $tables
         );
         $this->assertSame('Domain Name', $primary_fields['Domain']);
@@ -184,7 +184,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -225,7 +225,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => ['recven1'],
+                'Product'   => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
@@ -244,7 +244,7 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
-                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Products'        => [ 'recprod1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
@@ -283,7 +283,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'   => 'Sample Product',
-                'Vendor'  => ['recven1'],
+                'Product'  => ['recprod1'],
                 'Domain'         => ['recdom1'],
             ]),
         ];
@@ -302,12 +302,12 @@ class TTP_Data_Test extends TestCase {
 
         TTP_Data::refresh_product_cache();
 
-        $this->assertSame('Name', $captured['Vendors']);
+        $this->assertSame('Name', $captured['Products']);
         $this->assertSame('Domain Name', $captured['Domain']);
     }
 
     public function test_refresh_product_cache_skips_missing_schema_fields() {
-        unset( $this->schema_map['Vendor'] );
+        unset( $this->schema_map['Product'] );
 
         $fields = $this->id_fields([
             'Product Name'    => 'Sample Product',
@@ -320,7 +320,7 @@ class TTP_Data_Test extends TestCase {
             'Domain'          => ['recdom1'],
             'Additional Capabilities'    => ['reccap1'],
         ]);
-        $fields['Vendor'] = 'recven1';
+        $fields['Product'] = 'recprod1';
 
         $record = [
             'id'     => 'rec1',
@@ -344,8 +344,8 @@ class TTP_Data_Test extends TestCase {
 
         TTP_Data::refresh_product_cache();
 
-        $this->assertNotContains('Vendors', $tables);
-        $this->assertSame('recven1', $captured[0]['product']);
+        $this->assertNotContains('Products', $tables);
+        $this->assertSame('recprod1', $captured[0]['product']);
     }
 
     public function test_refresh_product_cache_uses_domain_names_from_pairs() {
@@ -353,7 +353,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => ['Cloud'],
@@ -393,7 +393,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -435,7 +435,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => ['recven1'],
+                'Product'   => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => ['rechost1'],
@@ -478,7 +478,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => ['recven1'],
+                'Product'   => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Regions'         => ['recreg1'],
@@ -509,7 +509,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Category'       => ['reccat1'],
@@ -590,7 +590,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'rcsven1',
+                'Product'   => 'rcsprod1',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => 'rcshost1',
@@ -609,7 +609,7 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ 'rcsreg1' => 'NORAM' ],
-                'Vendors'        => [ 'rcsven1' => 'Acme Corp' ],
+                'Products'        => [ 'rcsprod1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
                 'Domain'         => [ 'rcsdom1' => 'Banking' ],
                 'Sub Categories' => [ 'rcssc1' => 'Payments' ],
@@ -644,7 +644,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => [ [ 'id' => 'rcsven1' ] ],
+                'Product'   => [ [ 'id' => 'rcsprod1' ] ],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => [ [ 'id' => 'rcshost1' ] ],
@@ -663,7 +663,7 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ 'rcsreg1' => 'NORAM' ],
-                'Vendors'        => [ 'rcsven1' => 'Acme Corp' ],
+                'Products'        => [ 'rcsprod1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
                 'Domain'         => [ 'rcsdom1' => 'Banking' ],
                 'Sub Categories' => [ 'rcssc1' => 'Payments' ],
@@ -700,7 +700,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => '101',
+                'Product'   => '101',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => '102',
@@ -719,7 +719,7 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name' , $use_field_ids = false) {
             $maps = [
                 'Regions'        => [ '105' => 'North America' ],
-                'Vendors'        => [ '101' => 'Acme Corp' ],
+                'Products'        => [ '101' => 'Acme Corp' ],
                 'Hosted Type'    => [ '102' => 'Cloud' ],
                 'Domain'         => [ '106' => 'Banking' ],
                 'Sub Categories' => [ '104' => 'Payments' ],
@@ -807,7 +807,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -848,7 +848,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
-                'VENDOR'          => [ 'recven1' ],
+                'PRODUCT'          => [ 'recprod1' ],
                 'Product Website' => 'example.com',
                 'Demo Video URL'  => 'example.com/video',
                 'Logo URL'        => 'example.com/logo.png',
@@ -873,7 +873,7 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) {
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
-                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Products'        => [ 'recprod1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
@@ -930,7 +930,7 @@ class TTP_Data_Test extends TestCase {
         $record = [
             'id'            => 'rec1',
             'Product Name'  => 'Sample Product',
-            'VENDOR'        => [ 'recven1' ],
+            'PRODUCT'        => [ 'recprod1' ],
             'Product Website' => 'example.com',
             'Demo Video URL' => 'example.com/video',
             'Logo URL'      => 'example.com/logo.png',
@@ -954,7 +954,7 @@ class TTP_Data_Test extends TestCase {
         \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ( $table_id, $ids, $primary_field = 'Name', $use_field_ids = false ) {
             $maps = [
                 'Regions'        => [ 'recreg1' => 'North America' ],
-                'Vendors'        => [ 'recven1' => 'Acme Corp' ],
+                'Products'        => [ 'recprod1' => 'Acme Corp' ],
                 'Hosted Type'    => [ 'rechost1' => 'Cloud' ],
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
@@ -1012,7 +1012,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'recven1, recven2',
+                'Product'   => 'recprod1, recprod2',
                 'Product Website' => 'example.com',
                 'Status'         => 'Active',
                 'Hosted Type'    => 'rechost1, rechost2',
@@ -1036,9 +1036,9 @@ class TTP_Data_Test extends TestCase {
                     'recreg1' => 'North America',
                     'recreg2' => 'Europe',
                 ],
-                'Vendors'        => [
-                    'recven1' => 'Acme Corp',
-                    'recven2' => 'Globex',
+                'Products'        => [
+                    'recprod1' => 'Acme Corp',
+                    'recprod2' => 'Globex',
                 ],
                 'Hosted Type'    => [
                     'rechost1' => 'Cloud',
@@ -1076,7 +1076,7 @@ class TTP_Data_Test extends TestCase {
         TTP_Data::refresh_product_cache();
 
         $this->assertSame(['recreg1', 'recreg2'], $ids_used['Regions']);
-        $this->assertSame(['recven1', 'recven2'], $ids_used['Vendors']);
+        $this->assertSame(['recprod1', 'recprod2'], $ids_used['Products']);
         $this->assertSame(['rechost1', 'rechost2'], $ids_used['Hosted Type']);
         $this->assertSame(['recdom1', 'recdom2'], $ids_used['Domain']);
         $this->assertSame(['recsc1', 'recsc2'], $ids_used['Sub Categories']);
@@ -1095,7 +1095,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => 'Cloud',
@@ -1140,7 +1140,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -1199,10 +1199,10 @@ class TTP_Data_Test extends TestCase {
                 [ 'recreg1' => 'North America' ],
             ],
             'product' => [
-                'Vendor',
-                'Vendors',
+                'Product',
+                'Products',
                 'product',
-                [ 'recven1' => 'Acme Corp' ],
+                [ 'recprod1' => 'Acme Corp' ],
             ],
             'hosted_type' => [
                 'Hosted Type',
@@ -1251,7 +1251,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'   => 'Acme Corp',
+                'Product'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => ['Cloud'],
@@ -1310,12 +1310,12 @@ class TTP_Data_Test extends TestCase {
                 ],
             ],
             'product' => [
-                'Vendor',
-                'Vendors',
+                'Product',
+                'Products',
                 'product',
                 [
-                    'recven1' => 'Acme Corp',
-                    'recven2' => 'Globex',
+                    'recprod1' => 'Acme Corp',
+                    'recprod2' => 'Globex',
                 ],
             ],
             'hosted_type' => [
@@ -1406,7 +1406,7 @@ class TTP_Data_Test extends TestCase {
     public function test_get_all_products_refreshes_when_product_ids_present() {
         $products_with_ids = array(
             array(
-                'Vendor' => array( 'rec123' ),
+                'Product' => array( 'rec123' ),
                 'regions'       => array( 'EMEA' ),
             ),
         );
@@ -1924,7 +1924,7 @@ class TTP_Data_Test extends TestCase {
     public function test_products_need_resolution_detects_mixed_case_keys() {
         $products = array(
             array(
-                'VendorIds' => array( 'recABC123' ),
+                'ProductIds' => array( 'recABC123' ),
             ),
         );
 
@@ -1938,7 +1938,7 @@ class TTP_Data_Test extends TestCase {
     public function test_products_need_resolution_detects_mixed_case_fields_with_spaces() {
         $products = array(
             array(
-                'Vendor IDs' => array( 'recABC123' ),
+                'Product IDs' => array( 'recABC123' ),
             ),
         );
 
