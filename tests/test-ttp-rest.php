@@ -58,6 +58,7 @@ class TTP_Rest_Test extends TestCase {
             'sub_categories' => ['Payments'],
             'category_names' => ['Finance', 'Cash', 'Payments'],
             'regions'        => ['North America'],
+            'domain'         => ['Treasury'],
         ];
         \Patchwork\replace('TTP_Data::get_categories', function () {
             return array( 'Cash' => 'Cash' );
@@ -65,7 +66,7 @@ class TTP_Rest_Test extends TestCase {
 
         \Patchwork\replace('get_option', function ( $name, $default = array() ) {
             if ( $name === TTP_Admin::OPTION_ENABLED_CATEGORIES ) {
-                return array( 'Finance' );
+                return array( 'Cash' );
             }
             if ( $name === TTP_Admin::OPTION_ENABLED_DOMAINS ) {
                 return array( 'Treasury' );
