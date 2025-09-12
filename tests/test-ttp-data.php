@@ -21,6 +21,7 @@ class TTP_Data_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
+            'Vendor'          => 'fld_vendor',
             'Product'   => 'fld_product',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
@@ -76,6 +77,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
+                'Vendor'          => '',
                 'Product'   => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Full Website URL' => 'example.com?utm=1',
@@ -123,8 +125,10 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Treasury' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Core Capabilities' => [ 'reccore1' => 'Core API' ],
-                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
+                'Capabilities' => [
+                    'reccore1' => 'Core API',
+                    'reccap1'  => 'API',
+                ],
             ];
 
             $out = [];
@@ -141,9 +145,11 @@ class TTP_Data_Test extends TestCase {
 
         $this->assertContains($this->schema_map['Product Website'], $requested_fields);
         $this->assertContains($this->schema_map['Full Website URL'], $requested_fields);
+        $this->assertContains($this->schema_map['Core Capabilities'], $requested_fields);
+        $this->assertContains($this->schema_map['Additional Capabilities'], $requested_fields);
         $this->assertFalse($use_ids);
         $this->assertSame(
-            ['Regions', 'Products', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Core Capabilities', 'Additional Capabilities'],
+            ['Regions', 'Products', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Capabilities', 'Capabilities'],
             $tables
         );
         $this->assertSame('Domain Name', $primary_fields['Domain']);
@@ -255,8 +261,10 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Core Capabilities' => [ 'reccore1' => 'Core API' ],
-                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
+                'Capabilities' => [
+                    'reccore1' => 'Core API',
+                    'reccap1'  => 'API',
+                ],
             ];
 
             $out = [];
@@ -283,6 +291,54 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['Cash'], $product['categories']);
         $this->assertSame(['Payments'], $product['sub_categories']);
         $this->assertSame(['API'], $product['capabilities']);
+    }
+
+    public function test_refresh_product_cache_resolves_capability_names() {
+        $record = [
+            'id'     => 'rec1',
+            'fields' => $this->id_fields([
+                'Product Name'    => 'Sample Product',
+                'Product Website' => 'example.com',
+                'Status'          => 'Active',
+                'Core Capabilities' => ['reccore1', 'reccore2'],
+                'Additional Capabilities'    => ['reccap1', 'reccap2'],
+            ]),
+        ];
+
+        \Patchwork\replace('TTP_Airbase::get_products', function ($fields = array()) use ($record) {
+            return ['records' => [ $record ]];
+        });
+
+        $tables = [];
+        \Patchwork\replace('TTP_Airbase::resolve_linked_records', function ($table_id, $ids, $primary_field = 'Name', $use_field_ids = false) use (&$tables) {
+            $tables[] = $table_id;
+            $maps = [
+                'Capabilities' => [
+                    'reccore1' => 'Core API',
+                    'reccore2' => 'Security',
+                    'reccap1'  => 'Analytics',
+                    'reccap2'  => 'Payments',
+                ],
+            ];
+            $out = [];
+            foreach ( (array) $ids as $id ) {
+                if ( isset( $maps[ $table_id ][ $id ] ) ) {
+                    $out[] = $maps[ $table_id ][ $id ];
+                }
+            }
+            return $out;
+        });
+
+        $captured = null;
+        \Patchwork\replace('TTP_Data::save_products', function ($products) use (&$captured) {
+            $captured = $products;
+        });
+
+        TTP_Data::refresh_product_cache();
+
+        $this->assertSame(['Capabilities', 'Capabilities'], $tables);
+        $this->assertSame(['Core API', 'Security'], $captured[0]['core_capabilities']);
+        $this->assertSame(['Analytics', 'Payments'], $captured[0]['capabilities']);
     }
 
     public function test_refresh_product_cache_passes_primary_field_to_resolver() {
@@ -626,8 +682,10 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
                 'Domain'         => [ 'rcsdom1' => 'Banking' ],
                 'Sub Categories' => [ 'rcssc1' => 'Payments' ],
-                'Core Capabilities' => [ 'rcscore1' => 'Core API' ],
-                'Additional Capabilities'   => [ 'rcscap1' => 'API' ],
+                'Capabilities' => [
+                    'rcscore1' => 'Core API',
+                    'rcscap1'  => 'API',
+                ],
             ];
 
             $out = [];
@@ -683,8 +741,10 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
                 'Domain'         => [ 'rcsdom1' => 'Banking' ],
                 'Sub Categories' => [ 'rcssc1' => 'Payments' ],
-                'Core Capabilities' => [ 'rcscore1' => 'Core API' ],
-                'Additional Capabilities'   => [ 'rcscap1' => 'API' ],
+                'Capabilities' => [
+                    'rcscore1' => 'Core API',
+                    'rcscap1'  => 'API',
+                ],
             ];
 
             $out = [];
@@ -741,8 +801,10 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'    => [ '102' => 'Cloud' ],
                 'Domain'         => [ '106' => 'Banking' ],
                 'Sub Categories' => [ '104' => 'Payments' ],
-                'Core Capabilities' => [ '107a' => 'Core API' ],
-                'Additional Capabilities'   => [ '107' => 'API' ],
+                'Capabilities' => [
+                    '107a' => 'Core API',
+                    '107'  => 'API',
+                ],
                 'Categories'     => [ '108' => 'Finance', '103' => 'Cash' ],
             ];
 
@@ -869,6 +931,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
+                'Vendor'          => '',
                 'PRODUCT'          => [ 'recprod1' ],
                 'Product Website' => 'example.com',
                 'Demo Video URL'  => 'example.com/video',
@@ -900,8 +963,10 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Core Capabilities' => [ 'reccore1' => 'Core API' ],
-                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
+                'Capabilities' => [
+                    'reccore1' => 'Core API',
+                    'reccap1'  => 'API',
+                ],
                 'HQ Location'    => [ 'rechq1' => 'NY' ],
             ];
 
@@ -1076,7 +1141,7 @@ class TTP_Data_Test extends TestCase {
                     'recsc1' => 'Payments',
                     'recsc2' => 'Treasury',
                 ],
-                'Additional Capabilities'   => [
+                'Capabilities'   => [
                     'reccap1' => 'API',
                     'reccap2' => 'Analytics',
                 ],
@@ -1104,7 +1169,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['rechost1', 'rechost2'], $ids_used['Hosted Type']);
         $this->assertSame(['recdom1', 'recdom2'], $ids_used['Domain']);
         $this->assertSame(['recsc1', 'recsc2'], $ids_used['Sub Categories']);
-        $this->assertSame(['reccap1', 'reccap2'], $ids_used['Additional Capabilities']);
+        $this->assertSame(['reccap1', 'reccap2'], $ids_used['Capabilities']);
 
         $this->assertSame(['North America', 'Europe'], $captured[0]['regions']);
         $this->assertSame('Acme Corp', $captured[0]['product']);
@@ -1248,7 +1313,7 @@ class TTP_Data_Test extends TestCase {
             ],
             'capabilities' => [
                 'Additional Capabilities',
-                'Additional Capabilities',
+                'Capabilities',
                 'capabilities',
                 [ 'reccap1' => 'API' ],
             ],
@@ -1380,7 +1445,7 @@ class TTP_Data_Test extends TestCase {
             ],
             'capabilities' => [
                 'Additional Capabilities',
-                'Additional Capabilities',
+                'Capabilities',
                 'capabilities',
                 [
                     'reccap1' => 'API',
@@ -2049,14 +2114,15 @@ class TTP_Data_Test extends TestCase {
     public function test_migrate_semicolon_cache_normalises_values() {
         $stored_option = array(
             array(
-                'regions'        => array( 'North;South' ),
-                'categories'     => array( 'Cash;TRMS' ),
-                'sub_categories' => array(),
-                'category'       => 'Cash;TRMS',
-                'category_names' => array( 'Cash;TRMS' ),
-                'capabilities'   => array( 'Payables;Receivables' ),
-                'hosted_type'    => array( 'Cloud;On-Prem' ),
-                'domain'         => array( 'Treasury;Payments' ),
+                'regions'           => array( 'North;South' ),
+                'categories'        => array( 'Cash;TRMS' ),
+                'sub_categories'    => array(),
+                'category'          => 'Cash;TRMS',
+                'category_names'    => array( 'Cash;TRMS' ),
+                'capabilities'      => array( 'Payables;Receivables' ),
+                'core_capabilities' => 'Core API;Security',
+                'hosted_type'       => array( 'Cloud;On-Prem' ),
+                'domain'            => array( 'Treasury;Payments' ),
             ),
         );
 
@@ -2089,14 +2155,15 @@ class TTP_Data_Test extends TestCase {
         $result = TTP_Data::get_all_products();
 
         $expected = array(
-            'regions'        => array( 'North', 'South' ),
-            'categories'     => array( 'Cash', 'TRMS' ),
-            'sub_categories' => array(),
-            'category'       => 'Cash',
-            'category_names' => array( 'Cash', 'TRMS' ),
-            'capabilities'   => array( 'Payables', 'Receivables' ),
-            'hosted_type'    => array( 'Cloud', 'On-Prem' ),
-            'domain'         => array( 'Treasury', 'Payments' ),
+            'regions'           => array( 'North', 'South' ),
+            'categories'        => array( 'Cash', 'TRMS' ),
+            'sub_categories'    => array(),
+            'category'          => 'Cash',
+            'category_names'    => array( 'Cash', 'TRMS' ),
+            'capabilities'      => array( 'Payables', 'Receivables' ),
+            'core_capabilities' => array( 'Core API', 'Security' ),
+            'hosted_type'       => array( 'Cloud', 'On-Prem' ),
+            'domain'            => array( 'Treasury', 'Payments' ),
         );
 
         $this->assertSame( $expected['regions'], $result[0]['regions'] );
@@ -2104,6 +2171,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame( $expected['category'], $result[0]['category'] );
         $this->assertSame( $expected['category_names'], $result[0]['category_names'] );
         $this->assertSame( $expected['capabilities'], $result[0]['capabilities'] );
+        $this->assertSame( $expected['core_capabilities'], $result[0]['core_capabilities'] );
         $this->assertSame( $expected['hosted_type'], $result[0]['hosted_type'] );
         $this->assertSame( $expected['domain'], $result[0]['domain'] );
 

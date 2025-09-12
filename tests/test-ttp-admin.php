@@ -28,6 +28,7 @@ class TTP_Admin_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
+            'Vendor'          => 'fld_vendor',
             'Product'         => 'fld_product',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
@@ -49,6 +50,12 @@ class TTP_Admin_Test extends TestCase {
         $schema =& $this->schema_map;
         \Patchwork\replace( 'TTP_Airbase::get_table_schema', function () use ( &$schema ) {
             return $schema;
+        } );
+        \Patchwork\replace( 'TTP_Airbase::map_field_names', function ( $fields ) use ( &$schema ) {
+            return array(
+                'schema_map' => $schema,
+                'field_ids'  => array_values( $schema ),
+            );
         } );
     }
 
@@ -95,8 +102,10 @@ class TTP_Admin_Test extends TestCase {
                 'Domain'         => array( 'recdom1' => 'Banking' ),
                 'Category'       => array( 'reccat1' => 'Cash' ),
                 'Sub Categories' => array( 'recsc1' => 'Payments' ),
-                'Core Capabilities' => array( 'reccore1' => 'Core API' ),
-                'Additional Capabilities'   => array( 'reccap1' => 'API' ),
+                'Capabilities'   => array(
+                    'reccore1' => 'Core API',
+                    'reccap1'  => 'API',
+                ),
             );
             $out = array();
             foreach ( (array) $ids as $id ) {
@@ -156,9 +165,9 @@ class TTP_Admin_Test extends TestCase {
                 return new WP_Error( 'err', 'fail' );
             }
             $maps = array(
-                'Products'       => array( 'recprod1' => 'Acme Product' ),
-                'Hosted Type'    => array( 'rechost1' => 'Cloud' ),
-                'Core Capabilities' => array( 'reccore1' => 'Core API' ),
+                'Products'    => array( 'recprod1' => 'Acme Product' ),
+                'Hosted Type' => array( 'rechost1' => 'Cloud' ),
+                'Capabilities' => array( 'reccore1' => 'Core API' ),
             );
             $out = array();
             foreach ( (array) $ids as $id ) {

@@ -182,14 +182,18 @@ class TTP_Data {
                 $normalized = array();
 
                 foreach ( $values as $value ) {
-                    if ( is_string( $value ) && strpos( $value, ';' ) !== false ) {
+                    if ( is_string( $value ) ) {
                         $normalized = array_merge( $normalized, self::parse_record_ids( $value ) );
                     } else {
                         $normalized[] = $value;
                     }
                 }
 
-                $normalized = array_values( array_filter( array_map( 'trim', $normalized ) ) );
+                $normalized = array_values(
+                    array_filter(
+                        array_map( 'sanitize_text_field', array_map( 'trim', $normalized ) )
+                    )
+                );
 
                 if ( $normalized !== $values ) {
                     $product[ $field ] = $normalized;
