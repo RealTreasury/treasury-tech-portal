@@ -1,16 +1,72 @@
 (function() {
+    function debounce(fn, delay) {
+        let timeout;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(function() {
+                fn.apply(context, args);
+            }, delay);
+        };
+    }
+
     function init() {
         const searchInput = document.getElementById('treasury-portal-admin-search-input');
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                const filter = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('.treasury-portal-admin-table-wrapper tbody tr');
-                rows.forEach(function(row) {
-                    const text = row.textContent.toLowerCase();
-                    row.style.display = text.includes(filter) ? '' : 'none';
-                });
+        const filterControls = document.querySelectorAll('.tp-filter-row [data-column]');
+        const rows = document.querySelectorAll('.treasury-portal-admin-table-wrapper tbody tr');
+
+        const applyFilters = debounce(function() {
+            const searchVal = searchInput ? searchInput.value.toLowerCase() : '';
+            const activeFilters = {};
+
+            filterControls.forEach(function(control) {
+                const value = control.value.toLowerCase();
+                if (value) {
+                    activeFilters[control.getAttribute('data-column')] = {
+                        value: value,
+                        type: control.tagName
+                    };
+                }
             });
+
+            rows.forEach(function(row) {
+                let visible = true;
+
+                if (searchVal && !row.textContent.toLowerCase().includes(searchVal)) {
+                    visible = false;
+                }
+
+                if (visible) {
+                    for (const key in activeFilters) {
+                        const colIndex = parseInt(key, 10);
+                        const cell = row.children[colIndex];
+                        const cellText = cell ? cell.textContent.toLowerCase() : '';
+                        const filter = activeFilters[key];
+                        if (filter.type === 'SELECT') {
+                            if (cellText !== filter.value) {
+                                visible = false;
+                                break;
+                            }
+                        } else if (!cellText.includes(filter.value)) {
+                            visible = false;
+                            break;
+                        }
+                    }
+                }
+
+                row.style.display = visible ? '' : 'none';
+            });
+        }, 200);
+
+        if (searchInput) {
+            searchInput.addEventListener('input', applyFilters);
         }
+
+        filterControls.forEach(function(control) {
+            const eventType = control.tagName === 'SELECT' ? 'change' : 'input';
+            control.addEventListener(eventType, applyFilters);
+        });
 
         const tokenField = document.getElementById('ttp_airbase_token');
         const toggleBtn = document.getElementById('ttp_airbase_token_toggle');
@@ -71,3 +127,4 @@
         init();
     }
 })();
+

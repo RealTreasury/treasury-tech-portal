@@ -46,6 +46,24 @@
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Domains updated.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
     <?php if (!empty($vendors)) : ?>
+        <?php
+        $status_options   = array();
+        $category_options = array();
+        foreach ( $vendors as $vendor ) {
+            $status = sanitize_text_field( $vendor['status'] ?? '' );
+            if ( $status ) {
+                $status_options[] = $status;
+            }
+            $category = sanitize_text_field( $vendor['category'] ?? ( $vendor['categories'][0] ?? '' ) );
+            if ( $category ) {
+                $category_options[] = $category;
+            }
+        }
+        $status_options   = array_unique( $status_options );
+        sort( $status_options );
+        $category_options = array_unique( $category_options );
+        sort( $category_options );
+        ?>
         <div class="treasury-portal-admin-search">
             <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>
             <input type="search" id="treasury-portal-admin-search-input" placeholder="<?php esc_attr_e('Search vendors...', 'treasury-tech-portal'); ?>" />
@@ -70,6 +88,38 @@
                         <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                    </tr>
+                    <tr class="tp-filter-row">
+                        <th><input type="text" data-column="0" placeholder="<?php esc_attr_e('Filter', 'treasury-tech-portal'); ?>" /></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <select data-column="5">
+                                <option value=""><?php esc_html_e('All', 'treasury-tech-portal'); ?></option>
+                                <?php foreach ( $status_options as $option ) : ?>
+                                    <option value="<?php echo esc_attr( $option ); ?>"><?php echo esc_html( $option ); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden">
+                            <select data-column="10">
+                                <option value=""><?php esc_html_e('All', 'treasury-tech-portal'); ?></option>
+                                <?php foreach ( $category_options as $option ) : ?>
+                                    <option value="<?php echo esc_attr( $option ); ?>"><?php echo esc_html( $option ); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
+                        <th class="is-mobile-hidden"></th>
                     </tr>
                 </thead>
                 <tbody>
