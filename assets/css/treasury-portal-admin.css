@@ -65,6 +65,42 @@
     box-sizing: border-box;
 }
 
+.treasury-portal-admin .tp-filter-toggle {
+    display: none;
+    margin-bottom: 12px;
+}
+
+.treasury-portal-admin .tp-filter-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 6px rgba(0,0,0,0.2);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.treasury-portal-admin .tp-filter-panel.open {
+    transform: translateX(0);
+}
+
+.treasury-portal-admin .tp-filter-panel .tp-filter-row td {
+    display: block;
+    margin-bottom: 12px;
+}
+
+.treasury-portal-admin .tp-filter-panel .tp-filter-row input,
+.treasury-portal-admin .tp-filter-panel .tp-filter-row select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .treasury-portal-admin .treasury-portal-admin-table th {
     position: sticky;
     top: 0;
@@ -85,6 +121,14 @@
 }
 
 @media (max-width: 768px) {
+    .treasury-portal-admin .tp-filter-toggle {
+        display: inline-block;
+    }
+
+    .treasury-portal-admin .treasury-portal-admin-table .tp-filter-row {
+        display: none;
+    }
+
     .treasury-portal-admin .treasury-portal-admin-table-wrapper {
         overflow-x: auto;
     }

@@ -1,4 +1,10 @@
 (function() {
+    let filterRow;
+    let filterPanel;
+    let filterPanelContent;
+    let tableBody;
+    let filtersInPanel = false;
+
     function debounce(fn, delay) {
         let timeout;
         return function(...args) {
@@ -19,6 +25,12 @@
                 }
             });
         }
+
+        tableBody = table ? table.querySelector('tbody') : null;
+        filterRow = tableBody ? tableBody.querySelector('.tp-filter-row') : null;
+        filterPanel = document.querySelector('.tp-filter-panel');
+        filterPanelContent = filterPanel ? filterPanel.querySelector('.tp-filter-panel-content') : null;
+        const filterToggleBtn = document.querySelector('.tp-filter-toggle');
 
         const columnFilters = {};
         let searchValue = '';
@@ -71,6 +83,12 @@
                 applyFilters();
             });
         });
+
+        if (filterToggleBtn && filterPanel) {
+            filterToggleBtn.addEventListener('click', function() {
+                filterPanel.classList.toggle('open');
+            });
+        }
 
         applyFilters();
 
@@ -134,16 +152,27 @@
     }
 
     function handleResponsive() {
-        if (window.innerWidth > 768) {
-            return;
-        }
         const table = document.querySelector('.treasury-portal-admin-table');
         if (!table) {
             return;
         }
-        table.querySelectorAll('th, td').forEach(function(cell) {
-            cell.style.width = '';
-        });
+        if (window.innerWidth <= 768) {
+            table.querySelectorAll('th, td').forEach(function(cell) {
+                cell.style.width = '';
+            });
+            if (filterRow && filterPanelContent && !filtersInPanel) {
+                filterPanelContent.appendChild(filterRow);
+                filtersInPanel = true;
+            }
+        } else {
+            if (filterRow && tableBody && filtersInPanel) {
+                tableBody.insertBefore(filterRow, tableBody.firstChild);
+                filtersInPanel = false;
+            }
+            if (filterPanel) {
+                filterPanel.classList.remove('open');
+            }
+        }
     }
 
     function setupSorting() {
