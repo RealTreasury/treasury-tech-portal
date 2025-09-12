@@ -98,7 +98,7 @@ $category_meta = array(
                     <div class="menu-section-content">
                         <div class="search-container">
                             <span class="search-icon">🔍</span>
-                            <input type="text" id="searchInput" class="search-input" placeholder="Search vendors, features, or tags...">
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search products, features, or tags...">
                             <button class="search-clear" id="searchClear" style="display: none;">×</button>
                         </div>
                     </div>
@@ -151,7 +151,7 @@ $category_meta = array(
                             <div class="view-option" data-view="list">List</div>
                         </div>
                         <div class="filter-group">
-                            <label class="filter-label" for="groupByFilter">Group Vendors</label>
+                            <label class="filter-label" for="groupByFilter">Group Products</label>
                             <select id="groupByFilter" class="filter-select">
                                 <option value="category" selected>By Category</option>
                                 <option value="none">No Grouping</option>
@@ -184,7 +184,7 @@ $category_meta = array(
             <div class="shortlist-section">
                 <div class="menu-section-content">
                     <div id="shortlistContainer" class="shortlist-container empty">
-                        <p id="shortlistEmptyMessage" class="shortlist-empty-message">Drag vendor cards here or click to add.</p>
+                        <p id="shortlistEmptyMessage" class="shortlist-empty-message">Drag product cards here or click to add.</p>
                     </div>
 
                     <!-- Always visible tool picker -->
@@ -198,7 +198,7 @@ $category_meta = array(
                         </div>
                     </div>
                     <div class="tips-section">
-                        <h3>Tips for Building a Tech Vendor Shortlist</h3>
+                        <h3>Tips for Building a Tech Product Shortlist</h3>
                         <ul>
                             <li>Define must-have features and your budget early on.</li>
                             <li>Check how well each tool integrates with current systems.</li>
@@ -217,7 +217,7 @@ $category_meta = array(
         <div class="main-content" id="mainContent">
             <!-- No Results Message -->
             <div class="no-results" id="noResults" style="display: none;">
-                <h3>No vendors found</h3>
+                <h3>No products found</h3>
                 <p>Try adjusting your search terms or filters</p>
             </div>
             <div class="tools-grid" id="listViewContainer" style="display:none;"></div>
