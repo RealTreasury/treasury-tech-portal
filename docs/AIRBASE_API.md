@@ -6,8 +6,8 @@ The following is a condensed reference for developers working with the API.
 ## Base Information
 The plugin requires the following identifiers before it can query the Airbase API:
 
-- **Base ID** – Airtable base identifier.
-- **Products Table ID** – ID of the Products table within that base.
+- **Base ID** – Airtable base identifier (e.g. `appJdxdz3310aJ3Fd`).
+- **Products Table ID** – `tblOJ6yL9Jw5ZTdRc` (Products table).
 
 ### Plugin Configuration Options
 - `ttp_airbase_token` – API token used for authentication (**required**).
@@ -86,27 +86,26 @@ normalizes them into a single array of records built from product fields. The fo
 Any of these structures will be cached as a plain array of records built from product fields.
 
 ## Products Table Fields
-| Field | Type | Notes |
-|-------|------|-------|
-| `Product Name` (`fld2hocSMtPQYWfPa`) | text | required name of the product |
-| `Product` (`fldsrlwpO9AfkmjcH`) | text | product name |
-| `Hosted Type` (`fldGyZDaIUFFidaXA`) | multiple select (`On-Premise`, `Cloud`) |
-| `Domain` (`fldU53MVlWgkPbPDw`) | linked records to **Domain** table |
-| `Product Website` (`fldznljEJpn4lv79r`) | text URL |
-| `Regions` (`fldE8buvdk7TDG1ex`) | linked records to **Regions** table |
-| `Sub Categories` (`fldl2g5bYDq9TibuF`) | linked records to **Sub Categories** table |
-| `Category` (`fldXqnpKe8ioYOYhP`) | lookup of category from Sub Categories |
-| `Status` (`fldFsaznNFvfh3x7k`) | single select (`Active`, `Inactive`, `Discontinued`) |
-| `HQ Location` (`fldTIplvUIwNH7C4X`) | text |
-| `Founded Year` (`fldwsUY6nSqxBk62J`) | text |
-| `Founders` (`fldoTMkJIl1i8oo0r`) | text |
-| `Product Summary` (`fldwBi5oBw6BwZiqV`) | long text summary |
-| `Market Fit Analysis` (`fldJTDlDcvNn0MVJX`) | long text analysis |
-| `Core Capabilities` (`fldwzQG0IQ0dbVcwF`) | linked records to **Capabilities** table |
-| `Additional Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
-| `Logo URL` (`fldfZPuRMjQKCv3U6`) | text URL |
-| `Demo Video URL` (`fldHyVJRr3O5rkgd7`) | text URL |
-| `Full Website URL` (`fldpyWsRTiDiLX6nm`) | formula (appends UTM parameters) |
+| Field Name | Field ID | Type | Description |
+|------------|----------|------|-------------|
+| Product Name | `fld2hocSMtPQYWfPa` | Text | A single line of text. |
+| Vendor | `fldsrlwpO9AfkmjcH` | Text | A single line of text. |
+| Hosted Type | `fldGyZDaIUFFidaXA` | Multiple select | Array of option names ("On-Premise", "Cloud"). |
+| Domain | `fldU53MVlWgkPbPDw` | Link to another record | Array of linked record IDs from the **Domain** table. |
+| Product Website | `fldznljEJpn4lv79r` | Text | A single line of text. |
+| Regions | `fldE8buvdk7TDG1ex` | Link to another record | Array of linked record IDs from the **Regions** table. |
+| Sub Categories | `fldl2g5bYDq9TibuF` | Link to another record | Array of linked record IDs from the **Sub Categories** table. |
+| Category | `fldXqnpKe8ioYOYhP` | Lookup | Array of Category fields in linked Sub Categories. |
+| Status | `fldFsaznNFvfh3x7k` | Single select | Possible values: "Active", "Inactive", "Discontinued". |
+| HQ Location | `fldTIplvUIwNH7C4X` | Text | A single line of text. |
+| Founded Year | `fldwsUY6nSqxBk62J` | Text | A single line of text. |
+| Founders | `fldoTMkJIl1i8oo0r` | Text | A single line of text. |
+| Product Summary | `fldwBi5oBw6BwZiqV` | AI text | Automatically generated summary. |
+| Core Capabilities | `fldwzQG0IQ0dbVcwF` | Lookup | Array of Core Capabilities from linked Sub Categories. |
+| Additional Capabilities | `fldvvv8jnCKoJSI7x` | Link to another record | Linked record IDs from the **Capabilities** table. |
+| Logo URL | `fldfZPuRMjQKCv3U6` | Text | URL to a product logo. |
+| Demo Video URL | `fldHyVJRr3O5rkgd7` | Text | URL to a demo video. |
+| Full Website URL | `fldpyWsRTiDiLX6nm` | Formula | Appends UTM parameters to `Product Website`. |
 
 ## Linked Record Field Names
 
@@ -140,67 +139,361 @@ To resolve these warnings:
 2. Ensure product records reference the correct region IDs.
 3. Refresh products from the admin page after correcting any data issues.
 
+
 ## Listing Products
-Retrieve records from the Products table. Only non-empty fields are returned.
+To list records in **Products**, issue a `GET` request to the Products endpoint. Table names and table IDs can be used interchangeably. Using IDs means table name changes do not require modifications to your API request.
 
+Returned records omit any fields with empty values (e.g. "", [], or false).
+
+### Query Parameters
+The following parameters may be supplied to filter, sort, and format the response. All parameters must be URL encoded. Helper libraries such as `airtable.js` handle this automatically.
+
+- **`fields[]`** – Only include data for the specified field names or IDs.
+- **`filterByFormula`** – Airtable formula used to filter records.
+- **`maxRecords`** – Maximum total records returned.
+- **`pageSize`** – Number of records per page (≤100).
+- **`sort[]`** – List of sort objects with `field` and optional `direction` keys.
+- **`view`** – Limit results to a specific view.
+- **`cellFormat`** – Format for cell values (`json` or `string`).
+- **`timeZone` / `userLocale`** – Required when `cellFormat=string`.
+- **`returnFieldsByFieldId`** – If `true`, keys in the `fields` object are field IDs instead of names.
+- **`recordMetadata[]`** – Include additional metadata such as `commentCount`.
+
+### Pagination
+The server returns one page at a time. Each page contains `pageSize` records (default 100). If more records exist, the response includes an `offset` value. Pass this `offset` in the next request to fetch the next page. Pagination stops when the end of the table is reached or `maxRecords` is satisfied.
+
+### Example
 ```bash
-curl "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?maxRecords=3&view=Grid%20view" \
+curl "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products?maxRecords=3&view=Grid%20view" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
-Responses include a top-level `records` array containing matching rows.
+```json
+{
+    "records": [
+        {
+            "id": "recby2FRT9GFatFbR",
+            "createdTime": "2025-08-27T16:46:49.000Z",
+            "fields": {
+                "Product Name": "AccessPay",
+                "Vendor": "AccessPay",
+                "Status": "Active",
+                "Product Summary": {
+                    "state": "error",
+                    "errorType": "emptyDependency",
+                    "value": null,
+                    "isStale": false
+                },
+                "Sub Categories": [
+                    "recifmYqGMwBjGTfS"
+                ],
+                "Category": [
+                    "recR1Oq7EIhxDSquU"
+                ],
+                "Product Website": "https://accesspay.com/",
+                "Domain": [
+                    "rec3ffWVfNTT08Mu2"
+                ],
+                "HQ Location": "Manchester, UK",
+                "Hosted Type": [
+                    "Cloud"
+                ],
+                "Founded Year": "2012",
+                "Full Website URL": "https://accesspay.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+            }
+        },
+        {
+            "id": "recVCHbt66Eu4I0oA",
+            "createdTime": "2025-08-06T18:25:58.000Z",
+            "fields": {
+                "Product Name": "Agicap",
+                "Vendor": "Agicap",
+                "Status": "Active",
+                "Product Summary": {
+                    "state": "error",
+                    "errorType": "emptyDependency",
+                    "value": "Agicap is a comprehensive treasury management platform that provides cash visibility and forecasting capabilities through automated bank connectivity via API and SFTP. The solution offers transaction management tools including search, sort, tag, and group functionalities, along with accounts payable and receivable matching for enhanced cash positioning. Key treasury capabilities include payment processing, basic forecasting tools, cash accounting, and debt management. The platform also supports investment management, market data integration, and derivatives handling, making it suitable for organizations seeking an integrated approach to treasury operations and cash flow optimization.",
+                    "isStale": false
+                },
+                "Sub Categories": [
+                    "recwQ8U1s7jXAq6PF"
+                ],
+                "Category": [
+                    "reckz5jhQb2CBocKR"
+                ],
+                "Product Website": "https://agicap.com/en/",
+                "Regions": [
+                    "recGFTMlbSX4L69M9",
+                    "rec75L3VdbgJC8GpT"
+                ],
+                "Domain": [
+                    "rec3ffWVfNTT08Mu2"
+                ],
+                "HQ Location": "Lyon, France",
+                "Hosted Type": [
+                    "Cloud"
+                ],
+                "Founded Year": "2016",
+                "Full Website URL": "https://agicap.com/en/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral",
+                "Core Capabilities": [
+                    "recn4Y3PBFmPXh6Op",
+                    "recKWB2J61wdkd9Px",
+                    "recBesQQbKDTSrQpv",
+                    "recbljsXl4bS0bNGE",
+                    "recl1LDAxStyxrA8x",
+                    "reczfTMWjinccAA39",
+                    "rece2uGACplItLnov",
+                    "recsmajy4cyeSgB9A"
+                ]
+            }
+        },
+        {
+            "id": "recPOl8W1PGZzwR1z",
+            "createdTime": "2025-09-05T18:52:17.000Z",
+            "fields": {
+                "Product Name": "AiVidens",
+                "Vendor": "AiVidens",
+                "Status": "Active",
+                "Product Summary": {
+                    "state": "error",
+                    "errorType": "emptyDependency",
+                    "value": null,
+                    "isStale": false
+                },
+                "Sub Categories": [
+                    "rec82D8pfGWAxpKGb"
+                ],
+                "Category": [
+                    "recDcwJC0rWS3Ay7R"
+                ],
+                "Product Website": "https://aividens.com/",
+                "Domain": [
+                    "rec3ffWVfNTT08Mu2"
+                ],
+                "HQ Location": "Brussels, Belgium",
+                "Hosted Type": [
+                    "Cloud"
+                ],
+                "Founded Year": "2019",
+                "Full Website URL": "https://aividens.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+            }
+        }
+    ],
+    "offset": "itrqhTDJQL21SekUM/recPOl8W1PGZzwR1z"
+}
+```
 
-Common query parameters:
-- `fields[]`: restrict returned fields
-- `filterByFormula`: Airtable formula for filtering
-- `maxRecords` / `pageSize`: pagination controls
-- `sort[]`: order results
-- `view`: limit to a specific view
+If iteration times out due to client inactivity or server restarts, a `422 LIST_RECORDS_ITERATOR_NOT_AVAILABLE` error is returned. Restart the iteration from the beginning.
 
-## Retrieving a Product
+## Retrieve a Products record
+To retrieve an existing record, issue a `GET` request to the record endpoint. Empty fields are omitted from the response.
+
 ```bash
-curl https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID/RECORD_ID \
+curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products/recby2FRT9GFatFbR \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
-## Creating Products
-Send up to 10 records per request.
-
-```bash
-curl -X POST https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
-  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "records": [{
-      "fields": {
-        "Product Name": "Example",
-        "Product": "Example Co",
-        "Status": "Active"
-      }
-    }]
-  }'
+```json
+{
+    "id": "recby2FRT9GFatFbR",
+    "createdTime": "2025-08-27T16:46:49.000Z",
+    "fields": {
+        "Product Name": "AccessPay",
+        "Vendor": "AccessPay",
+        "Status": "Active",
+        "Product Summary": {
+            "state": "error",
+            "errorType": "emptyDependency",
+            "value": null,
+            "isStale": false
+        },
+        "Sub Categories": [
+            "recifmYqGMwBjGTfS"
+        ],
+        "Category": [
+            "recR1Oq7EIhxDSquU"
+        ],
+        "Product Website": "https://accesspay.com/",
+        "Domain": [
+            "rec3ffWVfNTT08Mu2"
+        ],
+        "HQ Location": "Manchester, UK",
+        "Hosted Type": [
+            "Cloud"
+        ],
+        "Founded Year": "2012",
+        "Full Website URL": "https://accesspay.com/?utm_source=realtreasury&utm_medium=website&utm_campaign=vendor_referral"
+    }
+}
 ```
 
-## Updating Products
-Patch only the fields that change. Up to 10 records per request.
+## Create Products records
+To create new records, issue a `POST` request to the Products endpoint. Up to 10 records may be created per request. Each record must include a `fields` object keyed by field name or ID. Values for **Category**, **Core Capabilities** and **Full Website URL** are computed and cannot be directly created. Enable the `typecast` parameter to allow best-effort automatic data conversion.
 
 ```bash
-curl -X PATCH https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
-  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
-  -H "Content-Type: application/json" \
+curl -X POST https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products 
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" 
+  -H "Content-Type: application/json" 
   --data '{
-    "records": [{
-      "id": "RECORD_ID",
+  "records": [
+    {
       "fields": {
-        "Status": "Inactive"
+        "Product Name": "AccessPay",
+        "Vendor": "AccessPay",
+        "Hosted Type": [
+          "Cloud"
+        ],
+        "Domain": [
+          "rec3ffWVfNTT08Mu2"
+        ],
+        "Product Website": "https://accesspay.com/",
+        "Sub Categories": [
+          "recifmYqGMwBjGTfS"
+        ],
+        "Status": "Active",
+        "HQ Location": "Manchester, UK",
+        "Founded Year": "2012",
+        "Product Summary": {
+          "state": "error",
+          "errorType": "emptyDependency",
+          "value": null,
+          "isStale": false
+        }
       }
-    }]
-  }'
+    },
+    {
+      "fields": {
+        "Product Name": "Agicap",
+        "Vendor": "Agicap",
+        "Hosted Type": [
+          "Cloud"
+        ],
+        "Domain": [
+          "rec3ffWVfNTT08Mu2"
+        ],
+        "Product Website": "https://agicap.com/en/",
+        "Regions": [
+          "recGFTMlbSX4L69M9",
+          "rec75L3VdbgJC8GpT"
+        ],
+        "Sub Categories": [
+          "recwQ8U1s7jXAq6PF"
+        ],
+        "Status": "Active",
+        "HQ Location": "Lyon, France",
+        "Founded Year": "2016",
+        "Product Summary": {
+          "state": "error",
+          "errorType": "emptyDependency",
+          "value": "Agicap is a comprehensive treasury management platform that provides cash visibility and forecasting capabilities through automated bank connectivity via API and SFTP. The solution offers transaction management tools including search, sort, tag, and group functionalities, along with accounts payable and receivable matching for enhanced cash positioning. Key treasury capabilities include payment processing, basic forecasting tools, cash accounting, and debt management. The platform also supports investment management, market data integration, and derivatives handling, making it suitable for organizations seeking an integrated approach to treasury operations and cash flow optimization.",
+          "isStale": false
+        }
+      }
+    }
+  ]
+}'
 ```
 
-## Deleting Products
+## Update/Upsert Products records
+Use `PATCH` for partial updates or `PUT` for destructive updates. Each record object must include an `id` and a `fields` object. To perform an upsert, include `performUpsert` with `fieldsToMergeOn` specifying 1–3 unique fields. Values for **Category**, **Core Capabilities** and **Full Website URL** are computed and cannot be updated directly. When modifying linked record fields or multiple select fields, include the full array of values you wish to retain.
+
 ```bash
-curl -X DELETE "https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID?records[]=RECORD_ID" \
+curl -X PATCH https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products 
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" 
+  -H "Content-Type: application/json" 
+  --data '{
+  "records": [
+    {
+      "id": "recby2FRT9GFatFbR",
+      "fields": {
+        "Product Name": "AccessPay",
+        "Vendor": "AccessPay",
+        "Hosted Type": [
+          "Cloud"
+        ],
+        "Domain": [
+          "rec3ffWVfNTT08Mu2"
+        ],
+        "Product Website": "https://accesspay.com/",
+        "Sub Categories": [
+          "recifmYqGMwBjGTfS"
+        ],
+        "Status": "Active",
+        "HQ Location": "Manchester, UK",
+        "Founded Year": "2012",
+        "Product Summary": {
+          "state": "error",
+          "errorType": "emptyDependency",
+          "value": null,
+          "isStale": false
+        }
+      }
+    },
+    {
+      "id": "recVCHbt66Eu4I0oA",
+      "fields": {
+        "Product Name": "Agicap",
+        "Vendor": "Agicap",
+        "Hosted Type": [
+          "Cloud"
+        ],
+        "Domain": [
+          "rec3ffWVfNTT08Mu2"
+        ],
+        "Product Website": "https://agicap.com/en/",
+        "Regions": [
+          "recGFTMlbSX4L69M9",
+          "rec75L3VdbgJC8GpT"
+        ],
+        "Sub Categories": [
+          "recwQ8U1s7jXAq6PF"
+        ],
+        "Status": "Active",
+        "HQ Location": "Lyon, France",
+        "Founded Year": "2016",
+        "Product Summary": {
+          "state": "error",
+          "errorType": "emptyDependency",
+          "value": "Agicap is a comprehensive treasury management platform that provides cash visibility and forecasting capabilities through automated bank connectivity via API and SFTP. The solution offers transaction management tools including search, sort, tag, and group functionalities, along with accounts payable and receivable matching for enhanced cash positioning. Key treasury capabilities include payment processing, basic forecasting tools, cash accounting, and debt management. The platform also supports investment management, market data integration, and derivatives handling, making it suitable for organizations seeking an integrated approach to treasury operations and cash flow optimization.",
+          "isStale": false
+        }
+      }
+    },
+    {
+      "id": "recPOl8W1PGZzwR1z",
+      "fields": {
+        "Product Name": "AiVidens",
+        "Vendor": "AiVidens",
+        "Hosted Type": [
+          "Cloud"
+        ],
+        "Domain": [
+          "rec3ffWVfNTT08Mu2"
+        ],
+        "Product Website": "https://aividens.com/",
+        "Sub Categories": [
+          "rec82D8pfGWAxpKGb"
+        ],
+        "Status": "Active",
+        "HQ Location": "Brussels, Belgium",
+        "Founded Year": "2019",
+        "Product Summary": {
+          "state": "error",
+          "errorType": "emptyDependency",
+          "value": null,
+          "isStale": false
+        }
+      }
+    }
+  ]
+}'
+```
+
+## Delete Products records
+To delete records, issue a `DELETE` request to the Products endpoint with a URL‑encoded array of up to 10 record IDs. You may also delete a single record by requesting the record endpoint directly.
+
+```bash
+curl -X DELETE "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Products?records[]=RECORD_ID" 
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
