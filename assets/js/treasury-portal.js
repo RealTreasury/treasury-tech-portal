@@ -1377,6 +1377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         this.advancedFilters.regions = Array.from(checkboxes).filter(c => c.checked).map(c => c.value);
                         this.filterAndDisplayTools();
                         this.updateFilterCount();
+                        this.handleIntroVideoRegion();
                     });
                 });
             }
@@ -1522,6 +1523,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     this.advancedFilters.regions = val ? [val] : [];
                     this.filterAndDisplayTools();
                     this.updateFilterCount();
+                    this.handleIntroVideoRegion();
                 });
                 categorySelect.addEventListener('change', e => {
                     const val = e.target.value;
@@ -1531,6 +1533,38 @@ document.addEventListener('DOMContentLoaded', async () => {
                     this.filterAndDisplayTools();
                     this.updateFilterCount();
                 });
+                this.handleIntroVideoRegion();
+            }
+
+            handleIntroVideoRegion() {
+                const introVideo = document.querySelector('.intro-video-target');
+                const trmsHeader = document.querySelector('.category-section[data-category="TRMS"] .category-header');
+                if (!introVideo || !trmsHeader) return;
+
+                if (!this.introVideoHome) {
+                    this.introVideoHome = {
+                        parent: introVideo.parentElement,
+                        next: introVideo.nextElementSibling
+                    };
+                    this.trmsVideoTarget = trmsHeader.querySelector('.category-video-target');
+                }
+
+                const regionIsNoram = this.advancedFilters.regions.includes('NORAM');
+
+                if (regionIsNoram) {
+                    if (this.trmsVideoTarget) this.trmsVideoTarget.style.display = 'none';
+                    introVideo.style.display = '';
+                    if (introVideo.parentElement !== trmsHeader) {
+                        trmsHeader.insertBefore(introVideo, this.trmsVideoTarget || trmsHeader.querySelector('.category-count'));
+                    }
+                } else {
+                    if (this.trmsVideoTarget) this.trmsVideoTarget.style.display = '';
+                    const { parent, next } = this.introVideoHome;
+                    if (parent && introVideo.parentElement !== parent) {
+                        parent.insertBefore(introVideo, next);
+                    }
+                    introVideo.style.display = 'none';
+                }
             }
 
             updateVisibleCounts() {
@@ -2283,6 +2317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const headerCategory = document.getElementById('headerCategoryFilter');
                 if (headerCategory) headerCategory.value = '';
 
+                this.handleIntroVideoRegion();
                 this.filterAndDisplayTools();
                 this.updateFilterCount();
             }
