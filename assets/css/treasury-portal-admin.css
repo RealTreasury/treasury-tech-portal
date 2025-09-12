@@ -118,7 +118,7 @@
         overflow-wrap: anywhere;
     }
 
-    .treasury-portal-admin .treasury-portal-admin-table td::before {
+    .treasury-portal-admin .treasury-portal-admin-table tbody tr:not(.tp-filter-row) td::before {
         content: attr(data-label) ": ";
         font-weight: 600;
     }
