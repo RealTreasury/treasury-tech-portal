@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-12T02:31:37+00:00\n"
+"POT-Creation-Date: 2025-09-12T04:10:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: treasury-tech-portal\n"
@@ -408,11 +408,19 @@ msgstr ""
 msgid "Filter category"
 msgstr ""
 
-#: templates/admin-page.php:142
+#: templates/admin-page.php:143
+msgid "Filter by core capabilities"
+msgstr ""
+
+#: templates/admin-page.php:144
+msgid "Filter core capabilities"
+msgstr ""
+
+#: templates/admin-page.php:147
 msgid "Filter by additional capabilities"
 msgstr ""
 
-#: templates/admin-page.php:143
+#: templates/admin-page.php:148
 msgid "Filter additional capabilities"
 msgstr ""
 

@@ -171,8 +171,24 @@
                     $domain       = implode(', ', array_map('sanitize_text_field', (array) ($product['domain'] ?? array())));
                     $regions      = implode(', ', array_map('sanitize_text_field', (array) ($product['regions'] ?? array())));
                     $subs         = implode(', ', array_map('sanitize_text_field', (array) ($product['sub_categories'] ?? array())));
-                    $core_caps    = implode(', ', array_map('sanitize_text_field', (array) ($product['core_capabilities'] ?? array())));
-                    $capabilities = implode(', ', array_map('sanitize_text_field', (array) ($product['capabilities'] ?? array())));
+                    $core_caps    = implode(
+                        ', ',
+                        array_map(
+                            function ( $cap ) {
+                                return sanitize_text_field( is_array( $cap ) ? ( $cap['name'] ?? '' ) : $cap );
+                            },
+                            (array) ( $product['core_capabilities'] ?? array() )
+                        )
+                    );
+                    $capabilities = implode(
+                        ', ',
+                        array_map(
+                            function ( $cap ) {
+                                return sanitize_text_field( is_array( $cap ) ? ( $cap['name'] ?? '' ) : $cap );
+                            },
+                            (array) ( $product['capabilities'] ?? array() )
+                        )
+                    );
 
                     $website   = $product['website'] ?? '';
                     $video_url = $product['video_url'] ?? '';
