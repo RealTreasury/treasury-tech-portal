@@ -76,7 +76,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $data = TTP_Airbase::get_vendors();
+        $data = TTP_Airbase::get_products();
         $this->assertIsArray($data);
         $this->assertCount(0, $data);
     }
@@ -105,7 +105,7 @@ class TTP_Airbase_Test extends TestCase {
             return $thing instanceof WP_Error;
         });
 
-        $result = TTP_Airbase::get_vendors();
+        $result = TTP_Airbase::get_products();
         $this->assertInstanceOf(WP_Error::class, $result);
     }
 
@@ -114,7 +114,7 @@ class TTP_Airbase_Test extends TestCase {
             return TTP_Airbase::OPTION_TOKEN === $option ? '' : $default;
         });
 
-        $result = TTP_Airbase::get_vendors();
+        $result = TTP_Airbase::get_products();
         $this->assertInstanceOf(WP_Error::class, $result);
     }
 
@@ -132,7 +132,7 @@ class TTP_Airbase_Test extends TestCase {
             }
         });
 
-        $result = TTP_Airbase::get_vendors();
+        $result = TTP_Airbase::get_products();
         $this->assertInstanceOf(WP_Error::class, $result);
     }
 
@@ -150,7 +150,7 @@ class TTP_Airbase_Test extends TestCase {
             }
         });
 
-        $result = TTP_Airbase::get_vendors();
+        $result = TTP_Airbase::get_products();
         $this->assertInstanceOf(WP_Error::class, $result);
     }
 
@@ -189,7 +189,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $data = TTP_Airbase::get_vendors();
+        $data = TTP_Airbase::get_products();
         $this->assertIsArray($data);
     }
 
@@ -244,7 +244,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $records = TTP_Airbase::get_vendors();
+        $records = TTP_Airbase::get_products();
         $this->assertIsArray($records);
         $this->assertCount(2, $records);
         $this->assertSame('rec2', $records[1]['id']);
@@ -291,7 +291,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $records = TTP_Airbase::get_vendors(['Name', 'Email']);
+        $records = TTP_Airbase::get_products(['Name', 'Email']);
         $this->assertIsArray($records);
     }
 
@@ -339,7 +339,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $records = TTP_Airbase::get_vendors(['Product Name', 'Category']);
+        $records = TTP_Airbase::get_products(['Product Name', 'Category']);
         $this->assertIsArray($records);
     }
 
@@ -384,7 +384,7 @@ class TTP_Airbase_Test extends TestCase {
             ];
         });
 
-        $records = TTP_Airbase::get_vendors(['Name', 'Email']);
+        $records = TTP_Airbase::get_products(['Name', 'Email']);
         $this->assertSame('Acme', $records[0]['fields']['Name']);
     }
 

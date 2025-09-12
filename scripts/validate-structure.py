@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def validate_tool_data_source():
-    """Ensure tool data is sourced from vendors instead of local JSON"""
+    """Ensure tool data is sourced from products instead of local JSON"""
 
     repo_root = Path(".")
     issues = []
@@ -21,8 +21,8 @@ def validate_tool_data_source():
     if "load_default_tools" in php_content:
         issues.append("Legacy load_default_tools() method still present")
 
-    if "get_all_vendors" not in php_content:
-        issues.append("get_all_tools() does not use vendor data")
+    if "get_all_products" not in php_content:
+        issues.append("get_all_tools() does not use product data")
 
     return issues
 
@@ -31,7 +31,7 @@ def find_modification_points():
     """Identify common modification points for automated tools"""
 
     points = {
-        "vendor_data": "includes/class-ttp-data.php::get_all_vendors()",
+        "product_data": "includes/class-ttp-data.php::get_all_products()",
         "js_main_class": "assets/js/treasury-portal.js (TreasuryTechPortal class)",
         "css_styles": "assets/css/treasury-portal.css",
         "admin_form": "templates/admin-page.php",

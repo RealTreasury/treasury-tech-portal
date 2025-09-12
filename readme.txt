@@ -53,7 +53,7 @@ Vendor entries are built from Airtable product fields. Follow these steps to con
    - `Product Summary` → `product_summary`
    - `Market Fit Analysis` → `market_fit_analysis`
    - `Full Website URL` → `full_website_url`
-   The refresh stores a normalized array accessible via `TTP_Data::get_all_vendors()`.
+   The refresh stores a normalized array accessible via `TTP_Data::get_all_products()`.
 
 See [AIRBASE_API.md](AIRBASE_API.md) for detailed API reference.
 

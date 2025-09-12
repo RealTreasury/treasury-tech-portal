@@ -3,12 +3,12 @@
 This document explains how product data moves through the plugin and how linked Airtable fields are resolved.
 
 ## Data Flow
-1. **`TTP_Airbase::get_vendors`** – Fetches raw product records from the Airbase API. Each record may contain linked field IDs for related tables.
-2. **`TTP_Data::refresh_vendor_cache`** – Calls `get_vendors`, maps field IDs to readable names and resolves linked record IDs. The final product array is cached for faster access.
+1. **`TTP_Airbase::get_products`** – Fetches raw product records from the Airbase API. Each record may contain linked field IDs for related tables.
+2. **`TTP_Data::refresh_product_cache`** – Calls `get_products`, maps field IDs to readable names and resolves linked record IDs. The final product array is cached for faster access.
 3. **`TTP_Airbase::resolve_linked_records`** – Given a table ID and a list of record IDs, retrieves the primary field from that table so that stored IDs become human‑readable values. Results are cached in-memory per table and record ID for the duration of the request to avoid redundant API calls. Pass the optional `$use_field_ids` flag to request and return values using field IDs instead of field names.
 
 ## Adding a New Linked Field
-Linked fields are configured in `TTP_Data::refresh_vendor_cache()` via the `$linked_tables` array. Each entry defines the Airtable table and the primary field used for display:
+Linked fields are configured in `TTP_Data::refresh_product_cache()` via the `$linked_tables` array. Each entry defines the Airtable table and the primary field used for display:
 
 ```php
 $linked_tables['Industry'] = [
@@ -61,7 +61,7 @@ Updating linked‑field logic requires both testing and cache invalidation:
    ```
    Then regenerate data:
    ```php
-   TTP_Data::refresh_vendor_cache();
+   TTP_Data::refresh_product_cache();
    ```
 
 These steps ensure that changes to linked field handling are validated and reflected in the stored product cache.

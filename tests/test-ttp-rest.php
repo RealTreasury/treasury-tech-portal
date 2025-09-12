@@ -48,8 +48,8 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame([TTP_Rest::class, 'get_tools'], $route[2]['callback']);
     }
 
-    public function test_tools_endpoint_returns_vendor_with_new_fields() {
-        $vendor = [
+    public function test_tools_endpoint_returns_product_with_new_fields() {
+        $product = [
             'name'           => 'Sample Product',
             'video_url'      => 'https://example.com/video',
             'logo_url'       => 'https://example.com/logo.png',
@@ -73,8 +73,8 @@ class TTP_Rest_Test extends TestCase {
             return $default;
         } );
 
-        \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($vendor) {
-            return [ $vendor ];
+        \Patchwork\replace('TTP_Data::get_tools', function ($args = array()) use ($product) {
+            return [ $product ];
         });
 
         $request = new class {
@@ -163,8 +163,8 @@ class TTP_Rest_Test extends TestCase {
         $this->assertSame( array( 'Cash', 'Lite' ), $captured['category'] );
     }
 
-    public function test_vendors_endpoint_returns_resolved_names() {
-        $vendor = [
+    public function test_products_endpoint_returns_resolved_names() {
+        $product = [
             'regions'    => ['North America'],
             'categories' => ['Finance'],
         ];
@@ -182,19 +182,19 @@ class TTP_Rest_Test extends TestCase {
             return $default;
         } );
 
-        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
-            return [ $vendor ];
+        \Patchwork\replace('TTP_Data::get_all_products', function () use ( $product ) {
+            return [ $product ];
         });
 
         $request = new class {};
-        $response = TTP_Rest::get_vendors( $request );
+        $response = TTP_Rest::get_products( $request );
 
-        $this->assertSame( ['North America'], $response['vendors'][0]['regions'] );
-        $this->assertSame( ['Finance'], $response['vendors'][0]['categories'] );
+        $this->assertSame( ['North America'], $response['products'][0]['regions'] );
+        $this->assertSame( ['Finance'], $response['products'][0]['categories'] );
     }
 
-    public function test_vendors_endpoint_strips_unresolved_ids_and_refreshes_cache() {
-        $vendor = [
+    public function test_products_endpoint_strips_unresolved_ids_and_refreshes_cache() {
+        $product = [
             'regions'    => ['rec123', 'North America'],
             'categories' => ['rec456'],
         ];
@@ -215,24 +215,24 @@ class TTP_Rest_Test extends TestCase {
             return $default;
         } );
 
-        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
-            return [ $vendor ];
+        \Patchwork\replace('TTP_Data::get_all_products', function () use ( $product ) {
+            return [ $product ];
         });
 
-        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$refresh_called ) {
+        \Patchwork\replace('TTP_Data::refresh_product_cache', function () use ( &$refresh_called ) {
             $refresh_called = true;
         });
 
         $request  = new class {};
-        $response = TTP_Rest::get_vendors( $request );
+        $response = TTP_Rest::get_products( $request );
 
         $this->assertTrue( $refresh_called );
-        $this->assertSame( [ 'North America' ], $response['vendors'][0]['regions'] );
-        $this->assertArrayNotHasKey( 'categories', $response['vendors'][0] );
+        $this->assertSame( [ 'North America' ], $response['products'][0]['regions'] );
+        $this->assertArrayNotHasKey( 'categories', $response['products'][0] );
     }
 
-    public function test_vendors_endpoint_marks_incomplete_vendors() {
-        $vendor = [
+    public function test_products_endpoint_marks_incomplete_products() {
+        $product = [
             'regions'    => ['rec123', 'North America'],
             'categories' => ['Finance'],
         ];
@@ -251,21 +251,21 @@ class TTP_Rest_Test extends TestCase {
             return $default;
         } );
 
-        \Patchwork\replace('TTP_Data::get_all_vendors', function () use ( $vendor ) {
-            return [ $vendor ];
+        \Patchwork\replace('TTP_Data::get_all_products', function () use ( $product ) {
+            return [ $product ];
         });
 
-        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () {});
+        \Patchwork\replace('TTP_Data::refresh_product_cache', function () {});
 
         $request  = new class {};
-        $response = TTP_Rest::get_vendors( $request );
+        $response = TTP_Rest::get_products( $request );
 
-        $this->assertTrue( $response['vendors'][0]['incomplete'] );
+        $this->assertTrue( $response['products'][0]['incomplete'] );
     }
 
     public function test_refresh_endpoint_triggers_cache_refresh() {
         $called = false;
-        \Patchwork\replace('TTP_Data::refresh_vendor_cache', function () use ( &$called ) {
+        \Patchwork\replace('TTP_Data::refresh_product_cache', function () use ( &$called ) {
             $called = true;
         });
 

@@ -4,8 +4,8 @@
     <p><?php esc_html_e('Use the button below to manually refresh the product cache after changing Airbase settings or when product data appears outdated.', 'treasury-tech-portal'); ?></p>
     <p><?php esc_html_e('Linked field IDs such as regions or categories are automatically converted to names for easier reading.', 'treasury-tech-portal'); ?></p>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-        <?php wp_nonce_field('ttp_refresh_vendors', 'ttp_refresh_vendors_nonce'); ?>
-        <input type="hidden" name="action" value="ttp_refresh_vendors" />
+        <?php wp_nonce_field('ttp_refresh_products', 'ttp_refresh_products_nonce'); ?>
+        <input type="hidden" name="action" value="ttp_refresh_products" />
         <?php submit_button(__('Refresh Products', 'treasury-tech-portal'), 'primary', 'refresh-vendors'); ?>
     </form>
     <?php if (isset($_GET['refreshed'])) : ?>

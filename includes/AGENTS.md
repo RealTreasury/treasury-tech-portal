@@ -252,14 +252,14 @@ if (!wp_http_validate_url($url)) {
 
 ## Common Backend Modifications
 
-### Adding Vendor Import/Export
+### Adding Product Import/Export
 ```php
 // In TTP_Admin class
-public static function export_vendors() {
-    $vendors = TTP_Data::get_all_vendors();
+public static function export_products() {
+    $products = TTP_Data::get_all_products();
     header('Content-Type: application/json');
-    header('Content-Disposition: attachment; filename="vendors.json"');
-    echo wp_json_encode($vendors);
+    header('Content-Disposition: attachment; filename="products.json"');
+    echo wp_json_encode($products);
     exit;
 }
 ```

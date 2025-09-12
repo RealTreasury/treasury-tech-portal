@@ -220,6 +220,10 @@ class TTP_Airbase {
         return $records;
     }
 
+    public static function get_products( $fields = array() ) {
+        return self::get_vendors( $fields );
+    }
+
     /**
      * Map field names to their schema IDs.
      *

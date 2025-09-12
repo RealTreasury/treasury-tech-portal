@@ -1,6 +1,6 @@
 <?php
 /**
- * Simple utility to fetch vendors from Airbase and display them in a table.
+ * Simple utility to fetch products from Airbase and display them in a table.
  *
  * Usage: php scripts/run-api-test.php
  */
@@ -15,21 +15,21 @@ if ( ! function_exists( 'is_wp_error' ) ) {
 }
 
 function run_api_test() {
-    // Refresh vendor cache and rebuild product-field ID\u2192name mappings.
-    $result = TTP_Data::refresh_vendor_cache();
+    // Refresh product cache and rebuild product-field ID\u2192name mappings.
+    $result = TTP_Data::refresh_product_cache();
     if ( is_wp_error( $result ) ) {
         echo 'Error: ' . $result->get_error_message() . PHP_EOL;
         return;
     }
 
-    $vendors = TTP_Data::get_all_vendors();
-    if ( empty( $vendors ) ) {
-        echo "No vendors retrieved." . PHP_EOL;
+    $products = TTP_Data::get_all_products();
+    if ( empty( $products ) ) {
+        echo "No products retrieved." . PHP_EOL;
         return;
     }
 
-    // Determine table columns from the first vendor record.
-    $columns = array_keys( $vendors[0] );
+    // Determine table columns from the first product record.
+    $columns = array_keys( $products[0] );
 
     echo "<table>\n<tr>";
     foreach ( $columns as $col ) {
@@ -38,10 +38,10 @@ function run_api_test() {
     }
     echo "</tr>\n";
 
-    foreach ( $vendors as $vendor ) {
+    foreach ( $products as $product ) {
         echo '<tr>';
         foreach ( $columns as $col ) {
-            $value = $vendor[ $col ] ?? '';
+            $value = $product[ $col ] ?? '';
             if ( is_array( $value ) ) {
                 $value = implode( ', ', $value );
             }

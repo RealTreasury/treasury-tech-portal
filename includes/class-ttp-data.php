@@ -32,7 +32,7 @@ class TTP_Data {
             return $tools;
         }
 
-        $tools = self::get_all_vendors();
+        $tools = self::get_all_products();
 
         set_transient(self::CACHE_KEY, $tools, self::CACHE_TTL);
         return $tools;
@@ -65,6 +65,10 @@ class TTP_Data {
     }
 
     public static function get_all_vendors() {
+        return self::get_all_products();
+    }
+
+    public static function get_all_products() {
         // Ensure legacy caches with semicolon-delimited values are normalised
         // before attempting to read from the transient cache. This migration is
         // lightweight and will no-op once data is updated.
@@ -77,7 +81,7 @@ class TTP_Data {
 
         $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
         if ( self::vendors_need_resolution( $vendors ) ) {
-            self::refresh_vendor_cache();
+            self::refresh_product_cache();
             $vendors = get_option( self::VENDOR_OPTION_KEY, array() );
         }
 
@@ -91,7 +95,7 @@ class TTP_Data {
      * @return array Mapping of category slug => label.
      */
     public static function get_categories() {
-        $vendors    = self::get_all_vendors();
+        $vendors    = self::get_all_products();
         $categories = array();
 
         foreach ( (array) $vendors as $vendor ) {
@@ -135,7 +139,7 @@ class TTP_Data {
      * @return array Mapping of domain name => label.
      */
     public static function get_domains() {
-        $vendors = self::get_all_vendors();
+        $vendors = self::get_all_products();
         $domains = array();
 
         foreach ( (array) $vendors as $vendor ) {
@@ -258,10 +262,14 @@ class TTP_Data {
 
             // Trigger the refresh through the existing action hook to ensure
             // consistent behaviour with scheduled events.
-            do_action( 'ttp_refresh_vendor_cache' );
+            do_action( 'ttp_refresh_product_cache' );
 
             self::$refreshing_vendors = false;
         }
+    }
+
+    public static function save_products( $products ) {
+        self::save_vendors( $products );
     }
 
     public static function register_cli_commands() {
@@ -273,10 +281,14 @@ class TTP_Data {
     }
 
     public static function cli_refresh_cache() {
-        self::refresh_vendor_cache();
+        self::refresh_product_cache();
         if ( class_exists( 'WP_CLI' ) ) {
             \WP_CLI::success( 'Vendor cache refreshed.' );
         }
+    }
+
+    public static function refresh_product_cache() {
+        return self::refresh_vendor_cache();
     }
 
     /**
@@ -371,7 +383,7 @@ class TTP_Data {
      * "Product Video" field when syncing vendor records.
      */
     public static function refresh_vendor_cache() {
-        do_action( 'rt_refresh_vendors' );
+        do_action( 'rt_refresh_products' );
 
         $field_names = array(
             'Product Name',
@@ -433,7 +445,7 @@ class TTP_Data {
             }
         }
 
-        $data = TTP_Airbase::get_vendors( $field_ids );
+        $data = TTP_Airbase::get_products( $field_ids );
         if ( is_wp_error( $data ) ) {
             return;
         }

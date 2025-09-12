@@ -331,13 +331,13 @@ location.reload();
 ```
 
 ```php
-// 3. Reset vendor data
+// 3. Reset product data
 delete_option('ttp_vendors');
 delete_transient('ttp_vendors_cache');
 wp_cache_flush();
 
 // 4. Refresh from API
-TTP_Data::refresh_vendor_cache();
+TTP_Data::refresh_product_cache();
 ```
 
 ### Rollback Deployment
