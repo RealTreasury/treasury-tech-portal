@@ -2447,15 +2447,41 @@
             display: none;
         }
 
-        /* Loading screen transition */
+        /* Loading overlay */
         .treasury-portal #loadingScreen {
-            display: none;
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #281345;
+            z-index: 1000;
             opacity: 1;
             transition: opacity 0.3s ease;
         }
 
         .treasury-portal #loadingScreen.fade-out {
             opacity: 0;
+        }
+
+        .treasury-portal #loadingScreen .loading-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .treasury-portal #loadingScreen h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .treasury-portal #loadingScreen p {
+            font-size: 1rem;
+            color: #7e7e7e;
         }
 
         /* Admin table responsiveness */

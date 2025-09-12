@@ -44,10 +44,10 @@ $category_meta = array(
 ?>
 <div class="treasury-portal" data-enabled-domains="<?php echo esc_attr( wp_json_encode( $enabled_domains ) ); ?>">
     <!-- Loading Screen -->
-    <div class="loading" id="loadingScreen" style="display: none; text-align: center; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
-        <div class="loading-logo" style="font-size: 3rem; margin-bottom: 1rem;">💼</div>
-        <h1 style="color: #281345; font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Treasury Tech Portal</h1>
-        <p style="color: #7e7e7e; font-size: 1rem;">Loading financial tools ecosystem...</p>
+    <div id="loadingScreen" class="loading-overlay">
+        <div class="loading-logo">💼</div>
+        <h1>Treasury Tech Portal</h1>
+        <p>Loading financial tools ecosystem...</p>
     </div>
     <div class="container">
         <button class="external-menu-toggle" id="externalMenuToggle">Menu</button>
