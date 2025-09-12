@@ -656,6 +656,22 @@
             gap: 12px;
         }
 
+        .treasury-portal .subcategory-group {
+            margin-bottom: 2rem;
+        }
+
+        .treasury-portal .subcategory-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+        }
+
+        .treasury-portal .subcategory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 12px;
+        }
+
         /* Tool Card */
         .treasury-portal .tool-card {
             background: #f9fafb;
