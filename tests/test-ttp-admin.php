@@ -33,6 +33,7 @@ class TTP_Admin_Test extends TestCase {
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
             'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
+            'Product Summary' => 'fld_summary',
             'Logo URL'        => 'fld_logo',
             'Status'          => 'fld_status',
             'Hosted Type'     => 'fld_hosted',
