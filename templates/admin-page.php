@@ -54,22 +54,22 @@
             <table class="widefat fixed striped treasury-portal-admin-table">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
-                        <th><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
-                        <th><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Website', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Status', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Category', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
+                        <th data-sort-key="name"><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
+                        <th data-sort-key="category_names"><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
+                        <th data-sort-key="vendor"><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?></th>
+                    <th data-sort-key="website"><?php esc_html_e('Website', 'treasury-tech-portal'); ?></th>
+                    <th data-sort-key="video_url"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
+                    <th data-sort-key="status"><?php esc_html_e('Status', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="hosted_type"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="domain"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="regions"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="sub_categories"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="category"><?php esc_html_e('Category', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="capabilities"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="logo_url"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="hq_location"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="founded_year"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
+                    <th class="is-mobile-hidden" data-sort-key="founders"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
                 </tr>
                 </thead>
                 <tbody>
