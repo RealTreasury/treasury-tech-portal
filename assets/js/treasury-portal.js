@@ -61,6 +61,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    if (window.self !== window.top) {
+        portalRoot.classList.add('embedded');
+    } else {
+        portalRoot.classList.remove('embedded');
+    }
+
     new ResizeObserver(() => {
         debouncedPostHeight();
     }).observe(portalRoot);
