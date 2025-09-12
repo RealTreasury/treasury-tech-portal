@@ -1162,8 +1162,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const listContainer = document.getElementById('listViewContainer');
                 const ungroup = !this.groupByCategory || this.searchTerm ||
-                                  this.advancedFilters.features.length || this.advancedFilters.hasVideo ||
-                                  this.advancedFilters.regions.length || this.advancedFilters.categories.length || this.advancedFilters.subcategories.length;
+                                  this.advancedFilters.features.length || this.advancedFilters.hasVideo;
 
                 if (ungroup) {
                     categories.forEach(cat => {
@@ -1198,11 +1197,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // Determine if this section should be visible
                     let shouldShowSection = false;
 
+                    const filteringByRegion = this.advancedFilters.regions.length > 0;
+                    const filteringByCategories = this.advancedFilters.categories.length > 0;
+                    const filteringBySubcats = this.advancedFilters.subcategories.length > 0;
+
                     if (this.searchTerm) {
                         // When searching, show section only if it has matching tools
                         shouldShowSection = categoryTools.length > 0;
+                    } else if (filteringByRegion || filteringByCategories || filteringBySubcats) {
+                        if (filteringByCategories) {
+                            const categoryName = (this.CATEGORY_INFO[category] || {}).name;
+                            shouldShowSection = this.advancedFilters.categories.includes(categoryName);
+                        } else if (filteringBySubcats) {
+                            shouldShowSection = this.advancedFilters.subcategories.some(sc =>
+                                this.TREASURY_TOOLS.some(t => t.category === category && (t.subCategories || []).includes(sc))
+                            );
+                        } else {
+                            // Region-only filtering shows all sections for the current filter
+                            shouldShowSection = this.currentFilter === 'ALL' || this.currentFilter === category;
+                        }
                     } else {
-                        // When filtering by category, show section if it matches filter and has tools
+                        // When no advanced filters are active, show section if it matches filter and has tools
                         shouldShowSection = (this.currentFilter === 'ALL' || this.currentFilter === category) && categoryTools.length > 0;
                     }
 
@@ -1212,7 +1227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
 
                     // Populate the container only if section is visible
-                    if (shouldShowSection && container) {
+                    if (shouldShowSection && container && categoryTools.length) {
                         categoryTools.forEach(tool => {
                             const card = this.createToolCard(tool, category);
                             container.appendChild(card);
