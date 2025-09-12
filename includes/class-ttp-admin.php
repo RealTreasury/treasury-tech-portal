@@ -175,7 +175,7 @@ class TTP_Admin {
         if (!current_user_can('manage_options')) {
             return;
         }
-        $vendors            = TTP_Data::get_all_products();
+        $products           = TTP_Data::get_all_products();
         $categories         = TTP_Data::get_categories();
         $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
         $domains            = TTP_Data::get_domains();
@@ -264,7 +264,7 @@ class TTP_Admin {
         } else {
             $data = $result;
             if ( is_array( $data ) ) {
-                $known = array( 'products', 'records', 'vendors' );
+                $known = array( 'products', 'records' );
                 foreach ( $known as $key ) {
                     if ( isset( $data[ $key ] ) && is_array( $data[ $key ] ) ) {
                         $data = $data[ $key ];

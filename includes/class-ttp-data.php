@@ -327,10 +327,10 @@ class TTP_Data {
             'capability'    => 'capabilities',
             'hosted_types'  => 'hosted_type',
             'domains'       => 'domain',
-            'linked_vendor' => 'vendor',
+            'linked_product'=> 'product',
         );
 
-        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'vendor', 'categories', 'category', 'category_names' );
+        $fields = array( 'domain', 'regions', 'sub_categories', 'capabilities', 'hosted_type', 'product', 'categories', 'category', 'category_names' );
 
         $products = array_map( array( __CLASS__, 'normalize_keys' ), (array) $products );
 
@@ -401,7 +401,7 @@ class TTP_Data {
 
         $linked_fields = array(
             'Regions'        => array( 'key' => 'regions',        'table' => 'Regions',        'primary_field' => 'Region' ),
-            'Vendor'         => array( 'key' => 'vendor',         'table' => 'Vendors',        'primary_field' => 'Name',   'single' => true ),
+            'Product'        => array( 'key' => 'product',        'table' => 'Products',       'primary_field' => 'Name',   'single' => true ),
             'Hosted Type'    => array( 'key' => 'hosted_type',    'table' => 'Hosted Type',    'primary_field' => 'Name' ),
             'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
             'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
@@ -556,7 +556,7 @@ class TTP_Data {
             $products[] = array(
                 'id'              => sanitize_text_field( $record['id'] ?? '' ),
                 'name'            => $fields['product_name'] ?? '',
-                'vendor'          => $resolved['vendor'],
+                'product'         => $resolved['product'],
                 'full_website_url' => self::normalize_url( $fields['full_website_url'] ?? '' ),
                 'website'         => self::normalize_url( $fields['full_website_url'] ?? ( $fields['product_website'] ?? '' ) ),
                 'video_url'       => self::normalize_url( $fields['demo_video_url'] ?? '' ),
@@ -590,7 +590,7 @@ class TTP_Data {
             return [];
         }
 
-        $known_keys = ['products', 'records', 'vendors'];
+        $known_keys = ['products', 'records'];
 
         foreach ($known_keys as $key) {
             if (isset($data[$key]) && is_array($data[$key])) {

@@ -51,6 +51,7 @@ class TTP_Rest_Test extends TestCase {
     public function test_products_endpoint_returns_product_with_new_fields() {
         $product = [
             'name'           => 'Sample Product',
+            'product'        => 'Sample Co',
             'video_url'      => 'https://example.com/video',
             'logo_url'       => 'https://example.com/logo.png',
             'categories'     => ['Finance'],
@@ -86,6 +87,7 @@ class TTP_Rest_Test extends TestCase {
         $response = TTP_Rest::get_products($request);
         $this->assertIsArray($response['products']);
         $tool = $response['products'][0];
+        $this->assertArrayHasKey('product', $tool);
         $this->assertArrayHasKey('video_url', $tool);
         $this->assertArrayHasKey('logo_url', $tool);
         $this->assertArrayHasKey('category', $tool);
@@ -93,6 +95,7 @@ class TTP_Rest_Test extends TestCase {
         $this->assertArrayHasKey('categories', $tool);
         $this->assertArrayHasKey('category_names', $tool);
         $this->assertArrayHasKey('regions', $tool);
+        $this->assertSame('Sample Co', $tool['product']);
         $this->assertSame('https://example.com/video', $tool['video_url']);
         $this->assertSame('https://example.com/logo.png', $tool['logo_url']);
         $this->assertSame('Cash', $tool['category']);
