@@ -1247,6 +1247,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // Clear the container first
                     if (container) {
                         container.innerHTML = '';
+                        container.classList.remove('tools-grid');
                     }
 
                     // Determine if this section should be visible
@@ -1283,9 +1284,32 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     // Populate the container only if section is visible
                     if (shouldShowSection && container && categoryTools.length) {
+                        const grouped = {};
                         categoryTools.forEach(tool => {
-                            const card = this.createToolCard(tool, category);
-                            container.appendChild(card);
+                            const subs = Array.isArray(tool.subCategories) && tool.subCategories.length
+                                ? tool.subCategories
+                                : ['Other'];
+                            subs.forEach(sc => {
+                                if (!grouped[sc]) grouped[sc] = [];
+                                grouped[sc].push(tool);
+                            });
+                        });
+                        const subcats = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+                        subcats.forEach(subcat => {
+                            const group = document.createElement('div');
+                            group.className = 'subcategory-group';
+                            const header = document.createElement('div');
+                            header.className = 'subcategory-header';
+                            header.textContent = subcat;
+                            group.appendChild(header);
+                            const grid = document.createElement('div');
+                            grid.className = 'tools-grid subcategory-grid';
+                            grouped[subcat].forEach(tool => {
+                                const card = this.createToolCard(tool, category);
+                                grid.appendChild(card);
+                            });
+                            group.appendChild(grid);
+                            container.appendChild(group);
                         });
                     }
                 });
