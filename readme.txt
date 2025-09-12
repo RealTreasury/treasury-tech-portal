@@ -22,7 +22,7 @@ Add the portal to any page or post using the shortcode:
 
 === Airbase Product Field Sync ===
 
-Vendor entries are built from Airtable product fields. Follow these steps to configure the sync:
+Product entries are built from Airtable product fields. Follow these steps to configure the sync:
 
 1. In the WordPress admin go to **Treasury Tools → Airbase Settings** and set the required values:
    - **API Token** (`ttp_airbase_token`)
@@ -33,9 +33,9 @@ Vendor entries are built from Airtable product fields. Follow these steps to con
 2. Save the settings.
 3. To fetch products immediately visit **Treasury Tools → Products** and click **Refresh Products**;
    otherwise a scheduled event updates the cache twice daily.
-4. Airbase fields map to the following keys in the stored vendor list:
+4. Airbase fields map to the following keys in the stored product list:
    - `Product Name` → `name`
-   - `Vendor` → `vendor`
+   - `Product` → `product`
    - `Product Website` → `website`
    - `Demo Video URL` → `video_url`
    - `Status` → `status`
@@ -53,7 +53,7 @@ Vendor entries are built from Airtable product fields. Follow these steps to con
    - `Product Summary` → `product_summary`
    - `Market Fit Analysis` → `market_fit_analysis`
    - `Full Website URL` → `full_website_url`
-   The refresh stores a normalized array accessible via `TTP_Data::get_all_vendors()`.
+   The refresh stores a normalized array accessible via `TTP_Data::get_all_products()`.
 
 See [AIRBASE_API.md](AIRBASE_API.md) for detailed API reference.
 

@@ -5,7 +5,7 @@
 A WordPress plugin that provides an interactive interface for discovering and comparing treasury technology solutions across Cash Tools, TMS-Lite platforms, and Enterprise TRMS suites.
 
 ## Features
-- Vendor listings grouped by category
+- Product listings grouped by category
 - Advanced filtering and search
 - Video demonstrations
 - Shortlist and comparison tools
@@ -18,7 +18,7 @@ A WordPress plugin that provides an interactive interface for discovering and co
    ```
 
 ### Refreshing the Product Cache
-- Bump the `VENDOR_CACHE_VERSION` constant in `includes/class-ttp-data.php` when product-field ID\u2192name mapping or other linked-record logic changes.
+- Bump the `PRODUCT_CACHE_VERSION` constant in `includes/class-ttp-data.php` when product-field ID\u2192name mapping or other linked-record logic changes.
 - Run `wp ttp refresh-cache` or use the **Refresh Products** button on the Products admin page to rebuild cached data and product-field ID\u2192name mappings.
 
 ## Documentation
