@@ -89,10 +89,14 @@ class Treasury_Tech_Portal {
             // Load the shortcode template. Any thrown errors will be caught and logged.
             include plugin_dir_path(__FILE__) . 'shortcode.php';
 
-            $output = ob_get_clean();
-            if ( false !== strpos( $output, 'treasury-portal' ) ) {
+            $output     = ob_get_clean();
+            $has_portal = false !== strpos( $output, 'treasury-portal' );
+
+            if ( $has_portal ) {
+                // Only enqueue assets when the expected portal container exists.
                 $this->enqueue_assets();
             }
+
             return $output;
         } catch ( \Throwable $e ) {
             // Log the error and display a user-facing message instead of failing silently.
