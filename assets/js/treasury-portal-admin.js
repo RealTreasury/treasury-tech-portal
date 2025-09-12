@@ -42,21 +42,30 @@
             const rows = table.querySelectorAll('tbody tr:not(.tp-filter-row)');
             rows.forEach(function(row) {
                 let matches = true;
-                if (searchValue && !row.textContent.toLowerCase().includes(searchValue)) {
-                    matches = false;
-                }
-                for (const key in columnFilters) {
-                    const cell = row.children[keyToIndex[key]];
-                    const cellText = cell ? cell.textContent.toLowerCase().trim() : '';
-                    const filter = columnFilters[key];
-                    if (filter.exact) {
-                        if (cellText !== filter.value) {
-                            matches = false;
-                            break;
-                        }
-                    } else if (!cellText.includes(filter.value)) {
+                const rowText = row.textContent.toLowerCase();
+                if (searchValue) {
+                    const searchTokens = searchValue.split(/[\s,]+/).filter(Boolean);
+                    if (!searchTokens.every(token => rowText.includes(token))) {
                         matches = false;
-                        break;
+                    }
+                }
+                if (matches) {
+                    for (const key in columnFilters) {
+                        const cell = row.children[keyToIndex[key]];
+                        const cellText = cell ? cell.textContent.toLowerCase().trim() : '';
+                        const filter = columnFilters[key];
+                        if (filter.exact) {
+                            if (cellText !== filter.value) {
+                                matches = false;
+                                break;
+                            }
+                        } else {
+                            const tokens = filter.value.split(/[\s,]+/).filter(Boolean);
+                            if (!tokens.every(token => cellText.includes(token))) {
+                                matches = false;
+                                break;
+                            }
+                        }
                     }
                 }
                 row.style.display = matches ? '' : 'none';
