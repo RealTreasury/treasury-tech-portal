@@ -39,6 +39,7 @@ class TTP_Admin_Test extends TestCase {
             'Regions'         => 'fld_regions',
             'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
+            'Core Capabilities' => 'fld_core_caps',
             'Additional Capabilities'    => 'fld_caps',
             'HQ Location'     => 'fld_hq',
             'Founded Year'    => 'fld_year',
@@ -77,6 +78,7 @@ class TTP_Admin_Test extends TestCase {
                 'Regions'         => ['recreg1'],
                 'Category'        => ['reccat1'],
                 'Sub Categories'  => ['recsc1'],
+                'Core Capabilities' => ['reccore1'],
                 'Additional Capabilities'    => ['reccap1'],
             ]),
         ];
@@ -93,6 +95,7 @@ class TTP_Admin_Test extends TestCase {
                 'Domain'         => array( 'recdom1' => 'Banking' ),
                 'Category'       => array( 'reccat1' => 'Cash' ),
                 'Sub Categories' => array( 'recsc1' => 'Payments' ),
+                'Core Capabilities' => array( 'reccore1' => 'Core API' ),
                 'Additional Capabilities'   => array( 'reccap1' => 'API' ),
             );
             $out = array();
@@ -139,6 +142,7 @@ class TTP_Admin_Test extends TestCase {
                 'Regions'         => ['recreg1'],
                 'Category'        => ['reccat1'],
                 'Sub Categories'  => ['recsc1'],
+                'Core Capabilities' => ['reccore1'],
                 'Additional Capabilities'    => ['reccap1'],
             ]),
         ];
@@ -154,6 +158,7 @@ class TTP_Admin_Test extends TestCase {
             $maps = array(
                 'Products'       => array( 'recprod1' => 'Acme Product' ),
                 'Hosted Type'    => array( 'rechost1' => 'Cloud' ),
+                'Core Capabilities' => array( 'reccore1' => 'Core API' ),
             );
             $out = array();
             foreach ( (array) $ids as $id ) {
