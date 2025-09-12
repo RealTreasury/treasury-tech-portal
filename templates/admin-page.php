@@ -63,6 +63,8 @@
             <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>
             <input type="search" id="treasury-portal-admin-search-input" placeholder="<?php esc_attr_e('Search vendors...', 'treasury-tech-portal'); ?>" />
         </div>
+        <button type="button" class="button tp-filter-toggle"><?php esc_html_e('Filter', 'treasury-tech-portal'); ?></button>
+        <div class="tp-filter-panel"><div class="tp-filter-panel-content"></div></div>
         <div class="treasury-portal-admin-table-wrapper">
             <table class="widefat fixed striped treasury-portal-admin-table">
                 <thead>
