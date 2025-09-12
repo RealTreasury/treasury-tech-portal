@@ -28,7 +28,7 @@ class TTP_Admin_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
-            'Vendor'          => 'fld_vendor',
+            'Product'         => 'fld_product',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
             'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
@@ -69,7 +69,7 @@ class TTP_Admin_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'          => ['recven1'],
+                'Product'         => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
@@ -88,7 +88,7 @@ class TTP_Admin_Test extends TestCase {
         \Patchwork\replace( 'TTP_Airbase::resolve_linked_records', function ( $table, $ids, $primary = 'Name' ) {
             $maps = array(
                 'Regions'        => array( 'recreg1' => 'North America' ),
-                'Vendors'        => array( 'recven1' => 'Acme Corp' ),
+                'Products'       => array( 'recprod1' => 'Acme Product' ),
                 'Hosted Type'    => array( 'rechost1' => 'Cloud' ),
                 'Domain'         => array( 'recdom1' => 'Banking' ),
                 'Category'       => array( 'reccat1' => 'Cash' ),
@@ -120,9 +120,9 @@ class TTP_Admin_Test extends TestCase {
         run_api_test();
         $output = ob_get_clean();
 
-        $this->assertStringContainsString( 'Acme Corp', $output );
+        $this->assertStringContainsString( 'Acme Product', $output );
         $this->assertStringContainsString( 'North America', $output );
-        $this->assertStringNotContainsString( 'recven1', $output );
+        $this->assertStringNotContainsString( 'recprod1', $output );
         $this->assertStringNotContainsString( 'recreg1', $output );
     }
 
@@ -131,7 +131,7 @@ class TTP_Admin_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Vendor'          => ['recven1'],
+                'Product'         => ['recprod1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
@@ -152,7 +152,7 @@ class TTP_Admin_Test extends TestCase {
                 return new WP_Error( 'err', 'fail' );
             }
             $maps = array(
-                'Vendors'        => array( 'recven1' => 'Acme Corp' ),
+                'Products'       => array( 'recprod1' => 'Acme Product' ),
                 'Hosted Type'    => array( 'rechost1' => 'Cloud' ),
             );
             $out = array();
@@ -165,8 +165,8 @@ class TTP_Admin_Test extends TestCase {
         } );
 
         $stored = array();
-        \Patchwork\replace( 'TTP_Data::save_vendors', function ( $vendors ) use ( &$stored ) {
-            $stored = $vendors;
+        \Patchwork\replace( 'TTP_Data::save_products', function ( $products ) use ( &$stored ) {
+            $stored = $products;
         } );
 
         when( 'get_option' )->alias( function ( $key, $default = null ) use ( &$stored ) {
@@ -240,9 +240,9 @@ class TTP_Admin_Test extends TestCase {
 
         \Patchwork\replace( 'TTP_Data::get_all_products', function () {
             return [ [
-                'name'            => 'Vendor1',
+                'name'            => 'Product1',
                 'category_names'  => [ 'Cat' ],
-                'vendor'          => 'Vendor Co',
+                'product'         => 'Product Co',
                 'website'         => 'https://example.com',
                 'video_url'       => 'https://example.com/video',
                 'status'          => 'Active',
@@ -268,7 +268,7 @@ class TTP_Admin_Test extends TestCase {
         $keys = [
             'name',
             'category_names',
-            'vendor',
+            'product',
             'website',
             'video_url',
             'status',

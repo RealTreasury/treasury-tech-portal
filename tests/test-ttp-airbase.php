@@ -584,7 +584,7 @@ class TTP_Airbase_Test extends TestCase {
          * IDs act as placeholders that TTP_Data::resolve_linked_field()
          * would swap with readable names.
          */
-        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1', 'rec2'], 'Name');
+        $values = TTP_Airbase::resolve_linked_records('Products', ['rec1', 'rec2'], 'Name');
         $this->assertSame(['First', 'Second'], $values);
     }
 
@@ -648,7 +648,7 @@ class TTP_Airbase_Test extends TestCase {
         /**
          * Emulates placeholder ID batches that resolve_linked_field() replaces with names.
          */
-        $values   = TTP_Airbase::resolve_linked_records( 'Vendors', $ids, 'Name' );
+        $values   = TTP_Airbase::resolve_linked_records( 'Products', $ids, 'Name' );
         $expected = array();
         for ( $i = 1; $i <= TTP_Airbase::RECORD_BATCH_SIZE + 5; $i++ ) {
             $expected[] = 'Name' . $i;
@@ -664,7 +664,7 @@ class TTP_Airbase_Test extends TestCase {
         /**
          * No placeholders provided; resolve_linked_field() would skip replacement.
          */
-        $result = TTP_Airbase::resolve_linked_records('Vendors', [], 'Name');
+        $result = TTP_Airbase::resolve_linked_records('Products', [], 'Name');
         $this->assertSame([], $result);
     }
 
@@ -696,7 +696,7 @@ class TTP_Airbase_Test extends TestCase {
         /**
          * Single placeholder ID; helper would attempt replacement and handle errors.
          */
-        $result = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Name');
+        $result = TTP_Airbase::resolve_linked_records('Products', ['rec1'], 'Name');
         $this->assertInstanceOf(WP_Error::class, $result);
         $this->assertSame('api_error', $result->get_error_code());
     }
@@ -726,7 +726,7 @@ class TTP_Airbase_Test extends TestCase {
 
         $body = json_encode([
             'records' => [
-                [ 'id' => 'rec1', 'fields' => [ 'Name' => [ 'id' => 'rec1', 'name' => 'Vendor A' ] ] ],
+                [ 'id' => 'rec1', 'fields' => [ 'Name' => [ 'id' => 'rec1', 'name' => 'Product A' ] ] ],
             ],
         ]);
 
@@ -735,8 +735,8 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => $body,
         ]);
 
-        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Name');
-        $this->assertSame(['Vendor A'], $values);
+        $values = TTP_Airbase::resolve_linked_records('Products', ['rec1'], 'Name');
+        $this->assertSame(['Product A'], $values);
     }
 
     public function test_resolve_linked_records_preserves_numeric_primary_field() {
@@ -763,7 +763,7 @@ class TTP_Airbase_Test extends TestCase {
         });
         when('get_transient')->alias(function ($key) {
             return 'ttp_airbase_schema' === $key ? [
-                'Vendors' => [
+                'Products' => [
                     'fields'  => [ 'Value' => 'fldVal' ],
                     'types'   => [ 'Value' => 'number' ],
                     'primary' => [ 'id' => 'fldVal', 'name' => 'Value', 'type' => 'number' ],
@@ -782,7 +782,7 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => $body,
         ]);
 
-        $values = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Value');
+        $values = TTP_Airbase::resolve_linked_records('Products', ['rec1'], 'Value');
         $this->assertSame([123], $values);
     }
 
@@ -811,7 +811,7 @@ class TTP_Airbase_Test extends TestCase {
 
         when('get_transient')->alias(function ( $key ) {
             return 'ttp_airbase_schema' === $key ? [
-                'Vendors' => [
+                'Products' => [
                     'fields'  => [ 'Renamed' => 'fld123' ],
                     'primary' => [ 'id' => 'fld123', 'name' => 'Renamed' ],
                 ],
@@ -831,7 +831,7 @@ class TTP_Airbase_Test extends TestCase {
         /**
          * Placeholder ID uses schema primary field; helper swaps with actual value.
          */
-        $values = TTP_Airbase::resolve_linked_records( 'Vendors', [ 'rec1' ] );
+        $values = TTP_Airbase::resolve_linked_records( 'Products', [ 'rec1' ] );
         $this->assertSame( [ 'Value1' ], $values );
     }
 
@@ -869,8 +869,8 @@ class TTP_Airbase_Test extends TestCase {
             'body'     => $body,
         ]);
 
-        $first  = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Name');
-        $second = TTP_Airbase::resolve_linked_records('Vendors', ['rec1'], 'Name');
+        $first  = TTP_Airbase::resolve_linked_records('Products', ['rec1'], 'Name');
+        $second = TTP_Airbase::resolve_linked_records('Products', ['rec1'], 'Name');
 
         $this->assertSame(['First'], $first);
         $this->assertSame(['First'], $second);

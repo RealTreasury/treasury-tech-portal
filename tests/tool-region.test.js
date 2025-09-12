@@ -40,7 +40,7 @@ test('tool regions render in card', () => {
   portal.CATEGORY_TAGS = {};
   portal.categoryLabels = window.TTP_DATA.category_labels;
 
-  const tool = { name: 'Vendor', category: 'CASH', desc: '', regions: ['North America', 'Europe'] };
+  const tool = { name: 'Product', category: 'CASH', desc: '', regions: ['North America', 'Europe'] };
   const card = portal.createToolCard(tool, 'CASH');
 
   const regionEl = card.querySelector('.tool-region');
