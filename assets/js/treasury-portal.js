@@ -470,6 +470,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (bottomNav) bottomNav.style.display = 'flex';
                     if (loading) {
                         loading.classList.add('fade-out');
+                        loading.style.pointerEvents = 'none';
                         loading.addEventListener('transitionend', () => {
                             loading.style.display = 'none';
                         }, { once: true });
