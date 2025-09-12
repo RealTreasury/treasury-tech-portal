@@ -54,22 +54,22 @@
             <table class="widefat fixed striped treasury-portal-admin-table">
                 <thead>
                     <tr>
-                        <th><div class="tp-header-cell"><?php esc_html_e('Name', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th><div class="tp-header-cell"><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th><div class="tp-header-cell"><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th><div class="tp-header-cell"><?php esc_html_e('Website', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th><div class="tp-header-cell"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th><div class="tp-header-cell"><?php esc_html_e('Status', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Category', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="name"><div class="tp-header-cell"><?php esc_html_e('Name', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="category_names"><div class="tp-header-cell"><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="vendor"><div class="tp-header-cell"><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="website"><div class="tp-header-cell"><?php esc_html_e('Website', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="video_url"><div class="tp-header-cell"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="status"><div class="tp-header-cell"><?php esc_html_e('Status', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="hosted_type"><div class="tp-header-cell"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="domain"><div class="tp-header-cell"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="regions"><div class="tp-header-cell"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="sub_categories"><div class="tp-header-cell"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="category"><div class="tp-header-cell"><?php esc_html_e('Category', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="capabilities"><div class="tp-header-cell"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="logo_url"><div class="tp-header-cell"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="hq_location"><div class="tp-header-cell"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="founded_year"><div class="tp-header-cell"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden" data-sort-key="founders"><div class="tp-header-cell"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                     </tr>
                 </thead>
                 <tbody>
