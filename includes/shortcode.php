@@ -318,3 +318,5 @@ $category_meta = array(
 </div>
 
 </div>
+
+</div>
