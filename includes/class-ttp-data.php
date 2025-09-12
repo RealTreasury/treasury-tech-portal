@@ -384,6 +384,7 @@ class TTP_Data {
             'Product Website',
             'Full Website URL',
             'Demo Video URL', // Airbase field ID fldHyVJRr3O5rkgd7
+            'Product Summary',
             'Logo URL',
             'Status',
             'Hosted Type',
@@ -577,6 +578,7 @@ class TTP_Data {
                 'category_names'  => $category_names,
                 'core_capabilities' => $resolved['core_capabilities'],
                 'capabilities'    => $resolved['capabilities'],
+                'product_summary' => function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $fields['product_summary'] ?? '' ) : strip_tags( $fields['product_summary'] ?? '' ),
                 'logo_url'        => self::normalize_url( $fields['logo_url'] ?? '' ),
                 'hq_location'     => $resolved['hq_location'],
                 'founded_year'    => $fields['founded_year'] ?? '',
