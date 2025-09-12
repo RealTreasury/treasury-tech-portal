@@ -75,6 +75,7 @@ test('modal capability sections expand and collapse', () => {
           <div class="modal-body">
             <div class="feature-section">
               <h4>🎯 Overview</h4>
+              <p id="modalSummary" class="tool-summary"></p>
               <p id="modalDescription"></p>
             </div>
             <div class="feature-section">
@@ -95,6 +96,7 @@ test('modal capability sections expand and collapse', () => {
   portal.openModal = () => {};
   portal.TREASURY_TOOLS = [{
     name: 'Tool1',
+    product_summary: 'Summary here',
     subCategories: ['Sub1', 'Sub2'],
     core_capabilities: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'],
     capabilities: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
@@ -106,7 +108,9 @@ test('modal capability sections expand and collapse', () => {
   const addContainer = document.getElementById('modalCapabilities');
 
   const descEl = document.getElementById('modalDescription');
+  const summaryEl = document.getElementById('modalSummary');
   assert.equal(descEl.textContent, 'Sub1, Sub2');
+  assert.equal(summaryEl.textContent, 'Summary here');
 
   assert.equal(coreContainer.querySelectorAll('.tool-capability').length, 5);
   coreContainer.querySelector('.show-more-modal-core-capabilities-btn').dispatchEvent(new window.Event('click', { bubbles: true }));

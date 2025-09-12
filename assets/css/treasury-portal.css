@@ -937,6 +937,13 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
 
+        .treasury-portal .tool-summary {
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
         .treasury-portal .tool-capabilities {
             display: flex;
             flex-wrap: wrap;
