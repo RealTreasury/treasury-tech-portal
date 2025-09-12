@@ -48,6 +48,13 @@
     overflow-wrap: anywhere;
 }
 
+.treasury-portal-admin fieldset label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
 .treasury-portal-admin .treasury-portal-admin-search {
     margin-bottom: 12px;
 }
