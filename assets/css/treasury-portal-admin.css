@@ -1,0 +1,17 @@
+.treasury-portal-admin-table th {
+    position: relative;
+}
+
+.treasury-portal-admin-table .tp-header-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.treasury-portal-admin-table .tp-resizer {
+    width: 6px;
+    cursor: col-resize;
+    user-select: none;
+    height: 100%;
+    margin-left: 4px;
+}
