@@ -1180,7 +1180,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     tools = tools.filter(t => (t.regions || []).some(r => regions.includes(r)));
                 }
                 if (categories.length) {
-                    tools = tools.filter(t => categories.includes(t.categoryName));
+                    tools = tools.filter(t =>
+                        categories.some(cat => this.normalizeCategory(cat) === t.category)
+                    );
                 }
                 if (subcategories.length) {
                     tools = tools.filter(t => (t.subCategories || []).some(sc => subcategories.includes(sc)));
@@ -1260,8 +1262,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         shouldShowSection = categoryTools.length > 0;
                     } else if (filteringByRegion || filteringByCategories || filteringBySubcats) {
                         if (filteringByCategories) {
-                            const categoryName = (this.CATEGORY_INFO[category] || {}).name;
-                            shouldShowSection = this.advancedFilters.categories.includes(categoryName);
+                            shouldShowSection = this.advancedFilters.categories
+                                .some(cat => this.normalizeCategory(cat) === category);
                         } else if (filteringBySubcats) {
                             shouldShowSection = this.advancedFilters.subcategories.some(sc =>
                                 this.TREASURY_TOOLS.some(t => t.category === category && (t.subCategories || []).includes(sc))
