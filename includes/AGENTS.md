@@ -58,7 +58,7 @@ const CACHE_TTL = HOUR_IN_SECONDS; // Change cache duration
 ```php
 // Add to save_tools() method for new properties
 private static function validate_tool($tool) {
-    $required = ['name', 'category', 'desc'];
+    $required = ['name', 'category', 'subCategories'];
     foreach ($required as $field) {
         if (empty($tool[$field])) {
             return false;
@@ -184,7 +184,7 @@ wp_cache_flush(); // Nuclear option
 $tool = [
     'name'       => 'Tool Name',           // string, required
     'category'   => 'CASH|LITE|TRMS',     // string, required  
-    'desc'       => 'Description',        // string, required
+    'subCategories' => 'Subcategories',   // array, required
     'features'   => ['Feature 1', '...'], // array of strings
     'target'     => 'Target audience',    // string
     'videoUrl'   => 'https://...',        // string, URL

@@ -38,7 +38,7 @@ class PortalCodeModifier:
         
         # 4. Update JavaScript tool card creation
         js_file = self.repo_root / "assets" / "js" / "treasury-portal.js"
-        card_pattern = r'(<div class="tool-description">\$\{tool\.desc\}</div>)'
+        card_pattern = r"(<div class=\"tool-description\">\\$\\{\\(tool\\.subCategories \\|\\| \\[]\\)\\.join\\(', '\\)\\}</div>)"
         card_addition = f'\\1\n                        ${{tool.{property_name} ? `<div class="{property_name.lower().replace("_", "-")}">${{tool.{property_name}}}</div>` : ""}}'
         self._replace_in_file(js_file, card_pattern, card_addition)
         

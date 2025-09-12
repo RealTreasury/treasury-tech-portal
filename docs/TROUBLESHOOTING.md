@@ -298,7 +298,7 @@ const searchTerm = 'AI';
 const results = treasuryTechPortal.TREASURY_TOOLS.filter(tool => {
   const searchableText = [
     tool.name,
-    tool.desc,
+    ...(tool.subCategories || []),
     tool.target,
     ...(tool.tags || []),
     ...(tool.features || [])

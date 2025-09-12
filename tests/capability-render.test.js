@@ -44,6 +44,7 @@ test('tool card capability show more/less toggles', () => {
   portal.categoryLabels = { TEST: 'Test' };
   portal.TREASURY_TOOLS = [{
     name: 'Tool1',
+    subCategories: [],
     core_capabilities: ['A', 'B', 'C'],
     capabilities: ['D', 'E', 'F']
   }];
@@ -94,7 +95,7 @@ test('modal capability sections expand and collapse', () => {
   portal.openModal = () => {};
   portal.TREASURY_TOOLS = [{
     name: 'Tool1',
-    desc: '',
+    subCategories: ['Sub1', 'Sub2'],
     core_capabilities: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'],
     capabilities: ['A1', 'A2', 'A3', 'A4', 'A5', 'A6']
   }];
@@ -103,6 +104,9 @@ test('modal capability sections expand and collapse', () => {
 
   const coreContainer = document.getElementById('modalCoreCapabilities');
   const addContainer = document.getElementById('modalCapabilities');
+
+  const descEl = document.getElementById('modalDescription');
+  assert.equal(descEl.textContent, 'Sub1, Sub2');
 
   assert.equal(coreContainer.querySelectorAll('.tool-capability').length, 5);
   coreContainer.querySelector('.show-more-modal-core-capabilities-btn').dispatchEvent(new window.Event('click', { bubbles: true }));
