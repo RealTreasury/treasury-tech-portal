@@ -649,85 +649,113 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?records[]=
 
 ## Sub Categories Table
 
-The Sub Categories table ID is `tblEDySEcdvwCweuq`. Table names and IDs are
-interchangeable in API requests.
+The Sub Categories table ID is `tblEDySEcdvwCweuq`. Table names and table IDs
+are interchangeable in API requests, but using IDs prevents future name changes
+from breaking your integration.
 
 ### Fields
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `Sub Category Name` (`fld6hOaUeXUsi8ZyM`) | text | name of the sub category |
-| `Description` (`fld0WF293CfkNMDu7`) | long text | may include mention tokens |
-| `Category` (`fldRv7UQGPVftu8Id`) | linked records to **Categories** table |
-| `Linked Products` (`fld5Oxt2B7NPkZNxc`) | linked records to **Products** table |
-| `Additional Capabilities` (`fldQXnjhbuiZS0vJV`) | linked records to **Capabilities** table |
-| `Product Count` (`fldpeAWrpXwnkTbnC`) | count | auto-calculated number of linked products |
-| `Count (Category)` (`fldV3e96JCcwfpdus`) | count | auto-calculated number of categories |
-| `Region` (`flda8n6TBoZ9zn5vu`) | linked records to **Regions** table |
+Each record in the Sub Categories table supports the following fields. Field
+names and field IDs can both be used in requests; however, we recommend using
+field IDs to avoid updates if a field name changes.
 
-### Listing Sub Categories
+| Field Name | Field ID | Type | Description |
+|------------|----------|------|-------------|
+| Sub Category Name | `fld6hOaUeXUsi8ZyM` | text | Single line text. Examples: "Cash Tool", "TMS-Lite", "TRMS". |
+| Description | `fld0WF293CfkNMDu7` | long text | May include mention tokens such as `<airtable:mention id="menE1i9oBaGX3DseR">@Alex</airtable:mention>`. |
+| Category | `fldRv7UQGPVftu8Id` | link to record | Array of linked record IDs from the **Categories** table. |
+| Linked Products | `fld5Oxt2B7NPkZNxc` | link to record | Array of linked record IDs from the **Products** table. |
+| Core Capabilities | `fldQXnjhbuiZS0vJV` | link to record | Array of linked record IDs from the **Capabilities** table. |
+| Product Count | `fldpeAWrpXwnkTbnC` | count | Number of linked Products records (read-only). |
+| Count (Parent Category) | `fldV3e96JCcwfpdus` | count | Number of linked Categories records (read-only). |
+| Region | `flda8n6TBoZ9zn5vu` | link to record | Array of linked record IDs from the **Regions** table. |
+
+### List Sub Categories records
+
+Use a `GET` request to `/v0/{baseId}/tblEDySEcdvwCweuq` to list records. The
+response omits fields with empty values (e.g. `""`, `[]`, or `false`).
+
+You can filter, sort, and format results using query parameters such as:
+
+- `fields[]` – only return specified fields (names or IDs)
+- `filterByFormula` – formula evaluated for each record
+- `maxRecords` – total number of records to return
+- `pageSize` – number of records per page (max 100)
+- `sort[]` – sort objects with `field` and optional `direction`
+- `view` – name or ID of a view to scope records
+- `cellFormat`, `timeZone`, `userLocale` – formatting controls for string output
+- `returnFieldsByFieldId` – boolean to return field objects keyed by field ID
+- `recordMetadata` – include `commentCount` if requested
+
+These parameters must be URL encoded. Airtable limits URLs to <16,000
+characters; long formulas may require using the POST `/listRecords` endpoint
+instead of query parameters.
 
 ```bash
-curl "https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq?maxRecords=3&view=Grid%20view" \
+curl "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Sub%20Categories?maxRecords=3&view=Grid%20view" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
-Returned records omit empty fields. All query parameters available to the
-Products table (`fields[]`, `filterByFormula`, `maxRecords`, `pageSize`,
-`sort[]`, `view`, `cellFormat`, `timeZone`, `userLocale`,
-`returnFieldsByFieldId`, `recordMetadata`) are supported.
-
-### Retrieving a Sub Category
+### Retrieve a Sub Categories record
 
 ```bash
-curl https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq/RECORD_ID \
+curl https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Sub%20Categories/RECORD_ID \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
-### Creating Sub Categories
+### Create Sub Categories records
 
-Values for `Product Count` and `Count (Category)` are computed and
-cannot be set directly.
+Send a `POST` request with up to 10 record objects. Field names or IDs may be
+used for keys. `Product Count` and `Count (Parent Category)` are computed by
+Airtable and cannot be set directly.
 
 ```bash
-curl -X POST https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq \
+curl -X POST https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Sub%20Categories \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{
-    "records": [{
-      "fields": {
-        "Sub Category Name": "Cash Tool",
-        "Category": ["reckz5jhQb2CBocKR"],
-        "Linked Products": ["recgOn3wZbYQE8gtZ"],
-        "Additional Capabilities": ["recn4Y3PBFmPXh6Op"],
-        "Region": ["rec75L3VdbgJC8GpT"]
+    "records": [
+      {
+        "fields": {
+          "Sub Category Name": "Cash Tool",
+          "Category": ["reckz5jhQb2CBocKR"],
+          "Linked Products": ["recgOn3wZbYQE8gtZ"],
+          "Core Capabilities": ["recn4Y3PBFmPXh6Op"],
+          "Region": ["rec75L3VdbgJC8GpT"]
+        }
       }
-    }]
+    ]
   }'
 ```
 
-### Updating Sub Categories
+### Update or upsert Sub Categories records
 
-Patch only the fields that change. Up to 10 records per request.
+PATCH requests modify only the supplied fields, while PUT requests overwrite the
+entire record. Up to 10 records may be sent per request. Upsert behaviour is
+available via a `performUpsert` object with `fieldsToMergeOn`.
 
 ```bash
-curl -X PATCH https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq \
+curl -X PATCH https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Sub%20Categories \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{
-    "records": [{
-      "id": "RECORD_ID",
-      "fields": {
-        "Sub Category Name": "Cash Tool"
+    "records": [
+      {
+        "id": "RECORD_ID",
+        "fields": {
+          "Sub Category Name": "Cash Tool"
+        }
       }
-    }]
+    ]
   }'
 ```
 
-### Deleting Sub Categories
+### Delete Sub Categories records
+
+Delete up to 10 records by specifying their IDs:
 
 ```bash
-curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq?records[]=RECORD_ID" \
+curl -X DELETE "https://api.airtable.com/v0/appJdxdz3310aJ3Fd/Sub%20Categories?records[]=RECORD_ID" \
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
