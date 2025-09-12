@@ -1,6 +1,6 @@
 <?php if (!defined('ABSPATH')) exit; ?>
 <div class="wrap treasury-portal-admin">
-    <h1><?php esc_html_e('Vendors', 'treasury-tech-portal'); ?></h1>
+    <h1><?php esc_html_e('Products', 'treasury-tech-portal'); ?></h1>
     <p><?php esc_html_e('Use the button below to manually refresh the product cache after changing Airbase settings or when product data appears outdated.', 'treasury-tech-portal'); ?></p>
     <p><?php esc_html_e('Linked field IDs such as regions or categories are automatically converted to names for easier reading.', 'treasury-tech-portal'); ?></p>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
@@ -60,8 +60,8 @@
         sort($statuses);
         ?>
         <div class="treasury-portal-admin-search">
-            <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search vendors', 'treasury-tech-portal'); ?></label>
-            <input type="search" id="treasury-portal-admin-search-input" placeholder="<?php esc_attr_e('Search vendors...', 'treasury-tech-portal'); ?>" />
+            <label for="treasury-portal-admin-search-input" class="screen-reader-text"><?php esc_html_e('Search products', 'treasury-tech-portal'); ?></label>
+            <input type="search" id="treasury-portal-admin-search-input" placeholder="<?php esc_attr_e('Search products...', 'treasury-tech-portal'); ?>" />
         </div>
         <button type="button" class="button tp-filter-toggle"><?php esc_html_e('Filter', 'treasury-tech-portal'); ?></button>
         <div class="tp-filter-panel"><div class="tp-filter-panel-content"></div></div>
@@ -71,7 +71,7 @@
                     <tr>
                         <th data-sort-key="name"><div class="tp-header-cell"><?php esc_html_e('Name', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="category_names"><div class="tp-header-cell"><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
-                        <th data-sort-key="vendor"><div class="tp-header-cell"><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th data-sort-key="vendor"><div class="tp-header-cell"><?php esc_html_e('Product', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="website"><div class="tp-header-cell"><?php esc_html_e('Website', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="video_url"><div class="tp-header-cell"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
                         <th data-sort-key="status"><div class="tp-header-cell"><?php esc_html_e('Status', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
@@ -97,9 +97,9 @@
                             <label class="screen-reader-text" for="tp-filter-category-names"><?php esc_html_e('Filter by category names', 'treasury-tech-portal'); ?></label>
                             <input type="text" id="tp-filter-category-names" class="tp-filter-control" data-filter-key="category_names" placeholder="<?php esc_attr_e('Filter categories', 'treasury-tech-portal'); ?>" />
                         </td>
-                        <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>">
-                            <label class="screen-reader-text" for="tp-filter-vendor"><?php esc_html_e('Filter by vendor', 'treasury-tech-portal'); ?></label>
-                            <input type="text" id="tp-filter-vendor" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter vendor', 'treasury-tech-portal'); ?>" />
+                        <td data-label="<?php echo esc_attr__('Product', 'treasury-tech-portal'); ?>">
+                            <label class="screen-reader-text" for="tp-filter-vendor"><?php esc_html_e('Filter by product', 'treasury-tech-portal'); ?></label>
+                            <input type="text" id="tp-filter-vendor" class="tp-filter-control" data-filter-key="vendor" placeholder="<?php esc_attr_e('Filter product', 'treasury-tech-portal'); ?>" />
                         </td>
                         <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>">
                             <label class="screen-reader-text" for="tp-filter-website"><?php esc_html_e('Filter by website', 'treasury-tech-portal'); ?></label>
@@ -190,7 +190,7 @@
                             ?>
                         </td>
                         <td data-label="<?php echo esc_attr__('Category Names', 'treasury-tech-portal'); ?>"><?php echo esc_html($cats); ?></td>
-                        <td data-label="<?php echo esc_attr__('Vendor', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
+                        <td data-label="<?php echo esc_attr__('Product', 'treasury-tech-portal'); ?>"><?php echo esc_html($vendor['vendor'] ?? ''); ?></td>
                         <td data-label="<?php echo esc_attr__('Website', 'treasury-tech-portal'); ?>" data-filter-value="<?php echo esc_url($website); ?>">
                             <?php if (!empty($website_href)) : ?>
                                 <a href="<?php echo $website_href; ?>" target="_blank" rel="noopener noreferrer"><?php echo $website_text; ?></a>
@@ -222,6 +222,6 @@
             </table>
         </div>
     <?php else : ?>
-        <p><?php esc_html_e('No vendors found.', 'treasury-tech-portal'); ?></p>
+        <p><?php esc_html_e('No products found.', 'treasury-tech-portal'); ?></p>
     <?php endif; ?>
 </div>

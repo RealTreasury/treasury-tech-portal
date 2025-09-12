@@ -1,0 +1,452 @@
+# Copyright (C) 2025 Real Treasury
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Treasury Tech Portal 1.0.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/treasury-tech-portal\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-09-12T02:31:37+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: treasury-tech-portal\n"
+
+#. Plugin Name of the plugin
+#: treasury-tech-portal.php
+msgid "Treasury Tech Portal"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: treasury-tech-portal.php
+msgid "https://realtreasury.com"
+msgstr ""
+
+#. Description of the plugin
+#: treasury-tech-portal.php
+msgid "Embed the Treasury Tech Portal tool using the [treasury_portal] shortcode. A comprehensive platform for discovering and comparing treasury technology solutions."
+msgstr ""
+
+#. Author of the plugin
+#: treasury-tech-portal.php
+msgid "Real Treasury"
+msgstr ""
+
+#: includes/class-treasury-portal.php:105
+msgid "An unexpected error occurred while loading the Treasury Tech Portal."
+msgstr ""
+
+#: includes/class-ttp-admin.php:79
+msgid "Settings saved."
+msgstr ""
+
+#: includes/class-ttp-admin.php:83
+msgid "Airbase product fetch successful."
+msgstr ""
+
+#: includes/class-ttp-admin.php:86
+#, php-format
+msgid "Airbase product fetch failed: %s"
+msgstr ""
+
+#: includes/class-ttp-admin.php:100
+#, php-format
+msgid "Missing expected product fields from Airtable: %s"
+msgstr ""
+
+#: includes/class-ttp-admin.php:102
+#, php-format
+msgid "(Requested field IDs: %s)"
+msgstr ""
+
+#: includes/class-ttp-admin.php:113
+msgid "Base ID is required to fetch Airbase product data."
+msgstr ""
+
+#: includes/class-ttp-admin.php:116
+msgid "Products table ID is required to fetch Airbase product data."
+msgstr ""
+
+#: includes/class-ttp-admin.php:120
+msgid "Airbase Settings"
+msgstr ""
+
+#: includes/class-ttp-admin.php:125
+msgid "API Token"
+msgstr ""
+
+#: includes/class-ttp-admin.php:128
+msgid "Reveal"
+msgstr ""
+
+#: includes/class-ttp-admin.php:132
+msgid "Base URL"
+msgstr ""
+
+#: includes/class-ttp-admin.php:136
+msgid "Please enter a valid base URL, e.g., https://api.airtable.com/v0."
+msgstr ""
+
+#: includes/class-ttp-admin.php:141
+msgid "Base ID"
+msgstr ""
+
+#: includes/class-ttp-admin.php:146
+msgid "Please enter a base ID."
+msgstr ""
+
+#: includes/class-ttp-admin.php:152
+msgid "API Path"
+msgstr ""
+
+#: includes/class-ttp-admin.php:157
+msgid "Please enter a products table ID."
+msgstr ""
+
+#: includes/class-ttp-admin.php:163
+msgid "Save Changes"
+msgstr ""
+
+#: includes/class-ttp-admin.php:168
+msgid "Test Connection"
+msgstr ""
+
+#: includes/class-ttp-airbase.php:82
+#: includes/class-ttp-airbase.php:295
+#: includes/class-ttp-airbase.php:487
+msgid "Airbase API token not configured."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:92
+#: includes/class-ttp-airbase.php:305
+#: includes/class-ttp-airbase.php:497
+msgid "Invalid Airbase base URL."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:101
+#: includes/class-ttp-airbase.php:314
+#: includes/class-ttp-airbase.php:506
+msgid "Airbase base ID not configured."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:106
+#: includes/class-ttp-airbase.php:281
+msgid "Airbase API path not configured."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:112
+#: includes/class-ttp-airbase.php:320
+#: includes/class-ttp-airbase.php:512
+msgid "Invalid Airbase API URL."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:196
+#: includes/class-ttp-airbase.php:344
+#: includes/class-ttp-airbase.php:570
+msgid "Unable to parse Airbase API response."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:348
+msgid "Airbase schema response missing tables."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:398
+msgid "Specified Airbase table not found in schema."
+msgstr ""
+
+#: includes/class-ttp-airbase.php:440
+msgid "Primary field not found for table."
+msgstr ""
+
+#: templates/admin-page.php:3
+msgid "Products"
+msgstr ""
+
+#: templates/admin-page.php:4
+msgid "Use the button below to manually refresh the product cache after changing Airbase settings or when product data appears outdated."
+msgstr ""
+
+#: templates/admin-page.php:5
+msgid "Linked field IDs such as regions or categories are automatically converted to names for easier reading."
+msgstr ""
+
+#: templates/admin-page.php:9
+msgid "Refresh Products"
+msgstr ""
+
+#: templates/admin-page.php:12
+msgid "Product cache refreshed."
+msgstr ""
+
+#: templates/admin-page.php:18
+msgid "Enable Categories"
+msgstr ""
+
+#: templates/admin-page.php:26
+msgid "Save Categories"
+msgstr ""
+
+#: templates/admin-page.php:29
+msgid "Categories updated."
+msgstr ""
+
+#: templates/admin-page.php:36
+msgid "Enable Domains"
+msgstr ""
+
+#: templates/admin-page.php:43
+msgid "Save Domains"
+msgstr ""
+
+#: templates/admin-page.php:46
+msgid "Domains updated."
+msgstr ""
+
+#: templates/admin-page.php:63
+msgid "Search products"
+msgstr ""
+
+#: templates/admin-page.php:64
+msgid "Search products..."
+msgstr ""
+
+#: templates/admin-page.php:66
+msgid "Filter"
+msgstr ""
+
+#: templates/admin-page.php:72
+#: templates/admin-page.php:92
+#: templates/admin-page.php:184
+msgid "Name"
+msgstr ""
+
+#: templates/admin-page.php:73
+#: templates/admin-page.php:96
+#: templates/admin-page.php:192
+msgid "Category Names"
+msgstr ""
+
+#: templates/admin-page.php:74
+#: templates/admin-page.php:100
+#: templates/admin-page.php:193
+msgid "Product"
+msgstr ""
+
+#: templates/admin-page.php:75
+#: templates/admin-page.php:104
+#: templates/admin-page.php:194
+msgid "Website"
+msgstr ""
+
+#: templates/admin-page.php:76
+#: templates/admin-page.php:108
+#: templates/admin-page.php:199
+msgid "Video URL"
+msgstr ""
+
+#: templates/admin-page.php:77
+#: templates/admin-page.php:112
+#: templates/admin-page.php:204
+msgid "Status"
+msgstr ""
+
+#: templates/admin-page.php:78
+#: templates/admin-page.php:121
+#: templates/admin-page.php:205
+msgid "Hosted Type"
+msgstr ""
+
+#: templates/admin-page.php:79
+#: templates/admin-page.php:125
+#: templates/admin-page.php:206
+msgid "Domain"
+msgstr ""
+
+#: templates/admin-page.php:80
+#: templates/admin-page.php:129
+#: templates/admin-page.php:207
+msgid "Regions"
+msgstr ""
+
+#: templates/admin-page.php:81
+#: templates/admin-page.php:133
+#: templates/admin-page.php:208
+msgid "Sub Categories"
+msgstr ""
+
+#: templates/admin-page.php:82
+#: templates/admin-page.php:137
+#: templates/admin-page.php:209
+msgid "Category"
+msgstr ""
+
+#: templates/admin-page.php:83
+#: templates/admin-page.php:141
+#: templates/admin-page.php:210
+msgid "Additional Capabilities"
+msgstr ""
+
+#: templates/admin-page.php:84
+#: templates/admin-page.php:145
+#: templates/admin-page.php:211
+msgid "Logo URL"
+msgstr ""
+
+#: templates/admin-page.php:85
+#: templates/admin-page.php:149
+#: templates/admin-page.php:216
+msgid "HQ Location"
+msgstr ""
+
+#: templates/admin-page.php:86
+#: templates/admin-page.php:153
+#: templates/admin-page.php:217
+msgid "Founded Year"
+msgstr ""
+
+#: templates/admin-page.php:87
+#: templates/admin-page.php:157
+#: templates/admin-page.php:218
+msgid "Founders"
+msgstr ""
+
+#: templates/admin-page.php:93
+msgid "Filter by name"
+msgstr ""
+
+#: templates/admin-page.php:94
+msgid "Filter name"
+msgstr ""
+
+#: templates/admin-page.php:97
+msgid "Filter by category names"
+msgstr ""
+
+#: templates/admin-page.php:98
+msgid "Filter categories"
+msgstr ""
+
+#: templates/admin-page.php:101
+msgid "Filter by product"
+msgstr ""
+
+#: templates/admin-page.php:102
+msgid "Filter product"
+msgstr ""
+
+#: templates/admin-page.php:105
+msgid "Filter by website"
+msgstr ""
+
+#: templates/admin-page.php:106
+msgid "Filter website"
+msgstr ""
+
+#: templates/admin-page.php:109
+msgid "Filter by video URL"
+msgstr ""
+
+#: templates/admin-page.php:110
+msgid "Filter video URL"
+msgstr ""
+
+#: templates/admin-page.php:113
+msgid "Filter by status"
+msgstr ""
+
+#: templates/admin-page.php:115
+msgid "All"
+msgstr ""
+
+#: templates/admin-page.php:122
+msgid "Filter by hosted type"
+msgstr ""
+
+#: templates/admin-page.php:123
+msgid "Filter hosted type"
+msgstr ""
+
+#: templates/admin-page.php:126
+msgid "Filter by domain"
+msgstr ""
+
+#: templates/admin-page.php:127
+msgid "Filter domain"
+msgstr ""
+
+#: templates/admin-page.php:130
+msgid "Filter by regions"
+msgstr ""
+
+#: templates/admin-page.php:131
+msgid "Filter regions"
+msgstr ""
+
+#: templates/admin-page.php:134
+msgid "Filter by sub categories"
+msgstr ""
+
+#: templates/admin-page.php:135
+msgid "Filter sub categories"
+msgstr ""
+
+#: templates/admin-page.php:138
+msgid "Filter by category"
+msgstr ""
+
+#: templates/admin-page.php:139
+msgid "Filter category"
+msgstr ""
+
+#: templates/admin-page.php:142
+msgid "Filter by additional capabilities"
+msgstr ""
+
+#: templates/admin-page.php:143
+msgid "Filter additional capabilities"
+msgstr ""
+
+#: templates/admin-page.php:146
+msgid "Filter by logo URL"
+msgstr ""
+
+#: templates/admin-page.php:147
+msgid "Filter logo URL"
+msgstr ""
+
+#: templates/admin-page.php:150
+msgid "Filter by HQ location"
+msgstr ""
+
+#: templates/admin-page.php:151
+msgid "Filter HQ location"
+msgstr ""
+
+#: templates/admin-page.php:154
+msgid "Filter by founded year"
+msgstr ""
+
+#: templates/admin-page.php:155
+msgid "Filter founded year"
+msgstr ""
+
+#: templates/admin-page.php:158
+msgid "Filter by founders"
+msgstr ""
+
+#: templates/admin-page.php:159
+msgid "Filter founders"
+msgstr ""
+
+#: templates/admin-page.php:179
+#: templates/admin-page.php:180
+#: templates/admin-page.php:181
+msgid "Visit"
+msgstr ""
+
+#: templates/admin-page.php:225
+msgid "No products found."
+msgstr ""
