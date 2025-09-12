@@ -1163,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const listContainer = document.getElementById('listViewContainer');
                 const ungroup = !this.groupByCategory || this.searchTerm ||
                                   this.advancedFilters.features.length || this.advancedFilters.hasVideo ||
-                                  this.advancedFilters.regions.length || this.advancedFilters.categories.length || this.advancedFilters.subcategories.length;
+                                  this.advancedFilters.categories.length || this.advancedFilters.subcategories.length;
 
                 if (ungroup) {
                     categories.forEach(cat => {
