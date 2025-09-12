@@ -71,10 +71,12 @@ test('fetchTools expands enabledCategories with API data', async () => {
   window.TTP_DATA = { rest_url: 'https://example.test/api' };
 
   window.fetch = async () => ({
-    json: async () => ([
-      { name: 'Cash Tool', category: 'Cash' },
-      { name: 'Lite Tool', category: 'Lite' }
-    ])
+    json: async () => ({
+      products: [
+        { name: 'Cash Tool', category: 'Cash' },
+        { name: 'Lite Tool', category: 'Lite' }
+      ]
+    })
   });
   global.fetch = window.fetch;
 
