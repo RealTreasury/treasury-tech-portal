@@ -1301,6 +1301,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                             const header = document.createElement('div');
                             header.className = 'subcategory-header';
                             header.textContent = subcat;
+                            const countEl = document.createElement('span');
+                            countEl.className = 'subcategory-count';
+                            countEl.textContent = grouped[subcat].length;
+                            header.appendChild(countEl);
                             group.appendChild(header);
                             const grid = document.createElement('div');
                             grid.className = 'tools-grid subcategory-grid';

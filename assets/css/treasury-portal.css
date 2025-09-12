@@ -664,6 +664,19 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .treasury-portal .subcategory-count {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #7216f4;
         }
 
         .treasury-portal .subcategory-grid {

@@ -70,8 +70,12 @@ test('tools render under subcategory headings', () => {
   portal.displayFilteredTools();
 
   const container = window.document.getElementById('tools-CASH');
-  const headers = [...container.querySelectorAll('.subcategory-header')].map(h => h.textContent);
-  assert.deepEqual(headers, ['Alpha', 'Other']);
+  const headers = [...container.querySelectorAll('.subcategory-header')];
+  const names = headers.map(h => h.childNodes[0].textContent.trim());
+  assert.deepEqual(names, ['Alpha', 'Other']);
+
+  const counts = headers.map(h => h.querySelector('.subcategory-count').textContent);
+  assert.deepEqual(counts, ['1', '1']);
 
   const groups = container.querySelectorAll('.subcategory-group');
   const alphaGroup = groups[0].querySelector('.subcategory-grid');
