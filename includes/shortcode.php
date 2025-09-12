@@ -43,7 +43,8 @@ $category_meta = array(
     ),
 );
 ?>
-<div class="treasury-portal" data-enabled-domains="<?php echo esc_attr( wp_json_encode( $enabled_domains ) ); ?>" data-intro-videos="<?php echo esc_attr( wp_json_encode( $intro_videos ) ); ?>">
+<div class="treasury-portal-wrapper">
+    <div class="treasury-portal" data-enabled-domains="<?php echo esc_attr( wp_json_encode( $enabled_domains ) ); ?>" data-intro-videos="<?php echo esc_attr( wp_json_encode( $intro_videos ) ); ?>">
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-overlay">
         <div class="loading-logo">💼</div>
@@ -316,5 +317,6 @@ $category_meta = array(
         <button id="bottomShortlist"><span class="icon">📝</span> Shortlist</button>
     </div>
 
+</div>
 </div>
 

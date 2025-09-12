@@ -1,3 +1,8 @@
+    .treasury-portal-wrapper {
+            height: auto;
+            overflow: visible;
+        }
+
     .treasury-portal *  {
             margin: 0;
             padding: 0;
