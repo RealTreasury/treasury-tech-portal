@@ -87,28 +87,28 @@ fetch('/wp-json/ttp/v1/tools?region=EMEA&category=Cash&sub_category=Payments')
 ```
 
 
-### Get Vendors
+### Get Products
 ```
-GET /wp-json/ttp/v1/vendors
+GET /wp-json/ttp/v1/products
 ```
 
 #### Response Format
-Array of vendor objects assembled from Airtable Products table fields.
+Array of product objects assembled from Airtable Products table fields.
 
-Vendor records containing unresolved Airtable product-field IDs (for example
+Product records containing unresolved Airtable product-field IDs (for example
 values starting with `rec`) are excluded from the response. When such
-unresolved Airtable product-field IDs are detected, the vendor cache is
+unresolved Airtable product-field IDs are detected, the product cache is
 automatically refreshed to replace them with readable names on subsequent
 requests.
 
 See [AIRBASE_API.md](AIRBASE_API.md#products-table-fields) for product-field
-details and detailed vendor API documentation. The integration relies on four
+details and detailed product API documentation. The integration relies on four
 WordPress options to configure API access: `ttp_airbase_token`,
 `ttp_airbase_base_url`, `ttp_airbase_base_id`, and `ttp_airbase_api_path`.
 
 #### Example Request
 ```
-fetch('/wp-json/ttp/v1/vendors')
+fetch('/wp-json/ttp/v1/products')
 ```
 
 ## JavaScript API (Frontend)

@@ -76,13 +76,12 @@ The schema cache is refreshed automatically when missing or expired. To manually
 - Or programmatically: `delete_transient('ttp_airbase_schema');`
 
 ## Response Formats
-`TTP_Data::refresh_vendor_cache()` accepts multiple response shapes and
+`TTP_Data::refresh_product_cache()` accepts multiple response shapes and
 normalizes them into a single array of records built from product fields. The following formats are supported:
 
-- `{ "records": [...] }`
-- `{ "products": [...] }`
-- `{ "vendors": [...] }`
-- `[ ... ]` (top-level array of product records)
+ - `{ "records": [...] }`
+ - `{ "products": [...] }`
+ - `[ ... ]` (top-level array of product records)
 
 Any of these structures will be cached as a plain array of records built from product fields.
 
@@ -90,7 +89,7 @@ Any of these structures will be cached as a plain array of records built from pr
 | Field | Type | Notes |
 |-------|------|-------|
 | `Product Name` (`fld2hocSMtPQYWfPa`) | text | required name of the product |
-| `Vendor` (`fldsrlwpO9AfkmjcH`) | text | vendor name |
+| `Product` (`fldsrlwpO9AfkmjcH`) | text | product name |
 | `Hosted Type` (`fldGyZDaIUFFidaXA`) | multiple select (`On-Premise`, `Cloud`) |
 | `Domain` (`fldU53MVlWgkPbPDw`) | linked records to **Domain** table |
 | `Product Website` (`fldznljEJpn4lv79r`) | text URL |
@@ -172,7 +171,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
     "records": [{
       "fields": {
         "Product Name": "Example",
-        "Vendor": "Example Co",
+        "Product": "Example Co",
         "Status": "Active"
       }
     }]
@@ -210,8 +209,8 @@ Table ID: `tbli7l5i5QxQzbpNV`
 | Field | Type | Notes |
 |-------|------|-------|
 | `Domain Name` (`fldoGBU2lWXKoFoAM`) | text | single line of text |
-| `Vendors` (`fldAWqHU9rv7oX6MT`) | text | comma separated vendor names |
-| `Vendor Count` (`fldlcq0OMqFUEJMla`) | count | number of vendor records |
+| `Products` (`fldAWqHU9rv7oX6MT`) | text | comma separated product names |
+| `Product Count` (`fldlcq0OMqFUEJMla`) | count | number of product records |
 | `Domain Summary` (`fldaMrJFqT5nkaa2L`) | rich text | AI-generated summary object |
 | `Categories` (`fldFAUQgi8WT1hdlA`) | linked records to **Categories** table | array of record IDs |
 | `Products` (`fldbhTNGdTp006wPd`) | linked records to **Products** table | array of record IDs |
@@ -238,7 +237,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV \
     {
       "fields": {
         "Domain Name": "Treasury",
-        "Vendors": "Alpha Group, Atlar",
+        "Products": "Alpha Group, Atlar",
         "Categories": ["reckz5jhQb2CBocKR"],
         "Products": ["recOwgOvbUhsD8e30"]
       }
@@ -271,7 +270,7 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV?records[]=
 ```
 
 ### Notes
-- Values for `Vendor Count` are computed by Airtable and cannot be set or updated directly.
+- Values for `Product Count` are computed by Airtable and cannot be set or updated directly.
 
 ## Categories Table
 
@@ -446,7 +445,7 @@ interchangeable in API requests.
 | Field | Type | Notes |
 |-------|------|-------|
 | `Region` (`fldM1PNxbzPeV45Kj`) | text | single line region name |
-| `Vendors` (`fldArBrHocWo0FxCr`) | text | list of vendors in that region |
+| `Products` (`fldArBrHocWo0FxCr`) | text | list of products in that region |
 | `Sub Categories` (`fldwbPhWdTg3Hcdpu`) | linked records to **Sub Categories** table | array of record IDs |
 | `Products` (`fld2CcSeWkli5ulg2`) | linked records to **Products** table | array of record IDs |
 
@@ -481,7 +480,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez \
     "records": [{
       "fields": {
         "Region": "EMEA",
-        "Vendors": "Alpha Group, Bond Treasury",
+        "Products": "Alpha Group, Bond Treasury",
         "Products": ["recbtxzaIPTYxjzwK", "rec130cwb06hCCkwk"],
         "Sub Categories": ["rec8116cdd76088af", "rec245db9343f55e8"]
       }

@@ -20,7 +20,7 @@ python3 ../scripts/validate-structure.py
 
 #### 1. Adding Tool Properties
 **Files to modify in order:**
-1. Vendor API - Ensure property is returned from vendor data
+1. Product API - Ensure property is returned from product data
 2. `../includes/class-ttp-admin.php` - Add sanitization in `save_tool()`
 3. `../templates/admin-page.php` - Add form field
 4. `../assets/js/treasury-portal.js` - Update `createToolCard()` method
