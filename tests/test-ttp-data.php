@@ -31,7 +31,7 @@ class TTP_Data_Test extends TestCase {
             'Regions'         => 'fld_regions',
             'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
-            'Capabilities'    => 'fld_caps',
+            'Additional Capabilities'    => 'fld_caps',
             'HQ Location'     => 'fld_hq',
             'Founded Year'    => 'fld_year',
             'Founders'        => 'fld_founders',
@@ -85,7 +85,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories'  => ['recsc1'],
                 'Regions'         => ['recreg1', 'recreg2'],
                 'Domain'          => ['recdom1'],
-                'Capabilities'    => ['reccap1'],
+                'Additional Capabilities'    => ['reccap1'],
                 'HQ Location'     => '',
                 'Founded Year'    => '',
                 'Founders'        => '',
@@ -120,7 +120,7 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Treasury' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Capabilities'   => [ 'reccap1' => 'API' ],
+                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
             ];
 
             $out = [];
@@ -139,7 +139,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertContains($this->schema_map['Full Website URL'], $requested_fields);
         $this->assertFalse($use_ids);
         $this->assertSame(
-            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Capabilities'],
+            ['Regions', 'Vendors', 'Hosted Type', 'Domain', 'Categories', 'Sub Categories', 'Additional Capabilities'],
             $tables
         );
         $this->assertSame('Domain Name', $primary_fields['Domain']);
@@ -191,7 +191,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => ['Cash', 'Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
-                'Capabilities'    => ['API'],
+                'Additional Capabilities'    => ['API'],
             ]),
         ];
 
@@ -232,7 +232,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['recreg1'],
                 'Category'        => ['reccat1'],
                 'Sub Categories'  => ['recsc1'],
-                'Capabilities'    => ['reccap1'],
+                'Additional Capabilities'    => ['reccap1'],
             ]),
         ];
 
@@ -248,7 +248,7 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Capabilities'   => [ 'reccap1' => 'API' ],
+                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
             ];
 
             $out = [];
@@ -317,7 +317,7 @@ class TTP_Data_Test extends TestCase {
             'Sub Categories'  => ['recsc1'],
             'Regions'         => ['recreg1'],
             'Domain'          => ['recdom1'],
-            'Capabilities'    => ['reccap1'],
+            'Additional Capabilities'    => ['reccap1'],
         ]);
         $fields['Vendor'] = 'recven1';
 
@@ -362,7 +362,7 @@ class TTP_Data_Test extends TestCase {
                 'Domain'          => [
                     [ 'id' => 'recdom1', 'name' => 'Banking' ],
                 ],
-                'Capabilities'    => ['API'],
+                'Additional Capabilities'    => ['API'],
             ]),
         ];
 
@@ -401,7 +401,7 @@ class TTP_Data_Test extends TestCase {
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
                 'HQ Location'     => ['recloc1'],
-                'Capabilities'    => ['API'],
+                'Additional Capabilities'    => ['API'],
             ]),
         ];
 
@@ -442,7 +442,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => ['recsc1'],
                 'Regions'         => ['recreg1'],
                 'Domain'          => ['recdom1'],
-                'Capabilities'    => ['reccap1'],
+                'Additional Capabilities'    => ['reccap1'],
             ]),
         ];
 
@@ -515,7 +515,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => ['recsc1'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
-                'Capabilities'    => ['API'],
+                'Additional Capabilities'    => ['API'],
             ]),
         ];
 
@@ -597,7 +597,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => 'rcssc1',
                 'Regions'         => 'rcsreg1',
                 'Domain'          => 'rcsdom1',
-                'Capabilities'    => 'rcscap1',
+                'Additional Capabilities'    => 'rcscap1',
             ]),
         ];
 
@@ -612,7 +612,7 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
                 'Domain'         => [ 'rcsdom1' => 'Banking' ],
                 'Sub Categories' => [ 'rcssc1' => 'Payments' ],
-                'Capabilities'   => [ 'rcscap1' => 'API' ],
+                'Additional Capabilities'   => [ 'rcscap1' => 'API' ],
             ];
 
             $out = [];
@@ -651,7 +651,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => [ [ 'id' => 'rcssc1' ] ],
                 'Regions'         => [ [ 'id' => 'rcsreg1' ] ],
                 'Domain'          => [ [ 'id' => 'rcsdom1' ] ],
-                'Capabilities'    => [ [ 'id' => 'rcscap1' ] ],
+                'Additional Capabilities'    => [ [ 'id' => 'rcscap1' ] ],
             ]),
         ];
 
@@ -666,7 +666,7 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'    => [ 'rcshost1' => 'Cloud' ],
                 'Domain'         => [ 'rcsdom1' => 'Banking' ],
                 'Sub Categories' => [ 'rcssc1' => 'Payments' ],
-                'Capabilities'   => [ 'rcscap1' => 'API' ],
+                'Additional Capabilities'   => [ 'rcscap1' => 'API' ],
             ];
 
             $out = [];
@@ -706,7 +706,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => '104',
                 'Regions'        => '105',
                 'Domain'         => '106',
-                'Capabilities'   => '107',
+                'Additional Capabilities'   => '107',
                 'Category'       => '108',
             ]),
         ];
@@ -722,7 +722,7 @@ class TTP_Data_Test extends TestCase {
                 'Hosted Type'    => [ '102' => 'Cloud' ],
                 'Domain'         => [ '106' => 'Banking' ],
                 'Sub Categories' => [ '104' => 'Payments' ],
-                'Capabilities'   => [ '107' => 'API' ],
+                'Additional Capabilities'   => [ '107' => 'API' ],
                 'Categories'     => [ '108' => 'Finance', '103' => 'Cash' ],
             ];
 
@@ -814,7 +814,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['recreg1', 'APAC'],
                 'Domain'          => ['Banking'],
-                'Capabilities'    => ['API'],
+                'Additional Capabilities'    => ['API'],
             ]),
         ];
 
@@ -857,7 +857,7 @@ class TTP_Data_Test extends TestCase {
                 'REGIONS'         => [ 'recreg1' ],
                 'Category'        => [ 'reccat1' ],
                 'SubCategories'   => [ 'recsc1' ],
-                'Capabilities'    => [ 'reccap1' ],
+                'Additional Capabilities'    => [ 'reccap1' ],
                 'HQ Location'     => [ 'rechq1' ],
                 'Full Website URL' => 'example.com',
                 'Founded Year'    => '',
@@ -877,7 +877,7 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Capabilities'   => [ 'reccap1' => 'API' ],
+                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
                 'HQ Location'    => [ 'rechq1' => 'NY' ],
             ];
 
@@ -939,7 +939,7 @@ class TTP_Data_Test extends TestCase {
             'REGIONS'       => [ 'recreg1' ],
             'Category'      => [ 'reccat1' ],
             'SubCategories' => [ 'recsc1' ],
-            'Capabilities'  => [ 'reccap1' ],
+            'Additional Capabilities'  => [ 'reccap1' ],
             'HQ Location'   => [ 'rechq1' ],
             'Full Website URL' => 'example.com',
             'Founded Year'  => '',
@@ -958,7 +958,7 @@ class TTP_Data_Test extends TestCase {
                 'Domain'         => [ 'recdom1' => 'Banking' ],
                 'Categories'     => [ 'reccat1' => 'Cash' ],
                 'Sub Categories' => [ 'recsc1' => 'Payments' ],
-                'Capabilities'   => [ 'reccap1' => 'API' ],
+                'Additional Capabilities'   => [ 'reccap1' => 'API' ],
                 'HQ Location'    => [ 'rechq1' => 'NY' ],
             ];
 
@@ -1019,7 +1019,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => 'recsc1, recsc2',
                 'Regions'         => 'recreg1, recreg2',
                 'Domain'          => 'recdom1, recdom2',
-                'Capabilities'    => 'reccap1, reccap2',
+                'Additional Capabilities'    => 'reccap1, reccap2',
             ]),
         ];
 
@@ -1051,7 +1051,7 @@ class TTP_Data_Test extends TestCase {
                     'recsc1' => 'Payments',
                     'recsc2' => 'Treasury',
                 ],
-                'Capabilities'   => [
+                'Additional Capabilities'   => [
                     'reccap1' => 'API',
                     'reccap2' => 'Analytics',
                 ],
@@ -1079,7 +1079,7 @@ class TTP_Data_Test extends TestCase {
         $this->assertSame(['rechost1', 'rechost2'], $ids_used['Hosted Type']);
         $this->assertSame(['recdom1', 'recdom2'], $ids_used['Domain']);
         $this->assertSame(['recsc1', 'recsc2'], $ids_used['Sub Categories']);
-        $this->assertSame(['reccap1', 'reccap2'], $ids_used['Capabilities']);
+        $this->assertSame(['reccap1', 'reccap2'], $ids_used['Additional Capabilities']);
 
         $this->assertSame(['North America', 'Europe'], $captured[0]['regions']);
         $this->assertSame('Acme Corp', $captured[0]['vendor']);
@@ -1102,7 +1102,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories'  => 'Payments',
                 'Regions'         => 'North America',
                 'Domain'          => 'Banking',
-                'Capabilities'    => 'API',
+                'Additional Capabilities'    => 'API',
             ]),
         ];
 
@@ -1147,7 +1147,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories'  => ['Payments'],
                 'Regions'         => ['North America'],
                 'Domain'          => ['Banking'],
-                'Capabilities'    => ['API'],
+                'Additional Capabilities'    => ['API'],
             ]),
         ];
 
@@ -1222,8 +1222,8 @@ class TTP_Data_Test extends TestCase {
                 [ 'recsc1' => 'Payments' ],
             ],
             'capabilities' => [
-                'Capabilities',
-                'Capabilities',
+                'Additional Capabilities',
+                'Additional Capabilities',
                 'capabilities',
                 [ 'reccap1' => 'API' ],
             ],
@@ -1258,7 +1258,7 @@ class TTP_Data_Test extends TestCase {
                 'Sub Categories' => ['Payments'],
                 'Regions'        => ['North America'],
                 'Domain'         => ['Banking'],
-                'Capabilities'   => ['API'],
+                'Additional Capabilities'   => ['API'],
             ]),
         ];
 
@@ -1354,8 +1354,8 @@ class TTP_Data_Test extends TestCase {
                 ],
             ],
             'capabilities' => [
-                'Capabilities',
-                'Capabilities',
+                'Additional Capabilities',
+                'Additional Capabilities',
                 'capabilities',
                 [
                     'reccap1' => 'API',

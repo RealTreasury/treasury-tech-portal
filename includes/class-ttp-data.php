@@ -386,7 +386,7 @@ class TTP_Data {
             'Regions',
             'Category',
             'Sub Categories',
-            'Capabilities',
+            'Additional Capabilities',
             'HQ Location',
             'Founded Year',
             'Founders',
@@ -406,7 +406,7 @@ class TTP_Data {
             'Domain'         => array( 'key' => 'domain',         'table' => 'Domain',         'primary_field' => 'Domain Name' ),
             'Category'       => array( 'key' => 'categories',     'table' => 'Categories',     'primary_field' => 'Category Name' ),
             'Sub Categories' => array( 'key' => 'sub_categories', 'table' => 'Sub Categories', 'primary_field' => 'Sub Category Name' ),
-            'Capabilities'   => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
+            'Additional Capabilities' => array( 'key' => 'capabilities',   'table' => 'Capabilities',   'primary_field' => '' ),
             'HQ Location'    => array( 'key' => 'hq_location',    'table' => 'HQ Location',    'primary_field' => 'Name',   'single' => true ),
         );
 

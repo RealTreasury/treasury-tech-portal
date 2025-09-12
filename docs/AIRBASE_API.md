@@ -103,7 +103,7 @@ Any of these structures will be cached as a plain array of records built from pr
 | `Founders` (`fldoTMkJIl1i8oo0r`) | text |
 | `Product Summary` (`fldwBi5oBw6BwZiqV`) | long text summary |
 | `Market Fit Analysis` (`fldJTDlDcvNn0MVJX`) | long text analysis |
-| `Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
+| `Additional Capabilities` (`fldvvv8jnCKoJSI7x`) | linked records to **Capabilities** table |
 | `Logo URL` (`fldfZPuRMjQKCv3U6`) | text URL |
 | `Demo Video URL` (`fldHyVJRr3O5rkgd7`) | text URL |
 | `Full Website URL` (`fldpyWsRTiDiLX6nm`) | formula (appends UTM parameters) |
@@ -117,7 +117,7 @@ following field names are accepted (including their common synonyms):
 - **Regions** – `regions`, `region`, `region_id`, `region_ids`, `regions_id`
 - **Sub Categories** – `sub_categories`, `sub_category`, `sub_category_id`,
   `sub_category_ids`
-- **Capabilities** – `capabilities`, `capability`, `capability_id`,
+- **Additional Capabilities** – `capabilities`, `capability`, `capability_id`,
   `capability_ids`
 - **Hosted Type** – `hosted_type`, `hosted_types`, `hosted_type_id`,
   `hosted_type_ids`
@@ -287,7 +287,7 @@ Table ID: `tblzGvVxiuzvf55a1`
 | `Product Count (from Sub Categories)` (`fldNRKbve8To8z0Oi`) | lookup | counts from linked sub categories |
 | `Linked Products (from Sub Categories)` (`fldTYdVWjYyQJXPS4`) | lookup | product IDs from linked sub categories |
 | `Count (Domain)` (`fldviPn2IFlVTpzg2`) | count | number of linked domain records |
-| `Linked Capabilities` (`fldMzl6st07X985kr`) | lookup | capability IDs from linked sub categories |
+| `Linked Additional Capabilities` (`fldMzl6st07X985kr`) | lookup | capability IDs from linked sub categories |
 | `Sub Category Count` (`fldQX6bLq9mTLFxwk`) | count | number of linked sub categories |
 | `Linked Product Count` (`fldmZLfQZKQCCbCGr`) | formula | sum of Product Count (from Sub Categories) |
 
@@ -345,7 +345,7 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblzGvVxiuzvf55a1?records[]=
 ```
 
 ### Notes
-- Values for `Product Count (from Sub Categories)`, `Linked Products (from Sub Categories)`, `Count (Domain)`, `Linked Capabilities`, `Sub Category Count` and `Linked Product Count` are computed by Airtable and cannot be set or updated directly.
+- Values for `Product Count (from Sub Categories)`, `Linked Products (from Sub Categories)`, `Count (Domain)`, `Linked Additional Capabilities`, `Sub Category Count` and `Linked Product Count` are computed by Airtable and cannot be set or updated directly.
 
 ## Additional Notes
 - Use `typecast=true` to let Airtable create new select options automatically.
@@ -365,7 +365,7 @@ interchangeable in API requests.
 | `Description` (`fld0WF293CfkNMDu7`) | long text | may include mention tokens |
 | `Category` (`fldRv7UQGPVftu8Id`) | linked records to **Categories** table |
 | `Linked Products` (`fld5Oxt2B7NPkZNxc`) | linked records to **Products** table |
-| `Capabilities` (`fldQXnjhbuiZS0vJV`) | linked records to **Capabilities** table |
+| `Additional Capabilities` (`fldQXnjhbuiZS0vJV`) | linked records to **Capabilities** table |
 | `Product Count` (`fldpeAWrpXwnkTbnC`) | count | auto-calculated number of linked products |
 | `Count (Category)` (`fldV3e96JCcwfpdus`) | count | auto-calculated number of categories |
 | `Region` (`flda8n6TBoZ9zn5vu`) | linked records to **Regions** table |
@@ -404,7 +404,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/tblEDySEcdvwCweuq \
         "Sub Category Name": "Cash Tool",
         "Category": ["reckz5jhQb2CBocKR"],
         "Linked Products": ["recgOn3wZbYQE8gtZ"],
-        "Capabilities": ["recn4Y3PBFmPXh6Op"],
+        "Additional Capabilities": ["recn4Y3PBFmPXh6Op"],
         "Region": ["rec75L3VdbgJC8GpT"]
       }
     }]

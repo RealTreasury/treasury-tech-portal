@@ -45,7 +45,7 @@ Vendor entries are built from Airtable product fields. Follow these steps to con
    - `Sub Categories` → `sub_categories`
    - `Category` → `category`
    - `category_names` (computed) → `category_names`
-   - `Capabilities` → `capabilities`
+   - `Additional Capabilities` → `capabilities`
    - `Logo URL` → `logo_url`
    - `HQ Location` → `hq_location`
    - `Founded Year` → `founded_year`

@@ -247,7 +247,7 @@ class TTP_Admin {
             'Regions',
             'Category',
             'Sub Categories',
-            'Capabilities',
+            'Additional Capabilities',
             'HQ Location',
             'Founded Year',
             'Founders',
