@@ -1815,6 +1815,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     groupByFilter.addEventListener('change', (e) => {
                         this.groupByCategory = e.target.value === 'category';
                         this.filterAndDisplayTools();
+                        this.handleIntroVideoRegion();
                     });
                 }
             }
