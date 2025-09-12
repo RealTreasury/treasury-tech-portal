@@ -1,11 +1,6 @@
         const EMBED_ORIGIN = 'https://realtreasury.com';
         let treasuryTechPortal;
-        // Root element for the portal; abort setup if not found.
-        const portalRoot = document.querySelector('.treasury-portal');
-
-        if (!portalRoot) {
-            console.warn('TreasuryTechPortal: .treasury-portal element not found. Aborting initialization.');
-        }
+        let portalRoot;
 
         function postHeight() {
             if (window.parent !== window) {
@@ -59,7 +54,14 @@ window.addEventListener('load', () => {
 });
 window.addEventListener('resize', debouncedPostHeight);
 
-if (portalRoot) {
+document.addEventListener('DOMContentLoaded', async () => {
+    portalRoot = document.querySelector('.treasury-portal');
+
+    if (!portalRoot) {
+        console.warn('TreasuryTechPortal: .treasury-portal element not found. Aborting initialization.');
+        return;
+    }
+
     new ResizeObserver(() => {
         debouncedPostHeight();
     }).observe(portalRoot);
@@ -72,14 +74,8 @@ if (portalRoot) {
         attributes: true,
         attributeFilter: ['style', 'class']
     });
-}
 
-document.addEventListener('DOMContentLoaded', async () => {
-    if (!portalRoot) {
-        // Skip initialization when portal root is absent.
-        return;
-    }
-    const containerEl = document.querySelector('.treasury-portal .container');
+    const containerEl = portalRoot.querySelector('.container');
     if (!window.TTP_DATA) {
         if (portalRoot) {
             const banner = document.createElement('div');
