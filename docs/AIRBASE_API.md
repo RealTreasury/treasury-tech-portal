@@ -516,4 +516,107 @@ curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez?records[]=
   -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
 ```
 
+## Capabilities Table
+
+The Capabilities table ID is `tbltQfcdS7UnEfAYG`. Table names and IDs are
+interchangeable in API requests.
+
+### Fields
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `Capability Name` (`fld7cdoQMdp4dfIWN`) | text | single line name |
+| `Definition` (`fld2bNdOej8rpge4s`) | long text | may include mention tokens |
+| `SubCategories` (`fld52VOtnqlVcFh12`) | linked records to **Sub Categories** table | array of record IDs |
+| `Linked Products` (`fld1sgwR0pbikvdHM`) | linked records to **Products** table | array of record IDs |
+| `Number of Linked Products` (`fldEw9VubF0suLJrf`) | count | auto-calculated number of linked products |
+| `Product List` (`fldrQsZKQ2WnaFgOF`) | lookup | product names from linked products |
+| `Capability Summary` (`fldWFUZuatVXmhJBQ`) | rich text | AI-generated summary object |
+| `Capability Classification` (`fldkkEJ8gSj5B0z6F`) | rich text | AI-generated classification object |
+| `Products` (`fldk33dtN9Di14Vgp`) | text | comma-separated product names |
+| `Sub Categories` (`fldFI7KtNgHjEExWH`) | text | comma-separated sub category names |
+
+### Listing Capabilities
+
+```bash
+curl "https://api.airtable.com/v0/BASE_ID/tbltQfcdS7UnEfAYG?maxRecords=3&view=Grid%20view" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+Returned records omit empty fields. All query parameters available to the
+Products table (`fields[]`, `filterByFormula`, `maxRecords`, `pageSize`,
+`sort[]`, `view`, `cellFormat`, `timeZone`, `userLocale`,
+`returnFieldsByFieldId`, `recordMetadata`) are supported.
+
+### Retrieving a Capability
+
+```bash
+curl https://api.airtable.com/v0/BASE_ID/tbltQfcdS7UnEfAYG/RECORD_ID \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
+### Creating Capabilities
+
+Values for `Number of Linked Products` and `Product List` are computed and
+cannot be set directly.
+
+```bash
+curl -X POST https://api.airtable.com/v0/BASE_ID/tbltQfcdS7UnEfAYG \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "fields": {
+        "Capability Name": "Transaction Search, Sort, Tag, Group",
+        "Definition": "Tools to organize and categorize bank transactions for better tracking, search and reporting.",
+        "SubCategories": ["recyEhPtqoqUxmmIt", "recwQ8U1s7jXAq6PF"],
+        "Linked Products": ["rec8116cdd76088af"],
+        "Capability Summary": {
+          "state": "error",
+          "errorType": "emptyDependency",
+          "value": "Predictive analytics for cash management",
+          "isStale": false
+        },
+        "Capability Classification": {
+          "state": "generated",
+          "value": "Financial Management",
+          "isStale": false
+        }
+      }
+    }]
+  }'
+```
+
+### Updating Capabilities
+
+Patch only the fields that change. Up to 10 records per request. To perform an
+upsert, include a `performUpsert` object with `fieldsToMergeOn`.
+
+```bash
+curl -X PATCH https://api.airtable.com/v0/BASE_ID/tbltQfcdS7UnEfAYG \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "records": [{
+      "id": "RECORD_ID",
+      "fields": {
+        "Capability Name": "Transaction Search, Sort, Tag, Group",
+        "Definition": "Tools to organize and categorize bank transactions for better tracking, search and reporting.",
+        "SubCategories": ["recyEhPtqoqUxmmIt"],
+        "Linked Products": ["rec8116cdd76088af"]
+      }
+    }]
+  }'
+```
+
+Values for `Number of Linked Products` and `Product List` are computed by
+Airtable and cannot be updated or cleared.
+
+### Deleting Capabilities
+
+```bash
+curl -X DELETE "https://api.airtable.com/v0/BASE_ID/tbltQfcdS7UnEfAYG?records[]=RECORD_ID" \
+  -H "Authorization: Bearer YOUR_SECRET_API_TOKEN"
+```
+
 
