@@ -17,6 +17,7 @@ $categories         = TTP_Data::get_categories();
 $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
 $domains            = TTP_Data::get_domains();
 $enabled_domains    = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( $domains ) );
+$intro_videos       = (array) get_option( TTP_Admin::OPTION_INTRO_VIDEOS, array() );
 
 $category_meta = array(
     'CASH' => array(
@@ -42,7 +43,7 @@ $category_meta = array(
     ),
 );
 ?>
-<div class="treasury-portal" data-enabled-domains="<?php echo esc_attr( wp_json_encode( $enabled_domains ) ); ?>">
+<div class="treasury-portal" data-enabled-domains="<?php echo esc_attr( wp_json_encode( $enabled_domains ) ); ?>" data-intro-videos="<?php echo esc_attr( wp_json_encode( $intro_videos ) ); ?>">
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-overlay">
         <div class="loading-logo">💼</div>

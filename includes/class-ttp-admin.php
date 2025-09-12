@@ -7,6 +7,7 @@ if (!defined('ABSPATH')) {
 class TTP_Admin {
     const OPTION_ENABLED_CATEGORIES = 'ttp_enabled_categories';
     const OPTION_ENABLED_DOMAINS    = 'ttp_enabled_domains';
+    const OPTION_INTRO_VIDEOS       = 'ttp_intro_videos';
 
     public static function init() {
         add_action('admin_menu', [__CLASS__, 'register_menu']);
@@ -16,6 +17,8 @@ class TTP_Admin {
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_assets']);
         add_action('admin_post_ttp_save_categories', [__CLASS__, 'save_categories']);
         add_action('admin_post_ttp_save_domains', [__CLASS__, 'save_domains']);
+        add_action('admin_post_ttp_save_intro_video', [__CLASS__, 'save_intro_video']);
+        add_action('admin_post_ttp_delete_intro_video', [__CLASS__, 'delete_intro_video']);
     }
 
     public static function register_menu() {
@@ -180,6 +183,29 @@ class TTP_Admin {
         $enabled_categories = (array) get_option( self::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
         $domains            = TTP_Data::get_domains();
         $enabled_domains    = (array) get_option( self::OPTION_ENABLED_DOMAINS, array_keys( $domains ) );
+        $intro_videos       = (array) get_option( self::OPTION_INTRO_VIDEOS, array() );
+
+        $regions = array();
+        $sub_categories = array();
+        foreach ( (array) $products as $product ) {
+            foreach ( (array) ( $product['regions'] ?? array() ) as $region ) {
+                $region = sanitize_text_field( $region );
+                if ( $region !== '' && !ctype_digit( $region ) ) {
+                    $regions[ $region ] = true;
+                }
+            }
+            foreach ( (array) ( $product['sub_categories'] ?? array() ) as $sub ) {
+                $sub = sanitize_text_field( $sub );
+                if ( $sub !== '' && !ctype_digit( $sub ) ) {
+                    $sub_categories[ $sub ] = true;
+                }
+            }
+        }
+        $regions = array_keys( $regions );
+        sort( $regions );
+        $sub_categories = array_keys( $sub_categories );
+        sort( $sub_categories );
+
         include dirname( __DIR__ ) . '/templates/admin-page.php';
     }
 
@@ -202,6 +228,53 @@ class TTP_Admin {
         $domains = array_map( 'sanitize_text_field', (array) ( $_POST['enabled_domains'] ?? array() ) );
         update_option( self::OPTION_ENABLED_DOMAINS, $domains );
         wp_redirect( add_query_arg( 'domains_updated', 1, admin_url( 'admin.php?page=treasury-tools' ) ) );
+        exit;
+    }
+
+    public static function save_intro_video() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( 'Unauthorized' );
+        }
+        check_admin_referer( 'ttp_save_intro_video', 'ttp_save_intro_video_nonce' );
+
+        $url          = esc_url_raw( wp_unslash( $_POST['video_url'] ?? '' ) );
+        $region       = sanitize_text_field( wp_unslash( $_POST['region'] ?? '' ) );
+        $category     = sanitize_text_field( wp_unslash( $_POST['category'] ?? '' ) );
+        $sub_category = sanitize_text_field( wp_unslash( $_POST['sub_category'] ?? '' ) );
+        $index        = isset( $_POST['index'] ) ? absint( $_POST['index'] ) : null;
+
+        $videos = (array) get_option( self::OPTION_INTRO_VIDEOS, array() );
+
+        $entry = array(
+            'url'          => $url,
+            'region'       => $region,
+            'category'     => $category,
+            'sub_category' => $sub_category,
+        );
+
+        if ( $index !== null && isset( $videos[ $index ] ) ) {
+            $videos[ $index ] = $entry;
+        } else {
+            $videos[] = $entry;
+        }
+
+        update_option( self::OPTION_INTRO_VIDEOS, array_values( $videos ) );
+        wp_redirect( add_query_arg( 'intro_video_saved', 1, admin_url( 'admin.php?page=treasury-tools' ) ) );
+        exit;
+    }
+
+    public static function delete_intro_video() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( 'Unauthorized' );
+        }
+        check_admin_referer( 'ttp_delete_intro_video', 'ttp_delete_intro_video_nonce' );
+        $index  = isset( $_POST['index'] ) ? absint( $_POST['index'] ) : -1;
+        $videos = (array) get_option( self::OPTION_INTRO_VIDEOS, array() );
+        if ( isset( $videos[ $index ] ) ) {
+            unset( $videos[ $index ] );
+            update_option( self::OPTION_INTRO_VIDEOS, array_values( $videos ) );
+        }
+        wp_redirect( add_query_arg( 'intro_video_deleted', 1, admin_url( 'admin.php?page=treasury-tools' ) ) );
         exit;
     }
 
