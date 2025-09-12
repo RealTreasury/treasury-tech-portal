@@ -112,7 +112,7 @@ class Treasury_Tech_Portal {
 
         foreach ($tools as $tool) {
             $bcb_products[] = array(
-                'vendor_id'      => sanitize_title($tool['name']),
+                'product_id'     => sanitize_title($tool['name']),
                 'name'           => $tool['name'],
                 'category'       => $this->map_category_to_bcb($tool['category']),
                 'target_segment' => $this->extract_target_segments($tool['target'] ?? ''),

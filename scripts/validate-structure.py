@@ -31,7 +31,7 @@ def find_modification_points():
     """Identify common modification points for automated tools"""
 
     points = {
-        "vendor_data": "includes/class-ttp-data.php::get_all_products()",
+        "product_data": "includes/class-ttp-data.php::get_all_products()",
         "js_main_class": "assets/js/treasury-portal.js (TreasuryTechPortal class)",
         "css_styles": "assets/css/treasury-portal.css",
         "admin_form": "templates/admin-page.php",
