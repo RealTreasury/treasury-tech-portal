@@ -27,6 +27,7 @@
     .treasury-portal.embedded {
             overflow-x: hidden;
             overflow-y: visible;
+            height: auto;
         }
 
     .treasury-portal {
