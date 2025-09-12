@@ -45,6 +45,90 @@
     <?php if (isset($_GET['domains_updated'])) : ?>
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Domains updated.', 'treasury-tech-portal'); ?></p></div>
     <?php endif; ?>
+
+    <h2><?php esc_html_e('Intro Videos', 'treasury-tech-portal'); ?></h2>
+    <?php if (isset($_GET['intro_video_saved'])) : ?>
+        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Intro video saved.', 'treasury-tech-portal'); ?></p></div>
+    <?php elseif (isset($_GET['intro_video_deleted'])) : ?>
+        <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Intro video deleted.', 'treasury-tech-portal'); ?></p></div>
+    <?php endif; ?>
+
+    <?php if (!empty($intro_videos)) : ?>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Region', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Category', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Sub Category', 'treasury-tech-portal'); ?></th>
+                    <th><?php esc_html_e('Actions', 'treasury-tech-portal'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($intro_videos as $i => $video) : ?>
+                    <tr>
+                        <td><?php echo esc_url($video['url'] ?? ''); ?></td>
+                        <td><?php echo esc_html($video['region'] ?? ''); ?></td>
+                        <td><?php echo esc_html($categories[$video['category']] ?? $video['category'] ?? ''); ?></td>
+                        <td><?php echo esc_html($video['sub_category'] ?? ''); ?></td>
+                        <td>
+                            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+                                <?php wp_nonce_field('ttp_delete_intro_video', 'ttp_delete_intro_video_nonce'); ?>
+                                <input type="hidden" name="action" value="ttp_delete_intro_video" />
+                                <input type="hidden" name="index" value="<?php echo esc_attr($i); ?>" />
+                                <?php submit_button(__('Delete', 'treasury-tech-portal'), 'delete', 'delete', false); ?>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+        <?php wp_nonce_field('ttp_save_intro_video', 'ttp_save_intro_video_nonce'); ?>
+        <input type="hidden" name="action" value="ttp_save_intro_video" />
+        <table class="form-table">
+            <tr>
+                <th scope="row"><label for="intro_video_url"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></label></th>
+                <td><input name="video_url" type="url" id="intro_video_url" class="regular-text" required /></td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="intro_video_region"><?php esc_html_e('Region', 'treasury-tech-portal'); ?></label></th>
+                <td>
+                    <select name="region" id="intro_video_region">
+                        <option value=""><?php esc_html_e('Any', 'treasury-tech-portal'); ?></option>
+                        <?php foreach ($regions as $region) : ?>
+                            <option value="<?php echo esc_attr($region); ?>"><?php echo esc_html($region); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="intro_video_category"><?php esc_html_e('Category', 'treasury-tech-portal'); ?></label></th>
+                <td>
+                    <select name="category" id="intro_video_category">
+                        <option value=""><?php esc_html_e('Any', 'treasury-tech-portal'); ?></option>
+                        <?php foreach ($categories as $key => $label) : ?>
+                            <option value="<?php echo esc_attr($key); ?>"><?php echo esc_html($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="intro_video_sub_category"><?php esc_html_e('Sub Category', 'treasury-tech-portal'); ?></label></th>
+                <td>
+                    <select name="sub_category" id="intro_video_sub_category">
+                        <option value=""><?php esc_html_e('Any', 'treasury-tech-portal'); ?></option>
+                        <?php foreach ($sub_categories as $sub) : ?>
+                            <option value="<?php echo esc_attr($sub); ?>"><?php echo esc_html($sub); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <?php submit_button(__('Save Intro Video', 'treasury-tech-portal')); ?>
+    </form>
     <?php if (!empty($products)) : ?>
         <?php
         $statuses = array_unique(

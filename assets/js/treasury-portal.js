@@ -259,6 +259,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.currentToolId = null;
                 this.permanentToolPickerInitialized = false;
                 this.spaceHandler = null;
+                this.introVideos = [];
+                this.defaultIntroVideo = { url: '', poster: '' };
+                const rootEl = document.querySelector('.treasury-portal');
+                if (rootEl) {
+                    try {
+                        this.introVideos = JSON.parse(rootEl.getAttribute('data-intro-videos') || '[]');
+                    } catch (_) {
+                        this.introVideos = [];
+                    }
+                    const introTarget = rootEl.querySelector('.intro-video-target');
+                    this.defaultIntroVideo = {
+                        url: introTarget?.getAttribute('data-video-src') || '',
+                        poster: introTarget?.getAttribute('data-poster') || ''
+                    };
+                }
                 this.handleOutsideSideMenuClick = (e) => {
                     const sideMenu = document.getElementById('sideMenu');
                     const toggle = document.getElementById('sideMenuToggle');
@@ -739,8 +754,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const container = document.querySelector('.treasury-portal');
                 const target = container?.querySelector('.intro-video-target') || container;
-                const src = target?.getAttribute('data-video-src') || '';
-                const poster = target?.getAttribute('data-poster') || '';
 
                 const createVideo = (source, posterUrl) => {
                     const wrapper = document.createElement('div');
@@ -785,14 +798,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     target.innerHTML = '<div class="intro-video-fallback">Intro video unavailable</div>';
                 };
 
-                if (src) {
-                    const wrapper = createVideo(src, poster);
-                    wrapper.querySelector('video').onerror = showFallback;
-                    target.innerHTML = '';
-                    target.appendChild(wrapper);
-                } else {
-                    showFallback();
-                }
+                const wrapper = createVideo(this.defaultIntroVideo.url, this.defaultIntroVideo.poster);
+                wrapper.querySelector('video').onerror = showFallback;
+                target.innerHTML = '';
+                target.appendChild(wrapper);
+                this.updateIntroVideoSource();
 
                 document.querySelectorAll('.category-video-target').forEach((el) => {
                     const categorySrc = el.getAttribute('data-video-src');
@@ -1206,6 +1216,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 this.filteredTools = tools;
                 this.displayFilteredTools();
                 this.updateVisibleCounts();
+                this.updateIntroVideoSource();
             }
 
             displayFilteredTools() {
@@ -1632,6 +1643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             handleIntroVideoRegion() {
+                this.updateIntroVideoSource();
                 const introVideo = document.querySelector('.intro-video-target');
                 const trmsHeader = document.querySelector('.category-section[data-category="TRMS"] .category-header');
                 const categoryVideos = document.querySelectorAll('.category-video-target');
@@ -1664,6 +1676,38 @@ document.addEventListener('DOMContentLoaded', async () => {
                         parent.insertBefore(introVideo, next);
                     }
                     introVideo.style.display = 'none';
+                }
+            }
+
+            selectIntroVideo() {
+                const region = this.advancedFilters.regions[0] || '';
+                const category = this.advancedFilters.categories[0] ? this.normalizeCategory(this.advancedFilters.categories[0]) : '';
+                const sub = this.advancedFilters.subcategories[0] || '';
+                const match = this.introVideos.find(v =>
+                    (!v.region || v.region === region) &&
+                    (!v.category || v.category === category) &&
+                    (!v.sub_category || v.sub_category === sub)
+                );
+                if (match) {
+                    return { url: match.url || '', poster: this.defaultIntroVideo.poster };
+                }
+                return this.defaultIntroVideo;
+            }
+
+            updateIntroVideoSource() {
+                const target = document.querySelector('.intro-video-target');
+                const video = target?.querySelector('video');
+                if (!target || !video) return;
+                const selected = this.selectIntroVideo();
+                if (!selected.url) {
+                    target.innerHTML = '<div class="intro-video-fallback">Intro video unavailable</div>';
+                    return;
+                }
+                if (video.src !== selected.url) {
+                    video.src = selected.url;
+                }
+                if (selected.poster) {
+                    video.poster = selected.poster;
                 }
             }
 
