@@ -678,6 +678,19 @@
             border-left: 3px solid #6366f1;
             border-radius: 6px;
             margin: 2rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .treasury-portal .subcategory-count {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #7216f4;
         }
 
         @media (max-width: 768px) {
