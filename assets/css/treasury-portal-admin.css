@@ -15,3 +15,9 @@
     height: 100%;
     margin-left: 4px;
 }
+
+.treasury-portal-admin-table .tp-filter-row input,
+.treasury-portal-admin-table .tp-filter-row select {
+    width: 100%;
+    box-sizing: border-box;
+}
