@@ -62,7 +62,11 @@ $category_meta = array(
                     </div>
                 </div>
 
-                <div class="intro-video-target" data-video-src="<?php echo esc_url($video_url); ?>" data-poster="<?php echo esc_url($poster_url); ?>"></div>
+                <div class="business-case-builder">
+                    <?php echo do_shortcode('[rt_business_case_builder]'); ?>
+                </div>
+
+                <div class="intro-video-target" data-video-src="<?php echo esc_url($video_url); ?>" data-poster="<?php echo esc_url($poster_url); ?>" style="display:none;"></div>
 
                 <div class="stats-bar">
                     <div class="stat-card">
