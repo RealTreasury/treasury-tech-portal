@@ -31,7 +31,7 @@ Vendor entries are built from Airtable product fields. Follow these steps to con
    These three fields are **mandatory**—the plugin will not query Airbase until they are provided.
    The API Token is masked in the interface; use the **Reveal** button to view or hide it when editing.
 2. Save the settings.
-3. To fetch vendors immediately visit **Treasury Tools → Vendors** and click **Refresh Vendors**;
+3. To fetch products immediately visit **Treasury Tools → Products** and click **Refresh Products**;
    otherwise a scheduled event updates the cache twice daily.
 4. Airbase fields map to the following keys in the stored vendor list:
    - `Product Name` → `name`
