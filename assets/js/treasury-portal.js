@@ -1634,6 +1634,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             handleIntroVideoRegion() {
                 const introVideo = document.querySelector('.intro-video-target');
                 const trmsHeader = document.querySelector('.category-section[data-category="TRMS"] .category-header');
+                const categoryVideos = document.querySelectorAll('.category-video-target');
+
+                const showVideos = this.advancedFilters.regions.includes('NORAM') && this.groupByCategory;
+
+                categoryVideos.forEach(video => {
+                    video.style.display = showVideos ? '' : 'none';
+                });
+
                 if (!introVideo || !trmsHeader) return;
 
                 if (!this.introVideoHome) {
@@ -1644,16 +1652,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     this.trmsVideoTarget = trmsHeader.querySelector('.category-video-target');
                 }
 
-                const regionIsNoram = this.advancedFilters.regions.includes('NORAM');
-
-                if (regionIsNoram) {
+                if (showVideos) {
                     if (this.trmsVideoTarget) this.trmsVideoTarget.style.display = 'none';
                     introVideo.style.display = '';
                     if (introVideo.parentElement !== trmsHeader) {
                         trmsHeader.insertBefore(introVideo, this.trmsVideoTarget || trmsHeader.querySelector('.category-count'));
                     }
                 } else {
-                    if (this.trmsVideoTarget) this.trmsVideoTarget.style.display = '';
                     const { parent, next } = this.introVideoHome;
                     if (parent && introVideo.parentElement !== parent) {
                         parent.insertBefore(introVideo, next);
