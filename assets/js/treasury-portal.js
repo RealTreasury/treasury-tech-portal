@@ -1248,7 +1248,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 </div>
                                 ${tool.videoUrl ? '<button type="button" class="video-indicator">\u25B6 Demo</button>' : ''}
                                 <div class="tool-type">${this.categoryLabels[tool.category] || tool.category}</div>
-                                ${tool.regions && tool.regions.length ? `<div class="tool-region">${tool.regions.join(', ')}</div>` : ''}
+                                ${Array.isArray(tool.regions) && tool.regions.length ? `<div class="tool-region">${tool.regions.join(', ')}</div>` : ''}
                             </div>
                         </div>
                         <div class="tool-description">${tool.desc}</div>
