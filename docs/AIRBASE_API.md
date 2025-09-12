@@ -90,7 +90,7 @@ Any of these structures will be cached as a plain array of records built from pr
 | Field | Type | Notes |
 |-------|------|-------|
 | `Product Name` (`fld2hocSMtPQYWfPa`) | text | required name of the product |
-| `Linked Vendor` (`fldsrlwpO9AfkmjcH`) | text | vendor name |
+| `Vendor` (`fldsrlwpO9AfkmjcH`) | text | vendor name |
 | `Hosted Type` (`fldGyZDaIUFFidaXA`) | multiple select (`On-Premise`, `Cloud`) |
 | `Domain` (`fldU53MVlWgkPbPDw`) | linked records to **Domain** table |
 | `Product Website` (`fldznljEJpn4lv79r`) | text URL |
@@ -172,7 +172,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/PRODUCTS_TABLE_ID \
     "records": [{
       "fields": {
         "Product Name": "Example",
-        "Linked Vendor": "Example Co",
+        "Vendor": "Example Co",
         "Status": "Active"
       }
     }]
@@ -210,8 +210,8 @@ Table ID: `tbli7l5i5QxQzbpNV`
 | Field | Type | Notes |
 |-------|------|-------|
 | `Domain Name` (`fldoGBU2lWXKoFoAM`) | text | single line of text |
-| `Linked Vendors` (`fldAWqHU9rv7oX6MT`) | text | comma separated vendor names |
-| `Vendor Count` (`fldlcq0OMqFUEJMla`) | count | number of linked vendor records |
+| `Vendors` (`fldAWqHU9rv7oX6MT`) | text | comma separated vendor names |
+| `Vendor Count` (`fldlcq0OMqFUEJMla`) | count | number of vendor records |
 | `Domain Summary` (`fldaMrJFqT5nkaa2L`) | rich text | AI-generated summary object |
 | `Categories` (`fldFAUQgi8WT1hdlA`) | linked records to **Categories** table | array of record IDs |
 | `Products` (`fldbhTNGdTp006wPd`) | linked records to **Products** table | array of record IDs |
@@ -238,7 +238,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/tbli7l5i5QxQzbpNV \
     {
       "fields": {
         "Domain Name": "Treasury",
-        "Linked Vendors": "Alpha Group, Atlar",
+        "Vendors": "Alpha Group, Atlar",
         "Categories": ["reckz5jhQb2CBocKR"],
         "Products": ["recOwgOvbUhsD8e30"]
       }
@@ -446,7 +446,7 @@ interchangeable in API requests.
 | Field | Type | Notes |
 |-------|------|-------|
 | `Region` (`fldM1PNxbzPeV45Kj`) | text | single line region name |
-| `Linked Vendors` (`fldArBrHocWo0FxCr`) | text | list of vendors in that region |
+| `Vendors` (`fldArBrHocWo0FxCr`) | text | list of vendors in that region |
 | `Sub Categories` (`fldwbPhWdTg3Hcdpu`) | linked records to **Sub Categories** table | array of record IDs |
 | `Products` (`fld2CcSeWkli5ulg2`) | linked records to **Products** table | array of record IDs |
 
@@ -481,7 +481,7 @@ curl -X POST https://api.airtable.com/v0/BASE_ID/tblmxl6BKXXjQHUez \
     "records": [{
       "fields": {
         "Region": "EMEA",
-        "Linked Vendors": "Alpha Group, Bond Treasury",
+        "Vendors": "Alpha Group, Bond Treasury",
         "Products": ["recbtxzaIPTYxjzwK", "rec130cwb06hCCkwk"],
         "Sub Categories": ["rec8116cdd76088af", "rec245db9343f55e8"]
       }

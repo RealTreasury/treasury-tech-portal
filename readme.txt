@@ -35,7 +35,7 @@ Vendor entries are built from Airtable product fields. Follow these steps to con
    otherwise a scheduled event updates the cache twice daily.
 4. Airbase fields map to the following keys in the stored vendor list:
    - `Product Name` → `name`
-   - `Linked Vendor` → `vendor`
+   - `Vendor` → `vendor`
    - `Product Website` → `website`
    - `Demo Video URL` → `video_url`
    - `Status` → `status`

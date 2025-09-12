@@ -20,7 +20,7 @@ class TTP_Data_Test extends TestCase {
 
         $this->schema_map = [
             'Product Name'    => 'fld_name',
-            'Linked Vendor'   => 'fld_vendor',
+            'Vendor'   => 'fld_vendor',
             'Product Website' => 'fld_website',
             'Full Website URL' => 'fld_full_url',
             'Demo Video URL'  => 'fldHyVJRr3O5rkgd7',
@@ -74,7 +74,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => ['recven1'],
+                'Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
                 'Full Website URL' => 'example.com?utm=1',
                 'Demo Video URL'  => 'example.com/video',
@@ -183,7 +183,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -224,7 +224,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => ['recven1'],
+                'Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['rechost1'],
@@ -282,7 +282,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'   => 'Sample Product',
-                'Linked Vendor'  => ['recven1'],
+                'Vendor'  => ['recven1'],
                 'Domain'         => ['recdom1'],
             ]),
         ];
@@ -306,7 +306,7 @@ class TTP_Data_Test extends TestCase {
     }
 
     public function test_refresh_vendor_cache_skips_missing_schema_fields() {
-        unset( $this->schema_map['Linked Vendor'] );
+        unset( $this->schema_map['Vendor'] );
 
         $fields = $this->id_fields([
             'Product Name'    => 'Sample Product',
@@ -319,7 +319,7 @@ class TTP_Data_Test extends TestCase {
             'Domain'          => ['recdom1'],
             'Capabilities'    => ['reccap1'],
         ]);
-        $fields['Linked Vendor'] = 'recven1';
+        $fields['Vendor'] = 'recven1';
 
         $record = [
             'id'     => 'rec1',
@@ -352,7 +352,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => ['Cloud'],
@@ -392,7 +392,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -434,7 +434,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => ['recven1'],
+                'Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => ['rechost1'],
@@ -477,7 +477,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => ['recven1'],
+                'Vendor'   => ['recven1'],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Regions'         => ['recreg1'],
@@ -508,7 +508,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Category'       => ['reccat1'],
@@ -589,7 +589,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'rcsven1',
+                'Vendor'   => 'rcsven1',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => 'rcshost1',
@@ -643,7 +643,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => [ [ 'id' => 'rcsven1' ] ],
+                'Vendor'   => [ [ 'id' => 'rcsven1' ] ],
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => [ [ 'id' => 'rcshost1' ] ],
@@ -699,7 +699,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => '101',
+                'Vendor'   => '101',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => '102',
@@ -806,7 +806,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -847,7 +847,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => [
                 'Product Name'    => 'Sample Product',
-                'LinkedVendor'    => [ 'recven1' ],
+                'VENDOR'          => [ 'recven1' ],
                 'Product Website' => 'example.com',
                 'Demo Video URL'  => 'example.com/video',
                 'Logo URL'        => 'example.com/logo.png',
@@ -929,7 +929,7 @@ class TTP_Data_Test extends TestCase {
         $record = [
             'id'            => 'rec1',
             'Product Name'  => 'Sample Product',
-            'LinkedVendor'  => [ 'recven1' ],
+            'VENDOR'        => [ 'recven1' ],
             'Product Website' => 'example.com',
             'Demo Video URL' => 'example.com/video',
             'Logo URL'      => 'example.com/logo.png',
@@ -1011,7 +1011,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'recven1, recven2',
+                'Vendor'   => 'recven1, recven2',
                 'Product Website' => 'example.com',
                 'Status'         => 'Active',
                 'Hosted Type'    => 'rechost1, rechost2',
@@ -1094,7 +1094,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => 'Cloud',
@@ -1139,7 +1139,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'     => ['Cloud'],
@@ -1198,7 +1198,7 @@ class TTP_Data_Test extends TestCase {
                 [ 'recreg1' => 'North America' ],
             ],
             'vendor' => [
-                'Linked Vendor',
+                'Vendor',
                 'Vendors',
                 'vendor',
                 [ 'recven1' => 'Acme Corp' ],
@@ -1250,7 +1250,7 @@ class TTP_Data_Test extends TestCase {
             'id'     => 'rec1',
             'fields' => $this->id_fields([
                 'Product Name'    => 'Sample Product',
-                'Linked Vendor'   => 'Acme Corp',
+                'Vendor'   => 'Acme Corp',
                 'Product Website' => 'example.com',
                 'Status'          => 'Active',
                 'Hosted Type'    => ['Cloud'],
@@ -1309,7 +1309,7 @@ class TTP_Data_Test extends TestCase {
                 ],
             ],
             'vendor' => [
-                'Linked Vendor',
+                'Vendor',
                 'Vendors',
                 'vendor',
                 [
@@ -1405,7 +1405,7 @@ class TTP_Data_Test extends TestCase {
     public function test_get_all_vendors_refreshes_when_vendor_ids_present() {
         $vendors_with_ids = array(
             array(
-                'Linked Vendor' => array( 'rec123' ),
+                'Vendor' => array( 'rec123' ),
                 'regions'       => array( 'EMEA' ),
             ),
         );
@@ -1923,7 +1923,7 @@ class TTP_Data_Test extends TestCase {
     public function test_vendors_need_resolution_detects_mixed_case_keys() {
         $vendors = array(
             array(
-                'LinkedVendorIds' => array( 'recABC123' ),
+                'VendorIds' => array( 'recABC123' ),
             ),
         );
 
@@ -1937,7 +1937,7 @@ class TTP_Data_Test extends TestCase {
     public function test_vendors_need_resolution_detects_mixed_case_fields_with_spaces() {
         $vendors = array(
             array(
-                'Linked Vendor IDs' => array( 'recABC123' ),
+                'Vendor IDs' => array( 'recABC123' ),
             ),
         );
 
