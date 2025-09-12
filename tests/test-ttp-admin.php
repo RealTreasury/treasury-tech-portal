@@ -39,7 +39,7 @@ class TTP_Admin_Test extends TestCase {
             'Regions'         => 'fld_regions',
             'Category'        => 'fld_category',
             'Sub Categories'  => 'fld_sub',
-            'Capabilities'    => 'fld_caps',
+            'Additional Capabilities'    => 'fld_caps',
             'HQ Location'     => 'fld_hq',
             'Founded Year'    => 'fld_year',
             'Founders'        => 'fld_founders',
@@ -77,7 +77,7 @@ class TTP_Admin_Test extends TestCase {
                 'Regions'         => ['recreg1'],
                 'Category'        => ['reccat1'],
                 'Sub Categories'  => ['recsc1'],
-                'Capabilities'    => ['reccap1'],
+                'Additional Capabilities'    => ['reccap1'],
             ]),
         ];
 
@@ -93,7 +93,7 @@ class TTP_Admin_Test extends TestCase {
                 'Domain'         => array( 'recdom1' => 'Banking' ),
                 'Category'       => array( 'reccat1' => 'Cash' ),
                 'Sub Categories' => array( 'recsc1' => 'Payments' ),
-                'Capabilities'   => array( 'reccap1' => 'API' ),
+                'Additional Capabilities'   => array( 'reccap1' => 'API' ),
             );
             $out = array();
             foreach ( (array) $ids as $id ) {
@@ -139,7 +139,7 @@ class TTP_Admin_Test extends TestCase {
                 'Regions'         => ['recreg1'],
                 'Category'        => ['reccat1'],
                 'Sub Categories'  => ['recsc1'],
-                'Capabilities'    => ['reccap1'],
+                'Additional Capabilities'    => ['reccap1'],
             ]),
         ];
 
