@@ -5,10 +5,11 @@ const fs = require('fs');
 
 const script = fs.readFileSync('assets/js/treasury-portal.js', 'utf8');
 
-test('region filter keeps category sections grouped', () => {
+test('region filter keeps category sections grouped and intro video in TRMS', () => {
   const html = `\
     <div class="treasury-portal">
       <div class="container">
+        <div class="intro-video-target"></div>
         <div id="noResults"></div>
         <div id="listViewContainer"></div>
         <div class="category-section" data-category="CASH" style="display:block;">
@@ -66,25 +67,29 @@ test('region filter keeps category sections grouped', () => {
   portal.groupByCategory = true;
   portal.searchTerm = '';
   portal.advancedFilters = {
-    regions: ['Europe'],
+    regions: ['NORAM'],
     categories: [],
     subcategories: [],
     features: [],
     hasVideo: false
   };
   portal.TREASURY_TOOLS = [
-    { name: 'CashTool', category: 'CASH', categoryName: 'Cash Tools', regions: ['North America'] },
-    { name: 'LiteTool', category: 'LITE', categoryName: 'TMS-Lite', regions: ['Europe'] },
+    { name: 'CashTool', category: 'CASH', categoryName: 'Cash Tools', regions: ['Europe'] },
+    { name: 'LiteTool', category: 'LITE', categoryName: 'TMS-Lite', regions: ['NORAM'] },
     { name: 'TrmsTool', category: 'TRMS', categoryName: 'TRMS', regions: ['Asia'] }
   ];
 
   portal.filterAndDisplayTools();
+  portal.handleIntroVideoRegion();
 
   ['CASH', 'LITE', 'TRMS'].forEach(cat => {
     const section = window.document.querySelector(`.category-section[data-category="${cat}"]`);
     assert.ok(section, `section for ${cat} exists`);
     assert.notStrictEqual(section.style.display, 'none', `section for ${cat} is visible`);
-    const video = section.querySelector('.category-video-target');
-    assert.ok(video, `video placeholder for ${cat} exists`);
   });
+
+  const introVideo = window.document.querySelector('.intro-video-target');
+  const trmsHeader = window.document.querySelector('.category-section[data-category="TRMS"] .category-header');
+  assert.ok(introVideo, 'intro video exists');
+  assert.strictEqual(introVideo.parentElement, trmsHeader, 'intro video attached to TRMS header');
 });
