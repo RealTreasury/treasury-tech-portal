@@ -17,7 +17,6 @@ $categories         = TTP_Data::get_categories();
 $enabled_categories = (array) get_option( TTP_Admin::OPTION_ENABLED_CATEGORIES, array_keys( $categories ) );
 $domains            = TTP_Data::get_domains();
 $enabled_domains    = (array) get_option( TTP_Admin::OPTION_ENABLED_DOMAINS, array_keys( $domains ) );
-$category_icons     = TTP_Data::get_category_icons();
 
 $category_meta = array(
     'CASH' => array(
@@ -221,7 +220,6 @@ $category_meta = array(
 
             <?php foreach ( $enabled_categories as $slug ) :
                 $label      = isset( $categories[ $slug ] ) ? $categories[ $slug ] : $slug;
-                $icon       = isset( $category_icons[ $slug ] ) ? $category_icons[ $slug ] : '💼';
                 $meta       = isset( $category_meta[ $slug ] ) ? $category_meta[ $slug ] : array();
                 $class_slug = sanitize_html_class( strtolower( $slug ) );
             ?>
@@ -229,7 +227,7 @@ $category_meta = array(
                 <div class="category-header" data-category="<?php echo esc_attr( $slug ); ?>">
                     <div class="category-info">
                         <h2 class="category-title">
-                            <?php echo esc_html( $icon ); ?> <span><?php echo esc_html( isset( $meta['title'] ) ? $meta['title'] : $label ); ?></span>
+                            <span><?php echo esc_html( isset( $meta['title'] ) ? $meta['title'] : $label ); ?></span>
                             <?php if ( ! empty( $meta['badge'] ) ) : ?>
                                 <span class="category-badge"><?php echo esc_html( $meta['badge'] ); ?></span>
                             <?php endif; ?>
