@@ -53,6 +53,15 @@ class TTP_Admin {
             $css_ver
         );
 
+        $admin_css_file = TTP_DIR . 'assets/css/treasury-portal-admin.css';
+        $admin_css_ver  = file_exists($admin_css_file) ? filemtime($admin_css_file) : '1.0';
+        wp_enqueue_style(
+            'treasury-tech-portal-admin-table-css',
+            TTP_URL . 'assets/css/treasury-portal-admin.css',
+            array('treasury-tech-portal-admin-css'),
+            $admin_css_ver
+        );
+
         $js_file = TTP_DIR . 'assets/js/treasury-portal-admin.js';
         $js_ver  = file_exists($js_file) ? filemtime($js_file) : '1.0';
         wp_enqueue_script(

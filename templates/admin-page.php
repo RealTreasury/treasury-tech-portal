@@ -54,23 +54,23 @@
             <table class="widefat fixed striped treasury-portal-admin-table">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e('Name', 'treasury-tech-portal'); ?></th>
-                        <th><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?></th>
-                        <th><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Website', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?></th>
-                    <th><?php esc_html_e('Status', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Category', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?></th>
-                    <th class="is-mobile-hidden"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?></th>
-                </tr>
+                        <th><div class="tp-header-cell"><?php esc_html_e('Name', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th><div class="tp-header-cell"><?php esc_html_e('Category Names', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th><div class="tp-header-cell"><?php esc_html_e('Vendor', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th><div class="tp-header-cell"><?php esc_html_e('Website', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th><div class="tp-header-cell"><?php esc_html_e('Video URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th><div class="tp-header-cell"><?php esc_html_e('Status', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Hosted Type', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Domain', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Regions', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Sub Categories', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Category', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Capabilities', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Logo URL', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('HQ Location', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Founded Year', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                        <th class="is-mobile-hidden"><div class="tp-header-cell"><?php esc_html_e('Founders', 'treasury-tech-portal'); ?><span class="tp-resizer"></span></div></th>
+                    </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($vendors as $vendor) : ?>
