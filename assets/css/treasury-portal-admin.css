@@ -1,0 +1,9 @@
+.treasury-portal-admin .tp-filter-row td {
+    padding: 4px 8px;
+}
+.treasury-portal-admin .tp-filter-row input,
+.treasury-portal-admin .tp-filter-row select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
