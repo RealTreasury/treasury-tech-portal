@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `rt_airtable_map_ids_to_names()`
 - `TTP_Data::get_tools()` no longer applies enabled category limits by default
 - REST tools endpoint now explicitly limits results to enabled categories
+- Regenerated translation template and updated "Core Capabilities"
+  and "Additional Capabilities" strings; translators should update their translations
 
 ### Removed
 - Slick carousel assets and jQuery dependency for a cleaner front-end
