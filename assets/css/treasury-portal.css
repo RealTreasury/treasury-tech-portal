@@ -902,8 +902,8 @@
 
 @media (max-width: 768px) {
     .treasury-portal .tool-logo-inline {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         margin: 0 12px 0 8px;
     }
 }
@@ -1545,25 +1545,34 @@
 
     }
 
-    @media (max-width: 768px) {
-        .treasury-portal .header-content {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 8px;
-            padding: 8px 12px;
-        }
+@media (max-width: 768px) {
+    .treasury-portal .header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 8px 12px;
+    }
 
         .treasury-portal .stats-bar,
         .treasury-portal .intro-video-target {
             display: none;
         }
 
-        .treasury-portal .business-case-builder {
-            order: 1;
-            align-self: flex-start;
-            margin-left: 0;
-        }
+    .treasury-portal .business-case-builder {
+        order: 1;
+        align-self: flex-start;
+        margin-left: 0;
     }
+
+    .treasury-portal .tool-name,
+    .treasury-portal .tool-name-title {
+        font-size: 0.95rem;
+    }
+
+    .treasury-portal .tool-name-title {
+        max-width: 180px;
+    }
+}
 
     /* Side Menu Toggle Button */
     .treasury-portal .menu-toggle {
