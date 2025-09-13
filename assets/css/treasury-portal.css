@@ -1004,6 +1004,20 @@
             border: 1px solid #e5e7eb;
         }
 
+        @media (max-width: 768px) {
+            .treasury-portal .tool-summary {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .treasury-portal .tool-capabilities {
+                max-height: 40px;
+                overflow: hidden;
+            }
+        }
+
         .treasury-portal .show-more-capabilities-btn,
         .treasury-portal .show-less-capabilities-btn {
             background: none;
