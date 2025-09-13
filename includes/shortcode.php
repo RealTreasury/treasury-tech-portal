@@ -66,6 +66,7 @@ $category_meta = array(
 
                 <div class="business-case-builder">
                     <a class="business-case-builder__link" href="/rtbcb/" target="_blank" rel="noopener noreferrer">Business Case Builder</a>
+                    <span id="mobileProductCount" class="mobile-product-count"></span>
                 </div>
 
                 <div class="intro-video-target" data-video-src="<?php echo esc_url($video_url); ?>" data-poster="<?php echo esc_url($poster_url); ?>" style="display:none;"></div>
