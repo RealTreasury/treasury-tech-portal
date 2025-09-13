@@ -1421,11 +1421,11 @@
 
             .treasury-portal .tools-grid {
                 grid-template-columns: 1fr;
-                gap: 10px;
+                gap: 6px;
             }
 
             .treasury-portal .tool-card {
-                padding: 14px;
+                padding: 10px;
             }
 
             .treasury-portal .modal-content {
@@ -1462,7 +1462,8 @@
             }
 
             .treasury-portal .tool-header {
-                min-height: 50px;
+                gap: 8px;
+                min-height: 44px;
             }
 
             .treasury-portal .search-container {
