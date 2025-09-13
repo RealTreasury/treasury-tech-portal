@@ -2327,10 +2327,16 @@
                 z-index: 1002;
             }
 
+            .treasury-portal .container {
+                margin-left: 0;
+                margin-right: 0;
+                padding: 0 4px;
+            }
+
             /* Fully hide sidebars until opened */
             .treasury-portal .side-menu,
             .treasury-portal .shortlist-menu {
-                width: 85%;
+                width: calc(100% - 8px);
             }
 
             .treasury-portal .side-menu {
@@ -2339,6 +2345,12 @@
 
             .treasury-portal .shortlist-menu {
                 transform: translateX(100%);
+            }
+
+            .treasury-portal.side-menu-open .container {
+                margin-left: 0;
+                margin-right: 0;
+                width: 100%;
             }
 
             .treasury-portal .bottom-nav button {
@@ -2412,12 +2424,24 @@
         font-size: 1.2rem !important;
     }
 
+    .treasury-portal .container {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 0 4px !important;
+    }
+
+    .treasury-portal.side-menu-open .container {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+
     /* Fix side menu positioning */
     .treasury-portal .side-menu {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
-        width: 85% !important;
+        width: calc(100% - 8px) !important;
         height: 100vh !important;
         background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(20px) !important;
@@ -2445,7 +2469,7 @@
         position: fixed !important;
         top: 0 !important;
         right: 0 !important;
-        width: 85% !important;
+        width: calc(100% - 8px) !important;
         height: 100vh !important;
         background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(20px) !important;
