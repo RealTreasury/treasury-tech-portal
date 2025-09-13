@@ -1817,6 +1817,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     totalTools.textContent = filtersActive ? visibleTotal : this.TREASURY_TOOLS.length;
                 }
 
+                const mobileCount = document.getElementById('mobileProductCount');
+                if (mobileCount) {
+                    mobileCount.textContent = filtersActive ? visibleTotal : this.TREASURY_TOOLS.length;
+                }
+
                 const totalCategories = document.getElementById('totalCategories');
                 if (totalCategories) {
                     if (filtersActive) {
@@ -1848,6 +1853,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const totalTools = document.getElementById('totalTools');
                 if (totalTools) {
                     totalTools.textContent = this.TREASURY_TOOLS.length;
+                }
+
+                const mobileCount = document.getElementById('mobileProductCount');
+                if (mobileCount) {
+                    mobileCount.textContent = this.TREASURY_TOOLS.length;
                 }
 
                 const totalCategories = document.getElementById('totalCategories');

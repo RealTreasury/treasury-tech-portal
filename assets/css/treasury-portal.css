@@ -222,11 +222,29 @@
             transform: translateY(-1px);
         }
 
+        .treasury-portal .mobile-product-count {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .treasury-portal .business-case-builder {
                 width: 100%;
                 display: flex;
                 justify-content: center;
+                align-items: center;
+            }
+
+            .treasury-portal .mobile-product-count {
+                display: inline-block;
+                margin-left: 8px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                line-height: 1;
+                padding: 2px 8px;
+                color: #fff;
+                background: #7216f4;
+                border-radius: 9999px;
+                vertical-align: middle;
             }
         }
 
