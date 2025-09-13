@@ -386,6 +386,8 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             flex-basis: 100%;
             order: 1;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .treasury-portal .header-filters {
@@ -1351,6 +1353,8 @@
             .treasury-portal .filter-tabs {
                 flex-wrap: wrap;
                 justify-content: center;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             .treasury-portal .stat-card {
