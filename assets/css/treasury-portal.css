@@ -1011,10 +1011,8 @@
                 -webkit-box-orient: vertical;
                 overflow: hidden;
             }
-
-            .treasury-portal .tool-capabilities {
-                max-height: 40px;
-                overflow: hidden;
+            .treasury-portal .tool-card-actions {
+                display: none;
             }
         }
 

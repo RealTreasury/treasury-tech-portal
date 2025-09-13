@@ -1407,10 +1407,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sortedCaps = [...new Set(capabilities)].sort((a, b) => a.localeCompare(b));
                 const displayCaps = sortedCaps.slice(0, 3);
                 const hasMoreCaps = sortedCaps.length > 3;
+                const showCapabilities = !this.isMobile();
                 const summaryLimit = this.isMobile() ? 100 : 150;
                 const summary = tool.product_summary
                     ? tool.product_summary.slice(0, summaryLimit) + (tool.product_summary.length > summaryLimit ? '...' : '')
                     : '';
+
+                const capabilitiesHtml = showCapabilities ? `
+                        <div class="tool-card-actions">
+                        <div class="tool-capabilities">
+                            ${displayCaps.map(cap => `<span class="tool-capability">${cap}</span>`).join('')}
+                            ${hasMoreCaps ? `<button class="show-more-capabilities-btn" data-tool-name="${tool.name}">... more</button>` : ''}
+                        </div>
+                    </div>` : '';
 
                 card.innerHTML = `
                     <div class="tool-card-content">
@@ -1430,12 +1439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="tool-description">${(tool.subCategories || []).join(', ')}</div>
                         ${summary ? `<div class="tool-summary">${summary}</div>` : ''}
                     </div>
-                        <div class="tool-card-actions">
-                        <div class="tool-capabilities">
-                            ${displayCaps.map(cap => `<span class="tool-capability">${cap}</span>`).join('')}
-                            ${hasMoreCaps ? `<button class="show-more-capabilities-btn" data-tool-name="${tool.name}">... more</button>` : ''}
-                        </div>
-                    </div>
+                    ${capabilitiesHtml}
                 `;
 
                 card.addEventListener('click', (e) => {
