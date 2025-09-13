@@ -7,7 +7,8 @@ const script = fs.readFileSync('assets/js/treasury-portal.js', 'utf8');
 
 test('updateVisibleCounts updates mobile product count', () => {
   const dom = new JSDOM(`
-    <div id="mobileProductCount"></div>
+    <div id="mobileProductCount" aria-label="0 visible tools"></div>
+    <span class="sr-only"> tools</span>
     <div id="totalTools"></div>
   `, { runScripts: 'outside-only' });
   const { window } = dom;
@@ -29,6 +30,8 @@ test('updateVisibleCounts updates mobile product count', () => {
 
   portal.updateVisibleCounts();
 
-  assert.equal(document.getElementById('mobileProductCount').textContent, '2');
+  const mobileCount = document.getElementById('mobileProductCount');
+  assert.equal(mobileCount.textContent, '2');
+  assert.equal(mobileCount.getAttribute('aria-label'), '2 visible tools');
   assert.equal(document.getElementById('totalTools').textContent, '2');
 });

@@ -1819,7 +1819,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const mobileProductCount = document.getElementById('mobileProductCount');
                 if (mobileProductCount) {
-                    mobileProductCount.textContent = filtersActive ? visibleTotal : this.TREASURY_TOOLS.length;
+                    const count = filtersActive ? visibleTotal : this.TREASURY_TOOLS.length;
+                    mobileProductCount.textContent = count;
+                    mobileProductCount.setAttribute('aria-label', `${count} visible tools`);
                 }
 
                 const totalCategories = document.getElementById('totalCategories');
@@ -1857,7 +1859,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const mobileProductCount = document.getElementById('mobileProductCount');
                 if (mobileProductCount) {
-                    mobileProductCount.textContent = this.TREASURY_TOOLS.length;
+                    const count = this.TREASURY_TOOLS.length;
+                    mobileProductCount.textContent = count;
+                    mobileProductCount.setAttribute('aria-label', `${count} visible tools`);
                 }
 
                 const totalCategories = document.getElementById('totalCategories');
