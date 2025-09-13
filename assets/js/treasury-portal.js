@@ -1407,8 +1407,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const sortedCaps = [...new Set(capabilities)].sort((a, b) => a.localeCompare(b));
                 const displayCaps = sortedCaps.slice(0, 3);
                 const hasMoreCaps = sortedCaps.length > 3;
+                const summaryLimit = this.isMobile() ? 100 : 150;
                 const summary = tool.product_summary
-                    ? tool.product_summary.slice(0, 150) + (tool.product_summary.length > 150 ? '...' : '')
+                    ? tool.product_summary.slice(0, summaryLimit) + (tool.product_summary.length > summaryLimit ? '...' : '')
                     : '';
 
                 card.innerHTML = `
