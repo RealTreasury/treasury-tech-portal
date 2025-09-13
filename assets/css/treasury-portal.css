@@ -217,6 +217,10 @@
             transition: background 0.3s ease, transform 0.2s ease;
         }
 
+        .treasury-portal .mobile-product-count {
+            display: none;
+        }
+
         .treasury-portal .business-case-builder__link:hover {
             background: linear-gradient(135deg, #8f47f6, #7216f4);
             transform: translateY(-1px);
@@ -227,6 +231,15 @@
                 width: 100%;
                 display: flex;
                 justify-content: center;
+                align-items: center;
+            }
+
+            .treasury-portal .mobile-product-count {
+                display: inline-block;
+                margin-left: 8px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #7216f4;
             }
         }
 
