@@ -455,18 +455,21 @@ applyTheme(themeName = 'default') {
         default: {
             '--primary-color': '#7216f4',
             '--secondary-color': '#8f47f6',
+            '--ttp-accent': '#7216f4',
             '--background-color': '#f8f9fa',
             '--text-color': '#281345'
         },
         dark: {
             '--primary-color': '#9333ea',
             '--secondary-color': '#a855f7',
+            '--ttp-accent': '#9333ea',
             '--background-color': '#1f2937',
             '--text-color': '#f9fafb'
         },
         corporate: {
             '--primary-color': '#1e40af',
             '--secondary-color': '#3b82f6',
+            '--ttp-accent': '#1e40af',
             '--background-color': '#f8fafc',
             '--text-color': '#1e293b'
         }
@@ -493,6 +496,7 @@ applyTheme(themeName = 'default') {
     --text-color: #281345;
     --border-color: #e5e7eb;
     --card-background: #ffffff;
+    --ttp-accent: #7216f4; /* Accent color for badges and highlights */
 }
 
 /* Use variables throughout CSS */
