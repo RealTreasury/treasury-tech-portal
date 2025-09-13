@@ -906,6 +906,18 @@
         height: 60px;
         margin: 0 12px 0 8px;
     }
+
+    .treasury-portal .tool-summary {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .treasury-portal .tool-capabilities {
+        max-height: 40px;
+        overflow: hidden;
+    }
 }
 
 .treasury-portal .video-indicator {
