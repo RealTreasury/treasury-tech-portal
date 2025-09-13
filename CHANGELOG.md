@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AGENTS.md files for AI developer guidance
 - Comprehensive documentation (API.md, TROUBLESHOOTING.md, EXAMPLES.md)
 - CONTRIBUTING.md with development workflow
+- `--ttp-accent` CSS variable for theming mobile product counts
 
 ### Changed
 - Enhanced mobile responsive design
