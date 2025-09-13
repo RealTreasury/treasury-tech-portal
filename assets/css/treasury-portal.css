@@ -222,6 +222,14 @@
             transform: translateY(-1px);
         }
 
+        @media (max-width: 768px) {
+            .treasury-portal .business-case-builder {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+        }
+
         /* Reduce portal intro video size within header */
         .treasury-portal .intro-video-target {
             flex: 0 1 400px;
